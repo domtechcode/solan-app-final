@@ -40,7 +40,7 @@
                         <?php $no++; ?>
                         <tr>
                             <td>{{ $no }}</td>
-                            <td>{{ $instruction->name }}</td>
+                            <td>{{ $instruction->spk_number }}</td>
                             <td>
                                 <div class="mt-sm-1 d-block">
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">Process</span>
