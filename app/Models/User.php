@@ -17,13 +17,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    // protected $fillable = [
-    //     'name',
-    //     'email',
-    //     'password',
-    // ];
+    protected $fillable = [
+        'name',
+        'username',
+        'role',
+    ];
 
-    protected $guarded = [];
+    // protected $guarded = [];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -42,4 +42,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // public static function search($search)
+    // {
+    //     return empty($search) ? static::query()
+    //         : static::query()->where('id', 'like', '%'.$search.'%')
+    //                 ->orwhere('name', 'like', '%'.$search.'%')
+    //                 ->orwhere('role', 'like', '%'.$search.'%');
+    // }
 }
