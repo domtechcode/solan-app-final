@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\FollowUp;
 
-use App\Models\User;
 use Livewire\Component;
+use App\Models\Instruction;
 use Livewire\WithPagination;
 
 class Dashboard extends Component
@@ -25,8 +25,8 @@ class Dashboard extends Component
     {
         return view('livewire.follow-up.dashboard',[
             'instructions' => $this->search === null ?
-                            User::latest()->paginate($this->paginate) :
-                            User::latest()->where('name', 'like', '%' . $this->search . '%')->paginate($this->paginate)
+                            Instruction::latest()->paginate($this->paginate) :
+                            Instruction::latest()->where('spk_number', 'like', '%' . $this->search . '%')->paginate($this->paginate)
         ]);
     }
 }
