@@ -38,7 +38,9 @@
             display: none;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     @livewireStyles
+    @stack('styles')
     
 </head>
 
@@ -104,6 +106,7 @@
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
     
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

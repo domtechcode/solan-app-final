@@ -29,6 +29,13 @@ Route::get('/dashboard', function () {
     return view('follow-up.dashboard', $data);
 });
 
+Route::get('/create-instruction', function () {
+    $data = [
+        'title' => 'Form Instruksi Kerja'
+    ];
+    return view('follow-up.create-instruction', $data);
+});
+
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'followup', 'middleware' => ['role:followup']], function () {
