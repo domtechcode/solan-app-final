@@ -14,28 +14,28 @@
                     <div class="row">
                         <div class="col-auto">
                             <label class="custom-switch form-switch me-5">
-                                <input type="radio" wire:model.defer="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="layout">
+                                <input type="radio" wire:model="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="layout">
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                 <span class="custom-switch-description">Layout</span>
                             </label>
                         </div>
                         <div class="col-auto">
                             <label class="custom-switch form-switch me-5">
-                                <input type="radio" wire:model.defer="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="sample">
+                                <input type="radio" wire:model="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="sample">
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                 <span class="custom-switch-description">Sample</span>
                             </label>
                         </div>
                         <div class="col-auto">
                             <label class="custom-switch form-switch me-5">
-                                <input type="radio" wire:model.defer="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="production">
+                                <input type="radio" wire:model="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="production">
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                 <span class="custom-switch-description">Production</span>
                             </label>
                         </div>
                         <div class="col-auto">
                             <label class="custom-switch form-switch me-5">
-                                <input type="radio" wire:model.defer="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="stock">
+                                <input type="radio" wire:model="spk_type" class="custom-switch-input @error('spk_type') is-invalid @enderror" value="stock">
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                 <span class="custom-switch-description">Stock</span>
                             </label>
@@ -190,7 +190,7 @@
                 <div class="form-group">
                     <label class="form-label">Quantity</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror" autocomplete="off" placeholder="Quantity">
+                        <input type="text" wire:model.defer="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror" autocomplete="off" placeholder="Quantity" type-currency="IDR">
                     </div>
                     @error('quantity') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>
@@ -210,7 +210,7 @@
                 <div class="form-group">
                     <label class="form-label">Harga</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="price" id="price" class="form-control @error('price') is-invalid @enderror" autocomplete="off" placeholder="Harga">
+                        <input type="text" wire:model.defer="price" id="price" class="form-control @error('price') is-invalid @enderror" autocomplete="off" placeholder="Harga" type-currency="IDR">
                     </div>
                     @error('price') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>

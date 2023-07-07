@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Storage;
 class CreateInstructionIndex extends Component
 {
     use WithFileUploads;
-    public $fileContoh = [];
-    public $fileArsip = [];
-    public $fileArsipAccounting = [];
+    public $filecontoh = [];
+    public $filearsip = [];
+    public $fileaccounting = [];
     public $notes = [];
 
     public $title;
@@ -143,21 +143,21 @@ class CreateInstructionIndex extends Component
         $folder = $this->spk_number."/followup";
 
         $nocontoh = 1;
-        foreach ($this->fileContoh as $file) {
+        foreach ($this->filecontoh as $file) {
             $fileName = $this->spk_number . '-file-contoh-'.$nocontoh . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs('public/'.$folder, $file, $fileName);
             $nocontoh ++;
         }
 
         $noarsip = 1;
-        foreach ($this->fileArsip as $file) {
+        foreach ($this->filearsip as $file) {
             $fileName = $this->spk_number . '-file-arsip-'.$noarsip . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs('public/'.$folder, $file, $fileName);
             $noarsip ++;
         }
 
         $noarsipaccounting = 1;
-        foreach ($this->fileArsipAccounting as $file) {
+        foreach ($this->fileaccounting as $file) {
             $fileName = $this->spk_number . '-file-arsip-accounting-'.$noarsipaccounting . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs('public/'.$folder, $file, $fileName);
             $noarsipaccounting ++;
@@ -202,8 +202,8 @@ class CreateInstructionIndex extends Component
                 'customer_number' => $this->customer_number,
                 'order_name' => $this->order_name,
                 'code_style' => $this->code_style,
-                'quantity' => $this->quantity,
-                'price' => $this->price,
+                'quantity' => currency_convert($this->quantity),
+                'price' => currency_convert($this->price),
                 'tgl_kirim_update' => $this->shipping_date,
                 'spk_status' => 'New',
                 'spk_state' => 'Running',
@@ -320,13 +320,12 @@ class CreateInstructionIndex extends Component
             'customer' => 'required',
         ]);
 
+        $datacustomerlist = Customer::find($this->customer);
 
         if($this->spk_type == 'layout' || $this->spk_type == 'sample'){
             $count_spk = Instruction::whereIn('spk_type', ['layout', 'sample'])->count();
             $this->spk_number = 'P-' . sprintf("1%04d", $count_spk + 1);
         }else if($this->spk_type == 'production'){
-            $datacustomerlist = Customer::find($this->customer);
-
             if(isset($this->spk_parent)){
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
                                         ->where('spk_type', $this->spk_type)
@@ -334,10 +333,18 @@ class CreateInstructionIndex extends Component
                                         ->latest('spk_number')->first();
                 $nomor_parent = Str::between($this->spk_parent, '-', '-');
             }else{
-                $nomor_spk = Instruction::where('spk_type', $this->spk_type)
-                                    ->where('spk_parent', NULL)
-                                    ->where('taxes_type', $datacustomerlist->taxes)
-                                    ->count();
+                if($datacustomerlist->taxes == 'pajak'){
+                    $nomor_spk = Instruction::where('spk_type', $this->spk_type)
+                    ->where('spk_parent', NULL)
+                    ->where('taxes_type', 'pajak')
+                    ->count();
+                }else{
+                    $nomor_spk = Instruction::where('spk_type', $this->spk_type)
+                    ->where('spk_parent', NULL)
+                    ->where('taxes_type', 'nonpajak')
+                    ->count();
+                }
+                
             }
 
             if (isset($nomor_spk_parent)) {
@@ -365,8 +372,8 @@ class CreateInstructionIndex extends Component
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
 
-        }if($this->spk_type == 'stock'){
-            $nomor_spk = Instruction::where('spk_type', $this->spk_type)
+        }else if($this->spk_type == 'stock'){
+            $nomor_spk = Instruction::where('spk_type', 'production')
                                     ->where('spk_parent', NULL)
                                     ->where('taxes_type', 'nonpajak')
                                     ->count();
