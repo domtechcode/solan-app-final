@@ -1,5 +1,5 @@
 <div>
-    {{-- The Master doesn't talk, he acts. --}}
+    {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
                 {{-- <label class="form-label">Customize Select</label> --}}
@@ -35,11 +35,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = 0; ?>
-                        @foreach ($instructions as $instruction)
-                        <?php $no++; ?>
+                        @forelse ($instructions as $key => $instruction)
                         <tr>
-                            <td>{{ $no }}</td>
+                            <td>{{ $key + 1 }}</td>
                             <td>{{ $instruction->spk_number }}</td>
                             <td>
                                 <div class="mt-sm-1 d-block">
@@ -53,12 +51,19 @@
                             </td>
                             <td>
                                 <div class="btn-list">         
-                                    <button class="btn btn-icon btn-sm btn-dark" href=""><i class="fe fe-eye"></i></button>
+                                    {{-- <button class="btn btn-icon btn-sm btn-dark" data-bs-target="#scrollingmodal" data-bs-toggle="modal"><i class="fe fe-eye"></i></button> --}}
+                                    <button class="btn btn-icon btn-sm btn-dark" wire:click="$emitTo('component.detail-instruction', 'detailInstruction', {{ $instruction->id }})"><i class="fe fe-eye"></i></button>
                                     <button class="btn btn-icon btn-sm btn-primary" href=""><i class="fe fe-edit"></i></button>
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="100%">
+                                No Data!
+                            </td>
+                        </tr>
+                        @endforelse
                         
                     </tbody>
                 </table>
@@ -67,8 +72,10 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{-- {{ $instructions->links() }} --}}
         </div>
     </div>
+
     
+    @livewire('component.detail-instruction')
 </div>

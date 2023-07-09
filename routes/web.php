@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Livewire\FollowUp\IndexDashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,12 +23,7 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-Route::get('/dashboard', function () {
-    $data = [
-        'title' => 'Dashboard'
-    ];
-    return view('follow-up.dashboard', $data);
-});
+Route::get('/dashboard', IndexDashboard::class);
 
 Route::get('/create-instruction', function () {
     $data = [
