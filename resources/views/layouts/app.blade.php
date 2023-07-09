@@ -58,6 +58,7 @@
 
             @include('layouts.header')
 
+            {{-- {{ $slot }} --}}
             @yield('content')
         </div>
 
@@ -127,6 +128,16 @@
                     this.setSelectionRange(cursorPostion, cursorPostion);
                     }
                 });
+            });
+
+            Livewire.on('showModal', (id) => {
+                id = "#" + id;
+                $(id).modal('show');
+            });
+
+            Livewire.on('closeModal', (id) => {
+                id = "#" + id;
+                $(id).modal('hide');
             });
         });
         
