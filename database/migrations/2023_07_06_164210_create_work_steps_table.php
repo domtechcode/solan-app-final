@@ -19,18 +19,20 @@ class CreateWorkStepsTable extends Migration
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->unsignedBigInteger('work_step_list_id');
             $table->foreign('work_step_list_id')->references('id')->on('work_step_lists');
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('status_id')->nullable();
             $table->foreign('status_id')->references('id')->on('statuses');
-            $table->unsignedBigInteger('job_id');
+            $table->unsignedBigInteger('job_id')->nullable();
             $table->foreign('job_id')->references('id')->on('jobs');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('machines');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('machine_id')->nullable();
             $table->foreign('machine_id')->references('id')->on('machines');
+            $table->date('target_date')->nullable();
+            $table->date('schedule_date')->nullable();
 
             $table->string('step')->nullable();
-            $table->string('state')->nullable();
-            $table->string('status')->nullable();
+            $table->string('state_task')->nullable();
+            $table->string('status_task')->nullable();
             $table->string('task')->nullable();
 
             $table->timestamp('dikerjakan')->nullable();

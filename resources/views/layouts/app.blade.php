@@ -32,6 +32,7 @@
     <!-- INTERNAL Switcher css -->
     <link href="{{ asset('assets/switcher/css/switcher.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/switcher/demo.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     <style>
         .select2-selection__arrow {
@@ -75,7 +76,7 @@
 
     <!-- INTERNAL SELECT2 JS -->
     <script src="{{ asset('assets/plugins/select2/select2.full.min.js') }}"></script>
-    <script src="{{ asset('assets/js/select2.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/select2.js') }}"></script> --}}
 
     <!-- BOOTSTRAP JS -->
     <script src="{{ asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
@@ -106,6 +107,7 @@
     <!-- Switcher js -->
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
     <script src="{{ asset('vendor/pharaonic/pharaonic.select2.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     
     @livewireScripts
     @stack('scripts')
@@ -130,14 +132,36 @@
                 });
             });
 
-            Livewire.on('showModal', (id) => {
-                id = "#" + id;
-                $(id).modal('show');
-            });
+            // Livewire.on('showModal', (id) => {
+            //     id = "#" + id;
+            //     $(id).modal('show');
+            // });
 
-            Livewire.on('closeModal', (id) => {
-                id = "#" + id;
-                $(id).modal('hide');
+            // Livewire.on('closeModal', (id) => {
+            //     id = "#" + id;
+            //     $(id).modal('hide');
+            // });
+
+            Livewire.on('flashMessage', (param) => {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+
+                toastr[param['type']](param['message'], param['title']);
             });
         });
         
