@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCatatansTable extends Migration
+class CreateFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateCatatansTable extends Migration
      */
     public function up()
     {
-        Schema::create('catatans', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('instruction_id');
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
-            $table->text('catatan')->nullable();
-            $table->string('tujuan')->nullable();
-            $table->string('kategori')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('type_file');
+            $table->string('file_name');
+            $table->string('file_path');
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ class CreateCatatansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('catatans');
+        Schema::dropIfExists('files');
     }
 }

@@ -40,14 +40,10 @@
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $instruction->spk_number }}</td>
                             <td>
-                                <div class="mt-sm-1 d-block">
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">Process</span>
-                                </div>
+                               <span class="badge bg-info rounded-pill text-white p-2 px-3">Process</span>
                             </td>
                             <td>
-                                <div class="mt-sm-1 d-block">
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">Follow Up</span>
-                                </div>
+                                <span class="badge bg-info rounded-pill text-white p-2 px-3">Follow Up</span>
                             </td>
                             <td>
                                 <div class="btn-list">         
@@ -72,7 +68,7 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{-- {{ $instructions->links() }} --}}
+            {{ $instructions->links() }}
         </div>
     </div>
 

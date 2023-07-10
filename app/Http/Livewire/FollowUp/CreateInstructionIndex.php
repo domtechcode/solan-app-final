@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\FollowUp;
 
 use Carbon\Carbon;
+use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\Customer;
@@ -11,6 +12,7 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CreateInstructionIndex extends Component
@@ -49,6 +51,7 @@ class CreateInstructionIndex extends Component
 
     public $type_ppn;
     public $ppn = 11.2 / 100;
+    public $type_order;
 
     //data
     public $datacustomers = [];
@@ -56,6 +59,8 @@ class CreateInstructionIndex extends Component
     public $datalayouts = [];
     public $datasamples = [];
     public $dataworksteplists = [];
+
+    public $currentInstructionId;
 
     // protected $rules = [
     //     'spk_type' => 'required',
@@ -104,7 +109,6 @@ class CreateInstructionIndex extends Component
         $this->datalayouts = Instruction::where('spk_type', 'layout')->orderByDesc('created_at')->get();
         $this->datasamples = Instruction::where('spk_type', 'sample')->orderByDesc('created_at')->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
-
         return view('livewire.follow-up.create-instruction-index')->extends('layouts.main')->layoutData(['title' => 'Form Instruksi Kerja']);
     }
 
@@ -138,32 +142,6 @@ class CreateInstructionIndex extends Component
         ]);
     }
 
-    public function uploadFiles()
-    {
-        $folder = $this->spk_number."/followup";
-
-        $nocontoh = 1;
-        foreach ($this->filecontoh as $file) {
-            $fileName = $this->spk_number . '-file-contoh-'.$nocontoh . '.' . $file->getClientOriginalExtension();
-            Storage::putFileAs('public/'.$folder, $file, $fileName);
-            $nocontoh ++;
-        }
-
-        $noarsip = 1;
-        foreach ($this->filearsip as $file) {
-            $fileName = $this->spk_number . '-file-arsip-'.$noarsip . '.' . $file->getClientOriginalExtension();
-            Storage::putFileAs('public/'.$folder, $file, $fileName);
-            $noarsip ++;
-        }
-
-        $noarsipaccounting = 1;
-        foreach ($this->fileaccounting as $file) {
-            $fileName = $this->spk_number . '-file-arsip-accounting-'.$noarsipaccounting . '.' . $file->getClientOriginalExtension();
-            Storage::putFileAs('public/'.$folder, $file, $fileName);
-            $noarsipaccounting ++;
-        }
-    }
-
     public function save()
     {
         if (empty($this->workSteps)) {
@@ -184,11 +162,14 @@ class CreateInstructionIndex extends Component
         $customerList = Customer::find($this->customer);
         $dataInstruction = Instruction::whereNotNull('customer_number')->where('customer_number', $this->customer_number)->first();
         
+        
         if($this->spk_type == 'stock'){
             $this->spk_type = 'production';
             $this->taxes_type = 'nonpajak';
+            $this->type_order = 'stock';
         }else{
             $this->taxes_type = $customerList->taxes;
+            $this->type_order = $this->spk_type;
         }
 
         if($dataInstruction == null){
@@ -216,6 +197,7 @@ class CreateInstructionIndex extends Component
                 'spk_sample_number' => $this->spk_sample_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
+                'type_order' => $this->type_order,
             ]);
 
             $this->workSteps = array_map(function ($workSteps) {
@@ -246,13 +228,17 @@ class CreateInstructionIndex extends Component
                     "user_id" => "4"
                 ]);
 
-                // Menambahkan elemen setelah "Hitung Bahan" (sebagai gantinya)
+                
                 $index = array_search("Hitung Bahan", array_column($this->workSteps, "name"));
-                array_splice($this->workSteps, $index + 1, 0, [[
-                    "name" => "RAB",
-                    "id" => "3",
-                    "user_id" => null
-                ]]);
+                if ($index !== false) {
+                    array_splice($this->workSteps, $index + 1, 0, [
+                        [
+                            "name" => "RAB",
+                            "id" => "3",
+                            "user_id" => null
+                        ]
+                    ]);
+                }                
             }
             
             $no = 0;
@@ -260,8 +246,6 @@ class CreateInstructionIndex extends Component
                 WorkStep::create([
                     'instruction_id' => $instruction->id,
                     'work_step_list_id' => $step['id'],
-                    'status_id' => 1,
-                    'job_id' => 2,
                     'state' => 'Not Running',
                     'status' => 'Waiting',
                     'step' => $no,
@@ -272,14 +256,47 @@ class CreateInstructionIndex extends Component
             }
 
             //update selesai
-            WorkStep::where('instruction_id', $instruction->id)->where('work_step_list_id', 1)
+            WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
                 ->update([
+                    'state' => 'Complete',
+                    'status' => 'Complete',
                     'dikerjakan' => Carbon::now()->toDateTimeString(),
                     'selesai' => Carbon::now()->toDateTimeString()
                 ]);
+            
+            $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)->first();
+            $workStepList = WorkStepList::find($firstWorkStep->work_step_list_id);
 
-            if($this->uploadFiles()){
-                $this->uploadFiles();
+            if($workStepList->name == 'Cari/Ambil Stock'){
+                $statusId = 1;
+                $JobId = 7;
+            }else if($workStepList->name == 'Hitung Bahan'){
+                $statusId = 1;
+                $JobId = 3;
+            }else if($workStepList->name == 'Setting'){
+                $statusId = 1;
+                $JobId = 8;
+            }else{
+                $statusId = 1;
+                $JobId = 2;
+            }
+
+            //cari no 1 langkah kerjanya
+            WorkStep::where('instruction_id', $instruction->id)->where('step', 1)
+                ->update([
+                    'state' => 'Running',
+                    'status' => 'Pending Approved',
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                ]);
+
+            WorkStep::where('instruction_id', $instruction->id)
+                ->update([
+                    'status_id' => $statusId,
+                    'job_id' => $JobId,
+                ]);
+
+            if($this->uploadFiles($instruction->id)){
+                $this->uploadFiles($instruction->id);
             }
             
             if($this->notes){
@@ -289,7 +306,7 @@ class CreateInstructionIndex extends Component
                         'catatan' => $input['catatan'],
                         'kategori' => 'catatan',
                         'instruction_id' => $instruction->id,
-                        // 'user_id' => 1,
+                        'user_id' => 1,
                     ]);
                 }
             }
@@ -297,20 +314,79 @@ class CreateInstructionIndex extends Component
             // Setelah data disimpan, reset array $workSteps
             $this->workSteps = [];
 
-            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
-            
-            $this->reset();
-            $this->mount();
-            // $this->dispatchBrowserEvent('reset-select2');
-            // $this->reset(['customer', 'spk_parent', 'spk_layout_number', 'spk_sample_number']);
-            // $this->emit('resetSelect2');
-            // $this->emit('saved'); // Panggil event 'saved'
+            // session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+            $this->emit('flashMessage', [
+                'type' => 'success',
+                'title' => 'Create Instruksi Kerja',
+                'message' => 'Berhasil membuat instruksi kerja',
+            ]);
 
+            $this->emit('reloadTableInstruction');
+            $this->reset();
+            $this->dispatchBrowserEvent('pondReset');
+            $this->mount();
+
+            
         }else{
-            session()->flash('error', 'Instruksi kerja pernah dibuat sebelumnya, karena po konsumen sudah pernah dibuatkan spk.');
+
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Instruksi Kerja',
+                'message' => 'Instruksi kerja pernah dibuat sebelumnya, karena po konsumen sudah terpakai',
+            ]);
         }
         
         
+    }
+
+    public function uploadFiles($instructionId)
+    {
+        $folder = "public/".$this->spk_number."/follow-up";
+
+        $nocontoh = 1;
+        foreach ($this->filecontoh as $file) {
+            $fileName = $this->spk_number . '-file-contoh-'.$nocontoh . '.' . $file->getClientOriginalExtension();
+            Storage::putFileAs($folder, $file, $fileName);
+            $nocontoh ++;
+
+            Files::create([
+                'instruction_id' => $instructionId,
+                "user_id" => "2",
+                "type_file" => "contoh",
+                "file_name" => $fileName,
+                "file_path" => $folder,
+            ]);
+        }
+
+        $noarsip = 1;
+        foreach ($this->filearsip as $file) {
+            $fileName = $this->spk_number . '-file-arsip-'.$noarsip . '.' . $file->getClientOriginalExtension();
+            Storage::putFileAs($folder, $file, $fileName);
+            $noarsip ++;
+
+            Files::create([
+                'instruction_id' => $instructionId,
+                "user_id" => "2",
+                "type_file" => "arsip",
+                "file_name" => $fileName,
+                "file_path" => $folder,
+            ]);
+        }
+
+        $noarsipaccounting = 1;
+        foreach ($this->fileaccounting as $file) {
+            $fileName = $this->spk_number . '-file-arsip-accounting-'.$noarsipaccounting . '.' . $file->getClientOriginalExtension();
+            Storage::putFileAs($folder, $file, $fileName);
+            $noarsipaccounting ++;
+
+            Files::create([
+                'instruction_id' => $instructionId,
+                "user_id" => "2",
+                "type_file" => "accounting",
+                "file_name" => $fileName,
+                "file_path" => $folder,
+            ]);
+        }
     }
 
     public function generateCode()

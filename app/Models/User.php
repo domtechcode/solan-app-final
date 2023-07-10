@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Files;
 use App\Models\Catatan;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -55,5 +56,10 @@ class User extends Authenticatable
     public function catatan()
     {
         return $this->hasMany(Catatan::class);
+    }
+
+    public function file()
+    {
+        return $this->hasMany(Files::class);
     }
 }

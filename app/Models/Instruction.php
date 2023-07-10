@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\WorkStep;
 use Illuminate\Database\Eloquent\Model;
@@ -22,5 +23,10 @@ class Instruction extends Model
     public function catatan()
     {
         return $this->hasMany(Catatan::class);
+    }
+
+    public function file()
+    {
+        return $this->hasMany(Files::class);
     }
 }

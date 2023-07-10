@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Livewire\FollowUp\IndexDashboard;
+use App\Http\Livewire\FollowUp\IndexCreateInstruction;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,13 +25,7 @@ Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
 Route::get('/dashboard', IndexDashboard::class);
-
-Route::get('/create-instruction', function () {
-    $data = [
-        'title' => 'Form Instruksi Kerja'
-    ];
-    return view('follow-up.create-instruction', $data);
-});
+Route::get('/create-instruction', IndexCreateInstruction::class);
 
 Route::group(['middleware' => ['auth']], function () {
 

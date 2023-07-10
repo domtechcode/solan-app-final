@@ -20,6 +20,9 @@
             allowFileSizeValidation: {{ $attributes->has('allowFileSizeValidation') ? 'true' : 'false' }},
             maxFileSize: {!! $attributes->has('maxFileSize') ? "'".$attributes->get('maxFileSize')."'" : 'null' !!}
         });
+        this.addEventListener('pondReset', e => {
+            post.removeFiles();
+        });
     }"
 >
     <input type="file" x-ref="{{ $attributes->get('ref') ?? 'input' }}" />

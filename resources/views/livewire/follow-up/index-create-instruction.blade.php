@@ -1,6 +1,5 @@
-@extends('layouts.main')
-
-@section('content')
+<div>
+    {{-- Stop trying to control. --}}
     <!--app-content open-->
     <div class="main-content app-content mt-0">
         <div class="side-app">
@@ -42,6 +41,4 @@
         </div>
     </div>
     <!--app-content closed-->
-
-    
-@endsection
+</div>
