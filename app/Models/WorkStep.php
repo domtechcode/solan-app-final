@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Job;
+use App\Models\User;
 use App\Models\Status;
 use App\Models\Machine;
 use App\Models\Instruction;
@@ -40,5 +41,10 @@ class WorkStep extends Model
     public function machine()
     {
         return $this->belongsTo(Machine::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

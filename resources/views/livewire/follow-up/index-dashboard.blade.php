@@ -76,5 +76,4 @@
         </div>
     </div>
     <!--app-content closed-->
-
 </div>

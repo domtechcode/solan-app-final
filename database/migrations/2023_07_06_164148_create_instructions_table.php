@@ -40,7 +40,7 @@ class CreateInstructionsTable extends Migration
             $table->string('group_id')->nullable();
             $table->string('group_priority')->nullable();
             $table->string('type_order')->nullable();
-            $table->date('tgl_kirim_update')->nullable();
+            $table->date('shipping_date_first')->nullable();
             $table->string('type_ppn')->nullable();
             $table->string('ppn')->nullable();
             $table->timestamps();

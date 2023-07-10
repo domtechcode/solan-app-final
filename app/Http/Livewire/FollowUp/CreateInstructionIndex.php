@@ -185,7 +185,7 @@ class CreateInstructionIndex extends Component
                 'code_style' => $this->code_style,
                 'quantity' => currency_convert($this->quantity),
                 'price' => currency_convert($this->price),
-                'tgl_kirim_update' => $this->shipping_date,
+                'shipping_date_first' => $this->shipping_date,
                 'spk_status' => 'New',
                 'spk_state' => 'Running',
                 'sub_spk' => $this->sub_spk,
@@ -260,6 +260,8 @@ class CreateInstructionIndex extends Component
                 ->update([
                     'state' => 'Complete',
                     'status' => 'Complete',
+                    'target_date' => Carbon::now(),
+                    'schedule_date' => Carbon::now(),
                     'dikerjakan' => Carbon::now()->toDateTimeString(),
                     'selesai' => Carbon::now()->toDateTimeString()
                 ]);

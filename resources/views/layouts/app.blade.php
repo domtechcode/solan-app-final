@@ -132,15 +132,15 @@
                 });
             });
 
-            Livewire.on('showModal', (id) => {
-                id = "#" + id;
-                $(id).modal('show');
-            });
+            // Livewire.on('showModal', (id) => {
+            //     id = "#" + id;
+            //     $(id).modal('show');
+            // });
 
-            Livewire.on('closeModal', (id) => {
-                id = "#" + id;
-                $(id).modal('hide');
-            });
+            // Livewire.on('closeModal', (id) => {
+            //     id = "#" + id;
+            //     $(id).modal('hide');
+            // });
 
             Livewire.on('flashMessage', (param) => {
                 toastr.options = {

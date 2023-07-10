@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\WorkStep;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -61,5 +62,10 @@ class User extends Authenticatable
     public function file()
     {
         return $this->hasMany(Files::class);
+    }
+
+    public function workstep()
+    {
+        return $this->hasMany(WorkStep::class);
     }
 }

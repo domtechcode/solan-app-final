@@ -25,7 +25,7 @@ class Instruction extends Model
         return $this->hasMany(Catatan::class);
     }
 
-    public function file()
+    public function fileArsip()
     {
         return $this->hasMany(Files::class);
     }

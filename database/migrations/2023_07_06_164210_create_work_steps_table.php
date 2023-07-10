@@ -27,10 +27,12 @@ class CreateWorkStepsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('machine_id')->nullable();
             $table->foreign('machine_id')->references('id')->on('machines');
+            $table->date('target_date')->nullable();
+            $table->date('schedule_date')->nullable();
 
             $table->string('step')->nullable();
-            $table->string('state')->nullable();
-            $table->string('status')->nullable();
+            $table->string('state_task')->nullable();
+            $table->string('status_task')->nullable();
             $table->string('task')->nullable();
 
             $table->timestamp('dikerjakan')->nullable();
