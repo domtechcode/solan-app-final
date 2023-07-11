@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CreateInstructionIndex extends Component
 {
+    protected $listeners = [
+        'pageReset' => '$refresh'
+    ];
+
     use WithFileUploads;
     public $filecontoh = [];
     public $filearsip = [];
@@ -109,7 +113,8 @@ class CreateInstructionIndex extends Component
         $this->datalayouts = Instruction::where('spk_type', 'layout')->orderByDesc('created_at')->get();
         $this->datasamples = Instruction::where('spk_type', 'sample')->orderByDesc('created_at')->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
-        return view('livewire.follow-up.create-instruction-index')->extends('layouts.main')->layoutData(['title' => 'Form Instruksi Kerja']);
+        
+        return view('livewire.follow-up.create-instruction-index')->extends('layouts.app')->layoutData(['title' => 'Form Instruksi Kerja']);
     }
 
     public function select2()
@@ -145,8 +150,13 @@ class CreateInstructionIndex extends Component
     public function save()
     {
         if (empty($this->workSteps)) {
-            session()->flash('error', 'Langkah harus dipilih..');
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Instruksi Kerja',
+                'message' => 'Langkah Kerja Harus Dipilih',
+            ]);
         }
+
 
        $this->validate([
             'spk_type' => 'required',
@@ -246,8 +256,8 @@ class CreateInstructionIndex extends Component
                 WorkStep::create([
                     'instruction_id' => $instruction->id,
                     'work_step_list_id' => $step['id'],
-                    'state' => 'Not Running',
-                    'status' => 'Waiting',
+                    'state_task' => 'Not Running',
+                    'status_task' => 'Waiting',
                     'step' => $no,
                     'task' => 'Running',
                     'user_id' => $step['user_id'],
@@ -258,15 +268,15 @@ class CreateInstructionIndex extends Component
             //update selesai
             WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
                 ->update([
-                    'state' => 'Complete',
-                    'status' => 'Complete',
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
                     'target_date' => Carbon::now(),
                     'schedule_date' => Carbon::now(),
                     'dikerjakan' => Carbon::now()->toDateTimeString(),
                     'selesai' => Carbon::now()->toDateTimeString()
                 ]);
             
-            $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)->first();
+            $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 2)->first();
             $workStepList = WorkStepList::find($firstWorkStep->work_step_list_id);
 
             if($workStepList->name == 'Cari/Ambil Stock'){
@@ -284,10 +294,10 @@ class CreateInstructionIndex extends Component
             }
 
             //cari no 1 langkah kerjanya
-            WorkStep::where('instruction_id', $instruction->id)->where('step', 1)
+            WorkStep::where('instruction_id', $instruction->id)->where('step', 2)
                 ->update([
-                    'state' => 'Running',
-                    'status' => 'Pending Approved',
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
                     'dikerjakan' => Carbon::now()->toDateTimeString(),
                 ]);
 
@@ -296,6 +306,60 @@ class CreateInstructionIndex extends Component
                     'status_id' => $statusId,
                     'job_id' => $JobId,
                 ]);
+
+            
+            if ($this->spk_layout_number) {
+                $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
+                $files = Files::where('instruction_id', $selectedLayout->id)->where('type_file', 'layout')->get();
+                $folder = "public/".$this->spk_number."/follow-up";
+
+                if($files){
+                    foreach ($files as $file) {
+                        $sourcePath = $file->file_path.'/'.$file->file_name;
+                        $newFileName = $file->file_name;
+                
+                        if (!Storage::exists($folder.'/'.$newFileName)) {
+                            // Copy the file to the destination folder with the new name
+                            Storage::copy($sourcePath, $folder.'/'.$newFileName);
+                    
+                            Files::create([
+                                'instruction_id' => $instruction->id,
+                                "user_id" => "2",
+                                "type_file" => "layout",
+                                "file_name" => $newFileName,
+                                "file_path" => $folder,
+                            ]);
+                        }
+                    }
+                }
+            }    
+
+            
+            if ($this->spk_sample_number) {
+                $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
+                $files = Files::where('instruction_id', $selectedSample->id)->where('type_file', 'sample')->get();
+                $folder = "public/".$this->spk_number."/follow-up";
+
+                if($files){
+                    foreach ($files as $file) {
+                        $sourcePath = $file->file_path.'/'.$file->file_name;
+                        $newFileName = $file->file_name;
+                
+                        if (!Storage::exists($folder.'/'.$newFileName)) {
+                            // Copy the file to the destination folder with the new name
+                            Storage::copy($sourcePath, $folder.'/'.$newFileName);
+                    
+                            Files::create([
+                                'instruction_id' => $instruction->id,
+                                "user_id" => "2",
+                                "type_file" => "sample",
+                                "file_name" => $newFileName,
+                                "file_path" => $folder,
+                            ]);
+                        }
+                    }
+                }
+            }    
 
             if($this->uploadFiles($instruction->id)){
                 $this->uploadFiles($instruction->id);
@@ -316,18 +380,17 @@ class CreateInstructionIndex extends Component
             // Setelah data disimpan, reset array $workSteps
             $this->workSteps = [];
 
-            // session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
 
-            $this->emit('reloadTableInstruction');
+            // $this->emit('reloadTableInstruction');
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
-            $this->mount();
-
+            return redirect()->route('createInstruction');
             
         }else{
 

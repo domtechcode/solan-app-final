@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Livewire\FollowUp\IndexDashboard;
+use App\Http\Livewire\FollowUp\IndexEditInstruction;
 use App\Http\Livewire\FollowUp\IndexCreateInstruction;
 
 /*
@@ -25,14 +26,13 @@ Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
 Route::get('/dashboard', IndexDashboard::class);
-Route::get('/create-instruction', IndexCreateInstruction::class);
+Route::get('/create-instruction', IndexCreateInstruction::class)->name('createInstruction');
+Route::get('/edit-instruction/{instructionId}', IndexEditInstruction::class)->name('editInstruction');
 
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'followup', 'middleware' => ['role:followup']], function () {
-        Route::get('/dashboard', function () {
-            return view('welcome');
-        })->name('follow-up.dashboard');
+
     });
 
 });

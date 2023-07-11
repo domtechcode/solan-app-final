@@ -8,7 +8,7 @@ class IndexCreateInstruction extends Component
 {
     public function render()
     {
-        return view('livewire.follow-up.index-create-instruction',[
+        return view('livewire.follow-up.index-create-instruction', [
             'title' => 'Form Instruksi Kerja'
         ])
         ->extends('layouts.app')

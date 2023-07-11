@@ -1,10 +1,6 @@
 <div>
     {{-- In work, do what you enjoy. --}}
-    @if(session()->has('notify'))
-        <div class="alert alert-success">
-            {{ session('notify') }}
-        </div>
-    @endif
+        
 
     <form wire:submit.prevent="save">
         <div class="row">
@@ -355,7 +351,7 @@
 
 
         <div class="row mt-3">
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-12 col-md-12">
                 <div class="expanel expanel-default">
                     <div class="expanel-body">
                         <div class="form-group">
@@ -402,7 +398,7 @@
 
         <button type="button" wire:click="addEmptyNote">+ Tambah Form Catatan</button> --}}
         
-    <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
+        <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
 </div>
 

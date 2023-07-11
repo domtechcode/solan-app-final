@@ -65,7 +65,7 @@
                                 <td>
                                     <div class="btn-list">         
                                         <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $instruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <button class="btn btn-icon btn-sm btn-primary" href=""><i class="fe fe-edit"></i></button>
+                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('editInstruction', ['instructionId' =>  $instruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
