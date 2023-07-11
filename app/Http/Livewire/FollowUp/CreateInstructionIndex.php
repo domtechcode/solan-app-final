@@ -200,6 +200,7 @@ class CreateInstructionIndex extends Component
                 'spk_state' => 'Running',
                 'sub_spk' => $this->sub_spk,
                 'spk_parent' => $this->spk_parent,
+                'spk_fsc' => $this->spk_fsc,
                 'fsc_type' => $this->fsc_type,
                 'spk_number_fsc' => $this->spk_number_fsc,
                 'follow_up' => $this->follow_up,

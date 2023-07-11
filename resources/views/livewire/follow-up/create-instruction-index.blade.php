@@ -349,7 +349,6 @@
             </div>
         </div>
 
-
         <div class="row mt-3">
             <div class="col-sm-12 col-md-12">
                 <div class="expanel expanel-default">
@@ -389,14 +388,6 @@
             
 
         </div>
-        {{-- @foreach ($notes as $index => $note)
-            <div class="note-container" wire:key="note-{{ $index }}">
-                <input type="text" wire:model="notes.{{ $index }}" placeholder="Tambahkan catatan baru" />
-                <button type="button" wire:click="removeNote({{ $index }})">X</button>
-            </div>
-        @endforeach
-
-        <button type="button" wire:click="addEmptyNote">+ Tambah Form Catatan</button> --}}
         
         <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
