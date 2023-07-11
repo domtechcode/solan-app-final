@@ -21,8 +21,10 @@ class CreateInstructionsTable extends Migration
             $table->string('spk_status')->nullable();
             $table->string('spk_state')->nullable();
             $table->string('repeat_from')->nullable();
+            $table->string('request_kekurangan')->nullable();
             $table->string('spk_parent')->nullable();
             $table->string('sub_spk')->nullable();
+            $table->string('spk_fsc')->nullable();
             $table->string('spk_number_fsc')->nullable();
             $table->string('fsc_type')->nullable();
             $table->date('order_date')->nullable();
