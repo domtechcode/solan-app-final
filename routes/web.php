@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Livewire\FollowUp\IndexDashboard;
 use App\Http\Livewire\FollowUp\IndexEditInstruction;
 use App\Http\Livewire\FollowUp\IndexCreateInstruction;
+use App\Http\Livewire\FollowUp\IndexUpdateInstruction;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess')
 Route::get('/dashboard', IndexDashboard::class)->name('dashboard');
 Route::get('/create-instruction', IndexCreateInstruction::class)->name('createInstruction');
 Route::get('/edit-instruction/{instructionId}', IndexEditInstruction::class)->name('editInstruction');
-// Route::get('/update-instruction/{instructionId}', IndexUpdateInstruction::class)->name('updateInstruction');
+Route::get('/update-instruction/{instructionId}', IndexUpdateInstruction::class)->name('updateInstruction');
 
 Route::group(['middleware' => ['auth']], function () {
 
