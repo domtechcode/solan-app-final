@@ -28,6 +28,7 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess')
 Route::get('/dashboard', IndexDashboard::class)->name('dashboard');
 Route::get('/create-instruction', IndexCreateInstruction::class)->name('createInstruction');
 Route::get('/edit-instruction/{instructionId}', IndexEditInstruction::class)->name('editInstruction');
+// Route::get('/update-instruction/{instructionId}', IndexUpdateInstruction::class)->name('updateInstruction');
 
 Route::group(['middleware' => ['auth']], function () {
 
