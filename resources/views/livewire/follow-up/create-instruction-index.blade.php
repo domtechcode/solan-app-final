@@ -363,7 +363,7 @@
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
                                     <div class="input-group control-group" style="padding-top: 5px;">
-                                        <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan">
+                                        <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan" required>
                                             <option label="Pilih Tujuan Catatan"></option>
                                             @foreach ($dataworksteplists as $key)
                                                 <option value="{{ $key['id'] }}">{{ $key['name']  }}</option>
@@ -373,7 +373,7 @@
                                         <button class="btn btn-danger" type="button" wire:click="removeNote({{ $index }})"><i class="fe fe-x"></i></button>
                                     </div>
                                     <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan"></textarea>
+                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
                                     </div>
                                     
                                 </div>

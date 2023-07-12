@@ -2,12 +2,14 @@
 
 namespace App\Http\Livewire\FollowUp;
 
+use Carbon\Carbon;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\WorkStep;
 use App\Models\Instruction;
+use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
@@ -167,7 +169,6 @@ class EditInstructionIndex extends Component
             ]);
         }
 
-
        $this->validate([
             'spk_type' => 'required',
             'spk_number' => 'required',
@@ -220,177 +221,182 @@ class EditInstructionIndex extends Component
                 'type_order' => $this->type_order,
             ]);
 
+        
+            $this->workSteps = array_map(function ($workSteps) {
+                $workSteps['user_id'] = null;
+                return $workSteps;
+            }, $this->workSteps);
+
+            if($this->spk_type == 'layout'){
+                // Menambahkan elemen sebelum array indeks 0
+                array_unshift($this->workSteps, [
+                    "name" => "Follow Up",
+                    "id" => "1",
+                    "user_id" => "2"
+                ], [
+                    "name" => "Penjadwalan",
+                    "id" => "2",
+                    "user_id" => "4"
+                ]);
+            }else{
+                // Menambahkan elemen sebelum array indeks 0
+                array_unshift($this->workSteps, [
+                    "name" => "Follow Up",
+                    "id" => "1",
+                    "user_id" => "2"
+                ], [
+                    "name" => "Penjadwalan",
+                    "id" => "2",
+                    "user_id" => "4"
+                ]);
+
+                
+                $index = array_search("Hitung Bahan", array_column($this->workSteps, "name"));
+                if ($index !== false) {
+                    array_splice($this->workSteps, $index + 1, 0, [
+                        [
+                            "name" => "RAB",
+                            "id" => "3",
+                            "user_id" => null
+                        ]
+                    ]);
+                }                
+            }
+        
             $lastWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->get();
+            $rejectFrom = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
+            $workStepFrom = WorkStep::find($rejectFrom->reject_from_id);
+            $deleteWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->delete();
 
-            // $this->workSteps = array_map(function ($workSteps) {
-            //     $workSteps['user_id'] = null;
-            //     return $workSteps;
-            // }, $this->workSteps);
+            $no = 0;
+            foreach ($this->workSteps as $step) {
+            $newWorkStep =  WorkStep::create([
+                    'instruction_id' => $this->currentInstructionId,
+                    'work_step_list_id' => $step['id'],
+                    'state_task' => 'Not Running',
+                    'status_task' => 'Waiting',
+                    'step' => $no,
+                    'task' => 'Running',
+                    'user_id' => $step['user_id'],
+                ]);
+                $no++;
+            }
 
-            // if($this->spk_type == 'layout'){
-            //     // Menambahkan elemen sebelum array indeks 0
-            //     array_unshift($this->workSteps, [
-            //         "name" => "Follow Up",
-            //         "id" => "1",
-            //         "user_id" => "2"
-            //     ], [
-            //         "name" => "Penjadwalan",
-            //         "id" => "2",
-            //         "user_id" => "4"
-            //     ]);
-            // }else{
-            //     // Menambahkan elemen sebelum array indeks 0
-            //     array_unshift($this->workSteps, [
-            //         "name" => "Follow Up",
-            //         "id" => "1",
-            //         "user_id" => "2"
-            //     ], [
-            //         "name" => "Penjadwalan",
-            //         "id" => "2",
-            //         "user_id" => "4"
-            //     ]);
+            
+            foreach ($lastWorkStep as $lastwork) {
+                WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $lastwork->work_step_list_id)
+                ->update([
+                    'user_id' => $lastwork->user_id,
+                    'machine_id' => $lastwork->machine_id,
+                    'target_date' => $lastwork->target_date,
+                    'schedule_date' => $lastwork->schedule_date,
+                    'target_time' => $lastwork->target_time,
+                    'step' => $lastwork->step,
+                    'state_task' => $lastwork->state_task,
+                    'status_task' => $lastwork->status_task,
+                    'dikerjakan' => $lastwork->dikerjakan,
+                    'selesai' => $lastwork->selesai,
+                    'task' => $lastwork->task,
+                ]);
+            }
 
+            //update selesai
+            WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', 0)
+                ->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'target_date' => Carbon::now(),
+                    'schedule_date' => Carbon::now(),
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'selesai' => Carbon::now()->toDateTimeString()
+                ]);
+            
+            WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => $rejectFrom->reject_from_status,
+                'job_id' =>  $rejectFrom->reject_from_job,
+                'reject_from_status' => NULL,
+                'reject_from_job' => NULL,
+            ]);
+
+            //cari no 1 langkah kerjanya
+            WorkStep::where('id', $rejectFrom->reject_from_id)
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                ]);
+            
+            if ($this->spk_layout_number) {
+                $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
+                $files = Files::where('instruction_id', $selectedLayout->id)->where('type_file', 'layout')->get();
+                $folder = "public/".$this->spk_number."/follow-up";
+
+                if($files){
+                    foreach ($files as $file) {
+                        $sourcePath = $file->file_path.'/'.$file->file_name;
+                        $newFileName = $file->file_name;
                 
-            //     $index = array_search("Hitung Bahan", array_column($this->workSteps, "name"));
-            //     if ($index !== false) {
-            //         array_splice($this->workSteps, $index + 1, 0, [
-            //             [
-            //                 "name" => "RAB",
-            //                 "id" => "3",
-            //                 "user_id" => null
-            //             ]
-            //         ]);
-            //     }                
-            // }
-            
-            // $no = 0;
-            // foreach ($this->workSteps as $step) {
-            //     WorkStep::create([
-            //         'instruction_id' => $instruction->id,
-            //         'work_step_list_id' => $step['id'],
-            //         'state_task' => 'Not Running',
-            //         'status_task' => 'Waiting',
-            //         'step' => $no,
-            //         'task' => 'Running',
-            //         'user_id' => $step['user_id'],
-            //     ]);
-            //     $no++;
-            // }
-
-            // //update selesai
-            // WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
-            //     ->update([
-            //         'state_task' => 'Complete',
-            //         'status_task' => 'Complete',
-            //         'target_date' => Carbon::now(),
-            //         'schedule_date' => Carbon::now(),
-            //         'dikerjakan' => Carbon::now()->toDateTimeString(),
-            //         'selesai' => Carbon::now()->toDateTimeString()
-            //     ]);
-            
-            // $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 2)->first();
-            // $workStepList = WorkStepList::find($firstWorkStep->work_step_list_id);
-
-            // if($workStepList->name == 'Cari/Ambil Stock'){
-            //     $statusId = 1;
-            //     $JobId = 7;
-            // }else if($workStepList->name == 'Hitung Bahan'){
-            //     $statusId = 1;
-            //     $JobId = 3;
-            // // }else if($workStepList->name == 'Setting'){
-            // //     $statusId = 1;
-            // //     $JobId = 8;
-            // }else{
-            //     $statusId = 1;
-            //     $JobId = 2;
-            // }
-
-            // //cari no 1 langkah kerjanya
-            // WorkStep::where('instruction_id', $instruction->id)->where('step', 2)
-            //     ->update([
-            //         'state_task' => 'Running',
-            //         'status_task' => 'Pending Approved',
-            //         'dikerjakan' => Carbon::now()->toDateTimeString(),
-            //     ]);
-
-            // WorkStep::where('instruction_id', $instruction->id)
-            //     ->update([
-            //         'status_id' => $statusId,
-            //         'job_id' => $JobId,
-            //     ]);
-
-            
-            // if ($this->spk_layout_number) {
-            //     $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
-            //     $files = Files::where('instruction_id', $selectedLayout->id)->where('type_file', 'layout')->get();
-            //     $folder = "public/".$this->spk_number."/follow-up";
-
-            //     if($files){
-            //         foreach ($files as $file) {
-            //             $sourcePath = $file->file_path.'/'.$file->file_name;
-            //             $newFileName = $file->file_name;
-                
-            //             if (!Storage::exists($folder.'/'.$newFileName)) {
-            //                 // Copy the file to the destination folder with the new name
-            //                 Storage::copy($sourcePath, $folder.'/'.$newFileName);
+                        if (!Storage::exists($folder.'/'.$newFileName)) {
+                            // Copy the file to the destination folder with the new name
+                            Storage::copy($sourcePath, $folder.'/'.$newFileName);
                     
-            //                 Files::create([
-            //                     'instruction_id' => $instruction->id,
-            //                     "user_id" => "2",
-            //                     "type_file" => "layout",
-            //                     "file_name" => $newFileName,
-            //                     "file_path" => $folder,
-            //                 ]);
-            //             }
-            //         }
-            //     }
-            // }    
+                            Files::create([
+                                'instruction_id' => $this->currentInstructionId,
+                                "user_id" => "2",
+                                "type_file" => "layout",
+                                "file_name" => $newFileName,
+                                "file_path" => $folder,
+                            ]);
+                        }
+                    }
+                }
+            }    
 
             
-            // if ($this->spk_sample_number) {
-            //     $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
-            //     $files = Files::where('instruction_id', $selectedSample->id)->where('type_file', 'sample')->get();
-            //     $folder = "public/".$this->spk_number."/follow-up";
+            if ($this->spk_sample_number) {
+                $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
+                $files = Files::where('instruction_id', $selectedSample->id)->where('type_file', 'sample')->get();
+                $folder = "public/".$this->spk_number."/follow-up";
 
-            //     if($files){
-            //         foreach ($files as $file) {
-            //             $sourcePath = $file->file_path.'/'.$file->file_name;
-            //             $newFileName = $file->file_name;
+                if($files){
+                    foreach ($files as $file) {
+                        $sourcePath = $file->file_path.'/'.$file->file_name;
+                        $newFileName = $file->file_name;
                 
-            //             if (!Storage::exists($folder.'/'.$newFileName)) {
-            //                 // Copy the file to the destination folder with the new name
-            //                 Storage::copy($sourcePath, $folder.'/'.$newFileName);
+                        if (!Storage::exists($folder.'/'.$newFileName)) {
+                            // Copy the file to the destination folder with the new name
+                            Storage::copy($sourcePath, $folder.'/'.$newFileName);
                     
-            //                 Files::create([
-            //                     'instruction_id' => $instruction->id,
-            //                     "user_id" => "2",
-            //                     "type_file" => "sample",
-            //                     "file_name" => $newFileName,
-            //                     "file_path" => $folder,
-            //                 ]);
-            //             }
-            //         }
-            //     }
-            // }    
+                            Files::create([
+                                'instruction_id' => $this->currentInstructionId,
+                                "user_id" => "2",
+                                "type_file" => "sample",
+                                "file_name" => $newFileName,
+                                "file_path" => $folder,
+                            ]);
+                        }
+                    }
+                }
+            }    
 
-            // if($this->uploadFiles($instruction->id)){
-            //     $this->uploadFiles($instruction->id);
-            // }
+            if($this->uploadFiles($this->currentInstructionId)){
+                $this->uploadFiles($this->currentInstructionId);
+            }
             
-            // if($this->notes){
-            //     foreach ($this->notes as $input) {
-            //         $catatan = Catatan::create([
-            //             'tujuan' => $input['tujuan'],
-            //             'catatan' => $input['catatan'],
-            //             'kategori' => 'catatan',
-            //             'instruction_id' => $instruction->id,
-            //             'user_id' => 1,
-            //         ]);
-            //     }
-            // }
+            Catatan::where('user_id', 1)->where('kategori', 'catatan')->where('instruction_id', $this->currentInstructionId)->delete();
+            if($this->notes){
+                foreach ($this->notes as $input) {
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->currentInstructionId,
+                        'user_id' => 1,
+                    ]);
+                }
+            }
             
             // // Setelah data disimpan, reset array $workSteps
-            // $this->workSteps = [];
+            $this->workSteps = [];
 
             session()->flash('success', 'Instruksi kerja berhasil disimpan.');
             $this->emit('flashMessage', [
@@ -401,7 +407,7 @@ class EditInstructionIndex extends Component
 
             // $this->reset();
             // $this->dispatchBrowserEvent('pondReset');
-            // return redirect()->route('dashboard');
+            return redirect()->route('dashboard');
             
         }else{
 
