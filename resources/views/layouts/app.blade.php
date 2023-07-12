@@ -103,6 +103,8 @@
 
     <!-- Custom-switcher -->
     <script src="{{ asset('assets/js/custom-swicher.js') }}"></script>
+    
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <!-- Switcher js -->
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
@@ -165,6 +167,13 @@
             });
         });
         
+    </script>
+
+    <script>
+        Echo.channel(`test`)
+        .listen('HelloEvent', (e) => {
+            console.log(e);
+        });
     </script>
 </body>
 
