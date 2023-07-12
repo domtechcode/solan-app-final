@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\HelloEvent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Livewire\FollowUp\IndexDashboard;
@@ -22,6 +23,10 @@ use App\Http\Livewire\FollowUp\IndexUpdateInstruction;
 //     return view('welcome');
 // });
 
+Route::get('/sender', function () {
+    broadcast(new HelloEvent(date('Y-m-d H:i:s'). "Halo"));
+});
+
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
@@ -38,4 +43,3 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 });
-dasd
