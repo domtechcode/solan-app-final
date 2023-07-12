@@ -42,9 +42,9 @@ class CreateInstructionIndex extends Component
     public $code_style;
     public $quantity;
     public $price;
+    public $follow_up;
     public $sub_spk;
     public $spk_parent;
-    public $follow_up;
 
     public $fsc_type;
     public $spk_number_fsc;
@@ -286,9 +286,9 @@ class CreateInstructionIndex extends Component
             }else if($workStepList->name == 'Hitung Bahan'){
                 $statusId = 1;
                 $JobId = 3;
-            }else if($workStepList->name == 'Setting'){
-                $statusId = 1;
-                $JobId = 8;
+            // }else if($workStepList->name == 'Setting'){
+            //     $statusId = 1;
+            //     $JobId = 8;
             }else{
                 $statusId = 1;
                 $JobId = 2;

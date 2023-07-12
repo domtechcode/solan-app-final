@@ -87,7 +87,7 @@
                 <div class="form-group">
                     <label class="form-label">No. SPK <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="spk_number" id="spk_number" class="form-control @error('spk_number') is-invalid @enderror" placeholder="No SPK" readonly>
+                        <input type="text" wire:model.defer="spk_number" id="spk_number" class="form-control @error('spk_number') is-invalid @enderror" placeholder="No SPK" autocomplete="off">
                         <button class="btn btn-primary" type="button" wire:click="generateCode">Generate</button>
                     </div>
                     @error('spk_number') <div><span class="text-danger">{{ $message }}</span></div> @enderror
@@ -125,7 +125,7 @@
                 <div class="form-group">
                     <label class="form-label">No. SPK FSC</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="spk_number_fsc" id="spk_number_fsc" class="form-control @error('spk_number_fsc') is-invalid @enderror" placeholder="No SPK FSC" readonly>
+                        <input type="text" wire:model.defer="spk_number_fsc" id="spk_number_fsc" class="form-control @error('spk_number_fsc') is-invalid @enderror" placeholder="No SPK FSC" autocomplete="off">
                         <button class="btn btn-primary" type="button" wire:click="generateCodeFsc">Generate FSC</button>
                     </div>
                     @error('spk_number_fsc') <div><span class="text-danger">{{ $message }}</span></div> @enderror
@@ -143,13 +143,23 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-3 col-md-3">
                 <div class="form-group">
                     <label class="form-label">Tanggal Permintaan Kirim <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="shipping_date" id="shipping_date" class="form-control @error('shipping_date') is-invalid @enderror">
+                        <input type="date" wire:model.defer="shipping_date" id="shipping_date" class="form-control @error('shipping_date') is-invalid @enderror" readonly>
                     </div>
                     @error('shipping_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                </div>
+            </div>
+
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
+                    <label class="form-label">Tanggal Permintaan Kirim <span class="text-red">*Perubahan</span></label>
+                    <div class="input-group">
+                        <input type="date" wire:model.defer="shipping_date_change" id="shipping_date_change" class="form-control @error('shipping_date_change') is-invalid @enderror">
+                    </div>
+                    @error('shipping_date_change') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>
             </div>
 
@@ -298,7 +308,201 @@
                 </div>
             </div>
 
+            {{-- file --}}
+            <div class="row mb-3">
+                <div class="col-xl-4">
+                    <div class="table-responsive">
+                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="border-bottom-0">Nama File Contoh</th>
+                                    <th class="border-bottom-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($filecontohCurrent as $file)
+                                    <tr>
+                                        <td>{{ $file->file_name }}</td>                                                    
+                                        <td>
+                                            <div class="btn-list">         
+                                                <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="deleteFileContoh({{ $file->id }})"><i class="fe fe-x"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="100%">
+                                            No Data!
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="table-responsive">
+                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="border-bottom-0">Nama File Arsip</th>
+                                    <th class="border-bottom-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($filearsipCurrent as $file)
+                                    <tr>
+                                        <td>{{ $file->file_name }}</td>                                                    
+                                        <td>
+                                            <div class="btn-list">         
+                                                <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="deleteFileArsip({{ $file->id }})"><i class="fe fe-x"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="100%">
+                                            No Data!
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="table-responsive">
+                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="border-bottom-0">Nama File Accounting</th>
+                                    <th class="border-bottom-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($fileaccountingCurrent as $file)
+                                    <tr>
+                                        <td>{{ $file->file_name }}</td>                                                    
+                                        <td>
+                                            <div class="btn-list">         
+                                                <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="deleteFileAccounting({{ $file->id }})"><i class="fe fe-x"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="100%">
+                                            No Data!
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4 col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">File Contoh</label>
+                        <x-forms.filepond
+                            wire:model="filecontoh"
+                            multiple
+                            allowImagePreview
+                            imagePreviewMaxHeight="200"
+                            allowFileTypeValidation
+                            allowFileSizeValidation
+                            maxFileSize="1024mb"
+                        />
+    
+                        @error('filecontoh') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <div class="form-group">
+                        <label class="form-label general">File Arsip</label>
+                        <x-forms.filepond
+                            wire:model="filearsip"
+                            multiple
+                            allowImagePreview
+                            imagePreviewMaxHeight="200"
+                            allowFileTypeValidation
+                            allowFileSizeValidation
+                            maxFileSize="1024mb"
+                        />
+    
+                        @error('filearsip') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <div class="form-group">
+                        <label class="form-label general">File Arsip Accounting</label>
+                        <x-forms.filepond
+                            wire:model="fileaccounting"
+                            multiple
+                            allowImagePreview
+                            imagePreviewMaxHeight="200"
+                            allowFileTypeValidation
+                            allowFileSizeValidation
+                            maxFileSize="1024mb"
+                        />
+    
+                        @error('fileaccounting') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-sm-12 col-md-12">
+                    <div class="expanel expanel-default">
+                        <div class="expanel-body">
+                            <div class="form-group">
+                                <label class="form-label mb-3">Catatan</label>
+                                <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i class="fe fe-plus"></i>Tambah Catatan</button>
+                            </div>
+    
+                            @foreach ($notes as $index => $note)
+                            <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                <div class="expanel expanel-default">
+                                    <div class="expanel-body">
+                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                            <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan">
+                                                <option label="Pilih Tujuan Catatan"></option>
+                                                @foreach ($dataworksteplists as $key)
+                                                    <option value="{{ $key['id'] }}">{{ $key['name']  }}</option>
+                                                @endforeach
+                                                
+                                            </select>
+                                            <button class="btn btn-danger" type="button" wire:click="removeNote({{ $index }})"><i class="fe fe-x"></i></button>
+                                        </div>
+                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan"></textarea>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
 </div>
+@push('scripts')
+    <script>
+        document.addEventListener('livewire:load', function () {
+            Livewire.on('generated', function (data) {
+                document.getElementById('spk_number').value = data.spk_number;
+            });
+            Livewire.on('generatedfsc', function (data) {
+                document.getElementById('spk_number_fsc').value = data.spk_number_fsc;
+            });
+        });
+    </script>
+@endpush

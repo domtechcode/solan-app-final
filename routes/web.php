@@ -25,7 +25,7 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-Route::get('/dashboard', IndexDashboard::class);
+Route::get('/dashboard', IndexDashboard::class)->name('dashboard');
 Route::get('/create-instruction', IndexCreateInstruction::class)->name('createInstruction');
 Route::get('/edit-instruction/{instructionId}', IndexEditInstruction::class)->name('editInstruction');
 
