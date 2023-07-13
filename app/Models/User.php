@@ -68,4 +68,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(WorkStep::class);
     }
+
+    public function notificationLog()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

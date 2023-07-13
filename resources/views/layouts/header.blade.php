@@ -31,8 +31,8 @@
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                     <div class="drop-heading">
                                         <div class="text-center">
-                                            {{-- <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ auth()->user()->name }}</h5>
-                                            <small class="text-muted">{{ auth()->user()->role }}</small> --}}
+                                            <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ auth()->user()->name }}</h5>
+                                            <small class="text-muted">{{ auth()->user()->role }}</small>
                                         </div>
                                     </div>
                                     <div class="dropdown-divider m-0"></div>
@@ -77,6 +77,7 @@
                 </svg></div>
             <ul class="side-menu">
 
+                @if( auth()->user()->role == 'Follow Up' )
                 <li class="sub-category">
                     <h3>Home</h3>
                 </li>
@@ -94,7 +95,7 @@
                                     <div class="tab-pane active" id="side1">
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Home</a></li>
-                                            <li><a href="#" class="slide-item {{ ($title === "Dashboard") ? 'active' : ''}}">Dashboard</a></li>
+                                            <li><a href="{{ route('followUp.dashboard') }}" class="slide-item {{ ($title === "Dashboard") ? 'active' : ''}}">Dashboard</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -102,6 +103,34 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="sub-category">
+                    <h3>Form Instructions</h3>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-user"></i><span class="side-menu__label">User</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Form Instructions</a></li>
+                                            <li><a href="{{ route('createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}">Create Instructions</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                @endif
 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
