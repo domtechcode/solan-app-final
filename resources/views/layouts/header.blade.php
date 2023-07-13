@@ -31,8 +31,8 @@
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                     <div class="drop-heading">
                                         <div class="text-center">
-                                            <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ auth()->user()->name }}</h5>
-                                            <small class="text-muted">{{ auth()->user()->role }}</small>
+                                            {{-- <h5 class="text-dark mb-0 fs-14 fw-semibold">{{ auth()->user()->name }}</h5>
+                                            <small class="text-muted">{{ auth()->user()->role }}</small> --}}
                                         </div>
                                     </div>
                                     <div class="dropdown-divider m-0"></div>
@@ -77,7 +77,7 @@
                 </svg></div>
             <ul class="side-menu">
 
-                @if( auth()->user()->role == 'Follow Up' )
+                {{-- @if( auth()->user()->role == 'Follow Up' )
                 <li class="sub-category">
                     <h3>Home</h3>
                 </li>
@@ -130,7 +130,7 @@
                     </ul>
                 </li>
 
-                @endif
+                @endif --}}
 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
