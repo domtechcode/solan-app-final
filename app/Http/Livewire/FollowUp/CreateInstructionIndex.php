@@ -12,14 +12,13 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CreateInstructionIndex extends Component
 {
-    protected $listeners = [
-        'pageReset' => '$refresh'
-    ];
+    protected $listeners = ['dispatchMessageSent'];
 
     use WithFileUploads;
     public $filecontoh = [];
@@ -65,6 +64,10 @@ class CreateInstructionIndex extends Component
     public $dataworksteplists = [];
 
     public $currentInstructionId;
+
+    public $createdMessage;
+    public $selectedConversation;
+    public $receiverInstance;
 
     // protected $rules = [
     //     'spk_type' => 'required',
@@ -148,7 +151,7 @@ class CreateInstructionIndex extends Component
     }
 
     public function save()
-    {
+    {        
         if (empty($this->workSteps)) {
             $this->emit('flashMessage', [
                 'type' => 'error',
@@ -158,7 +161,7 @@ class CreateInstructionIndex extends Component
         }
 
 
-       $this->validate([
+        $this->validate([
             'spk_type' => 'required',
             'spk_number' => 'required',
             'customer' => 'required',
@@ -221,7 +224,7 @@ class CreateInstructionIndex extends Component
                 array_unshift($this->workSteps, [
                     "name" => "Follow Up",
                     "id" => "1",
-                    "user_id" => "2"
+                    "user_id" => Auth()->user()->id
                 ], [
                     "name" => "Penjadwalan",
                     "id" => "2",
@@ -232,7 +235,7 @@ class CreateInstructionIndex extends Component
                 array_unshift($this->workSteps, [
                     "name" => "Follow Up",
                     "id" => "1",
-                    "user_id" => "2"
+                    "user_id" => Auth()->user()->id
                 ], [
                     "name" => "Penjadwalan",
                     "id" => "2",
@@ -325,7 +328,7 @@ class CreateInstructionIndex extends Component
                     
                             Files::create([
                                 'instruction_id' => $instruction->id,
-                                "user_id" => "2",
+                                "user_id" => Auth()->user()->id,
                                 "type_file" => "layout",
                                 "file_name" => $newFileName,
                                 "file_path" => $folder,
@@ -352,7 +355,7 @@ class CreateInstructionIndex extends Component
                     
                             Files::create([
                                 'instruction_id' => $instruction->id,
-                                "user_id" => "2",
+                                "user_id" => Auth()->user()->id,
                                 "type_file" => "sample",
                                 "file_name" => $newFileName,
                                 "file_path" => $folder,
@@ -388,7 +391,7 @@ class CreateInstructionIndex extends Component
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
 
-            // $this->emit('reloadTableInstruction');
+            $this->messageSent();
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
             return redirect()->route('createInstruction');
@@ -403,6 +406,14 @@ class CreateInstructionIndex extends Component
         }
         
         
+    }
+
+    public function messageSent()
+    {
+        $this->createdMessage = "success";
+        $this->selectedConversation = "message conversation";
+        $this->receiverInstance = Auth()->user()->id;
+        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $this->receiverInstance));
     }
 
     public function uploadFiles($instructionId)

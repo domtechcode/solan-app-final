@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth\LoginContr;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+	public function showLoginForm()
     {
         $data['title'] = "Login";
 
@@ -28,14 +28,21 @@ class LoginController extends Controller
 
             // Determine the user's role and redirect to the appropriate dashboard
             $user = Auth::user();
-            // dd($user->role);
             switch ($user->role) {
-                case 'followup':
-                    return redirect()->route('follow-up.dashboard');
+                case 'Follow Up':
+                    return redirect()->route('followUp.dashboard');
                     break;
 
-                case 'Penjadwalan':
-                    return redirect()->route('penjadwalan.dashboard');
+                case 'admin-kecamatan':
+                    return redirect()->route('admin-kecamatan.dashboard');
+                    break;
+
+                case 'admin-kelurahan':
+                    return redirect()->route('admin-kelurahan.dashboard');
+                    break;
+
+                case 'admin-kader':
+                    return redirect()->route('admin-kader.dashboard');
                     break;
 
                 default:
