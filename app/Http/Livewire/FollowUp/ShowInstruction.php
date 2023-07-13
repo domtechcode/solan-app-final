@@ -13,30 +13,30 @@ class ShowInstruction extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
+    
 
-    public function getListeners()
+    protected $listeners = ['refreshIndexDashboard' => 'refreshStatistik'];
+
+    public function refreshStatistik()
     {
-        $user_id = Auth()->user()->id;
-        return [
-            "echo:notif.{$user_id},NotificationSent" => 'notifyNewOrder',
-        ];
-    }
- 
-    public function notifyNewOrder($data)
-    {
-        $user_id = $data['user_id'];
-        $message = $data['message'];
-        $conversation_id = $data['conversation_id'];
-        $receiver_id = $data['receiver_id'];
+        // $user_id = $data['user_id'];
+        // $message = $data['message'];
+        // $conversation_id = $data['conversation_id'];
+        // $receiver_id = $data['receiver_id'];
 
         $this->emit('flashMessage', [
-                    'type' => $message,
+                    'type' => 'error',
                     'title' => 'Error Instruksi Kerja',
-                    'message' => $conversation_id,
+                    'message' => 'asdasd',
             ]);
 
         $this->render();
     }
+ 
+    // public function notifyNewOrder($data)
+    // {
+        
+    // }
 
     public $paginate = 10;
     public $search = '';

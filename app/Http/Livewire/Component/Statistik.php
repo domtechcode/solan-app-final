@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class Statistik extends Component
 {
@@ -34,7 +35,16 @@ class Statistik extends Component
     public $spkCompleteProduction;
     public $spkCompleteStock;
 
-    public function mount()
+
+    protected $listeners = ['refreshIndexDashboard' => 'refreshStatistik'];
+
+    public function refreshStatistik()
+    {
+        $this->render();
+    }
+
+   
+    public function render()
     {
         $this->totalOrder = Instruction::count();
         $this->prosesOrder = Instruction::whereHas('workstep', function ($query) {
@@ -97,10 +107,6 @@ class Statistik extends Component
         $this->spkCompleteProduction = Instruction::where('type_order', 'production')->where('spk_state', 'Selesai')->count();
         $this->spkCompleteStock = Instruction::where('type_order', 'stock')->where('spk_state', 'Selesai')->count();
 
-    }
-
-    public function render()
-    {
         return view('livewire.component.statistik');
     }
 }

@@ -170,11 +170,22 @@
     </script>
 
     <script>
+        window.addEventListener('livewire:load', function () {
+            // Mendengarkan event dari public channel
+            window.Echo.channel('notif.' + {{ Auth::user()->id }})
+                .listen('NotificationSent', function (data) {
+                    Livewire.emit('refreshIndexDashboard');
+                    console.log(data);
+                });
+        });
+    </script>
+
+    {{-- <script>
         Echo.channel(`test`)
         .listen('HelloEvent', (e) => {
             console.log(e);
         });
-    </script>
+    </script> --}}
 </body>
 
 </html>
