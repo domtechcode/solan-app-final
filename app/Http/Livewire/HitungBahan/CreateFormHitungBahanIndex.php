@@ -11,14 +11,23 @@ class CreateFormHitungBahanIndex extends Component
 
     public function addFormSetting()
     {
-        $this->layoutSettings[] = ['size' => ''];
+        $this->layoutSettings[] = [
+            'panjang_barang_jadi' => '',
+            'lebar_barang_jadi' => '',
+            'panjang_bahan_cetak' => '',
+            'lebar_bahan_cetak' => '',
+            'dataURL' => '',
+        ];
     }
 
     public function addFormKeterangan($index)
     {
         $this->keterangans[$index][] = [
-            'panjang' => '',
-            'lebar' => '',
+            'state_plate' => '',
+            'jumlah_plate' => '',
+            'ukuran_plate' => '',
+            'state_pisau' => '',
+            'ukuran_pisau' => '',
             'rincianPlate' => [],
         ];
     }
@@ -50,12 +59,21 @@ class CreateFormHitungBahanIndex extends Component
     {
          // Cek apakah array layoutSettings dan keterangans kosong
     if (empty($this->layoutSettings)) {
-        $this->layoutSettings[] = ['size' => ''];
+        $this->layoutSettings[] = [
+            'panjang_barang_jadi' => '',
+            'lebar_barang_jadi' => '',
+            'panjang_bahan_cetak' => '',
+            'lebar_bahan_cetak' => '',
+            'dataURL' => '',
+        ];
     }
     if (empty($this->keterangans)) {
         $this->keterangans[0][] = [
-            'panjang' => '',
-            'lebar' => '',
+            'state_plate' => '',
+            'jumlah_plate' => '',
+            'ukuran_plate' => '',
+            'state_pisau' => '',
+            'ukuran_pisau' => '',
             'rincianPlate' => [],
         ];
     }
@@ -66,5 +84,11 @@ class CreateFormHitungBahanIndex extends Component
         return view('livewire.hitung-bahan.create-form-hitung-bahan-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form Hitung Bahan']);
+    }
+
+    
+    public function save()
+    {
+        dd($this->layoutSettings);
     }
 }
