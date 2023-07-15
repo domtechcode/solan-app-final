@@ -27,9 +27,9 @@ class CreateFormHitungBahanIndex extends Component
         ];
     }
 
-    public function addFormKeterangan($index)
+    public function addFormKeterangan()
     {
-        $this->keterangans[$index][] = [
+        $this->keterangans[] = [
             'plate' => [],
             'pond' => [],
             'fileRincian' => [],
@@ -38,9 +38,9 @@ class CreateFormHitungBahanIndex extends Component
         ];
     }
 
-    public function addRincianPlate($index, $keteranganIndex)
+    public function addRincianPlate($keteranganIndex)
     {
-        $this->keterangans[$index][$keteranganIndex]['rincianPlate'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianPlate'][] = '';
     }
 
     public function removeFormSetting($index)
@@ -49,16 +49,16 @@ class CreateFormHitungBahanIndex extends Component
         $this->layoutSettings = array_values($this->layoutSettings);
     }
 
-    public function removeFormKeterangan($parentIndex, $index)
+    public function removeFormKeterangan($keteranganIndex)
     {
-        unset($this->keterangans[$parentIndex][$index]);
-        $this->keterangans[$parentIndex] = array_values($this->keterangans[$parentIndex]);
+        unset($this->keterangans[$keteranganIndex]);
+        $this->keterangans = array_values($this->keterangans);
     }
 
     public function removeRincianPlate($index, $keteranganIndex, $rincianIndex)
     {
-        unset($this->keterangans[$index][$keteranganIndex]['rincianPlate'][$rincianIndex]);
-        $this->keterangans[$index][$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$index][$keteranganIndex]['rincianPlate']);
+        unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndex]);
+        $this->keterangans[$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate']);
     }
     
     public function mount()
@@ -75,7 +75,7 @@ class CreateFormHitungBahanIndex extends Component
             ];
         }
         if (empty($this->keterangans)) {
-            $this->keterangans[0][] = [
+            $this->keterangans[] = [
                 'plate' => [],
                 'pond' => [],
                 'fileRincian' => [],
@@ -94,7 +94,68 @@ class CreateFormHitungBahanIndex extends Component
     
     public function save()
     {
-        if($this->layoutSettings){
+        $this->validate([
+            'layoutSettings' => 'required|array|min:1',
+            'layoutSettings.*.panjang_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.lebar_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.panjang_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.lebar_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.dataURL' => 'required',
+            'layoutSettings.*.dataJSON' => 'required',
+        
+            'keterangans' => 'required|array|min:1',
+            'keterangans.*.notes' => 'required',
+            'keterangans.*.plate' => 'required|array|min:1',
+            'keterangans.*.plate.*.state' => 'required',
+            'keterangans.*.plate.*.jumlah_plate' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'keterangans.*.plate.*.ukuran_plate' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'keterangans.*.pond' => 'required|array|min:1',
+            'keterangans.*.pond.*.state' => 'required',
+            'keterangans.*.pond.*.jumlah_pisau' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'keterangans.*.rincianPlate' => 'required|array|min:1',
+            'keterangans.*.rincianPlate.*.state' => 'required',
+            'keterangans.*.rincianPlate.*.plate' => 'required',
+            'keterangans.*.rincianPlate.*.jumlah_lembar_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'keterangans.*.rincianPlate.*.waste' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+        ], [
+            'layoutSettings.required' => 'Setidaknya satu layout setting harus diisi.',
+            'layoutSettings.min' => 'Setidaknya satu layout setting harus diisi.',
+            'layoutSettings.*.panjang_barang_jadi.required' => 'Panjang barang jadi harus diisi.',
+            'layoutSettings.*.lebar_barang_jadi.required' => 'Lebar barang jadi harus diisi.',
+            'layoutSettings.*.panjang_bahan_cetak.required' => 'Panjang bahan cetak harus diisi.',
+            'layoutSettings.*.lebar_bahan_cetak.required' => 'Lebar bahan cetak harus diisi.',
+            'layoutSettings.*.panjang_barang_jadi.numeric' => 'Panjang barang jadi harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.lebar_barang_jadi.numeric' => 'Lebar barang jadi harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.panjang_bahan_cetak.numeric' => 'Panjang bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.lebar_bahan_cetak.numeric' => 'Lebar bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.dataURL.required' => 'Gambar harus dibuat terlebih dahulu.',
+            'layoutSettings.*.dataJSON.required' => 'Gambar harus dibuat terlebih dahulu.',
+        
+            'keterangans.*.notes.required' => 'Notes harus diisi pada keterangan.',
+            'keterangans.*.plate.required' => 'Setidaknya satu data plate harus diisi pada keterangan.',
+            'keterangans.*.plate.min' => 'Setidaknya satu data plate harus diisi pada keterangan.',
+            'keterangans.*.plate.*.state.required' => 'State pada data plate harus diisi pada keterangan.',
+            'keterangans.*.plate.*.jumlah_plate.required' => 'Jumlah plate harus diisi pada keterangan.',
+            'keterangans.*.plate.*.jumlah_plate.numeric' => 'Jumlah plate harus berupa angka/tidak boleh ada tanda koma(,).',
+            'keterangans.*.plate.*.ukuran_plate.required' => 'Ukuran plate harus diisi pada keterangan.',
+            'keterangans.*.pond.required' => 'Setidaknya satu data pond harus diisi pada keterangan.',
+            'keterangans.*.pond.min' => 'Setidaknya satu data pond harus diisi pada keterangan.',
+            'keterangans.*.pond.*.state.required' => 'State pada data pond harus diisi pada keterangan.',
+            'keterangans.*.pond.*.jumlah_pisau.required' => 'Jumlah pisau harus diisi pada keterangan.',
+            'keterangans.*.pond.*.jumlah_pisau.numeric' => 'Jumlah pisau harus berupa angka/tidak boleh ada tanda koma(,).',
+            'keterangans.*.rincianPlate.required' => 'Setidaknya satu data rincian plate harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.min' => 'Setidaknya satu data rincian plate harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.*.state.required' => 'State pada rincian plate harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.*.plate.required' => 'Plate harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.*.jumlah_lembar_cetak.required' => 'Jumlah lembar cetak harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.*.jumlah_lembar_cetak.numeric' => 'Jumlah lembar cetak harus berupa angka/tidak boleh ada tanda koma(,).',
+            'keterangans.*.rincianPlate.*.waste.required' => 'Waste harus diisi pada keterangan.',
+            'keterangans.*.rincianPlate.*.waste.numeric' => 'Waste harus berupa angka/tidak boleh ada tanda koma(,).',
+        ]);
+        
+        
+
+        if ($this->layoutSettings) {
             foreach ($this->layoutSettings as $key => $layoutSettingData) {
                 // Buat instance model LayoutSetting
                 $layoutSetting = LayoutSetting::create([
@@ -108,34 +169,33 @@ class CreateFormHitungBahanIndex extends Component
                 ]);
             }
         }
-        
-        if($this->keterangans){
+
+        if ($this->keterangans) {
             foreach ($this->keterangans as $index => $keteranganData) {
-                foreach ($keteranganData as $key => $data) {
                     $keterangan = Keterangan::create([
                         'form_id' => $key,
-                        'notes' => $data['notes'],
+                        'notes' => $keteranganData['notes'],
                     ]);
-            
-                    foreach ($data['plate'] as $plate) {
-                        // Buat instance model Keterangan
+
+                    foreach ($keteranganData['plate'] as $plate) {
+                        // Buat instance model KeteranganPlate
                         $keteranganPlate = $keterangan->keteranganPlate()->create([
                             'state_plate' => $plate['state'],
                             'jumlah_plate' => $plate['jumlah_plate'],
                             'ukuran_plate' => $plate['ukuran_plate'],
                         ]);
                     }
-            
-                    foreach ($data['pond'] as $pond) {
-                        // Buat instance model Keterangan
+
+                    foreach ($keteranganData['pond'] as $pond) {
+                        // Buat instance model KeteranganPisauPond
                         $keteranganPisauPond = $keterangan->keteranganPisauPond()->create([
                             'state_pisau' => $pond['state'],
                             'jumlah_pisau' => $pond['jumlah_pisau'],
                         ]);
                     }
-            
-                    foreach ($data['rincianPlate'] as $rincianPlate) {
-                        // Buat instance model Keterangan
+
+                    foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
+                        // Buat instance model RincianPlate
                         $rincianPlate = $keterangan->rincianPlate()->create([
                             'state' => $rincianPlate['state'],
                             'plate' => $rincianPlate['plate'],
@@ -143,11 +203,8 @@ class CreateFormHitungBahanIndex extends Component
                             'waste' => $rincianPlate['waste'],
                         ]);
                     }
-                }
             }
         }
-        
-        
 
         session()->flash('success', 'Instruksi kerja berhasil disimpan.');
         $this->emit('flashMessage', [
@@ -158,15 +215,6 @@ class CreateFormHitungBahanIndex extends Component
 
         return redirect()->route('hitungBahan.createFormHitungBahan');
     }
-
-    
-    
-
-
-
-
-
-
 
 
 }
