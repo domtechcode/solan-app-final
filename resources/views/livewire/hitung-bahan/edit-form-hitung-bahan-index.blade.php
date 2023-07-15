@@ -9,7 +9,7 @@
 <div>
     {{-- Do your work, then step back. --}}
 
-    <form wire:submit.prevent="save">
+    <form wire:submit.prevent="update">
         @foreach ($layoutSettings as $index => $setting)
             <!-- ROW-2-->
             <div class="row">
@@ -61,9 +61,7 @@
                                                     class="btn btn-sm btn-success save-canvas-setting"
                                                     onclick="exportCanvas({{ $index }})"
                                                     style="display: none;">Export</button>
-                                                <button type="button" class="btn btn-sm btn-warning"
-                                                    onclick="addCanvas({{ $index }})">Create Canvas</button>
-
+                                                    <button type="button" class="btn btn-sm btn-warning" onclick="editCanvas({{ $index }})">Edit & Create Canvas</button>
                                             </div>
                                         </div>
                                     </div>
@@ -157,8 +155,8 @@
             <!-- ROW-2 END -->
         @endforeach
 
-
         @foreach ($keterangans as $keteranganIndex => $keterangan)
+        {{-- {{ dd( $keterangans); }} --}}
             <!-- ROW-2-->
             <div class="row">
                 <div class="col-md-12">
@@ -172,8 +170,7 @@
                                         wire:click="removeFormKeterangan({{ $keteranganIndex }})"><i
                                             class="fe fe-minus"></i> Delete Form Keterangan Bahan</button>
                                     <button type="button" class="btn btn-sm btn-success"
-                                        wire:click="addFormKeterangan({{ $keteranganIndex }})"><i
-                                            class="fe fe-plus"></i>
+                                        wire:click="addFormKeterangan({{ $keteranganIndex }})"><i class="fe fe-plus"></i>
                                         Add Form Keterangan Bahan</button>
                                 </div>
                             </div>
@@ -189,7 +186,7 @@
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.plate.0.state_plate"
-                                                            class="custom-switch-input" value="baru">
+                                                            class="custom-switch-input" value="baru" {{ data_get($keterangans, $keteranganIndex . '.plate.0.state_plate') === 'baru' ? 'checked' : '' }}>
                                                         <span
                                                             class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                         <span class="custom-switch-description">Baru</span>
@@ -434,67 +431,55 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="form-group">
-                                                                        <select
-                                                                            wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndex }}.state"
-                                                                            class="form-control form-select"
-                                                                            data-bs-placeholder="Pilih View">
+                                                                        <select wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndex }}.state"
+                                                                            class="form-control form-select" data-bs-placeholder="Pilih View">
                                                                             <option label="-- Pilih View --"></option>
-                                                                            <option value="depan/belakang">
+                                                                            <option value="depan/belakang"
+                                                                                {{ data_get($rincian, 'state') === 'depan/belakang' ? 'selected' : '' }}>
                                                                                 Depan/Belakang</option>
-                                                                            <option value="depan">Depan</option>
-                                                                            <option value="tengah">Tengah</option>
-                                                                            <option value="belakang">Belakang
-                                                                            </option>
+                                                                            <option value="depan" {{ data_get($rincian, 'state') === 'depan' ? 'selected' : '' }}>
+                                                                                Depan</option>
+                                                                            <option value="tengah" {{ data_get($rincian, 'state') === 'tengah' ? 'selected' : '' }}>
+                                                                                Tengah</option>
+                                                                            <option value="belakang" {{ data_get($rincian, 'state') === 'belakang' ? 'selected' : '' }}>
+                                                                                Belakang</option>
                                                                         </select>
-                                                                        @error('keterangans.' . $keteranganIndex .
-                                                                            '.rincianPlate.' . $rincianIndex . '.state')
-                                                                            <p class="mt-2 text-sm text-danger">
-                                                                                {{ $message }}</p>
+                                                                        @error('keterangans.' . $keteranganIndex . '.rincianPlate.' . $rincianIndex . '.state')
+                                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                                                         @enderror
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-group">
-                                                                        <input type="text" autocomplete="off"
-                                                                            class="form-control" placeholder="Plate"
+                                                                        <input type="text" autocomplete="off" class="form-control" placeholder="Plate"
                                                                             wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndex }}.plate">
-                                                                        @error('keterangans.' . $keteranganIndex .
-                                                                            '.rincianPlate.' . $rincianIndex . '.plate')
-                                                                            <p class="mt-2 text-sm text-danger">
-                                                                                {{ $message }}</p>
+                                                                        @error('keterangans.' . $keteranganIndex . '.rincianPlate.' . $rincianIndex . '.plate')
+                                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                                                         @enderror
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-group">
-                                                                        <input type="text" autocomplete="off"
-                                                                            class="form-control"
-                                                                            placeholder="Jumlah Lembar Cetak"
+                                                                        <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Lembar Cetak"
                                                                             wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndex }}.jumlah_lembar_cetak">
-                                                                        @error('keterangans.' . $keteranganIndex .
-                                                                            '.rincianPlate.' . $rincianIndex .
-                                                                            '.jumlah_lembar_cetak')
-                                                                            <p class="mt-2 text-sm text-danger">
-                                                                                {{ $message }}</p>
+                                                                        @error('keterangans.' . $keteranganIndex . '.rincianPlate.' . $rincianIndex . '.jumlah_lembar_cetak')
+                                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                                                         @enderror
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-group">
-                                                                        <input type="text" autocomplete="off"
-                                                                            class="form-control" placeholder="Waste"
+                                                                        <input type="text" autocomplete="off" class="form-control" placeholder="Waste"
                                                                             wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndex }}.waste">
-                                                                        @error('keterangans.' . $keteranganIndex .
-                                                                            '.rincianPlate.' . $rincianIndex . '.waste')
-                                                                            <p class="mt-2 text-sm text-danger">
-                                                                                {{ $message }}</p>
+                                                                        @error('keterangans.' . $keteranganIndex . '.rincianPlate.' . $rincianIndex . '.waste')
+                                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                                                         @enderror
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-group input-group control-group">
                                                                         <button class="btn btn-primary" type="button"
-                                                                            wire:click="removeRincianPlate({{ $index }}, {{ $rincianIndex }})"><i
+                                                                            wire:click="removeRincianPlate({{ $keteranganIndex }}, {{ $rincianIndex }})"><i
                                                                                 class="fe fe-x"></i></button>
                                                                     </div>
                                                                 </td>
@@ -547,7 +532,41 @@
         //   var canvasId = 0;
         var canvases = {};
 
-        function addCanvas(index) {
+        // function addCanvas(index) {
+        //     var canvasContainer = document.createElement('div');
+        //     canvasContainer.id = 'canvas-container-' + index;
+        //     canvasContainer.classList.add('canvas-container');
+
+        //     var canvasWrapper = document.getElementById('canvas-wrapper-' + index);
+        //     canvasWrapper.appendChild(canvasContainer);
+
+        //     // Buat elemen <canvas> baru
+        //     var canvasElement = document.createElement('canvas');
+        //     canvasElement.id = 'canvas-' + index;
+        //     canvasElement.width = canvasWrapper.offsetWidth; // Atur lebar sesuai dengan lebar canvas-wrapper
+        //     canvasElement.height = canvasWrapper.offsetWidth / 1.5; // Atur tinggi sesuai kebutuhan
+
+        //     // Tambahkan elemen <canvas> ke dalam wrapper
+        //     // canvasWrapper.appendChild(canvasElement);
+        //     canvasContainer.appendChild(canvasElement);
+
+        //     // Inisialisasi objek canvas menggunakan Fabric.js
+        //     var canvas = new fabric.Canvas('canvas-' + index, {
+        //         snapAngle: 45,
+        //         guidelines: true,
+        //         snapToGrid: 10,
+        //         snapToObjects: true
+        //     });
+
+        //     // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
+
+        //     console.log('Canvas created:', canvas);
+        //     canvases[canvasContainer.id] = canvas;
+        //     initCenteringGuidelines(canvas);
+        //     initAligningGuidelines(canvas);
+        // }
+
+        function editCanvas(index) {
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-' + index;
             canvasContainer.classList.add('canvas-container');
@@ -576,9 +595,22 @@
             // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
 
             console.log('Canvas created:', canvas);
+            var dataJSON = @this.layoutSettings[index].dataJSON;
+            if(dataJSON){
+                canvas.loadFromJSON(JSON.parse(dataJSON), function () {
+                canvas.renderAll();
+            });
             canvases[canvasContainer.id] = canvas;
             initCenteringGuidelines(canvas);
             initAligningGuidelines(canvas);
+            }else{
+                canvases[canvasContainer.id] = canvas;
+            initCenteringGuidelines(canvas);
+            initAligningGuidelines(canvas);
+            }
+            
+
+            
         }
 
         function addRectangle(index) {
@@ -714,5 +746,6 @@
             // // Submit form after all buttons are clicked
             // document.getElementById("the-form").submit();
         });
+
     </script>
 @endpush

@@ -8,6 +8,7 @@ use App\Http\Livewire\FollowUp\IndexEditInstruction;
 use App\Http\Livewire\FollowUp\IndexCreateInstruction;
 use App\Http\Livewire\FollowUp\IndexUpdateInstruction;
 use App\Http\Controllers\Auth\LoginContr\LoginController;
+use App\Http\Livewire\HitungBahan\IndexEditFormHitungBahan;
 use App\Http\Livewire\HitungBahan\IndexCreateFormHitungBahan;
 
 /*
@@ -34,6 +35,7 @@ Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
 Route::get('/create-form-hitung-bahan', IndexCreateFormHitungBahan::class)->name('hitungBahan.createFormHitungBahan');
+Route::get('/edit-form-hitung-bahan', IndexEditFormHitungBahan::class)->name('hitungBahan.editFormHitungBahan');
 
 Route::group(['middleware' => ['auth']], function () {
 

@@ -152,8 +152,6 @@ class CreateFormHitungBahanIndex extends Component
             'keterangans.*.rincianPlate.*.waste.required' => 'Waste harus diisi pada keterangan.',
             'keterangans.*.rincianPlate.*.waste.numeric' => 'Waste harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
-        
-        
 
         if ($this->layoutSettings) {
             foreach ($this->layoutSettings as $key => $layoutSettingData) {
@@ -180,7 +178,7 @@ class CreateFormHitungBahanIndex extends Component
                     foreach ($keteranganData['plate'] as $plate) {
                         // Buat instance model KeteranganPlate
                         $keteranganPlate = $keterangan->keteranganPlate()->create([
-                            'state_plate' => $plate['state'],
+                            'state_plate' => $plate['state_plate'],
                             'jumlah_plate' => $plate['jumlah_plate'],
                             'ukuran_plate' => $plate['ukuran_plate'],
                         ]);
@@ -189,7 +187,7 @@ class CreateFormHitungBahanIndex extends Component
                     foreach ($keteranganData['pond'] as $pond) {
                         // Buat instance model KeteranganPisauPond
                         $keteranganPisauPond = $keterangan->keteranganPisauPond()->create([
-                            'state_pisau' => $pond['state'],
+                            'state_pisau' => $pond['state_pisau'],
                             'jumlah_pisau' => $pond['jumlah_pisau'],
                         ]);
                     }
