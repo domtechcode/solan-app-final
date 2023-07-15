@@ -6,6 +6,7 @@ use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
+use App\Models\LayoutBahan;
 use App\Models\Notification;
 use App\Models\LayoutSetting;
 use Illuminate\Database\Eloquent\Model;
@@ -46,5 +47,10 @@ class Instruction extends Model
     public function layoutSetting()
     {
         return $this->hasMany(LayoutSetting::class);
+    }
+
+    public function layoutBahan()
+    {
+        return $this->hasMany(LayoutBahan::class);
     }
 }

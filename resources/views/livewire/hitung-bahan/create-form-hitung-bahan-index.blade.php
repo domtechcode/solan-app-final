@@ -10,18 +10,18 @@
     {{-- Do your work, then step back. --}}
 
     <form wire:submit.prevent="save">
-        @foreach ($layoutSettings as $index => $setting)
+        @foreach ($layoutSettings as $indexSetting => $setting)
             <!-- ROW-2-->
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                         <div class="card-header">
-                            <h3 class="card-title">Layout Setting - {{ $index }}</h3>
+                            <h3 class="card-title">Layout Setting - {{ $indexSetting }}</h3>
                             <div class="card-options">
                                 <div class="btn-list">
                                     <button type="button" class="btn btn-sm btn-danger"
-                                        wire:click="removeFormSetting({{ $index }})"><i class="fe fe-minus"></i>
+                                        wire:click="removeFormSetting({{ $indexSetting }})"><i class="fe fe-minus"></i>
                                         Delete Form Layout Setting</button>
                                     <button type="button" class="btn btn-sm btn-success" wire:click="addFormSetting"
                                         wire:loading.attr="disabled"><i class="fe fe-plus"></i> Add Form Layout
@@ -37,11 +37,11 @@
                                             <h3 class="card-title">Shape</h3>
                                             <div class="btn-list">
                                                 <button type="button" class="btn btn-sm btn-dark"
-                                                    onclick="addRectangle({{ $index }})">Rectangle</button>
+                                                    onclick="addRectangleSetting({{ $indexSetting }})">Rectangle</button>
                                                 <button type="button" class="btn btn-sm btn-primary"
-                                                    onclick="addText({{ $index }})">Text</button>
+                                                    onclick="addTextSetting({{ $indexSetting }})">Text</button>
                                                 <button type="button" class="btn btn-sm btn-info"
-                                                    onclick="addLine({{ $index }})">Line</button>
+                                                    onclick="addLineSetting({{ $indexSetting }})">Line</button>
                                             </div>
                                         </div>
                                     </div>
@@ -52,39 +52,39 @@
                                             <h3 class="card-title">Action</h3>
                                             <div class="btn-list">
                                                 <button type="button" class="btn btn-sm btn-dark"
-                                                    onclick="copy({{ $index }})">Copy</button>
+                                                    onclick="copySetting({{ $indexSetting }})">Copy</button>
                                                 <button type="button" class="btn btn-sm btn-info"
-                                                    onclick="paste({{ $index }})">Paste</button>
+                                                    onclick="pasteSetting({{ $indexSetting }})">Paste</button>
                                                 <button type="button" class="btn btn-sm btn-primary"
-                                                    onclick="deleteObjects({{ $index }})">Delete</button>
+                                                    onclick="deleteObjectsSetting({{ $indexSetting }})">Delete</button>
                                                 <button type="button"
                                                     class="btn btn-sm btn-success save-canvas-setting"
-                                                    onclick="exportCanvas({{ $index }})"
+                                                    onclick="exportCanvasSetting({{ $indexSetting }})"
                                                     style="display: none;">Export</button>
                                                 <button type="button" class="btn btn-sm btn-warning"
-                                                    onclick="addCanvas({{ $index }})">Create Canvas</button>
+                                                    onclick="addCanvasSetting({{ $indexSetting }})">Create Canvas</button>
 
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="canvas-wrapper-{{ $index }}" wire:ignore></div>
-                            @error('layoutSettings.' . $index . '.dataURL')
+                            <div id="canvas-wrapper-setting-{{ $indexSetting }}" wire:ignore></div>
+                            @error('layoutSettings.' . $indexSetting . '.dataURL')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                            @error('layoutSettings.' . $index . '.dataJSON')
+                            @error('layoutSettings.' . $indexSetting . '.dataJSON')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                            <input type="hidden" wire:model="layoutSettings.{{ $index }}.dataURL"
-                                id="dataURL-{{ $index }}">
-                            <input type="hidden" wire:model="layoutSettings.{{ $index }}.dataJSON"
-                                id="dataJSON-{{ $index }}">
+                            <input type="hidden" wire:model="layoutSettings.{{ $indexSetting }}.dataURL"
+                                id="dataURL-{{ $indexSetting }}">
+                            <input type="hidden" wire:model="layoutSettings.{{ $indexSetting }}.dataJSON"
+                                id="dataJSON-{{ $indexSetting }}">
                             <div class="row mt-3">
                                 <div class="col-lg-12">
                                     <div class="text-wrap">
                                         <div class="example">
-                                            <h3 class="card-title">Details Layout Setting - {{ $index }}</h3>
+                                            <h3 class="card-title">Details Layout Setting - {{ $indexSetting }}</h3>
                                             <div class="form-row">
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
@@ -95,8 +95,8 @@
                                                             <div class="col-sm">
                                                                 <input type="text" autocomplete="off"
                                                                     class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutSettings.{{ $index }}.panjang_barang_jadi">
-                                                                @error('layoutSettings.' . $index .
+                                                                    wire:model="layoutSettings.{{ $indexSetting }}.panjang_barang_jadi">
+                                                                @error('layoutSettings.' . $indexSetting .
                                                                     '.panjang_barang_jadi')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -107,8 +107,8 @@
                                                             <div class="col-sm">
                                                                 <input type="text" autocomplete="off"
                                                                     class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutSettings.{{ $index }}.lebar_barang_jadi">
-                                                                @error('layoutSettings.' . $index .
+                                                                    wire:model="layoutSettings.{{ $indexSetting }}.lebar_barang_jadi">
+                                                                @error('layoutSettings.' . $indexSetting .
                                                                     '.lebar_barang_jadi')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -124,8 +124,8 @@
                                                             <div class="col-sm">
                                                                 <input type="text" autocomplete="off"
                                                                     class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutSettings.{{ $index }}.panjang_bahan_cetak">
-                                                                @error('layoutSettings.' . $index .
+                                                                    wire:model="layoutSettings.{{ $indexSetting }}.panjang_bahan_cetak">
+                                                                @error('layoutSettings.' . $indexSetting .
                                                                     '.panjang_bahan_cetak')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -136,8 +136,8 @@
                                                             <div class="col-sm">
                                                                 <input type="text" autocomplete="off"
                                                                     class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutSettings.{{ $index }}.lebar_bahan_cetak">
-                                                                @error('layoutSettings.' . $index .
+                                                                    wire:model="layoutSettings.{{ $indexSetting }}.lebar_bahan_cetak">
+                                                                @error('layoutSettings.' . $indexSetting .
                                                                     '.lebar_bahan_cetak')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -494,7 +494,7 @@
                                                                 <td>
                                                                     <div class="form-group input-group control-group">
                                                                         <button class="btn btn-primary" type="button"
-                                                                            wire:click="removeRincianPlate({{ $index }}, {{ $rincianIndex }})"><i
+                                                                            wire:click="removeRincianPlate({{ $keteranganIndex }}, {{ $rincianIndex }})"><i
                                                                                 class="fe fe-x"></i></button>
                                                                     </div>
                                                                 </td>
@@ -534,6 +534,153 @@
             </div>
         @endforeach
 
+        @foreach ($layoutBahans as $indexBahan => $bahan)
+            <!-- ROW-2-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-status bg-primary br-te-7 br-ts-7"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Layout Bahan - {{ $indexBahan }}</h3>
+                            <div class="card-options">
+                                <div class="btn-list">
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                        wire:click="removeFormBahan({{ $indexBahan }})"><i class="fe fe-minus"></i>
+                                        Delete Form Layout Setting</button>
+                                    <button type="button" class="btn btn-sm btn-success" wire:click="addFormBahan"
+                                        wire:loading.attr="disabled"><i class="fe fe-plus"></i> Add Form Layout
+                                        Bahan</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <h3 class="card-title">Shape</h3>
+                                            <div class="btn-list">
+                                                <button type="button" class="btn btn-sm btn-dark"
+                                                    onclick="addRectangleBahan({{ $indexBahan }})">Rectangle</button>
+                                                <button type="button" class="btn btn-sm btn-primary"
+                                                    onclick="addTextBahan({{ $indexBahan }})">Text</button>
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="addLineBahan({{ $indexBahan }})">Line</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <h3 class="card-title">Action</h3>
+                                            <div class="btn-list">
+                                                <button type="button" class="btn btn-sm btn-dark"
+                                                    onclick="copyBahan({{ $indexBahan }})">Copy</button>
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="pasteBahan({{ $indexBahan }})">Paste</button>
+                                                <button type="button" class="btn btn-sm btn-primary"
+                                                    onclick="deleteObjectsBahan({{ $indexBahan }})">Delete</button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-success save-canvas-bahan"
+                                                    onclick="exportCanvasBahan({{ $indexBahan }})"
+                                                    style="display: none;">Export</button>
+                                                <button type="button" class="btn btn-sm btn-warning"
+                                                    onclick="addCanvasBahan({{ $indexBahan }})">Create Canvas</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="canvas-wrapper-bahan-{{ $indexBahan }}" wire:ignore></div>
+                            @error('layoutBahans.' . $indexBahan . '.dataURL')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            @error('layoutBahans.' . $indexBahan . '.dataJSON')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            <input type="hidden" wire:model="layoutBahans.{{ $indexBahan }}.dataURL"
+                                id="dataURL-{{ $indexBahan }}">
+                            <input type="hidden" wire:model="layoutBahans.{{ $indexBahan }}.dataJSON"
+                                id="dataJSON-{{ $indexBahan }}">
+                            <div class="row mt-3">
+                                <div class="col-lg-12">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <h3 class="card-title">Details Layout Bahan - {{ $indexBahan }}</h3>
+                                            <div class="form-row">
+                                                <div class="col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Ukuran Barang Jadi (P x L)
+                                                            (cm)
+                                                        </label>
+                                                        <div class="row">
+                                                            <div class="col-sm">
+                                                                <input type="text" autocomplete="off"
+                                                                    class="form-control" placeholder="Panjang"
+                                                                    wire:model="layoutBahans.{{ $indexBahan }}.panjang_barang_jadi">
+                                                                @error('layoutBahans.' . $indexBahan .
+                                                                    '.panjang_barang_jadi')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="col-sm-1">
+                                                                <label class="form-label text-center">X</label>
+                                                            </div>
+                                                            <div class="col-sm">
+                                                                <input type="text" autocomplete="off"
+                                                                    class="form-control" placeholder="Lebar"
+                                                                    wire:model="layoutBahans.{{ $indexBahan }}.lebar_barang_jadi">
+                                                                @error('layoutBahans.' . $indexBahan .
+                                                                    '.lebar_barang_jadi')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="form-label">Ukuran Bahan Cetak (P x L)
+                                                            (cm)</label>
+                                                        <div class="row">
+                                                            <div class="col-sm">
+                                                                <input type="text" autocomplete="off"
+                                                                    class="form-control" placeholder="Panjang"
+                                                                    wire:model="layoutBahans.{{ $indexBahan }}.panjang_bahan_cetak">
+                                                                @error('layoutBahans.' . $indexBahan .
+                                                                    '.panjang_bahan_cetak')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="col-sm-1">
+                                                                <label class="form-label text-center">X</label>
+                                                            </div>
+                                                            <div class="col-sm">
+                                                                <input type="text" autocomplete="off"
+                                                                    class="form-control" placeholder="Lebar"
+                                                                    wire:model="layoutBahans.{{ $indexBahan }}.lebar_bahan_cetak">
+                                                                @error('layoutBahans.' . $indexBahan .
+                                                                    '.lebar_bahan_cetak')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ROW-2 END -->
+        @endforeach
+
         <button type="submit" class="btn btn-primary mt-4 mb-0" id="submitBtn">Submit</button>
     </form>
 </div>
@@ -545,19 +692,19 @@
 
     <script>
         //   var canvasId = 0;
-        var canvases = {};
+        var canvasesSetting = {};
 
-        function addCanvas(index) {
+        function addCanvasSetting(index) {
             var canvasContainer = document.createElement('div');
-            canvasContainer.id = 'canvas-container-' + index;
+            canvasContainer.id = 'canvas-container-setting-' + index;
             canvasContainer.classList.add('canvas-container');
 
-            var canvasWrapper = document.getElementById('canvas-wrapper-' + index);
+            var canvasWrapper = document.getElementById('canvas-wrapper-setting-' + index);
             canvasWrapper.appendChild(canvasContainer);
 
             // Buat elemen <canvas> baru
             var canvasElement = document.createElement('canvas');
-            canvasElement.id = 'canvas-' + index;
+            canvasElement.id = 'canvas-setting-' + index;
             canvasElement.width = canvasWrapper.offsetWidth; // Atur lebar sesuai dengan lebar canvas-wrapper
             canvasElement.height = canvasWrapper.offsetWidth / 1.5; // Atur tinggi sesuai kebutuhan
 
@@ -566,7 +713,7 @@
             canvasContainer.appendChild(canvasElement);
 
             // Inisialisasi objek canvas menggunakan Fabric.js
-            var canvas = new fabric.Canvas('canvas-' + index, {
+            var canvas = new fabric.Canvas('canvas-setting-' + index, {
                 snapAngle: 45,
                 guidelines: true,
                 snapToGrid: 10,
@@ -576,13 +723,13 @@
             // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
 
             console.log('Canvas created:', canvas);
-            canvases[canvasContainer.id] = canvas;
+            canvasesSetting[canvasContainer.id] = canvas;
             initCenteringGuidelines(canvas);
             initAligningGuidelines(canvas);
         }
 
-        function addRectangle(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function addRectangleSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             var rect = new fabric.Rect({
                 left: 50,
                 top: 50,
@@ -599,8 +746,8 @@
             currentCanvas.add(rect);
         }
 
-        function addText(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function addTextSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             var text = new fabric.Textbox('Sample Text', {
                 left: 50,
                 top: 50,
@@ -616,8 +763,8 @@
             currentCanvas.add(text);
         }
 
-        function addLine(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function addLineSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             var line = new fabric.Line([50, 50, 200, 200], {
                 fill: 'black',
                 stroke: 'black',
@@ -630,8 +777,8 @@
             currentCanvas.add(line);
         }
 
-        function copy(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function copySetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             var activeObject = currentCanvas.getActiveObject();
             if (activeObject) {
                 activeObject.clone(function(cloned) {
@@ -640,8 +787,8 @@
             }
         }
 
-        function paste(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function pasteSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             if (currentCanvas.clipboard) {
                 currentCanvas.clipboard.clone(function(clonedObj) {
                     currentCanvas.discardActiveObject();
@@ -667,8 +814,8 @@
             }
         }
 
-        function deleteObjects(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function deleteObjectsSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             var activeObject = currentCanvas.getActiveObject();
             if (activeObject) {
                 if (activeObject.type === 'activeSelection') {
@@ -683,8 +830,8 @@
             }
         }
 
-        function exportCanvas(index) {
-            var currentCanvas = getCurrentCanvas(index);
+        function exportCanvasSetting(index) {
+            var currentCanvas = getCurrentCanvasSetting(index);
             if (currentCanvas) {
                 var dataURL = currentCanvas.toDataURL();
                 var dataJSON = currentCanvas.toJSON();
@@ -695,21 +842,182 @@
             }
         }
 
-        function getCurrentCanvas(index) {
-            var currentCanvasId = 'canvas-container-' + index;
-            return canvases[currentCanvasId];
+        function getCurrentCanvasSetting(index) {
+            var currentCanvasId = 'canvas-container-setting-' + index;
+            return canvasesSetting[currentCanvasId];
+        }
+        
+    </script>
+
+    <script>
+        var canvasesBahan = {};
+
+        function addCanvasBahan(indexBahan) {
+            var canvasContainer = document.createElement('div');
+            canvasContainer.id = 'canvas-container-bahan-' + indexBahan;
+            canvasContainer.classList.add('canvas-container');
+
+            var canvasWrapper = document.getElementById('canvas-wrapper-bahan-' + indexBahan);
+            canvasWrapper.appendChild(canvasContainer);
+
+            // Buat elemen <canvas> baru
+            var canvasElement = document.createElement('canvas');
+            canvasElement.id = 'canvas-bahan-' + indexBahan;
+            canvasElement.width = canvasWrapper.offsetWidth; // Atur lebar sesuai dengan lebar canvas-wrapper
+            canvasElement.height = canvasWrapper.offsetWidth / 1.5; // Atur tinggi sesuai kebutuhan
+
+            // Tambahkan elemen <canvas> ke dalam wrapper
+            // canvasWrapper.appendChild(canvasElement);
+            canvasContainer.appendChild(canvasElement);
+
+            // Inisialisasi objek canvas menggunakan Fabric.js
+            var canvas = new fabric.Canvas('canvas-bahan-' + indexBahan, {
+                snapAngle: 45,
+                guidelines: true,
+                snapToGrid: 10,
+                snapToObjects: true
+            });
+
+            // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
+
+            console.log('Canvas created:', canvas);
+            canvasesBahan[canvasContainer.id] = canvas;
+            initCenteringGuidelines(canvas);
+            initAligningGuidelines(canvas);
         }
 
+        function addRectangleBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            var rect = new fabric.Rect({
+                left: 50,
+                top: 50,
+                width: 100,
+                height: 100,
+                fill: 'transparent',
+                stroke: 'black',
+                strokeWidth: 2,
+                snapAngle: 15,
+                snapThreshold: 10,
+                snapToGrid: 10,
+                strokeUniform: true
+            });
+            currentCanvas.add(rect);
+        }
+
+        function addTextBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            var text = new fabric.Textbox('Sample Text', {
+                left: 50,
+                top: 50,
+                width: 200,
+                fontSize: 20,
+                fontFamily: 'Arial',
+                fill: 'black',
+                snapAngle: 15,
+                snapThreshold: 10,
+                snapToGrid: 10,
+                strokeUniform: true
+            });
+            currentCanvas.add(text);
+        }
+
+        function addLineBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            var line = new fabric.Line([50, 50, 200, 200], {
+                fill: 'black',
+                stroke: 'black',
+                strokeWidth: 2,
+                snapAngle: 15,
+                snapThreshold: 10,
+                snapToGrid: 10,
+                strokeUniform: true
+            });
+            currentCanvas.add(line);
+        }
+
+        function copyBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            var activeObject = currentCanvas.getActiveObject();
+            if (activeObject) {
+                activeObject.clone(function(cloned) {
+                    currentCanvas.clipboard = cloned;
+                });
+            }
+        }
+
+        function pasteBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            if (currentCanvas.clipboard) {
+                currentCanvas.clipboard.clone(function(clonedObj) {
+                    currentCanvas.discardActiveObject();
+                    clonedObj.set({
+                        left: clonedObj.left + 10,
+                        top: clonedObj.top + 10,
+                        evented: true,
+                    });
+                    if (clonedObj.type === 'activeSelection') {
+                        clonedObj.canvas = currentCanvas;
+                        clonedObj.forEachObject(function(obj) {
+                            currentCanvas.add(obj);
+                        });
+                        clonedObj.setCoords();
+                    } else {
+                        currentCanvas.add(clonedObj);
+                    }
+                    currentCanvas.clipboard.top += 100;
+                    currentCanvas.clipboard.left += 100;
+                    currentCanvas.setActiveObject(clonedObj);
+                    currentCanvas.requestRenderAll();
+                });
+            }
+        }
+
+        function deleteObjectsBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            var activeObject = currentCanvas.getActiveObject();
+            if (activeObject) {
+                if (activeObject.type === 'activeSelection') {
+                    activeObject.forEachObject(function(obj) {
+                        currentCanvas.remove(obj);
+                    });
+                } else {
+                    currentCanvas.remove(activeObject);
+                }
+                currentCanvas.discardActiveObject();
+                currentCanvas.requestRenderAll();
+            }
+        }
+
+        function exportCanvasBahan(indexBahan) {
+            var currentCanvas = getCurrentCanvasBahan(indexBahan);
+            if (currentCanvas) {
+                var dataURL = currentCanvas.toDataURL();
+                var dataJSON = currentCanvas.toJSON();
+                delete dataJSON.version;
+                var dataJSON = JSON.stringify(dataJSON);
+                @this.set('layoutBahans.' + indexBahan + '.dataURL', dataURL);
+                @this.set('layoutBahans.' + indexBahan + '.dataJSON', dataJSON);
+            }
+        }
+
+        function getCurrentCanvasBahan(indexBahan) {
+            var currentCanvasId = 'canvas-container-bahan-' + indexBahan;
+            return canvasesBahan[currentCanvasId];
+        }
+
+    </script>
+
+    <script>
         document.getElementById("submitBtn").addEventListener("click", function(event) {
             var allCanvasButtons = document.querySelectorAll(".save-canvas-setting");
             allCanvasButtons.forEach(function(button) {
                 button.click();
             });
 
-            // var allCanvasButtonsBahan = document.querySelectorAll(".save-canvas-bahan");
-            // allCanvasButtonsBahan.forEach(function(button) {
-            //     button.click();
-            // });
+            var allCanvasButtonsBahan = document.querySelectorAll(".save-canvas-bahan");
+            allCanvasButtonsBahan.forEach(function(button) {
+                button.click();
+            });
 
             // // Submit form after all buttons are clicked
             // document.getElementById("the-form").submit();
