@@ -58,7 +58,7 @@
                                                 <button type="button" class="btn btn-sm btn-primary"
                                                     onclick="deleteObjects({{ $index }})">Delete</button>
                                                 <button type="button"
-                                                    class="btn btn-sm btn-success export-canvas-button"
+                                                    class="btn btn-sm btn-success save-canvas-setting"
                                                     onclick="exportCanvas({{ $index }})">Export</button>
                                                 <button type="button" class="btn btn-sm btn-warning"
                                                     onclick="addCanvas({{ $index }})">Create Canvas</button>
@@ -69,8 +69,8 @@
                                 </div>
                             </div>
                             <div id="canvas-wrapper-{{ $index }}" wire:ignore></div>
-                            <input type="hidden" wire:model="layoutSettings.{{ $index }}.dataURL"
-                                id="dataURL-{{ $index }}">
+                            <input type="hidden" wire:model="layoutSettings.{{ $index }}.dataURL" id="dataURL-{{ $index }}">
+                            <input type="hidden" wire:model="layoutSettings.{{ $index }}.dataJSON" id="dataJSON-{{ $index }}">
                             <div class="row mt-3">
                                 <div class="col-lg-12">
                                     <div class="text-wrap">
@@ -129,7 +129,6 @@
                 </div>
             </div>
             <!-- ROW-2 END -->
-
             @foreach ($keterangans[$index] ?? [] as $keteranganIndex => $keterangan)
                 <!-- ROW-2-->
                 <div class="row">
@@ -159,78 +158,57 @@
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_plate"
-                                                                class="custom-switch-input" value="baru">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.0.state" class="custom-switch-input" value="baru">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Baru</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.0.jumlah_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.0.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.ukuran_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.0.ukuran_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.0.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_plate"
-                                                                class="custom-switch-input" value="repeat">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.1.state" class="custom-switch-input" value="repeat">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Repeat</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.1.jumlah_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.1.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.ukuran_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.1.ukuran_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.1.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_plate"
-                                                                class="custom-switch-input" value="sample">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.2.state" class="custom-switch-input" value="sample">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Sample</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.2.jumlah_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.2.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-5">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Plate"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.ukuran_plate">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Plate" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.plate.2.ukuran_plate" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.plate.2.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -240,67 +218,56 @@
                                     <div class="col-lg-6">
                                         <div class="text-wrap">
                                             <div class="example">
-                                                <h3 class="card-title">Pon</h3>
+                                                <h3 class="card-title">Pond</h3>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_pisau"
-                                                                class="custom-switch-input" value="baru">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.0.state" class="custom-switch-input" value="baru">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Baru</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-10">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Pisau"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_pisau">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Pisau" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.0.jumlah_pisau" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.pond.0.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_pisau"
-                                                                class="custom-switch-input" value="repeat">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.1.state" class="custom-switch-input" value="repeat">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Repeat</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-10">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Pisau"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_pisau">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Pisau" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.1.jumlah_pisau" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.pond.1.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <label class="custom-switch form-switch me-5">
-                                                            <input type="checkbox"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.state_pisau"
-                                                                class="custom-switch-input" value="sample">
-                                                            <span
-                                                                class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                            <input type="checkbox" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.2.state" class="custom-switch-input" value="sample">
+                                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
                                                             <span class="custom-switch-description">Sample</span>
                                                         </label>
                                                     </div>
                                                     <div class="col-md-10">
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Pisau"
-                                                                wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.jumlah_pisau">
+                                                            <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Pisau" wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.pond.2.jumlah_pisau" {{ empty(data_get($keterangans, $index . '.' . $keteranganIndex . '.pond.2.state')) ? 'disabled' : '' }}>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    
+                                    
+                                    
                                 </div>
 
                                 <div class="row mt-3">
@@ -313,7 +280,7 @@
 
                                                         <div class="form-group">
                                                             <label class="form-label">File Rincian</label>
-                                                            <x-forms.filepond wire:model="filerincian" multiple
+                                                            <x-forms.filepond wire:model="keterangans.{{ $index }}.{{ $keteranganIndex }}.fileRincian" multiple
                                                                 allowImagePreview imagePreviewMaxHeight="200"
                                                                 allowFileTypeValidation allowFileSizeValidation
                                                                 maxFileSize="1024mb" />
@@ -339,7 +306,7 @@
                                                         <h3 class="card-title">Rincian Plate</h3>
                                                     </div>
                                                     <div class="col d-flex justify-content-end">
-                                                        <button class="btn btn-sm btn-success"
+                                                        <button class="btn btn-sm btn-success" type="button"
                                                             wire:click="addRincianPlate({{ $index }}, {{ $keteranganIndex }})">Add
                                                             Rincian Plate</button>
                                                     </div>
@@ -443,7 +410,7 @@
                 </div>
             @endforeach
         @endforeach
-        <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
+        <button type="submit" class="btn btn-primary mt-4 mb-0" id="submitBtn">Submit</button>
     </form>
 </div>
 
@@ -595,11 +562,12 @@
         function exportCanvas(index) {
             var currentCanvas = getCurrentCanvas(index);
             if (currentCanvas) {
-                setTimeout(function() {
                     var dataURL = currentCanvas.toDataURL();
-                    console.log(dataURL);
+                    var dataJSON = currentCanvas.toJSON();
+                    delete dataJSON.version;
+                    var dataJSON = JSON.stringify(dataJSON);
                     @this.set('layoutSettings.' + index + '.dataURL', dataURL);
-                }, 100);
+                    @this.set('layoutSettings.' + index + '.dataJSON', dataJSON);
             }
         }
 
@@ -607,5 +575,20 @@
             var currentCanvasId = 'canvas-container-' + index;
             return canvases[currentCanvasId];
         }
+
+        document.getElementById("submitBtn").addEventListener("click", function(event) {
+            var allCanvasButtons = document.querySelectorAll(".save-canvas-setting");
+            allCanvasButtons.forEach(function(button) {
+                button.click();
+            });
+
+            // var allCanvasButtonsBahan = document.querySelectorAll(".save-canvas-bahan");
+            // allCanvasButtonsBahan.forEach(function(button) {
+            //     button.click();
+            // });
+
+            // // Submit form after all buttons are clicked
+            // document.getElementById("the-form").submit();
+        });
     </script>
 @endpush

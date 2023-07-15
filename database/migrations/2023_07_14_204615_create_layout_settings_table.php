@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFormLayoutSettingsTable extends Migration
+class CreateLayoutSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,17 @@ class CreateFormLayoutSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('form_layout_settings', function (Blueprint $table) {
+        Schema::create('layout_settings', function (Blueprint $table) {
             $table->id();
+            // $table->unsignedBigInteger('instruction_id');
+            // $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
+            $table->string('form_id')->nullable();
             $table->string('panjang_barang_jadi')->nullable();
             $table->string('lebar_barang_jadi')->nullable();
             $table->string('panjang_bahan_cetak')->nullable();
             $table->string('lebar_bahan_cetak')->nullable();
+            $table->longText('dataURL')->nullable();
+            $table->json('dataJSON')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +35,6 @@ class CreateFormLayoutSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('form_layout_settings');
+        Schema::dropIfExists('layout_settings');
     }
 }
