@@ -2,6 +2,7 @@
 
 use App\Events\HelloEvent;
 use App\Events\NotificationSent;
+use App\Http\Livewire\ExcelViewer;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\FollowUp\IndexDashboard;
 use App\Http\Livewire\FollowUp\IndexEditInstruction;
@@ -36,6 +37,8 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess')
 
 Route::get('/create-form-hitung-bahan', IndexCreateFormHitungBahan::class)->name('hitungBahan.createFormHitungBahan');
 Route::get('/edit-form-hitung-bahan', IndexEditFormHitungBahan::class)->name('hitungBahan.editFormHitungBahan');
+
+Route::get('/excel-viewer', ExcelViewer::class);
 
 Route::group(['middleware' => ['auth']], function () {
 
