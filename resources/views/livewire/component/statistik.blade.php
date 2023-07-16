@@ -9,28 +9,22 @@
                         <div class="text-white">
                             <h2 class="mb-0 number-font">{{ $totalOrder }}</h2>
                             <p class="text-white mb-0">Total SPK</p>
-                            <div class="btn-list">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Layout</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkLayout }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Sample</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkSample }}</span>
-                                </button>
-                            </div>
-                            <div class="btn-list mt-2">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Production</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkProduction }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Stock</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkStock }}</span>
-                                </button>
-                            </div>
                         </div>
                         <div class="ms-auto"> <i class="fe fe-package text-white fs-40 me-2 mt-2"></i> </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col text-center"> <span class="text-white">Layout</span>
+                            <h4 class="fw-normal text-white">{{ $spkLayout }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Sample</span>
+                            <h4 class="fw-normal text-white">{{ $spkSample }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Production</span>
+                            <h4 class="fw-normal text-white">{{ $spkProduction }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Stock</span>
+                            <h4 class="fw-normal text-white">{{ $spkStock }}</h4>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,28 +36,22 @@
                         <div class="text-white">
                             <h2 class="mb-0 number-font">{{ $prosesOrder }}</h2>
                             <p class="text-white mb-0">SPK Proses</p>
-                            <div class="btn-list">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Layout</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkProsesLayout }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Sample</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkProsesSample }}</span>
-                                </button>
-                            </div>
-                            <div class="btn-list mt-2">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Production</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkProsesProduction }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Stock</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkProsesStock }}</span>
-                                </button>
-                            </div>
                         </div>
                         <div class="ms-auto"> <i class="fe fe-file-text text-white fs-40 me-2 mt-2"></i> </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col text-center"> <span class="text-white">Layout</span>
+                            <h4 class="fw-normal text-white">{{ $spkProsesLayout }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Sample</span>
+                            <h4 class="fw-normal text-white">{{ $spkProsesSample }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Production</span>
+                            <h4 class="fw-normal text-white">{{ $spkProsesProduction }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Stock</span>
+                            <h4 class="fw-normal text-white">{{ $spkProsesStock }}</h4>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,28 +63,22 @@
                         <div class="text-white">
                             <h2 class="mb-0 number-font">{{ $pendingOrder }}</h2>
                             <p class="text-white mb-0">SPK Pending</p>
-                            <div class="btn-list">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Layout</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkPendingLayout }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Sample</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkPendingSample }}</span>
-                                </button>
-                            </div>
-                            <div class="btn-list mt-2">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Production</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkPendingProduction }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Stock</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkPendingStock }}</span>
-                                </button>
-                            </div>
                         </div>
                         <div class="ms-auto"> <i class="fe fe-x-square text-white fs-40 me-2 mt-2"></i>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col text-center"> <span class="text-white">Layout</span>
+                            <h4 class="fw-normal text-white">{{ $spkPendingLayout }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Sample</span>
+                            <h4 class="fw-normal text-white">{{ $spkPendingSample }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Production</span>
+                            <h4 class="fw-normal text-white">{{ $spkPendingProduction }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Stock</span>
+                            <h4 class="fw-normal text-white">{{ $spkPendingStock }}</h4>
                         </div>
                     </div>
                 </div>
@@ -109,28 +91,22 @@
                         <div class="text-white">
                             <h2 class="mb-0 number-font">{{ $completeOrder }}</h2>
                             <p class="text-white mb-0">SPK Complete</p>
-                            <div class="btn-list">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Layout</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkCompleteLayout }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Sample</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkCompleteSample }}</span>
-                                </button>
-                            </div>
-                            <div class="btn-list mt-2">
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Production</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkCompleteProduction }}</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-purple mt-1 mb-1 me-3">
-                                    <span>SPK Stock</span>
-                                    <span class="badge bg-white text-primary ms-2">{{ $spkCompleteStock }}</span>
-                                </button>
-                            </div>
                         </div>
                         <div class="ms-auto"> <i class="fe fe-check-square text-white fs-40 me-2 mt-2"></i> </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col text-center"> <span class="text-white">Layout</span>
+                            <h4 class="fw-normal text-white">{{ $spkCompleteLayout }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Sample</span>
+                            <h4 class="fw-normal text-white">{{ $spkCompleteSample }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Production</span>
+                            <h4 class="fw-normal text-white">{{ $spkCompleteProduction }}</h4>
+                        </div>
+                        <div class="col text-center"> <span class="text-white">Stock</span>
+                            <h4 class="fw-normal text-white">{{ $spkCompleteStock }}</h4>
+                        </div>
                     </div>
                 </div>
             </div>
