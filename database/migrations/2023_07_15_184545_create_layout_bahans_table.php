@@ -18,6 +18,8 @@ class CreateLayoutBahansTable extends Migration
             $table->unsignedBigInteger('instruction_id');
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->string('form_id')->nullable();
+            $table->string('state')->nullable();
+            $table->string('include_belakang')->nullable();
             $table->string('panjang_plano')->nullable();
             $table->string('lebar_plano')->nullable();
             $table->string('panjang_bahan_cetak')->nullable();

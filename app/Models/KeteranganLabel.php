@@ -7,11 +7,11 @@ use App\Models\Instruction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RincianPlate extends Model
+class KeteranganLabel extends Model
 {
     use HasFactory;
 
-    protected $table = 'rincian_plates';
+    protected $table = 'keterangan_labels';
     protected $guarded = [];
 
     public function keterangans()

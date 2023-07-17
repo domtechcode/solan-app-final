@@ -15,8 +15,8 @@ class CreateKeterangansTable extends Migration
     {
         Schema::create('keterangans', function (Blueprint $table) {
             $table->id();
-            // $table->unsignedBigInteger('instruction_id');
-            // $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
+            $table->unsignedBigInteger('instruction_id');
+            $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->string('form_id');
             $table->text('notes')->nullable();
             $table->timestamps();
