@@ -34,7 +34,7 @@ class CreateLayoutSettingsTable extends Migration
             $table->string('jarak_tambahan_vertical')->nullable();
             $table->string('jarak_tambahan_horizontal')->nullable();
             $table->longText('dataURL')->nullable();
-            $table->json('dataJSON')->nullable();
+            $table->longText('dataJSON')->nullable();
             $table->timestamps();
         });
     }

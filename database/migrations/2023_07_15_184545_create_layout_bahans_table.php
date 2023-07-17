@@ -38,7 +38,7 @@ class CreateLayoutBahansTable extends Migration
             $table->string('panjang_sisa_bahan')->nullable();
             $table->string('lebar_sisa_bahan')->nullable();
             $table->longText('dataURL')->nullable();
-            $table->json('dataJSON')->nullable();
+            $table->longText('dataJSON')->nullable();
             $table->string('layout_custom_file_name')->nullable();
             $table->string('layout_custom_path')->nullable();
             $table->timestamps();
