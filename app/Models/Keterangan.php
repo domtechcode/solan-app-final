@@ -6,7 +6,9 @@ use App\Models\FileRincian;
 use App\Models\Instruction;
 use App\Models\RincianPlate;
 use App\Models\LayoutSetting;
+use App\Models\RincianScreen;
 use App\Models\KeteranganPlate;
+use App\Models\KeteranganScreen;
 use App\Models\KeteranganPisauPond;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +33,16 @@ class Keterangan extends Model
     public function keteranganPlate()
     {
         return $this->hasMany(KeteranganPlate::class);
+    }
+
+    public function rincianScreen()
+    {
+        return $this->hasMany(RincianScreen::class);
+    }
+
+    public function keteranganScreen()
+    {
+        return $this->hasMany(KeteranganScreen::class);
     }
 
     public function keteranganPisauPond()

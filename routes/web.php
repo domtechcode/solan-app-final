@@ -35,7 +35,7 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-Route::get('/create-form-hitung-bahan', IndexCreateFormHitungBahan::class)->name('hitungBahan.createFormHitungBahan');
+Route::get('/create-form-hitung-bahan/{instructionId}', IndexCreateFormHitungBahan::class)->name('hitungBahan.createFormHitungBahan');
 Route::get('/edit-form-hitung-bahan', IndexEditFormHitungBahan::class)->name('hitungBahan.editFormHitungBahan');
 
 Route::get('/excel-viewer', ExcelViewer::class);
