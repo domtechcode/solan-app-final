@@ -169,7 +169,7 @@
         
     </script>
 
-    {{-- <script>
+    <script>
         window.addEventListener('livewire:load', function () {
             // Mendengarkan event dari public channel
             window.Echo.channel('notif.' + {{ Auth::user()->id }})
@@ -178,7 +178,7 @@
                     console.log(data);
                 });
         });
-    </script> --}}
+    </script>
 
     {{-- <script>
         Echo.channel(`test`)

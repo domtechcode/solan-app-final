@@ -7,6 +7,7 @@ use App\Models\Instruction;
 use App\Models\RincianPlate;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
+use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\KeteranganPisauPond;
@@ -48,6 +49,11 @@ class Keterangan extends Model
     public function keteranganPisauPond()
     {
         return $this->hasMany(KeteranganPisauPond::class);
+    }
+
+    public function keteranganLabel()
+    {
+        return $this->hasMany(KeteranganLabel::class);
     }
 
     public function fileRincian()

@@ -15,6 +15,8 @@ class CreateKeteranganPlatesTable extends Migration
     {
         Schema::create('keterangan_plates', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('instruction_id');
+            $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
             $table->string('state_plate')->nullable();
