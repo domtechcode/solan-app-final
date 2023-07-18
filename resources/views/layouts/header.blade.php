@@ -77,7 +77,7 @@
                 </svg></div>
             <ul class="side-menu">
 
-                {{-- @if( auth()->user()->role == 'Follow Up' )
+                {{-- @if( auth()->user()->role == 'Follow Up' ) --}}
                 <li class="sub-category">
                     <h3>Home</h3>
                 </li>
@@ -130,7 +130,7 @@
                     </ul>
                 </li>
 
-                @endif --}}
+                {{-- @endif --}}
 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"

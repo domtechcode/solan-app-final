@@ -1998,7 +1998,6 @@
                                             <div class="input-group control-group" style="padding-top: 5px;">
                                                 <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                 </div>
