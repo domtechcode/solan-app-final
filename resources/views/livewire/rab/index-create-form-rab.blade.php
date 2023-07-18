@@ -45,9 +45,18 @@
                     </div>
                     {{-- End Notif --}}
                     @endif
+
+                    <div class="row mb-5">
+                        <div class="col-md-7 overflow-auto" style="height: 100vh;">
+                            @livewire('component.hitung-bahan-data-view-index', ['instructionId' => $instructionSelectedId])
+                        </div>
+                        <div class="col-md-5 overflow-auto" style="height: 100vh;">
+                            @livewire('rab.create-form-rab-index', ['instructionId' => $instructionSelectedId])
+                        </div>
+                    </div>
     
-                    @livewire('component.hitung-bahan-data-view-index', ['instructionId' => $instructionSelectedId])
-                    {{-- @livewire('hitung-bahan.create-form-rab-index', ['instructionId' => $instructionSelectedId]) --}}
+                    
+                    
     
                 </div>
                 <!-- CONTAINER CLOSED -->

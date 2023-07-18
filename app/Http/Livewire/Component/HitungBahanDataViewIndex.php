@@ -266,7 +266,10 @@ class HitungBahanDataViewIndex extends Component
             ];
         }
         
-        $this->loadExcel();
+        if(isset($this->filePaths)){
+            $this->loadExcel();
+        }
+        
         
     }
 
