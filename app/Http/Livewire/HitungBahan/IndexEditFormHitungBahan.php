@@ -6,6 +6,13 @@ use Livewire\Component;
 
 class IndexEditFormHitungBahan extends Component
 {
+    public $instructionSelectedId;
+
+    public function mount($instructionId)
+    {
+        $this->instructionSelectedId = $instructionId;
+    }
+    
     public function render()
     {
         return view('livewire.hitung-bahan.index-edit-form-hitung-bahan', [

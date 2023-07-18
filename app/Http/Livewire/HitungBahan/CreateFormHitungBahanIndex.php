@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HitungBahan;
 
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
@@ -22,6 +23,10 @@ class CreateFormHitungBahanIndex extends Component
     public $currentInstructionId;
     public $instructionData;
     public $contohData;
+    public $note;
+    public $notereject;
+    public $notes = [];
+    public $workSteps;
 
     public $stateWorkStepPlate;
     public $stateWorkStepSablon;
@@ -169,6 +174,17 @@ class CreateFormHitungBahanIndex extends Component
         $this->keterangans[$keteranganIndex]['rincianScreen'] = array_values($this->keterangans[$keteranganIndex]['rincianScreen']);
     }
 
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId)
     {
         $this->currentInstructionId = $instructionId;
@@ -179,7 +195,10 @@ class CreateFormHitungBahanIndex extends Component
         $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 23)->first();
         $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 24)->first();
         $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
-        // dd($this->stateWorkStepCetakLabel);
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+
+        $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 5)->get();
+        $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 5)->get();
         
          // Cek apakah array layoutSettings dan keterangans kosong
         if (empty($this->layoutSettings)) {
@@ -203,7 +222,6 @@ class CreateFormHitungBahanIndex extends Component
                 'jarak_tambahan_horizontal' => '',
             ];
         }
-        
         if (empty($this->keterangans)) {
             $this->keterangans[] = [
                 'plate' => [],
@@ -764,8 +782,20 @@ class CreateFormHitungBahanIndex extends Component
             }
         }
         
+        if($this->notes){
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
 
         session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Create Instruksi Kerja',

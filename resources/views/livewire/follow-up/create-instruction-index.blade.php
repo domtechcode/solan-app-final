@@ -365,7 +365,7 @@
                                     <div class="input-group control-group" style="padding-top: 5px;">
                                         <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan" required>
                                             <option label="Pilih Tujuan Catatan"></option>
-                                            @foreach ($dataworksteplists as $key)
+                                            @foreach ($workSteps as $key)
                                                 <option value="{{ $key['id'] }}">{{ $key['name']  }}</option>
                                             @endforeach
                                             
