@@ -4,6 +4,7 @@ use App\Events\HelloEvent;
 use App\Events\NotificationSent;
 use App\Http\Livewire\ExcelViewer;
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\FollowUp\IndexGroup;
 use App\Http\Livewire\Rab\IndexCreateFormRab;
 use App\Http\Livewire\FollowUp\IndexDashboard;
 use App\Http\Livewire\FollowUp\IndexEditInstruction;
@@ -41,7 +42,7 @@ Route::get('/edit-form-hitung-bahan/{instructionId}', IndexEditFormHitungBahan::
 
 Route::get('/create-form-rab/{instructionId}', IndexCreateFormRab::class)->name('rab.createFormRab');
 
-Route::get('/excel-viewer', ExcelViewer::class);
+Route::get('/group', IndexGroup::class);
 
 Route::group(['middleware' => ['auth']], function () {
 
