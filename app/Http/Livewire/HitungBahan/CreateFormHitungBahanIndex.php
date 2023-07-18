@@ -42,6 +42,19 @@ class CreateFormHitungBahanIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
 
+    public $selectedInstructionParent;
+    public $selectedWorkStepParent;
+    public $selectedFileContohParent;
+    public $selectedFileArsipParent;
+    public $selectedFileAccountingParent;
+    public $selectedFileLayoutParent;
+    public $selectedFileSampleParent;
+
+    public $selectedInstructionChild;
+
+    public $selectedGroupParent;
+    public $selectedGroupChild;
+
     public function addFormSetting()
     {
         $this->layoutSettings[] = [
@@ -188,7 +201,18 @@ class CreateFormHitungBahanIndex extends Component
     public function mount($instructionId)
     {
         $this->currentInstructionId = $instructionId;
-        $this->instructionData = Instruction::where('id', $instructionId)->get();
+        $cekGroup = Instruction::where('id', $instructionId)
+            ->whereNotNull('group_id')
+            ->whereNotNull('group_priority')
+            ->first();
+
+        if (!$cekGroup){
+            $this->instructionData = Instruction::where('id', $instructionId)->get();
+        }else{
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
+        }
+
         $this->contohData = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
 
         $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 7)->first();
@@ -817,5 +841,23 @@ class CreateFormHitungBahanIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal');
+    }
+
+    public function modalInstructionDetailsGroup($groupId)
+    {
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+
+        $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 }

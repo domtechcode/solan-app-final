@@ -47,13 +47,45 @@ class HitungBahanDataViewIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
 
+    public $selectedInstructionParent;
+    public $selectedWorkStepParent;
+    public $selectedFileContohParent;
+    public $selectedFileArsipParent;
+    public $selectedFileAccountingParent;
+    public $selectedFileLayoutParent;
+    public $selectedFileSampleParent;
+
+    public $selectedInstructionChild;
+
+    public $selectedGroupParent;
+    public $selectedGroupChild;
+
     public $filePaths;
     public $htmlOutputs;
+
+    public $totalPlate;
+    public $totalLembarCetakPlate;
+    public $totalWastePlate;
+
+    public $totalScreen;
+    public $totalLembarCetakScreen;
+    public $totalWasteScreen;
     
     public function mount($instructionId)
     {
         $this->currentInstructionId = $instructionId;
-        $this->instructionData = Instruction::where('id', $instructionId)->get();
+        $cekGroup = Instruction::where('id', $instructionId)
+            ->whereNotNull('group_id')
+            ->whereNotNull('group_priority')
+            ->first();
+
+        if (!$cekGroup){
+            $this->instructionData = Instruction::where('id', $instructionId)->get();
+        }else{
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
+        }
+
         $this->contohData = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
 
         $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 7)->first();
@@ -99,6 +131,12 @@ class HitungBahanDataViewIndex extends Component
         }
 
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'rincianPlate')->get();
+        $this->totalPlate = 0;
+        $this->totalLembarCetakPlate = 0;
+        $this->totalWastePlate = 0;
+        $this->totalScreen = 0;
+        $this->totalLembarCetakScreen = 0;
+        $this->totalWasteScreen = 0;
         foreach($keteranganData as $dataKeterangan){
             $keterangan = [
                 'fileRincian' => [],
@@ -111,6 +149,7 @@ class HitungBahanDataViewIndex extends Component
                     "jumlah_plate" => $dataPlate['jumlah_plate'],
                     "ukuran_plate" => $dataPlate['ukuran_plate']
                 ];
+                $this->totalPlate += $dataPlate['jumlah_plate'];
             }
 
             foreach($dataKeterangan['keteranganScreen'] as $dataScreen){
@@ -119,6 +158,7 @@ class HitungBahanDataViewIndex extends Component
                     "jumlah_screen" => $dataScreen['jumlah_screen'],
                     "ukuran_screen" => $dataScreen['ukuran_screen']
                 ];
+                $this->totalScreen += $dataScreen['jumlah_screen'];
             }
 
             foreach($dataKeterangan['keteranganPisauPond'] as $dataPisau){
@@ -135,6 +175,8 @@ class HitungBahanDataViewIndex extends Component
                     "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
                     "waste" => $dataRincianPlate['waste'],
                 ];
+                $this->totalLembarCetakPlate += $dataRincianPlate['jumlah_lembar_cetak'];
+                $this->totalWastePlate += $dataRincianPlate['waste'];
             }
 
             foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
@@ -144,6 +186,8 @@ class HitungBahanDataViewIndex extends Component
                     "jumlah_lembar_cetak" => $dataRincianScreen['jumlah_lembar_cetak'],
                     "waste" => $dataRincianScreen['waste'],
                 ];
+                $this->totalLembarCetakScreen += $dataRincianScreen['jumlah_lembar_cetak'];
+                $this->totalWasteScreen += $dataRincianScreen['waste'];
             }
 
             foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
@@ -177,8 +221,8 @@ class HitungBahanDataViewIndex extends Component
                 'supplier' => $dataLayoutBahan['supplier'],
                 'jumlah_lembar_cetak' => $dataLayoutBahan['jumlah_lembar_cetak'],
                 'jumlah_incit' => $dataLayoutBahan['jumlah_incit'],
-                'total_lembar_cetak' => $dataLayoutBahan['total_lembar_cetak'],
-                'harga_bahan' => $dataLayoutBahan['harga_bahan'],
+                'total_lembar_cetak' => currency_idr($dataLayoutBahan['total_lembar_cetak']),
+                'harga_bahan' => currency_idr($dataLayoutBahan['harga_bahan']),
                 'jumlah_bahan' => $dataLayoutBahan['jumlah_bahan'],
                 'panjang_sisa_bahan' => $dataLayoutBahan['panjang_sisa_bahan'],
                 'lebar_sisa_bahan' => $dataLayoutBahan['lebar_sisa_bahan'],
@@ -823,6 +867,24 @@ class HitungBahanDataViewIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal');
+    }
+
+    public function modalInstructionDetailsGroup($groupId)
+    {
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+
+        $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 
     public function deleteFileRincian($fileName, $key, $keteranganIndex)
