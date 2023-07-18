@@ -6,7 +6,7 @@
             {!! $htmlOutput !!}
         </div>
         <br>
-    @endforeach
+        @endforeach
     </div>
     
 </div>
