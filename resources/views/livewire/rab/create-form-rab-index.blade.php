@@ -25,6 +25,50 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
+                                            <th class="border-bottom-0">No SPK</th>
+                                            <th class="border-bottom-0">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{-- @php
+                                            $total_Price = 0;
+                                        @endphp --}}
+                                        
+                                        @foreach ($instructionItems as $key => $instructions)
+                                        <tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type="text" autocomplete="off"
+                                                        wire:model="instructionItems.{{ $key }}.spk_number"
+                                                        class="form-control" placeholder="SPK Number" readonly>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                <input type="text" autocomplete="off"
+                                                    wire:model="instructionItems.{{ $key }}.price"
+                                                    class="form-control" placeholder="Price" type-currency="IDR">
+                                                </div>
+                                            </td>
+                                            
+                                            {{-- @php
+                                                $total_Price += $instruction->price;
+                                            @endphp --}}
+                                        </tr>
+                                        @endforeach
+                                        {{-- <tr>
+                                            <td><strong>Total Price</strong></td>
+                                            <td><strong>{{ currency_idr($total_Price) }}</strong></td>
+                                        </tr> --}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
                                             <th class="border-bottom-0">Jenis Pengeluaran</th>
                                             <th class="border-bottom-0">RAB</th>
                                         </tr>
@@ -58,7 +102,7 @@
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off"
                                                             wire:model="rabItems.{{ $index }}.rab"
-                                                            class="form-control" placeholder="RAB">
+                                                            class="form-control" placeholder="RAB" type-currency="IDR">
                                                     </div>
                                                 </td>
                                                 <td>

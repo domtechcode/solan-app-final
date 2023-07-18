@@ -4,10 +4,14 @@ namespace App\Http\Livewire\Rab;
 
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Models\Instruction;
+use App\Models\LayoutBahan;
+use App\Models\KeteranganPlate;
 
 class CreateFormRabIndex extends Component
 {
     public $rabItems = [];
+    public $instructionItems = [];
     public $workSteps;
     public $keteranganReject;
     public $currentInstructionId;
@@ -40,19 +44,59 @@ class CreateFormRabIndex extends Component
 
     public function mount($instructionId)
     {
+        $this->currentInstructionId = $instructionId;
+        
+        $cekGroup = Instruction::where('id', $instructionId)
+            ->whereNotNull('group_id')
+            ->whereNotNull('group_priority')
+            ->first();
+
+        if (!$cekGroup){
+            $this->instructionData = Instruction::where('id', $instructionId)->get();
+            foreach ($this->instructionData as $instruction) {
+                $this->instructionItems[] = [
+                    'spk_number' => $instruction->spk_number,
+                    'price' => currency_idr($instruction->price),
+                ];
+            }
+        }else{
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
+            foreach ($this->instructionData as $instruction) {
+                $this->instructionItems[] = [
+                    'spk_number' => $instruction->spk_number,
+                    'price' => currency_idr($instruction->price),
+                ];
+            }
+        }
+
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
         $dataWorkSteps = WorkStep::where('instruction_id', $instructionId)->get();
 
+        $priceBahanBaku = LayoutBahan::where('instruction_id', $instructionId)->get();
+        $totalPrice = 0;
+
+        foreach ($priceBahanBaku as $layoutBahan) {
+            $totalPrice += $layoutBahan->jumlah_bahan * $layoutBahan->harga_bahan;
+        }
+
         $this->rabItems[] = [
             'jenisPengeluaran' => 'Bahan Baku',
-            'rab' => '',
+            'rab' => currency_idr($totalPrice),
         ];
+
+        $plateTotal = KeteranganPlate::where('instruction_id', $instructionId)->get();
+        $totalPlate = 0;
+
+        foreach ($plateTotal as $keteranganPlate) {
+            $totalPlate += $keteranganPlate->jumlah_plate;
+        }
 
         foreach ($dataWorkSteps as $workStep) {
             if ($workStep->work_step_list_id == 7) {
                 $this->rabItems[] = [
                     'jenisPengeluaran' => 'Plate',
-                    'rab' => '',
+                    'rab' => $totalPlate,
                 ];
             }
         }
