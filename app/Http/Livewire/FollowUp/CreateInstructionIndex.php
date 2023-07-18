@@ -69,16 +69,6 @@ class CreateInstructionIndex extends Component
     public $selectedConversation;
     public $receiverInstance;
 
-    // protected $rules = [
-    //     'spk_type' => 'required',
-    //     'spk_number' => 'required',
-    //     'customer' => 'required',
-    //     'order_date' => 'required',
-    //     'shipping_date' => 'required',
-    //     'order_name' => 'required',
-    //     'quantity' => 'required',
-    // ];
-
     public $workSteps = [];
 
     public function addField($name, $id)
@@ -376,7 +366,7 @@ class CreateInstructionIndex extends Component
                         'catatan' => $input['catatan'],
                         'kategori' => 'catatan',
                         'instruction_id' => $instruction->id,
-                        'user_id' => 1,
+                        'user_id' => Auth()->user()->id,
                     ]);
                 }
             }

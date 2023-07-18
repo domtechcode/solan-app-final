@@ -9,30 +9,45 @@
 <div>
     {{-- Do your work, then step back. --}}
 
-    {{-- @foreach ($catatan as $datacatatan)
-                @if (isset($datacatatan))
-                    <div class="row row-sm mb-5">
-                        <div class="text-wrap">
-                            <div class="">
-                                <div class="alert alert-danger">
-                                    <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40"
-                                            width="40" viewBox="0 0 24 24">
-                                            <path fill="#f07f8f"
-                                                d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
-                                            <circle cx="12" cy="17" r="1"
-                                                fill="#e62a45" />
-                                            <path fill="#e62a45"
-                                                d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
-                                        </svg></span>
-                                    <strong>Catatan Dari Operator : {{ $datacatatan->user->name }}</strong>
-                                    <hr class="message-inner-separator">
-                                    <p>{{ $datacatatan->catatan }}</p>
-                                </div>
-                            </div>
+    @foreach ($note as $datanote)
+    @if (isset($datanote))
+        <div class="row row-sm mb-5">
+            <div class="text-wrap">
+                <div class="">
+                    <div class="alert alert-info">
+                        <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24"><path fill="#70a9ee" d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z"/><circle cx="12" cy="17" r="1" fill="#1170e4"/><path fill="#1170e4" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z"/></svg></span>
+                        <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                        <hr class="message-inner-separator">
+                        <p>{{ $datanote->catatan }}</p>
+                        <div class="d-flex justify-content-end">
+                            <small>{{ $datanote->created_at }}</small>
                         </div>
                     </div>
-                @endif
-            @endforeach --}}
+                </div>
+            </div>
+        </div>
+    @endif
+    @endforeach
+
+    @foreach ($notereject as $datanotereject)
+    @if (isset($datanotereject))
+        <div class="row row-sm mb-5">
+            <div class="text-wrap">
+                <div class="">
+                    <div class="alert alert-danger">
+                        <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24"><path fill="#f07f8f" d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z"/><circle cx="12" cy="17" r="1" fill="#e62a45"/><path fill="#e62a45" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z"/></svg></span>
+                        <strong>Catatan Reject Dari Operator : {{ $datanotereject->user->name }}</strong>
+                        <hr class="message-inner-separator">
+                        <p>{{ $datanotereject->catatan }}</p>
+                        <div class="d-flex justify-content-end">
+                            <small>{{ $datanotereject->created_at }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    @endforeach
 
     <!-- ROW-1 Data Order-->
     <div class="row row-sm">
@@ -1950,7 +1965,54 @@
             <!-- ROW-2 END -->
         @endforeach
 
-        <button type="submit" class="btn btn-primary mt-4 mb-0" id="submitBtn">Submit</button>
+        <!-- ROW-1 Catatan -->
+        <div class="row row-sm">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                    <div class="card-header">
+                        <h3 class="card-title">Catatan</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="expanel expanel-default">
+                            <div class="expanel-body">
+                                <div class="form-group">
+                                    <label class="form-label mb-3">Catatan</label>
+                                    <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i class="fe fe-plus"></i>Tambah Catatan</button>
+                                </div>
+        
+                                @foreach ($notes as $index => $note)
+                                <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                    <div class="expanel expanel-default">
+                                        <div class="expanel-body">
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                    <option label="Pilih Tujuan Catatan"></option>
+                                                    @foreach ($workSteps as $key)
+                                                        <option value="{{ $key['work_step_list_id'] }}">{{ $key['workStepList']['name']  }}</option>
+                                                    @endforeach
+                                                    
+                                                </select>
+                                                <button class="btn btn-danger" type="button" wire:click="removeNote({{ $index }})"><i class="fe fe-x"></i></button>
+                                            </div>
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+        
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4 mb-0" id="submitBtn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
     </form>
 </div>
 
