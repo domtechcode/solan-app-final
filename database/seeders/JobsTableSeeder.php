@@ -21,7 +21,7 @@ class JobsTableSeeder extends Seeder
             ["id"=>"4","desc_job"=>"RAB","prefix"=>"rab"],
             ["id"=>"5","desc_job"=>"Purchase","prefix"=>"purchase"],
             ["id"=>"6","desc_job"=>"Accounting","prefix"=>"accounting"],
-            ["id"=>"7","desc_job"=>"Stock","prefix"=>"stock"],
+            ["id"=>"7","desc_job"=>"Cari/Ambil Stock","prefix"=>"stock"],
             ["id"=>"8","desc_job"=>"Setting","prefix"=>"setting"],
             ["id"=>"9","desc_job"=>"Checker","prefix"=>"checker"],
             ["id"=>"10","desc_job"=>"Plate","prefix"=>"plate"],
