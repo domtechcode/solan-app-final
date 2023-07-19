@@ -33,8 +33,8 @@ class LoginController extends Controller
                     return redirect()->route('followUp.dashboard');
                     break;
 
-                case 'admin-kecamatan':
-                    return redirect()->route('admin-kecamatan.dashboard');
+                case 'Stock':
+                    return redirect()->route('stock.dashboard');
                     break;
 
                 case 'admin-kelurahan':

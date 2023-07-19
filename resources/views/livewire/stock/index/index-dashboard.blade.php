@@ -20,6 +20,9 @@
                 </div>
                 <!-- PAGE-HEADER END -->
 
+                @livewire('component.statistik')
+
+
                 <div class="row">
                     <div class="col-lg-12">
                         <!--Row-->
@@ -29,13 +32,8 @@
                                     <!-- Tabs -->
                                     <ul class="nav panel-tabs">
                                         <li>
-                                            <button href="#tab1" class="active btn btn-info mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Group SPK
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab2" class="btn btn-primary mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Ungroup SPK
+                                            <button href="#tab1" class="active btn btn-dark mt-1 mb-1 me-3"
+                                                data-bs-toggle="tab">New SPK
                                             </button>
                                         </li>
                                     </ul>
@@ -52,29 +50,12 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                                <div class="card-status bg-dark br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Group SPK</h3>
+                                                    <h3 class="card-title">New SPK</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('component.group-index')
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- ROW-2 END -->
-                                </div>
-                                <div class="tab-pane" id="tab2">
-                                    <!-- ROW-2-->
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-status bg-primary br-te-7 br-ts-7"></div>
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Ungroup SPK</h3>
-                                                </div>
-                                                <div class="card-body">
-                                                    @livewire('component.ungroup-index')
+                                                    @livewire('stock.component.new-spk-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>

@@ -21,8 +21,7 @@ class CreateNotificationsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->text('message');
             $table->text('conversation');
-            $table->unsignedBigInteger('receiver_id')->nullable();
-            $table->foreign('receiver_id')->references('id')->on('users');
+            $table->string('receiver_id')->nullable();
             $table->timestamps();
         });
     }

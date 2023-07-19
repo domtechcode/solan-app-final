@@ -135,17 +135,7 @@
                     }
                 });
             });
-
-            // Livewire.on('showModal', (id) => {
-            //     id = "#" + id;
-            //     $(id).modal('show');
-            // });
-
-            // Livewire.on('closeModal', (id) => {
-            //     id = "#" + id;
-            //     $(id).modal('hide');
-            // });
-
+            
             Livewire.on('flashMessage', (param) => {
                 toastr.options = {
                     "closeButton": true,
@@ -176,8 +166,9 @@
             // Mendengarkan event dari public channel
             window.Echo.channel('notif.' + {{ Auth::user()->id }})
                 .listen('NotificationSent', function (data) {
-                    Livewire.emit('refreshIndexDashboard');
-                    console.log(data);
+                    // Livewire.emit('refreshIndexDashboard', data);
+                    Livewire.emit('notifSent', data);
+                    // console.log(data);
                 });
         });
     </script>

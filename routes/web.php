@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Livewire\Rab\IndexCreateFormRab;
 use App\Http\Livewire\FollowUp\Index\IndexGroup;
-use App\Http\Livewire\FollowUp\Index\IndexDashboard;
 use App\Http\Controllers\Auth\LoginContr\LoginController;
 use App\Http\Livewire\FollowUp\Index\IndexEditInstruction;
 use App\Http\Livewire\HitungBahan\IndexEditFormHitungBahan;
@@ -37,11 +35,16 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess')
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'followup', 'middleware' => ['role:Follow Up']], function () {
-        Route::get('/dashboard', IndexDashboard::class)->name('followUp.dashboard');
-        Route::get('/create-instruction', IndexCreateInstruction::class)->name('followUp.createInstruction');
-        Route::get('/edit-instruction/{instructionId}', IndexEditInstruction::class)->name('followUp.editInstruction');
-        Route::get('/update-instruction/{instructionId}', IndexUpdateInstruction::class)->name('followUp.updateInstruction');
-        Route::get('/group', IndexGroup::class)->name('followUp.group');
+        Route::get('/dashboard', 'App\Http\Livewire\FollowUp\Index\IndexDashboard')->name('followUp.dashboard');
+        Route::get('/create-instruction', 'App\Http\Livewire\FollowUp\Index\IndexCreateInstruction')->name('followUp.createInstruction');
+        Route::get('/edit-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexEditInstruction')->name('followUp.editInstruction');
+        Route::get('/update-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction')->name('followUp.updateInstruction');
+        Route::get('/group', IndexGroup::class)->name('group');
+
+    });
+
+    Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\Stock\Index\IndexDashboard')->name('stock.dashboard');
 
     });
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp\Component;
+namespace App\Http\Livewire\Stock\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -13,14 +13,28 @@ class NewSpkDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
-
+    
     protected $listeners = ['refreshIndexDashboard' => 'refreshIndex'];
 
     public function refreshIndex($data)
     {
+        $instruction_id = $data['instruction_id'];
+        $user_id = $data['user_id'];
+        $message = $data['message'];
+        $conversation_id = $data['conversation_id'];
+        $receiver_id = $data['receiver_id'];
+
+        $instructionData = Instruction::find($instruction_id);
+
+        $this->emit('flashMessage', [
+                    'type' => 'info',
+                    'title' => 'SPK Baru',
+                    'message' => 'SPK '.$instructionData->spk_number,
+            ]);
+
         $this->render();
     }
- 
+
     public $paginate = 10;
     public $search = '';
     public $data;
@@ -53,15 +67,19 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.component.new-spk-dashboard-index', [
+        return view('livewire.stock.component.new-spk-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 1)
+                            WorkStep::where('work_step_list_id', 4)
+                                    ->where('state_task', 'Running')
+                                    ->where('status_task', 'Pending Approved')
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'jobs'])
+                                        ->with(['status', 'job'])
                                         ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 1)
+                            WorkStep::where('work_step_list_id', 4)
+                                        ->where('state_task', 'Running')
+                                        ->where('status_task', 'Pending Approved')
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
