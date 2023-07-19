@@ -20,6 +20,7 @@ class NotificationSent implements ShouldBroadcast
     public $message;
     public $conversation;
     public $receiver;
+    public $instruction;
 
     /**
      * Create a new event instance.
@@ -30,19 +31,21 @@ class NotificationSent implements ShouldBroadcast
      * @param  mixed  $receiver
      * @return void
      */
-    public function __construct($user, $message, $conversation, $receiver)
+    public function __construct($user, $message, $conversation, $instruction, $receiver)
     {
         $this->user = $user;
         $this->message = $message;
         $this->conversation = $conversation;
         $this->receiver = $receiver;
+        $this->instruction = $instruction;
 
-        // Notification::create([
-        //     'user_id' => $user,
-        //     'message' => $message,
-        //     'conversation_id' => $conversation,
-        //     'receiver_id' => $receiver,
-        // ]);
+        Notification::create([
+            'instruction_id' => $instruction,
+            'user_id' => $user,
+            'message' => $message,
+            'conversation' => $conversation,
+            'receiver_id' => $receiver,
+        ]);
     }
 
     /**
@@ -63,6 +66,7 @@ class NotificationSent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
+            'instruction_id' => $this->instruction,
             'user_id' => $this->user,
             'message' => $this->message,
             'conversation_id' => $this->conversation,

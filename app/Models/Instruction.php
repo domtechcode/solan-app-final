@@ -25,7 +25,7 @@ class Instruction extends Model
     protected $table = 'instructions';
     protected $guarded = [];
 
-    public function workstep()
+    public function workStep()
     {
         return $this->hasMany(WorkStep::class);
     }
