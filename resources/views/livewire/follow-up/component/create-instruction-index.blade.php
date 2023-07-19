@@ -1,7 +1,5 @@
 <div>
     {{-- In work, do what you enjoy. --}}
-        
-
     <form wire:submit.prevent="save">
         <div class="row">
             <div class="col-sm-6 col-md-6">
@@ -366,6 +364,10 @@
                                         <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan" required>
                                             <option label="Pilih Tujuan Catatan"></option>
                                             @foreach ($workSteps as $key)
+                                                @if($key['name'] == 'Hitung Bahan')
+                                                    <option value="2">Penjadwalan</option>
+                                                    <option value="3">RAB</option>
+                                                @endif
                                                 <option value="{{ $key['id'] }}">{{ $key['name']  }}</option>
                                             @endforeach
                                             

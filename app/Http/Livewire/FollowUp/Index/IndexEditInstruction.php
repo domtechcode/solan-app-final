@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp;
+namespace App\Http\Livewire\FollowUp\Index;
 
 use Livewire\Component;
 
-class IndexUpdateInstruction extends Component
+class IndexEditInstruction extends Component
 {
     public $instructions;
 
@@ -16,11 +16,11 @@ class IndexUpdateInstruction extends Component
     public function render()
     {
 
-        return view('livewire.follow-up.index-update-instruction', [
-            'title' => 'Form Update Instruksi Kerja'
+        return view('livewire.follow-up.index.index-edit-instruction', [
+            'title' => 'Form Edit Instruksi Kerja'
         ])
         ->extends('layouts.app')
         ->section('content')
-        ->layoutData(['title' => 'Form Update Instruksi Kerja']);
+        ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
     }
 }

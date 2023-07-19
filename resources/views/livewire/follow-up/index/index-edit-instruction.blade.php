@@ -28,7 +28,7 @@
                                 <h3 class="card-title">{{ $title }}</h3>
                             </div>
                             <div class="card-body">
-                                @livewire('follow-up.update-instruction-index', ['instructionId' => $instructions])
+                                @livewire('follow-up.component.edit-instruction-index', ['instructionId' => $instructions])
                             </div>
                         </div>
                     </div>

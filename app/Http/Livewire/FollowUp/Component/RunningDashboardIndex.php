@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp;
+namespace App\Http\Livewire\FollowUp\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -8,7 +8,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class ShowInstruction extends Component
+class RunningDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -70,7 +70,7 @@ class ShowInstruction extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.show-instruction', [
+        return view('livewire.follow-up.component.running-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 1)
                                         ->whereHas('instruction', function ($query) {

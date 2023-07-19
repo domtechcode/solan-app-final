@@ -77,7 +77,7 @@
                 </svg></div>
             <ul class="side-menu">
 
-                {{-- @if( auth()->user()->role == 'Follow Up' ) --}}
+                @if( auth()->user()->role == 'Follow Up' )
                 <li class="sub-category">
                     <h3>Home</h3>
                 </li>
@@ -105,11 +105,11 @@
                 </li>
 
                 <li class="sub-category">
-                    <h3>Form Instructions</h3>
+                    <h3>Form Instruksi Kerja</h3>
                 </li>
                 <li class="slide">
                     <a class="side-menu__item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
-                            class="side-menu__icon fe fe-user"></i><span class="side-menu__label">User</span><i
+                            class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Form Instruksi Kerja</span><i
                             class="angle fe fe-chevron-right"></i>
                     </a>
                     <ul class="slide-menu">
@@ -120,8 +120,9 @@
                                 <div class="tab-content">
                                     <div class="tab-pane active" id="side1">
                                         <ul class="sidemenu-list">
-                                            <li class="side-menu-label1"><a href="javascript:void(0)">Form Instructions</a></li>
-                                            <li><a href="{{ route('createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}">Create Instructions</a></li>
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Form Instruksi Kerja</a></li>
+                                            <li><a href="{{ route('followUp.createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}">Form Instruksi Kerja (New)</a></li>
+                                            <li><a href="{{ route('followUp.createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja Kekurangan") ? 'active' : ''}}">Form Instruksi Kerja (Kekurangan)</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -130,7 +131,33 @@
                     </ul>
                 </li>
 
-                {{-- @endif --}}
+                <li class="sub-category">
+                    <h3>Group</h3>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Group") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Group</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Group</a></li>
+                                            <li><a href="{{ route('followUp.group') }}" class="slide-item {{ ($title === "Group") ? 'active' : ''}}">Group (New)</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                @endif
 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"

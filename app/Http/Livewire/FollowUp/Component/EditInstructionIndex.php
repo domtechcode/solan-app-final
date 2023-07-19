@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp;
+namespace App\Http\Livewire\FollowUp\Component;
 
 use Carbon\Carbon;
 use App\Models\Files;
@@ -14,7 +14,7 @@ use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
 
-class UpdateInstructionIndex extends Component
+class EditInstructionIndex extends Component
 {
     use WithFileUploads;
     public $filecontoh = [];
@@ -52,13 +52,28 @@ class UpdateInstructionIndex extends Component
     public $dataparents = [];
     public $datalayouts = [];
     public $datasamples = [];
+    public $dataworksteplists = [];
 
+    public $workSteps = [];
+    
     public $filecontohCurrent;
     public $filearsipCurrent;
     public $fileaccountingCurrent;
 
     public $currentInstructionId;
 
+
+    public function addField($name, $id)
+    {
+        $this->workSteps[] = ['name' => $name, 'id' => $id];
+
+    }
+    
+    public function removeField($index)
+    {
+        unset($this->workSteps[$index]);
+        $this->workSteps = array_values($this->workSteps);
+    }
 
     public function addEmptyNote()
     {
@@ -78,6 +93,7 @@ class UpdateInstructionIndex extends Component
         $this->dataparents = Instruction::where('spk_number', 'LIKE', '%-A')->orderByDesc('created_at')->get();
         $this->datalayouts = Instruction::where('spk_type', 'layout')->orderByDesc('created_at')->get();
         $this->datasamples = Instruction::where('spk_type', 'sample')->orderByDesc('created_at')->get();
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
 
         $this->instructions = Instruction::findorfail($instructionId);
         $this->spk_type = $this->instructions->type_order;
@@ -107,6 +123,15 @@ class UpdateInstructionIndex extends Component
             ->with('workStepList')
             ->get();
 
+        $this->workSteps = [];
+
+        foreach ($dataWorkStep as $workStep) {
+            $this->workSteps[] = [
+                "name" => $workStep->workStepList->name,
+                "id" => $workStep->work_step_list_id
+            ];
+        }
+
         $this->filecontohCurrent = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->filearsipCurrent = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
         $this->fileaccountingCurrent = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
@@ -126,7 +151,7 @@ class UpdateInstructionIndex extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.update-instruction-index', [
+        return view('livewire.follow-up.component.edit-instruction-index', [
             'title' => 'Form Edit Instruksi Kerja'
         ])
         ->extends('layouts.app')
@@ -136,6 +161,14 @@ class UpdateInstructionIndex extends Component
 
     public function update()
     {
+        if (empty($this->workSteps)) {
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Instruksi Kerja',
+                'message' => 'Langkah Kerja Harus Dipilih',
+            ]);
+        }
+
        $this->validate([
             'spk_type' => 'required',
             'spk_number' => 'required',
@@ -144,6 +177,7 @@ class UpdateInstructionIndex extends Component
             'shipping_date' => 'required',
             'order_name' => 'required',
             'quantity' => 'required',
+            'workSteps' => 'required',
         ]);
 
         $customerList = Customer::find($this->customer);
@@ -186,6 +220,155 @@ class UpdateInstructionIndex extends Component
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
             ]);
+
+        
+            $this->workSteps = array_map(function ($workSteps) {
+                $workSteps['user_id'] = null;
+                return $workSteps;
+            }, $this->workSteps);
+
+            if($this->spk_type == 'layout'){
+                // Menambahkan elemen sebelum array indeks 0
+                array_unshift($this->workSteps, [
+                    "name" => "Follow Up",
+                    "id" => "1",
+                    "user_id" => Auth()->user()->id
+                ], [
+                    "name" => "Penjadwalan",
+                    "id" => "2",
+                    "user_id" => "4"
+                ]);
+            }else{
+                // Menambahkan elemen sebelum array indeks 0
+                array_unshift($this->workSteps, [
+                    "name" => "Follow Up",
+                    "id" => "1",
+                    "user_id" => Auth()->user()->id
+                ]);
+                
+                $indexHitungBahan = array_search("Hitung Bahan", array_column($this->workSteps, "name"));
+                $indexRAB = array_search("RAB", array_column($this->workSteps, "name"));
+                $indexCariStock = array_search("Cari/Ambil Stock", array_column($this->workSteps, "name"));
+                
+                if ($indexHitungBahan !== false) {
+                    // Elemen "Hitung Bahan" ditemukan
+                    array_splice($this->workSteps, $indexHitungBahan + 1, 0, [
+                        [
+                            "name" => "RAB",
+                            "id" => "3",
+                            "user_id" => null
+                        ]
+                    ]);
+                    $indexRAB = array_search("RAB", array_column($this->workSteps, "name"));
+                    if ($indexRAB !== false) {
+                        // Elemen "RAB" ditemukan setelah "Hitung Bahan"
+                        array_splice($this->workSteps, $indexRAB + 1, 0, [
+                            [
+                                "name" => "Penjadwalan",
+                                "id" => "2",
+                                "user_id" => "4"
+                            ]
+                        ]);
+                    }
+                } elseif ($indexRAB !== false) {
+                    // Elemen "Hitung Bahan" tidak ditemukan, tetapi elemen "RAB" ditemukan
+                    array_splice($this->workSteps, $indexRAB + 1, 0, [
+                        [
+                            "name" => "Penjadwalan",
+                            "id" => "2",
+                            "user_id" => "4"
+                        ]
+                    ]);
+                } else {
+                    // Tidak ada elemen "Hitung Bahan" atau "RAB"
+                    $indexFollowUp = array_search("Follow Up", array_column($this->workSteps, "name"));
+                    $indexCariStock = array_search("Cari/Ambil Stock", array_column($this->workSteps, "name"));
+                    
+                    if ($indexFollowUp !== false && $indexCariStock !== false && $indexCariStock > $indexFollowUp) {
+                        // Elemen "Cari/Ambil Stock" ditemukan setelah "Follow Up"
+                        array_splice($this->workSteps, $indexCariStock + 1, 0, [
+                            [
+                                "name" => "Penjadwalan",
+                                "id" => "2",
+                                "user_id" => "4"
+                            ]
+                        ]);
+                    } else {
+                        // Tidak ada elemen "Cari/Ambil Stock" atau "Cari/Ambil Stock" sebelum "Follow Up"
+                        if ($indexFollowUp !== false) {
+                            array_splice($this->workSteps, $indexFollowUp + 1, 0, [
+                                [
+                                    "name" => "Penjadwalan",
+                                    "id" => "2",
+                                    "user_id" => "4"
+                                ]
+                            ]);
+                        }
+                    }
+                }
+            }
+        
+            $lastWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->get();
+            $rejectFrom = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
+            $workStepFrom = WorkStep::find($rejectFrom->reject_from_id);
+            $deleteWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->delete();
+
+            $no = 0;
+            foreach ($this->workSteps as $step) {
+            $newWorkStep =  WorkStep::create([
+                    'instruction_id' => $this->currentInstructionId,
+                    'work_step_list_id' => $step['id'],
+                    'state_task' => 'Not Running',
+                    'status_task' => 'Waiting',
+                    'step' => $no,
+                    'task' => 'Running',
+                    'user_id' => $step['user_id'],
+                ]);
+                $no++;
+            }
+
+            
+            foreach ($lastWorkStep as $lastwork) {
+                WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $lastwork->work_step_list_id)
+                ->update([
+                    'user_id' => $lastwork->user_id,
+                    'machine_id' => $lastwork->machine_id,
+                    'target_date' => $lastwork->target_date,
+                    'schedule_date' => $lastwork->schedule_date,
+                    'target_time' => $lastwork->target_time,
+                    'step' => $lastwork->step,
+                    'state_task' => $lastwork->state_task,
+                    'status_task' => $lastwork->status_task,
+                    'dikerjakan' => $lastwork->dikerjakan,
+                    'selesai' => $lastwork->selesai,
+                    'task' => $lastwork->task,
+                ]);
+            }
+
+            //update selesai
+            WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', 0)
+                ->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'target_date' => Carbon::now(),
+                    'schedule_date' => Carbon::now(),
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'selesai' => Carbon::now()->toDateTimeString()
+                ]);
+            
+            WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => $rejectFrom->reject_from_status,
+                'job_id' =>  $rejectFrom->reject_from_job,
+                'reject_from_status' => NULL,
+                'reject_from_job' => NULL,
+            ]);
+
+            //cari no 1 langkah kerjanya
+            WorkStep::where('id', $rejectFrom->reject_from_id)
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                ]);
             
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
@@ -257,6 +440,8 @@ class UpdateInstructionIndex extends Component
                 }
             }
             
+            // // Setelah data disimpan, reset array $workSteps
+            $this->workSteps = [];
 
             session()->flash('success', 'Instruksi kerja berhasil disimpan.');
             $this->emit('flashMessage', [
@@ -448,18 +633,18 @@ class UpdateInstructionIndex extends Component
             
             if($datacustomerlist->taxes == 'pajak' && empty($this->sub_spk) && empty($this->spk_parent)){
                 $nomor_urut = $nomor_spk + 534;
-                $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut);
+                $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut + 1);
             }else if($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && empty($this->spk_parent)){
                 $nomor_urut = $nomor_spk + 534;
-                $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut). '-A';
+                $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '-A';
             }else if($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && isset($this->spk_parent)){
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }if($datacustomerlist->taxes == 'nonpajak' && empty($this->sub_spk) && empty($this->spk_parent)){
                 $nomor_urut = $nomor_spk + 153;
-                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut);
+                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1);
             }else if($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && empty($this->spk_parent)){
                 $nomor_urut = $nomor_spk + 153;
-                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut). '-A';
+                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '-A';
             }else if($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && isset($this->spk_parent)){
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
@@ -470,7 +655,7 @@ class UpdateInstructionIndex extends Component
                                     ->where('taxes_type', 'nonpajak')
                                     ->count();
             $nomor_urut = $nomor_spk + 153;
-            $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut). '(STK)';
+            $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '(STK)';
         }
 
         // Perbarui nilai input text
