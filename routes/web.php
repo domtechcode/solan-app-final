@@ -36,8 +36,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'followup', 'middleware' => ['role:Follow Up']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\FollowUp\Index\IndexDashboard')->name('followUp.dashboard');
         Route::get('/create-instruction', 'App\Http\Livewire\FollowUp\Index\IndexCreateInstruction')->name('followUp.createInstruction');
+        Route::get('/create-instruction-kekurangan', 'App\Http\Livewire\FollowUp\Index\IndexCreateInstructionKekurangan')->name('followUp.createInstructionKekurangan');
         Route::get('/edit-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexEditInstruction')->name('followUp.editInstruction');
         Route::get('/update-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction')->name('followUp.updateInstruction');
+        Route::get('/reorder-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexReorderInstruction')->name('followUp.reorderInstruction');
         Route::get('/group', IndexGroup::class)->name('group');
 
     });

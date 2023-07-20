@@ -18,6 +18,7 @@ class AllDashboardIndex extends Component
     public $search = '';
     public $data;
 
+    public $instructionSelectedId;
     public $selectedInstruction;
     public $selectedWorkStep;
     public $selectedFileContoh;
@@ -39,9 +40,14 @@ class AllDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex'];
+    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
-    public function refreshIndex($data)
+    public function refreshIndex()
+    {
+        $this->render();
+    }
+
+    public function renderIndex()
     {
         $this->render();
     }
@@ -58,7 +64,7 @@ class AllDashboardIndex extends Component
                             WorkStep::where('work_step_list_id', 1)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->whereIn('spk_status', ['Running', 'Hold'])
+                                        ->whereIn('spk_status', ['Running'])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
@@ -67,7 +73,7 @@ class AllDashboardIndex extends Component
                             WorkStep::where('work_step_list_id', 1)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->whereIn('spk_status', ['Running', 'Hold'])
+                                        ->whereIn('spk_status', ['Running'])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -82,13 +88,82 @@ class AllDashboardIndex extends Component
                                         ->paginate($this->paginate)
         ])
         ->extends('layouts.app')
-        ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function deleteSpk($instructionDeleteId)
+    {
+        $deleteSpk = WorkStep::where('instruction_id', $instructionDeleteId)->update([
+            'spk_status' => 'Deleted'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Delete Instruksi Kerja',
+            'message' => 'SPK berhasil didelete',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function holdSpk($instructionHoldId)
+    {
+        $holdSpk = WorkStep::where('instruction_id', $instructionHoldId)->update([
+            'spk_status' => 'Hold'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Instruksi Kerja',
+            'message' => 'SPK berhasil dihold',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+        
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function cancelSpk($instructionCancelId)
+    {
+        $cancelSpk = WorkStep::where('instruction_id', $instructionCancelId)->update([
+            'spk_status' => 'Cancel'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Cancel Instruksi Kerja',
+            'message' => 'SPK berhasil dicancel',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function modalInstructionDetailsAll($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
+        $this->instructionSelectedId = $instructionId;
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
@@ -96,10 +171,10 @@ class AllDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-all');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupAll($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -114,6 +189,6 @@ class AllDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-all');
     }
 }

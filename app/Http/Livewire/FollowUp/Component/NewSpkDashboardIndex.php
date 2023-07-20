@@ -39,9 +39,14 @@ class NewSpkDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex'];
+    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
-    public function refreshIndex($data)
+    public function refreshIndex()
+    {
+        $this->render();
+    }
+
+    public function renderIndex()
     {
         $this->render();
     }
@@ -63,7 +68,7 @@ class NewSpkDashboardIndex extends Component
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'workStepList'])
+                                        ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 1)
                                         ->where('state_task', 'Running')
@@ -80,7 +85,7 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'workStepList'])
+                                        ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate)
         ])
         ->extends('layouts.app')

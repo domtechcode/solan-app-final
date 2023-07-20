@@ -194,39 +194,12 @@
             </div>
 
             <div class="col-sm-6 col-md-6">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label">Quantity</label>
-                            <div class="input-group">
-                                <input type="text" wire:model.defer="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror" autocomplete="off" placeholder="Quantity" type-currency="IDR">
-                            </div>
-                            @error('quantity') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <div class="input-group">
+                        <input type="text" wire:model.defer="quantity" id="quantity" class="form-control @error('quantity') is-invalid @enderror" autocomplete="off" placeholder="Quantity" type-currency="IDR">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Hitung Ulang Estimator</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <label class="custom-switch form-switch me-5">
-                                        <input type="radio" wire:model="qtyState" class="custom-switch-input @error('qtyState') is-invalid @enderror" value="Ya">
-                                        <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        <span class="custom-switch-description">Ya</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <label class="custom-switch form-switch me-5">
-                                        <input type="radio" wire:model="qtyState" class="custom-switch-input @error('qtyState') is-invalid @enderror" value="Tidak">
-                                        <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        <span class="custom-switch-description">Tidak</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @error('quantity') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>
             </div>
 
@@ -291,6 +264,46 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6">
+                <div class="expanel expanel-default">
+                    <div class="expanel-body">
+                        <div class="form-group">
+                            <label class="form-label mb-3">Langkah Kerja</label>
+                            @foreach ($workSteps as $index => $step)
+                                <div class="input-group control-group" style="padding-top: 5px;" id="row_remove{{ $index }}">
+                                    <input type="text" class="form-control" value="{{ $step['id'] }}" wire:model.defer="workSteps.{{ $index }}.id" style="display: none;">
+                                    <input type="text" class="form-control" value="{{ $step['name'] }}">
+                                    <button class="btn btn-danger btn_remove" type="button" wire:click="removeField({{ $index }})"><i class="fe fe-x"></i></button>
+                                </div>
+                            @endforeach
+                        </div>
+                        @error('workStep') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6">
+                <div class="expanel expanel-default">
+                    <div class="expanel-body">
+                        <label class="form-label mb-3">List Langkah Kerja</label>
+                        <div class="form-group">
+                            <div class="selectgroup selectgroup-pills">
+                                @foreach ($dataworksteplists as $key)
+                                    <label class="selectgroup-item">
+                                        @if ($key['name'] == 'Cetak Label' || $key['name'] == 'Hot Cutting' || $key['name'] == 'Hot Cutting Folding' || $key['name'] == 'Lipat Perahu' || $key['name'] == 'Lipat Kanan Kiri')
+                                            <input type="button" class="btn btn-outline-info add_field" wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')" value="{{ $key['name'] }}">
+                                        @else
+                                            <input type="button" class="btn btn-outline-primary add_field" wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')" value="{{ $key['name'] }}">
+                                        @endif
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
