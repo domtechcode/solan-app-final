@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\FollowUp\Index;
 
 use Livewire\Component;
+use App\Models\Instruction;
 
 class IndexDashboard extends Component
 {

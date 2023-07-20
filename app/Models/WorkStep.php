@@ -28,10 +28,10 @@ class WorkStep extends Model
         return $this->belongsTo(WorkStepList::class);
     }
 
-    public function job()
-    {
-        return $this->belongsTo(Job::class);
-    }
+    // public function job()
+    // {
+    //     return $this->belongsTo(Job::class);
+    // }
 
     public function status()
     {

@@ -18,7 +18,7 @@ class CreateInstructionsTable extends Migration
             $table->string('spk_number')->nullable();
             $table->string('spk_type')->nullable();
             $table->string('taxes_type')->nullable();
-            $table->string('spk_status')->nullable();
+            // $table->string('spk_status')->nullable();
             $table->string('spk_state')->nullable();
             $table->string('repeat_from')->nullable();
             $table->string('request_kekurangan')->nullable();

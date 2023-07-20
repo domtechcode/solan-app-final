@@ -13,13 +13,6 @@ class NewSpkDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
-
-    protected $listeners = ['refreshIndexDashboard' => 'refreshIndex'];
-
-    public function refreshIndex($data)
-    {
-        $this->render();
-    }
  
     public $paginate = 10;
     public $search = '';
@@ -46,6 +39,13 @@ class NewSpkDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    protected $listeners = ['notifSent' => 'refreshIndex'];
+
+    public function refreshIndex($data)
+    {
+        $this->render();
+    }
+
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
@@ -56,12 +56,20 @@ class NewSpkDashboardIndex extends Component
         return view('livewire.follow-up.component.new-spk-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Running')
+                                        ->whereIn('status_task', ['Process'])
+                                        ->where('spk_status', 'Running')
+                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'jobs'])
+                                        ->with(['status', 'workStepList'])
                                         ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Running')
+                                        ->whereIn('status_task', ['Process'])
+                                        ->where('spk_status', 'Running')
+                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -72,7 +80,7 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'job'])
+                                        ->with(['status', 'workStepList'])
                                         ->paginate($this->paginate)
         ])
         ->extends('layouts.app')

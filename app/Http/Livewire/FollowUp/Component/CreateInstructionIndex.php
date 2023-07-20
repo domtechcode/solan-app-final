@@ -19,8 +19,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CreateInstructionIndex extends Component
 {
-    protected $listeners = ['dispatchMessageSent'];
-
     use WithFileUploads;
     public $filecontoh = [];
     public $filearsip = [];
@@ -189,8 +187,8 @@ class CreateInstructionIndex extends Component
                 'quantity' => currency_convert($this->quantity),
                 'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
-                'spk_status' => 'New',
-                'spk_state' => 'Running',
+                // 'spk_status' => 'New',
+                'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,
                 'spk_parent' => $this->spk_parent,
                 'spk_fsc' => $this->spk_fsc,
@@ -292,23 +290,22 @@ class CreateInstructionIndex extends Component
             
             $no = 0;
             foreach ($this->workSteps as $step) {
-                WorkStep::create([
+                $inserWorkStep = WorkStep::create([
                     'instruction_id' => $instruction->id,
                     'work_step_list_id' => $step['id'],
                     'state_task' => 'Not Running',
                     'status_task' => 'Waiting',
                     'step' => $no,
-                    'task' => 'Running',
                     'user_id' => $step['user_id'],
+                    'spk_status' => 'Running',
                 ]);
                 $no++;
             }
 
-            //update selesai
-            WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
+            $updateFollowUp = WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
                 ->update([
                     'state_task' => 'Running',
-                    'status_task' => 'Complete',
+                    'status_task' => 'Process',
                     'target_date' => Carbon::now(),
                     'schedule_date' => Carbon::now(),
                     'dikerjakan' => Carbon::now()->toDateTimeString(),
@@ -316,13 +313,8 @@ class CreateInstructionIndex extends Component
                 ]);
             
             $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)->first();
-            $workStepList = WorkStepList::find($firstWorkStep->work_step_list_id);
-            $jobList = Job::where('desc_job', $workStepList->name)->first();
-            $statusId = 1;
-            $JobId = $jobList->id;
 
-            //cari no 1 langkah kerjanya
-            WorkStep::where('instruction_id', $instruction->id)->where('step', 1)
+            $updateNextStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)
                 ->update([
                     'state_task' => 'Running',
                     'status_task' => 'Pending Approved',
@@ -333,8 +325,7 @@ class CreateInstructionIndex extends Component
 
             WorkStep::where('instruction_id', $instruction->id)
                 ->update([
-                    'status_id' => $statusId,
-                    'job_id' => $JobId,
+                    'status_id' => 1,
                 ]);
             
             if ($this->spk_layout_number) {
@@ -410,15 +401,10 @@ class CreateInstructionIndex extends Component
 
             //notif
             if ($firstWorkStep->work_step_list_id == 4) {
-                WorkStep::where('instruction_id', $instruction->id)
-                    ->where('step', 1)
-                    ->update([
-                        'user_id' => 9,
-                    ]);
                 $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
             } else if ($firstWorkStep->work_step_list_id == 5) {
                 $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
+                $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
             } else {
                 $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
             }
@@ -454,6 +440,7 @@ class CreateInstructionIndex extends Component
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, $receiverUser));
+        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, Auth()->user()->id));
     }
 
     public function uploadFiles($instructionId)
@@ -468,7 +455,7 @@ class CreateInstructionIndex extends Component
 
             Files::create([
                 'instruction_id' => $instructionId,
-                "user_id" => "2",
+                "user_id" => Auth()->user()->id,
                 "type_file" => "contoh",
                 "file_name" => $fileName,
                 "file_path" => $folder,
@@ -483,7 +470,7 @@ class CreateInstructionIndex extends Component
 
             Files::create([
                 'instruction_id' => $instructionId,
-                "user_id" => "2",
+                "user_id" => Auth()->user()->id,
                 "type_file" => "arsip",
                 "file_name" => $fileName,
                 "file_path" => $folder,
@@ -498,7 +485,7 @@ class CreateInstructionIndex extends Component
 
             Files::create([
                 'instruction_id' => $instructionId,
-                "user_id" => "2",
+                "user_id" => Auth()->user()->id,
                 "type_file" => "accounting",
                 "file_name" => $fileName,
                 "file_path" => $folder,
