@@ -13,31 +13,7 @@ class CompleteDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
-    
-
-    protected $listeners = ['refreshIndexDashboard' => 'refreshStatistik'];
-
-    public function refreshStatistik()
-    {
-        // $user_id = $data['user_id'];
-        // $message = $data['message'];
-        // $conversation_id = $data['conversation_id'];
-        // $receiver_id = $data['receiver_id'];
-
-        $this->emit('flashMessage', [
-                    'type' => 'error',
-                    'title' => 'Error Instruksi Kerja',
-                    'message' => 'asdasd',
-            ]);
-
-        $this->render();
-    }
  
-    // public function notifyNewOrder($data)
-    // {
-        
-    // }
-
     public $paginate = 10;
     public $search = '';
     public $data;
@@ -63,6 +39,13 @@ class CompleteDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    protected $listeners = ['notifSent' => 'refreshIndex'];
+
+    public function refreshIndex($data)
+    {
+        $this->render();
+    }
+
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
@@ -73,12 +56,20 @@ class CompleteDashboardIndex extends Component
         return view('livewire.follow-up.component.complete-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Selesai')
+                                        ->whereIn('status_task', ['Selesai'])
+                                        ->where('spk_status', 'Selesai')
+                                        ->whereIn('status_id', [7])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'jobs'])
+                                        ->with(['status', 'workStepList'])
                                         ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Selesai')
+                                        ->whereIn('status_task', ['Selesai'])
+                                        ->where('spk_status', 'Selesai')
+                                        ->whereIn('status_id', [7])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -89,7 +80,7 @@ class CompleteDashboardIndex extends Component
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'job'])
+                                        ->with(['status', 'workStepList'])
                                         ->paginate($this->paginate)
         ])
         ->extends('layouts.app')

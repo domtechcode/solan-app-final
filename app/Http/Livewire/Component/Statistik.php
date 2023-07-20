@@ -36,10 +36,24 @@ class Statistik extends Component
     public $spkCompleteStock;
 
 
-    protected $listeners = ['refreshIndexDashboard' => 'refreshStatistik'];
+    protected $listeners = ['notifSent' => 'refreshIndex'];
 
-    public function refreshStatistik()
+    public function refreshIndex($data)
     {
+        $instruction_id = $data['instruction_id'];
+        $user_id = $data['user_id'];
+        $message = $data['message'];
+        $conversation_id = $data['conversation_id'];
+        $receiver_id = $data['receiver_id'];
+
+        $instructionData = Instruction::find($instruction_id);
+
+        $this->emit('flashMessage', [
+                    'type' => 'info',
+                    'title' => 'SPK Baru',
+                    'message' => 'SPK '.$instructionData->spk_number,
+            ]);
+            
         $this->render();
     }
 

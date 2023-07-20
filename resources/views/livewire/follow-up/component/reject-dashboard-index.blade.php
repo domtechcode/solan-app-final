@@ -36,36 +36,70 @@
                     </thead>
                     <tbody>
                         {{-- {{ dd($instructions) }} --}}
-                        @forelse ($instructions as $key => $instruction)
+                        @forelse ($instructions as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
-                                    {{ $instruction->instruction->spk_number }}
-                                    @if($instruction->instruction->spk_number_fsc)
-                                        <span class="tag tag-border">{{ $instruction->instruction->spk_number_fsc }}</span>
+                                    {{ $dataInstruction->instruction->spk_number }}
+                                    @if($dataInstruction->instruction->spk_number_fsc)
+                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
 
-                                    @if($instruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $instruction->instruction->group_id }})">Group-{{ $instruction->instruction->group_id }}</button>
+                                    @if($dataInstruction->instruction->group_id)
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
-                                <td>{{ $instruction->instruction->spk_type }}</td>
-                                <td>{{ $instruction->instruction->customer_name }}</td>
-                                <td>{{ $instruction->instruction->order_name }}</td>
-                                <td>{{ $instruction->instruction->customer_number }}</td>
-                                <td>{{ $instruction->instruction->code_style }}</td>
-                                <td>{{ $instruction->instruction->shipping_date }}</td>
-                                <td>{{ $instruction->instruction->quantity - $instruction->instruction->stock }}</td>
+                                <td>{{ $dataInstruction->instruction->spk_type }}</td>
+                                <td>{{ $dataInstruction->instruction->customer_name }}</td>
+                                <td>{{ $dataInstruction->instruction->order_name }}</td>
+                                <td>{{ $dataInstruction->instruction->customer_number }}</td>
+                                <td>{{ $dataInstruction->instruction->code_style }}</td>
+                                <td>{{ $dataInstruction->instruction->shipping_date }}</td>
+                                <td>{{ $dataInstruction->instruction->quantity - $dataInstruction->instruction->stock }}</td>
+                                @if(in_array($dataInstruction->status_id, [1, 8]))
                                 <td>
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $instruction->status->desc_status }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                 </td>
                                 <td>
-                                        <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $instruction->job->desc_job }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
                                 </td>
+                                @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                </td>
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                </td>
+                                @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $instruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.editInstruction', ['instructionId' =>  $instruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.editInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>

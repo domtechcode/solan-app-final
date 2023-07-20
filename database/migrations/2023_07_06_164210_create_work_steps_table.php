@@ -21,8 +21,8 @@ class CreateWorkStepsTable extends Migration
             $table->foreign('work_step_list_id')->references('id')->on('work_step_lists');
             $table->unsignedBigInteger('status_id')->nullable();
             $table->foreign('status_id')->references('id')->on('statuses');
-            $table->unsignedBigInteger('job_id')->nullable();
-            $table->foreign('job_id')->references('id')->on('jobs');
+            // $table->unsignedBigInteger('job_id')->nullable();
+            // $table->foreign('job_id')->references('id')->on('jobs');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('machine_id')->nullable();
@@ -37,12 +37,13 @@ class CreateWorkStepsTable extends Migration
             $table->string('reject_from_id')->nullable();
             $table->string('reject_from_status')->nullable();
             $table->string('reject_from_job')->nullable();
-            $table->string('task')->nullable();
+            $table->string('task_priority')->nullable();
 
             $table->timestamp('dikerjakan')->nullable();
             $table->timestamp('selesai')->nullable();
 
-
+            
+            $table->string('spk_status')->nullable();
             $table->timestamps();
         });
     }
