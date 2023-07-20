@@ -58,6 +58,7 @@ class UpdateInstructionIndex extends Component
     public $fileaccountingCurrent;
 
     public $currentInstructionId;
+    public $qtyState;
 
 
     public function addEmptyNote()
@@ -144,6 +145,7 @@ class UpdateInstructionIndex extends Component
             'shipping_date' => 'required',
             'order_name' => 'required',
             'quantity' => 'required',
+            'qtyState' => 'required',
         ]);
 
         $customerList = Customer::find($this->customer);
@@ -158,6 +160,7 @@ class UpdateInstructionIndex extends Component
             $this->type_order = $this->spk_type;
         }
 
+        
         if($dataInstruction != null){
             $instruction = Instruction::where('id', $this->currentInstructionId)->update([
                 'spk_type' => $this->spk_type,
@@ -172,8 +175,7 @@ class UpdateInstructionIndex extends Component
                 'quantity' => currency_convert($this->quantity),
                 'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
-                'spk_status' => 'New',
-                'spk_state' => 'Running',
+                'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,
                 'spk_parent' => $this->spk_parent,
                 'spk_fsc' => $this->spk_fsc,
@@ -213,7 +215,6 @@ class UpdateInstructionIndex extends Component
                 }
             }    
 
-            
             if ($this->spk_sample_number) {
                 $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
                 $files = Files::where('instruction_id', $selectedSample->id)->where('type_file', 'sample')->get();
@@ -256,18 +257,28 @@ class UpdateInstructionIndex extends Component
                     ]);
                 }
             }
-            
 
-            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+            if($this->qtyState == 'Ya'){
+                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                    'status_id' => 25,
+                ]);
+                $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Revisi Qty',
+                ]);
+                    $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
+                    $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
+                    $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                
+            }
+            
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
 
-            // $this->reset();
-            // $this->dispatchBrowserEvent('pondReset');
-            return redirect()->route('dashboard');
+            return redirect()->route('followUp.dashboard');
             
         }else{
 
@@ -277,6 +288,16 @@ class UpdateInstructionIndex extends Component
                 'message' => 'Instruksi kerja pernah dibuat sebelumnya, karena po konsumen sudah terpakai',
             ]);
         }
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "success";
+        $selectedConversation = "SPK Perbaikan QTY";
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function uploadFiles($instructionId)

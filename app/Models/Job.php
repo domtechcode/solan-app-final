@@ -13,8 +13,8 @@ class Job extends Model
     protected $table = 'jobs';
     protected $guarded = [];
 
-    // public function workstep()
-    // {
-    //     return $this->hasMany(WorkStep::class);
-    // }
+    public function workstep()
+    {
+        return $this->hasMany(WorkStep::class);
+    }
 }

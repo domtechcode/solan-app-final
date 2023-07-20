@@ -46,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupCancel({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -67,7 +67,7 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
                                 <td>
@@ -80,7 +80,7 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
                                 <td>
@@ -93,13 +93,12 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.updateInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsCancel({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -122,7 +121,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalCancel" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -367,7 +366,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupCancel" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -891,15 +890,16 @@
 @push('scripts')
     <script>
         window.addEventListener('close-modal', event =>{
-            $('#detailInstructionModal').modal('hide');
+            $('#detailInstructionModalCancel').modal('hide');
+            $('#detailInstructionModalGroupCancel').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal', event =>{
-            $('#detailInstructionModal').modal('show');
+        window.addEventListener('show-detail-instruction-modal-cancel', event =>{
+            $('#detailInstructionModalCancel').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group', event =>{
-            $('#detailInstructionModalGroup').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-cancel', event =>{
+            $('#detailInstructionModalGroupCancel').modal('show');
         });
     </script>
 @endpush

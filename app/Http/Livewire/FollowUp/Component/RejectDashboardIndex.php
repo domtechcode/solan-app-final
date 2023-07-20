@@ -39,9 +39,14 @@ class RejectDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex'];
+    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
-    public function refreshIndex($data)
+    public function refreshIndex()
+    {
+        $this->render();
+    }
+
+    public function renderIndex()
     {
         $this->render();
     }
@@ -63,7 +68,7 @@ class RejectDashboardIndex extends Component
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'workStepList'])
+                                        ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 1)
                                         ->where('state_task', 'Running')
@@ -80,7 +85,7 @@ class RejectDashboardIndex extends Component
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
                                         })
-                                        ->with(['status', 'workStepList'])
+                                        ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate)
         ])
         ->extends('layouts.app')
@@ -88,7 +93,7 @@ class RejectDashboardIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function modalInstructionDetailsReject($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -98,10 +103,10 @@ class RejectDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-reject');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupReject($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();

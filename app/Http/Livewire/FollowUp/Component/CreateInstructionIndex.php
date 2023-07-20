@@ -64,10 +64,6 @@ class CreateInstructionIndex extends Component
 
     public $currentInstructionId;
 
-    public $createdMessage;
-    public $selectedConversation;
-    public $receiverInstance;
-
     public $workSteps = [];
 
     public function addField($name, $id)
@@ -187,7 +183,6 @@ class CreateInstructionIndex extends Component
                 'quantity' => currency_convert($this->quantity),
                 'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
-                // 'spk_status' => 'New',
                 'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,
                 'spk_parent' => $this->spk_parent,
@@ -297,6 +292,7 @@ class CreateInstructionIndex extends Component
                     'status_task' => 'Waiting',
                     'step' => $no,
                     'user_id' => $step['user_id'],
+                    'task_priority' => 'Normal',
                     'spk_status' => 'Running',
                 ]);
                 $no++;
@@ -323,9 +319,10 @@ class CreateInstructionIndex extends Component
                     'target_date' => Carbon::now(),
                 ]);
 
-            WorkStep::where('instruction_id', $instruction->id)
+            $updateStatus = WorkStep::where('instruction_id', $instruction->id)
                 ->update([
                     'status_id' => 1,
+                    'job_id' => $firstWorkStep->work_step_list_id,
                 ]);
             
             if ($this->spk_layout_number) {
@@ -402,19 +399,23 @@ class CreateInstructionIndex extends Component
             //notif
             if ($firstWorkStep->work_step_list_id == 4) {
                 $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
+                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
             } else if ($firstWorkStep->work_step_list_id == 5) {
                 $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
                 $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
+                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
             } else {
+                $this->messageSent(['receiver' => 4, 'instruction_id' => $instruction->id]);
                 $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
             }
 
-            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
+
+            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
 
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
@@ -434,13 +435,12 @@ class CreateInstructionIndex extends Component
 
     public function messageSent($arguments)
     {
-        $this->createdMessage = "success";
-        $this->selectedConversation = "message conversation";
+        $createdMessage = "success";
+        $selectedConversation = "SPK Baru";
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, $receiverUser));
-        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, Auth()->user()->id));
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function uploadFiles($instructionId)

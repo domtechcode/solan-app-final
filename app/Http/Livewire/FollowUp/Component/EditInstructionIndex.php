@@ -66,7 +66,6 @@ class EditInstructionIndex extends Component
     public function addField($name, $id)
     {
         $this->workSteps[] = ['name' => $name, 'id' => $id];
-
     }
     
     public function removeField($index)
@@ -206,8 +205,7 @@ class EditInstructionIndex extends Component
                 'quantity' => currency_convert($this->quantity),
                 'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
-                'spk_status' => 'New',
-                'spk_state' => 'Running',
+                'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,
                 'spk_parent' => $this->spk_parent,
                 'spk_fsc' => $this->spk_fsc,
@@ -310,7 +308,6 @@ class EditInstructionIndex extends Component
         
             $lastWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->get();
             $rejectFrom = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
-            $workStepFrom = WorkStep::find($rejectFrom->reject_from_id);
             $deleteWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->delete();
 
             $no = 0;
@@ -329,7 +326,7 @@ class EditInstructionIndex extends Component
 
             
             foreach ($lastWorkStep as $lastwork) {
-                WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $lastwork->work_step_list_id)
+                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $lastwork->work_step_list_id)
                 ->update([
                     'user_id' => $lastwork->user_id,
                     'machine_id' => $lastwork->machine_id,
@@ -341,34 +338,28 @@ class EditInstructionIndex extends Component
                     'status_task' => $lastwork->status_task,
                     'dikerjakan' => $lastwork->dikerjakan,
                     'selesai' => $lastwork->selesai,
-                    'task' => $lastwork->task,
+                    'task_priority' => $lastwork->task_priority,
+                    'spk_status' => $lastwork->spk_status,
                 ]);
             }
-
-            //update selesai
-            WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', 0)
-                ->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                    'target_date' => Carbon::now(),
-                    'schedule_date' => Carbon::now(),
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'selesai' => Carbon::now()->toDateTimeString()
-                ]);
             
-            WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            $rejectFormStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                 'status_id' => $rejectFrom->reject_from_status,
-                'job_id' =>  $rejectFrom->reject_from_job,
                 'reject_from_status' => NULL,
                 'reject_from_job' => NULL,
             ]);
 
-            //cari no 1 langkah kerjanya
-            WorkStep::where('id', $rejectFrom->reject_from_id)
+            $updateRejectSource = WorkStep::where('id', $rejectFrom->reject_from_id)
                 ->update([
                     'state_task' => 'Running',
                     'status_task' => 'Process',
                 ]);
+
+            // $updateStatus = WorkStep::where('instruction_id', $instruction->id)
+            //     ->update([
+            //         'status_id' => 2,
+            //         'job_id' => $firstWorkStep->work_step_list_id,
+            //     ]);
             
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
@@ -439,19 +430,25 @@ class EditInstructionIndex extends Component
                     ]);
                 }
             }
-            
-            // // Setelah data disimpan, reset array $workSteps
-            $this->workSteps = [];
 
-            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+            $updateFollowUp = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', 0)
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                    'reject_from_id' => null,
+                    'target_date' => Carbon::now(),
+                    'selesai' => Carbon::now()->toDateTimeString()
+                ]);
+            
+            //notif
+            $this->messageSent(['receiver' => $updateRejectSource->user_id, 'instruction_id' => $this->currentInstructionId]);
+
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
 
-            // $this->reset();
-            // $this->dispatchBrowserEvent('pondReset');
             return redirect()->route('dashboard');
             
         }else{
@@ -462,6 +459,17 @@ class EditInstructionIndex extends Component
                 'message' => 'Instruksi kerja pernah dibuat sebelumnya, karena po konsumen sudah terpakai',
             ]);
         }
+    }
+
+    public function messageSent($arguments)
+    {
+        $this->createdMessage = "info";
+        $this->selectedConversation = "SPK telah diperbaiki";
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, $receiverUser));
+        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, Auth()->user()->id));
     }
 
     public function uploadFiles($instructionId)

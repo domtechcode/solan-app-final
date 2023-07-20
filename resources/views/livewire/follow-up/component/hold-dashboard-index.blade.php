@@ -46,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupHold({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -67,7 +67,7 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
                                 <td>
@@ -80,7 +80,7 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
                                 <td>
@@ -93,12 +93,12 @@
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsHold({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalHold" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -359,6 +359,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-warning" wire:click="unholdSpk({{ $instructionSelectedId }})">Unhold</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -366,7 +367,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupHold" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -890,15 +891,16 @@
 @push('scripts')
     <script>
         window.addEventListener('close-modal', event =>{
-            $('#detailInstructionModal').modal('hide');
+            $('#detailInstructionModalHold').modal('hide');
+            $('#detailInstructionModalGroupHold').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal', event =>{
-            $('#detailInstructionModal').modal('show');
+        window.addEventListener('show-detail-instruction-modal-hold', event =>{
+            $('#detailInstructionModalHold').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group', event =>{
-            $('#detailInstructionModalGroup').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-hold', event =>{
+            $('#detailInstructionModalGroupHold').modal('show');
         });
     </script>
 @endpush

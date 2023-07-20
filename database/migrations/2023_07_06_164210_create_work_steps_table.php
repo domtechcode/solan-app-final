@@ -21,8 +21,8 @@ class CreateWorkStepsTable extends Migration
             $table->foreign('work_step_list_id')->references('id')->on('work_step_lists');
             $table->unsignedBigInteger('status_id')->nullable();
             $table->foreign('status_id')->references('id')->on('statuses');
-            // $table->unsignedBigInteger('job_id')->nullable();
-            // $table->foreign('job_id')->references('id')->on('jobs');
+            $table->unsignedBigInteger('job_id')->nullable();
+            $table->foreign('job_id')->references('id')->on('jobs');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('machine_id')->nullable();

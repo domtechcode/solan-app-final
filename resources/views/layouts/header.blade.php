@@ -108,7 +108,7 @@
                     <h3>Form Instruksi Kerja</h3>
                 </li>
                 <li class="slide">
-                    <a class="side-menu__item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                    <a class="side-menu__item {{ ($title === "Form Instruksi Kerja" or $title === "Form Instruksi Kerja Kekurangan") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
                             class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Form Instruksi Kerja</span><i
                             class="angle fe fe-chevron-right"></i>
                     </a>
@@ -122,7 +122,7 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Form Instruksi Kerja</a></li>
                                             <li><a href="{{ route('followUp.createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja") ? 'active' : ''}}">Form Instruksi Kerja (New)</a></li>
-                                            <li><a href="{{ route('followUp.createInstruction') }}" class="slide-item {{ ($title === "Form Instruksi Kerja Kekurangan") ? 'active' : ''}}">Form Instruksi Kerja (Kekurangan)</a></li>
+                                            <li><a href="{{ route('followUp.createInstructionKekurangan') }}" class="slide-item {{ ($title === "Form Instruksi Kerja Kekurangan") ? 'active' : ''}}">Form Instruksi Kerja (Kekurangan)</a></li>
                                         </ul>
                                     </div>
                                 </div>
