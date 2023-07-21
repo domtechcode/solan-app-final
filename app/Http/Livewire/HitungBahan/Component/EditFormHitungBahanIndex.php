@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\HitungBahan\Component;
 
+use Carbon\Carbon;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -13,12 +14,14 @@ use App\Models\LayoutBahan;
 use Illuminate\Support\Arr;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
 class EditFormHitungBahanIndex extends Component
 {   
     use WithFileUploads;
     public $filerincian = [];
+    public $filerincianlast = [];
     public $layoutSettings = [];
     public $layoutBahans = [];
     public $keterangans = [];
@@ -158,6 +161,7 @@ class EditFormHitungBahanIndex extends Component
                 
             ],
             'fileRincian' => [],
+            'fileRincianLast' => [],
             'rincianPlate' => [],
             'notes' => '',
         ];
@@ -413,6 +417,7 @@ class EditFormHitungBahanIndex extends Component
                     
                 ],
                 'fileRincian' => [],
+                'fileRincianLast' => [],
                 'rincianPlate' => [],
                 'rincianScreen' => [],
                 'notes' => '',
@@ -976,7 +981,37 @@ class EditFormHitungBahanIndex extends Component
             }
         }
 
-        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+        $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('work_step_list_id', 5)
+                ->first();
+            
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+            
+                $updateNextStep = WorkStep::find($updateTask->reject_from_id);
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Process',
+                        'reject_from_id' => NULL,
+                        'reject_from_status' => NULL,
+                        'reject_from_job' => NULL,
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => $updateNextStep->user_id]);
+
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -984,8 +1019,9 @@ class EditFormHitungBahanIndex extends Component
             'message' => 'Berhasil membuat instruksi kerja',
         ]);
 
-        // return redirect()->route('hitungBahan.createFormHitungBahan');
-        return redirect()->back();
+        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+
+        return redirect()->route('hitungBahan.dashboard');
         
     }
 
@@ -997,8 +1033,8 @@ class EditFormHitungBahanIndex extends Component
             Storage::delete($file->file_path.'/'.$file->file_name);
             $file->delete();
             // Hapus juga entry dari array fileRincian di property $keterangans menggunakan index
-            if (isset($this->keterangans[$keteranganIndex]['fileRincian'][$key])) {
-                unset($this->keterangans[$keteranganIndex]['fileRincian'][$key]);
+            if (isset($this->keterangans[$keteranganIndex]['fileRincianLast'][$key])) {
+                unset($this->keterangans[$keteranganIndex]['fileRincianLast'][$key]);
             }
         }
     }
@@ -1052,4 +1088,13 @@ class EditFormHitungBahanIndex extends Component
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 
+    public function messageSent($arguments)
+    {
+        $createdMessage = $arguments['createdMessage'];
+        $selectedConversation = $arguments['selectedConversation'];
+        $receiverUser = $arguments['receiverUser'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+    }
 }

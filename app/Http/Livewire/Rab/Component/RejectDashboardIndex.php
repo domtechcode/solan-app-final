@@ -60,7 +60,7 @@ class RejectDashboardIndex extends Component
     {
         return view('livewire.rab.component.reject-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 5)
+                            WorkStep::where('work_step_list_id', 3)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Reject', 'Reject Requirements'])
                                         ->where('spk_status', 'Running')
@@ -70,7 +70,7 @@ class RejectDashboardIndex extends Component
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 5)
+                            WorkStep::where('work_step_list_id', 3)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Reject', 'Reject Requirements'])
                                         ->where('spk_status', 'Running')

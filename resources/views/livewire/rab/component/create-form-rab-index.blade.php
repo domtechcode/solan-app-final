@@ -30,10 +30,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{-- @php
+                                        @php
                                             $total_Price = 0;
-                                        @endphp --}}
-                                        
+                                        @endphp
                                         @foreach ($instructionItems as $key => $instructions)
                                         <tr>
                                             <td>
@@ -49,17 +48,18 @@
                                                     wire:model="instructionItems.{{ $key }}.price"
                                                     class="form-control" placeholder="Price" type-currency="IDR">
                                                 </div>
+                                                @error('instructionItems.'.$key.'.price') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </td>
                                             
-                                            {{-- @php
-                                                $total_Price += $instruction->price;
-                                            @endphp --}}
+                                            @php
+                                                $total_Price += $instructions['price'];
+                                            @endphp
                                         </tr>
                                         @endforeach
-                                        {{-- <tr>
+                                        <tr>
                                             <td><strong>Total Price</strong></td>
                                             <td><strong>{{ currency_idr($total_Price) }}</strong></td>
-                                        </tr> --}}
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -96,6 +96,7 @@
                                                             <option value="Biaya Packing">Biaya Packing</option>
                                                             <option value="Biaya Pengiriman">Biaya Pengiriman</option>
                                                         </select>
+                                                        @error('rabItems.'.$index.'.jenisPengeluaran') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
@@ -103,6 +104,7 @@
                                                         <input type="text" autocomplete="off"
                                                             wire:model="rabItems.{{ $index }}.rab"
                                                             class="form-control" placeholder="RAB" type-currency="IDR">
+                                                            @error('rabItems.'.$index.'.rab') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
@@ -117,12 +119,6 @@
                         </div>
 
                         <div class="col-md-12 mt-3">
-                            <label class="form-label mb-3">Keterangan Reject</label>
-                            <div class="input-group control-group" style="padding-top: 5px;">
-                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model.defer="keteranganReject"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mt-3">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
                                     <div class="form-group">
@@ -135,7 +131,7 @@
                                         <div class="expanel expanel-default">
                                             <div class="expanel-body">
                                                 <div class="input-group control-group" style="padding-top: 5px;">
-                                                    <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                    <select class="form-control form-select" data-bs-placeholder="Pilih Tujuan Catatan" wire:model="notes.{{ $index }}.tujuan" required>
                                                         <option label="Pilih Tujuan Catatan"></option>
                                                         @foreach ($workSteps as $key)
                                                             <option value="{{ $key['work_step_list_id'] }}">{{ $key['workStepList']['name']  }}</option>
@@ -145,7 +141,7 @@
                                                     <button class="btn btn-danger" type="button" wire:click="removeNote({{ $index }})"><i class="fe fe-x"></i></button>
                                                 </div>
                                                 <div class="input-group control-group" style="padding-top: 5px;">
-                                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="notes.{{ $index }}.catatan" required></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -154,6 +150,14 @@
             
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">Keterangan Reject</label>
+                            <div class="input-group control-group" style="padding-top: 5px;">
+                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                            </div>
+                            @error('keteranganReject') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary mt-4 mb-0" wire:click="rejectRAB">Reject</button>

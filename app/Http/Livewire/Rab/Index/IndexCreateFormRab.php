@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\Rab\Index;
 
+use Carbon\Carbon;
 use Livewire\Component;
+use App\Models\WorkStep;
 
 class IndexCreateFormRab extends Component
 {
@@ -11,6 +13,10 @@ class IndexCreateFormRab extends Component
     public function mount($instructionId)
     {
         $this->instructionSelectedId = $instructionId;
+        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 3)->update([
+            'user_id' => Auth()->user()->id,
+            'dikerjakan' => Carbon::now()->toDateTimeString(),
+        ]);
     }
 
     public function render()

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\FormRab;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
 use App\Models\FileRincian;
@@ -93,5 +94,10 @@ class Instruction extends Model
     public function keteranganLabel()
     {
         return $this->hasMany(KeteranganLabel::class);
+    }
+
+    public function formRab()
+    {
+        return $this->hasMany(FormRab::class);
     }
 }

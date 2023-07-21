@@ -61,22 +61,38 @@ class NewSpkDashboardIndex extends Component
         return view('livewire.hitung-bahan.component.new-spk-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
+                                    ->where('state_task', 'Running')
+                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
+                                    ->where('spk_status', 'Running')
+                                    ->where(function ($query) {
+                                        $query->where(function ($subQuery) {
+                                            $subQuery->where('status_id', 1)
+                                                ->where('user_id', NULL);
+                                        })->orWhere(function ($subQuery) {
+                                            $subQuery->where('status_id', 2)
+                                                ->where('user_id', Auth()->user()->id);
+                                        });
+                                    })
+                                    ->whereHas('instruction', function ($query) {
+                                        $query->orderBy('shipping_date', 'asc');
+                                    })
+                                    ->with(['status', 'job', 'workStepList'])
+                                    ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
+                                    ->where('state_task', 'Running')
+                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
+                                    ->where('spk_status', 'Running')
+                                    ->where(function ($query) {
+                                        $query->where(function ($subQuery) {
+                                            $subQuery->where('status_id', 1)
+                                                ->where('user_id', NULL);
+                                        })->orWhere(function ($subQuery) {
+                                            $subQuery->where('status_id', 2)
+                                                ->where('user_id', Auth()->user()->id);
+                                        });
+                                    })
+                                    ->whereHas('instruction', function ($query) {
+                                        $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
                                             ->orWhere('customer_name', 'like', '%' . $this->search . '%')
                                             ->orWhere('order_name', 'like', '%' . $this->search . '%')
@@ -84,9 +100,10 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
+                                    })
+                                    
+                                    ->with(['status', 'job', 'workStepList'])
+                                    ->paginate($this->paginate)
         ])
         ->extends('layouts.app')
         ->section('content')

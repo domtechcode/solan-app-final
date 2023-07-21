@@ -43,7 +43,7 @@
                 {{-- End Notif --}}
                 @endif
 
-                @livewire('hitung-bahan.edit-form-hitung-bahan-index' , ['instructionId' => $instructionSelectedId])
+                @livewire('hitung-bahan.component.edit-form-hitung-bahan-index' , ['instructionId' => $instructionSelectedId])
 
             </div>
             <!-- CONTAINER CLOSED -->

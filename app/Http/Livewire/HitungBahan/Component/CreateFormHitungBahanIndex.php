@@ -735,26 +735,7 @@ class CreateFormHitungBahanIndex extends Component
                                     "file_path" => $folder,
                                 ]);
                             }
-                        }
-
-                        if($keteranganData['fileRincianLast']){
-                            $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
-                            $norincian = 1;
-                            foreach ($keteranganData['fileRincianLast'] as $file) {
-                                $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
-    
-                                $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-'.$norincian . '.' . $file->getClientOriginalExtension();
-                                Storage::putFileAs($folder, $file, $fileName);
-                                $norincian ++;
-    
-                                $keteranganFileRincian= $keterangan->fileRincian()->create([
-                                    'instruction_id' => $this->currentInstructionId,
-                                    "file_name" => $fileName,
-                                    "file_path" => $folder,
-                                ]);
-                            }
-                        }
-    
+                        }    
                 }
             }
     

@@ -99,7 +99,7 @@
                                 <td>
                                     <div class="btn-list">         
                                         <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsReject({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.editInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
+                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('hitungBahan.editFormHitungBahan', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>

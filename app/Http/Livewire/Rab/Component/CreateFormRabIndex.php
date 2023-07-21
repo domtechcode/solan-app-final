@@ -2,11 +2,15 @@
 
 namespace App\Http\Livewire\Rab\Component;
 
+use Carbon\Carbon;
+use App\Models\Catatan;
+use App\Models\FormRab;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use App\Models\KeteranganPlate;
+use App\Events\NotificationSent;
 
 class CreateFormRabIndex extends Component
 {
@@ -217,5 +221,145 @@ class CreateFormRabIndex extends Component
         return view('livewire.rab.component.create-form-rab-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form RAB']);
+    }
+
+    public function save()
+    {
+        $this->validate([
+            'rabItems.*.jenisPengeluaran' => 'required',
+            'rabItems.*.rab' => 'required',
+            'instructionItems.*.price' => 'required',
+        ]);
+        
+        foreach($this->instructionItems as $dataInstructionItem){
+            $updatePrice = Instruction::where('spk_number', $dataInstructionItem['spk_number'])->update([
+                    'price' => $dataInstructionItem['price'], 
+            ]);
+        }
+        
+        foreach($this->rabItems as $datarabItem){
+            $createRab = FormRab::create([
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                    'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'], 
+                    'rab' => $datarabItem['rab'], 
+            ]);
+        }
+
+        if($this->notes){
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
+        $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('work_step_list_id', 3)
+                ->first();
+            
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+            
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'schedule_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
+
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Create Instruksi Kerja',
+            'message' => 'Berhasil membuat instruksi kerja',
+        ]);
+
+        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+
+        return redirect()->route('rab.dashboard');
+        
+    }
+
+    public function rejectRAB()
+    {
+        $this->validate([
+            'keteranganReject' => 'required',
+        ]);
+
+        $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 3)->first();
+        if($currentWorkStep){
+            $currentWorkStep->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Perbaikan',
+                'selesai' => Carbon::now()->toDateTimeString(),
+            ]);
+        }
+
+        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->update([
+            'state_task' => 'Running',
+            'status_task' => 'Reject',
+            'status_id' => 3,
+            'job_id' => 5,
+            'reject_from_id' => $currentWorkStep->id,
+            'reject_from_status' => $currentWorkStep->status_id,
+            'reject_from_job' => $currentWorkStep->work_step_list_id,
+        ]);
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            'status_id' => 3,
+            'job_id' => 5,
+        ]);
+        
+        $createKeteranganReject = Catatan::create([
+                    'tujuan' => 5,
+                    'catatan' => $this->keteranganReject,
+                    'kategori' => 'reject',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+        ]);
+
+        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 5]);
+        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 6]);
+
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Reject Instruksi Kerja',
+            'message' => 'Berhasil reject instruksi kerja',
+        ]);
+
+        return redirect()->route('rab.dashboard');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = $arguments['createdMessage'];
+        $selectedConversation = $arguments['selectedConversation'];
+        $receiverUser = $arguments['receiverUser'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
