@@ -435,7 +435,7 @@ class CreateInstructionIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "success";
+        $createdMessage = "info";
         $selectedConversation = "SPK Baru";
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

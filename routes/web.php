@@ -1,14 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Livewire\Rab\IndexCreateFormRab;
 use App\Http\Livewire\FollowUp\Index\IndexGroup;
 use App\Http\Controllers\Auth\LoginContr\LoginController;
-use App\Http\Livewire\FollowUp\Index\IndexEditInstruction;
-use App\Http\Livewire\HitungBahan\IndexEditFormHitungBahan;
-use App\Http\Livewire\FollowUp\Index\IndexCreateInstruction;
-use App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction;
-use App\Http\Livewire\HitungBahan\IndexCreateFormHitungBahan;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +20,6 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-Route::get('/create-form-hitung-bahan/{instructionId}', IndexCreateFormHitungBahan::class)->name('hitungBahan.createFormHitungBahan');
-Route::get('/edit-form-hitung-bahan/{instructionId}', IndexEditFormHitungBahan::class)->name('hitungBahan.editFormHitungBahan');
-
-Route::get('/create-form-rab/{instructionId}', IndexCreateFormRab::class)->name('rab.createFormRab');
 
 Route::group(['middleware' => ['auth']], function () {
 
@@ -40,13 +30,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexEditInstruction')->name('followUp.editInstruction');
         Route::get('/update-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction')->name('followUp.updateInstruction');
         Route::get('/reorder-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexReorderInstruction')->name('followUp.reorderInstruction');
-        Route::get('/group', IndexGroup::class)->name('group');
-
+        Route::get('/group', 'App\Http\Livewire\FollowUp\Index\IndexGroup')->name('group');
     });
 
     Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Stock\Index\IndexDashboard')->name('stock.dashboard');
+    });
 
+    Route::group(['prefix' => 'hitungbahan', 'middleware' => ['role:Hitung Bahan']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\HitungBahan\Index\IndexDashboard')->name('hitungBahan.dashboard');
+        Route::get('/create-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexCreateFormHitungBahan')->name('hitungBahan.createFormHitungBahan');
+        Route::get('/edit-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexEditFormHitungBahan')->name('hitungBahan.editFormHitungBahan');
     });
 
 });

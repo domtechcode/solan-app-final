@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan;
+namespace App\Http\Livewire\HitungBahan\Component;
 
 use App\Models\Files;
 use App\Models\Catatan;
@@ -431,7 +431,7 @@ class EditFormHitungBahanIndex extends Component
 
     public function render()
     {
-        return view('livewire.hitung-bahan.edit-form-hitung-bahan-index')->extends('layouts.app')
+        return view('livewire.hitung-bahan.component.edit-form-hitung-bahan-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }

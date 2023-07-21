@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Stock\Component;
 
 use Carbon\Carbon;
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
@@ -23,6 +24,7 @@ class NewSpkDashboardIndex extends Component
     public $search = '';
     public $data;
 
+    public $catatan;
     public $selectedInstruction;
     public $selectedWorkStep;
     public $selectedFileContoh;
@@ -112,7 +114,7 @@ class NewSpkDashboardIndex extends Component
                 'message' => 'Stock tidak boleh lebih dari quantity',
             ]);
         }else if($this->selectedInstruction->quantity == currency_convert($this->stock)){
-            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [2, 35, 36])->update([
+            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 35, 36])->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
                 'selesai' => Carbon::now(),
@@ -120,14 +122,14 @@ class NewSpkDashboardIndex extends Component
 
             $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->update([
                 'state_task' => 'Running',
-                'status_task' => 'Process',
+                'status_task' => 'Pending Approved',
                 'dikerjakan' => Carbon::now()->toDateTimeString(),
                 'schedule_date' => Carbon::now(),
             ]);
 
             $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereIn('work_step_list_id', [35, 36])->update([
                 'state_task' => 'Running',
-                'status_task' => 'Pending Approved',
+                'status_task' => 'Pending Start',
                 'dikerjakan' => Carbon::now()->toDateTimeString(),
                 'schedule_date' => Carbon::now(),
             ]);
@@ -139,13 +141,6 @@ class NewSpkDashboardIndex extends Component
 
             $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
                 'stock' => currency_convert($this->stock),
-            ]);
-
-            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->update([
-                'state_task' => 'Running',
-                'status_task' => 'Process',
-                'dikerjakan' => Carbon::now()->toDateTimeString(),
-                'schedule_date' => Carbon::now(),
             ]);
 
             $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 4)->update([
@@ -173,7 +168,7 @@ class NewSpkDashboardIndex extends Component
                 }
             }
 
-            $this->messageSent(['receiver' => 2, 'instruction_id' => $this->selectedInstruction->id]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 2]);
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -188,18 +183,35 @@ class NewSpkDashboardIndex extends Component
             $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
                 'stock' => currency_convert($this->stock),
             ]);
+            
+            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->where('work_step_list_id', 4)
+                ->first();
+            
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+            
+                $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'schedule_date' => Carbon::now(),
+                    ]);
 
-            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 4)->update([
-                'state_task' => 'Complete',
-                'status_task' => 'Complete',
-                'selesai' => Carbon::now()->toDateTimeString(),
-            ]);
-
-            $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('step', $updateTask->step + 1)->update([
-                'state_task' => 'Running',
-                'status_task' => 'Pending Approved',
-                'schedule_date' => Carbon::now(),
-            ]);
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
 
 
             if($this->fileRincian){
@@ -221,8 +233,9 @@ class NewSpkDashboardIndex extends Component
                 }
             }
 
-            $this->messageSent(['receiver' => 5, 'instruction_id' => $this->selectedInstruction->id]);
-            $this->messageSent(['receiver' => 9, 'instruction_id' => $this->selectedInstruction->id]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 5]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 9]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 2]);
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -238,22 +251,17 @@ class NewSpkDashboardIndex extends Component
 
     }
 
-    public function messageSent($arguments)
-    {
-        $createdMessage = "success";
-        $selectedConversation = "message conversation";
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
-    }
-
     public function modalInstructionStock($instructionId)
     {
         $updateStatusStock = WorkStep::where('instruction_id', $instructionId)->update([
+            'user_id' => Auth()->user()->id,
             'status_id' => 2,
             'status_task' => 'Process',
         ]);
+
+        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK sedang diproses oleh stock', 'instruction_id' => $instructionId, 'receiverUser' => 2]);
+
+        $this->catatan = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 4)->get();
 
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -295,5 +303,15 @@ class NewSpkDashboardIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = $arguments['createdMessage'];
+        $selectedConversation = $arguments['selectedConversation'];
+        $receiverUser = $arguments['receiverUser'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
