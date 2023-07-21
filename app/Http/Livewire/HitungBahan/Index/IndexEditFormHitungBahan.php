@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan;
+namespace App\Http\Livewire\HitungBahan\Index;
 
 use Livewire\Component;
 
-class IndexCreateFormHitungBahan extends Component
+class IndexEditFormHitungBahan extends Component
 {
     public $instructionSelectedId;
 
@@ -12,14 +12,14 @@ class IndexCreateFormHitungBahan extends Component
     {
         $this->instructionSelectedId = $instructionId;
     }
-
+    
     public function render()
     {
-        return view('livewire.hitung-bahan.index-create-form-hitung-bahan', [
-            'title' => 'Form Hitung Bahan'
+        return view('livewire.hitung-bahan.index.index-edit-form-hitung-bahan', [
+            'title' => 'Form Edit Hitung Bahan'
         ])
         ->extends('layouts.app')
         ->section('content')
-        ->layoutData(['title' => 'Form Hitung Bahan']);
+        ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
 }

@@ -28,6 +28,7 @@ class LoginController extends Controller
 
             // Determine the user's role and redirect to the appropriate dashboard
             $user = Auth::user();
+            // dd($user->role);
             switch ($user->role) {
                 case 'Follow Up':
                     return redirect()->route('followUp.dashboard');
@@ -37,8 +38,8 @@ class LoginController extends Controller
                     return redirect()->route('stock.dashboard');
                     break;
 
-                case 'admin-kelurahan':
-                    return redirect()->route('admin-kelurahan.dashboard');
+                case 'Hitung Bahan':
+                    return redirect()->route('hitungBahan.dashboard');
                     break;
 
                 case 'admin-kader':
