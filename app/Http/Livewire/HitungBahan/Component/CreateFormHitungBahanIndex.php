@@ -224,6 +224,147 @@ class CreateFormHitungBahanIndex extends Component
         $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 5)->get();
         $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 5)->get();
         
+        $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)->get();
+        foreach($layoutSettingData as $dataLayoutSetting){
+            $this->layoutSettings[] = [
+                'panjang_barang_jadi' => $dataLayoutSetting['panjang_barang_jadi'],
+                'lebar_barang_jadi' => $dataLayoutSetting['lebar_barang_jadi'],
+                'panjang_bahan_cetak' => $dataLayoutSetting['panjang_bahan_cetak'],
+                'lebar_bahan_cetak' => $dataLayoutSetting['lebar_bahan_cetak'],
+                'dataURL' => $dataLayoutSetting['dataURL'],
+                'dataJSON' => $dataLayoutSetting['dataJSON'],
+                'state' => $dataLayoutSetting['state'],
+                'panjang_naik' => $dataLayoutSetting['panjang_naik'],
+                'lebar_naik' => $dataLayoutSetting['lebar_naik'],
+                'jarak_panjang' => $dataLayoutSetting['jarak_panjang'],
+                'jarak_lebar' => $dataLayoutSetting['jarak_lebar'],
+                'sisi_atas' => $dataLayoutSetting['sisi_atas'],
+                'sisi_bawah' => $dataLayoutSetting['sisi_bawah'],
+                'sisi_kiri' => $dataLayoutSetting['sisi_kiri'],
+                'sisi_kanan' => $dataLayoutSetting['sisi_kanan'],
+                'jarak_tambahan_vertical' => $dataLayoutSetting['jarak_tambahan_vertical'],
+                'jarak_tambahan_horizontal' => $dataLayoutSetting['jarak_tambahan_horizontal'],
+            ];
+        }
+
+        $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'rincianPlate')->get();
+        foreach($keteranganData as $dataKeterangan){
+            $keterangan = [
+                'fileRincian' => [],
+                'notes' => $dataKeterangan['notes'],
+            ];
+
+            if($dataKeterangan['keteranganPlate']){
+                $keterangan['plate'] = [];
+            }else{
+                foreach($dataKeterangan['keteranganPlate'] as $dataPlate){
+                    $keterangan['plate'][] = [
+                        "state_plate" => $dataPlate['state_plate'],
+                        "jumlah_plate" => $dataPlate['jumlah_plate'],
+                        "ukuran_plate" => $dataPlate['ukuran_plate']
+                    ];
+                }
+            }
+
+
+            if($dataKeterangan['keteranganScreen']){
+                $keterangan['screen'] = [];
+            }else{
+                foreach($dataKeterangan['keteranganScreen'] as $dataScreen){
+                    $keterangan['screen'][] = [
+                        "state_screen" => $dataScreen['state_screen'],
+                        "jumlah_screen" => $dataScreen['jumlah_screen'],
+                        "ukuran_screen" => $dataScreen['ukuran_screen']
+                    ];
+                }
+            }
+
+
+            if($dataKeterangan['keteranganPisauPond']){
+                $keterangan['pond'] = [];
+            }else{
+                foreach($dataKeterangan['keteranganPisauPond'] as $dataPisau){
+                    $keterangan['pond'][] = [
+                        "state_pisau" => $dataPisau['state_pisau'],
+                        "jumlah_pisau" => $dataPisau['jumlah_pisau'],
+                    ];
+                }
+            }
+
+
+            if($dataKeterangan['rincianPlate']){
+                $keterangan['rincianPlate'] = [];
+            }else{
+                foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
+                    $keterangan['rincianPlate'][] = [
+                        "state" => $dataRincianPlate['state'],
+                        "plate" => $dataRincianPlate['plate'],
+                        "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
+                        "waste" => $dataRincianPlate['waste'],
+                    ];
+                }
+            }
+
+
+            if($dataKeterangan['rincianScreen']){
+                $keterangan['rincianScreen'] = [];
+            }else{
+                foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
+                    $keterangan['rincianScreen'][] = [
+                        "state" => $dataRincianScreen['state'],
+                        "screen" => $dataRincianScreen['screen'],
+                        "jumlah_lembar_cetak" => $dataRincianScreen['jumlah_lembar_cetak'],
+                        "waste" => $dataRincianScreen['waste'],
+                    ];
+                }
+            }
+
+
+            if($dataKeterangan['fileRincian']){
+                $keterangan['fileRincian'] = [];
+            }else{
+                foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
+                    $keterangan['fileRincian'][] = [
+                        "file_name" => $dataFileRincian['file_name'],
+                        "file_path" => $dataFileRincian['file_path'],
+                    ];
+                }
+            }
+            
+            
+            $this->keterangans[] = $keterangan;
+        }
+        
+        $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)->get();
+        foreach($layoutBahanData as $dataLayoutBahan){
+            $this->layoutBahans[] = [
+                'dataURL' => $dataLayoutBahan['dataURL'],
+                'dataJSON' => $dataLayoutBahan['dataJSON'],
+                'state' => $dataLayoutBahan['state'],
+                'panjang_plano' => $dataLayoutBahan['panjang_plano'],
+                'lebar_plano' => $dataLayoutBahan['lebar_plano'],
+                'panjang_bahan_cetak' => $dataLayoutBahan['panjang_bahan_cetak'],
+                'lebar_bahan_cetak' => $dataLayoutBahan['lebar_bahan_cetak'],
+                'jenis_bahan' => $dataLayoutBahan['jenis_bahan'],
+                'gramasi' => $dataLayoutBahan['gramasi'],
+                'one_plano' => $dataLayoutBahan['one_plano'],
+                'sumber_bahan' => $dataLayoutBahan['sumber_bahan'],
+                'merk_bahan' => $dataLayoutBahan['merk_bahan'],
+                'supplier' => $dataLayoutBahan['supplier'],
+                'jumlah_lembar_cetak' => $dataLayoutBahan['jumlah_lembar_cetak'],
+                'jumlah_incit' => $dataLayoutBahan['jumlah_incit'],
+                'total_lembar_cetak' => $dataLayoutBahan['total_lembar_cetak'],
+                'harga_bahan' => $dataLayoutBahan['harga_bahan'],
+                'jumlah_bahan' => $dataLayoutBahan['jumlah_bahan'],
+                'panjang_sisa_bahan' => $dataLayoutBahan['panjang_sisa_bahan'],
+                'lebar_sisa_bahan' => $dataLayoutBahan['lebar_sisa_bahan'],
+                'layout_custom_file_name' => $dataLayoutBahan['layout_custom_file_name'],
+                'layout_custom_path' => $dataLayoutBahan['layout_custom_path'],
+                'include_belakang' => $dataLayoutBahan['include_belakang'],
+                'fileLayoutCustom' => '',
+            ];
+        }
+        
          // Cek apakah array layoutSettings dan keterangans kosong
         if (empty($this->layoutSettings)) {
             $this->layoutSettings[] = [
@@ -296,6 +437,8 @@ class CreateFormHitungBahanIndex extends Component
                 'lebar_sisa_bahan' => '',
                 'fileLayoutCustom' => '',
                 'include_belakang' => '',
+                'layout_custom_file_name' => '',
+                'layout_custom_path' => '',
             ];
         }
     }
@@ -519,6 +662,18 @@ class CreateFormHitungBahanIndex extends Component
                 'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
                 'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
             ]);
+        }
+
+        $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->first();
+        $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->first();
+        $checkLayoutBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->first();
+
+        if($checkLayoutSetting){
+            $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
+        }else if($checkKeterangan){
+            $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
+        }else if($checkLayoutBahan){
+            $checkLayoutBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
         }
 
         if(isset($this->stateWorkStepCetakLabel)){
@@ -826,8 +981,7 @@ class CreateFormHitungBahanIndex extends Component
             'message' => 'Berhasil membuat instruksi kerja',
         ]);
 
-        // return redirect()->route('hitungBahan.createFormHitungBahan');
-        return redirect()->back();
+        return redirect()->route('hitungBahan.dashboard');
     }
 
     public function modalInstructionDetails($instructionId)

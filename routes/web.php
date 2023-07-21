@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\HitungBahan\Index\IndexDashboard')->name('hitungBahan.dashboard');
         Route::get('/create-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexCreateFormHitungBahan')->name('hitungBahan.createFormHitungBahan');
         Route::get('/edit-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexEditFormHitungBahan')->name('hitungBahan.editFormHitungBahan');
+        Route::get('/group', 'App\Http\Livewire\HitungBahan\Index\IndexGroup')->name('group');
     });
 
 });
