@@ -46,6 +46,10 @@ class LoginController extends Controller
                     return redirect()->route('rab.dashboard');
                     break;
 
+                case 'Penjadwalan':
+                    return redirect()->route('jadwal.dashboard');
+                    break;
+
                 default:
                     return redirect()->route('login');
                     break;

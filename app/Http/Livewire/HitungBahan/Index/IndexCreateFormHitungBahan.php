@@ -5,6 +5,7 @@ namespace App\Http\Livewire\HitungBahan\Index;
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Events\NotificationSent;
 
 class IndexCreateFormHitungBahan extends Component
 {
@@ -19,6 +20,13 @@ class IndexCreateFormHitungBahan extends Component
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
         ]);
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
+            'status_id' => 2,
+        ]);
+
+        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diproses', 'instruction_id' => $this->instructionSelectedId, 'receiverUser' => 5]);
+        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diproses', 'instruction_id' => $this->instructionSelectedId, 'receiverUser' => 6]);
     }
 
     public function render()
@@ -29,5 +37,15 @@ class IndexCreateFormHitungBahan extends Component
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form Hitung Bahan']);
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = $arguments['createdMessage'];
+        $selectedConversation = $arguments['selectedConversation'];
+        $receiverUser = $arguments['receiverUser'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
