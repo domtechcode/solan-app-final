@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan\Component;
+namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -8,7 +8,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class NewSpkDashboardIndex extends Component
+class IncomingDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -58,41 +58,25 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.hitung-bahan.component.new-spk-dashboard-index', [
+        return view('livewire.rab.component.incoming-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 5)
-                                    ->where('state_task', 'Running')
-                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                    ->where('spk_status', 'Running')
-                                    ->where(function ($query) {
-                                        $query->where(function ($subQuery) {
-                                            $subQuery->where('status_id', 1)
-                                                ->where('user_id', NULL);
-                                        })->orWhere(function ($subQuery) {
-                                            $subQuery->where('status_id', 2)
-                                                ->where('user_id', Auth()->user()->id);
-                                        });
-                                    })
-                                    ->whereHas('instruction', function ($query) {
-                                        $query->orderBy('shipping_date', 'asc');
-                                    })
-                                    ->with(['status', 'job', 'workStepList'])
-                                    ->paginate($this->paginate) :
+                                        ->where('state_task', 'Not Running')
+                                        ->whereIn('status_task', ['Process'])
+                                        ->where('spk_status', 'Running')
+                                        ->whereIn('status_id', [1, 2, 23])
+                                        ->whereHas('instruction', function ($query) {
+                                            $query->orderBy('shipping_date', 'asc');
+                                        })
+                                        ->with(['status', 'job', 'workStepList'])
+                                        ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 5)
-                                    ->where('state_task', 'Running')
-                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                    ->where('spk_status', 'Running')
-                                    ->where(function ($query) {
-                                        $query->where(function ($subQuery) {
-                                            $subQuery->where('status_id', 1)
-                                                ->where('user_id', NULL);
-                                        })->orWhere(function ($subQuery) {
-                                            $subQuery->where('status_id', 2)
-                                                ->where('user_id', Auth()->user()->id);
-                                        });
-                                    })
-                                    ->whereHas('instruction', function ($query) {
-                                        $query->where('spk_number', 'like', '%' . $this->search . '%')
+                                        ->where('state_task', 'Running')
+                                        ->whereIn('status_task', ['Process'])
+                                        ->where('spk_status', 'Running')
+                                        ->whereIn('status_id', [1, 2, 23])
+                                        ->whereHas('instruction', function ($query) {
+                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
                                             ->orWhere('customer_name', 'like', '%' . $this->search . '%')
                                             ->orWhere('order_name', 'like', '%' . $this->search . '%')
@@ -100,17 +84,16 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
-                                    })
-                                    
-                                    ->with(['status', 'job', 'workStepList'])
-                                    ->paginate($this->paginate)
+                                        })
+                                        ->with(['status', 'job', 'workStepList'])
+                                        ->paginate($this->paginate)
         ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function modalInstructionDetailsRunning($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -120,10 +103,10 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-running');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupRunning($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -138,6 +121,6 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
     }
 }

@@ -253,7 +253,7 @@ class NewSpkDashboardIndex extends Component
 
     public function modalInstructionStock($instructionId)
     {
-        $updateStatusStock = WorkStep::where('instruction_id', $instructionId)->update([
+        $updateStatusStock = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 4)->update([
             'user_id' => Auth()->user()->id,
             'status_id' => 2,
             'status_task' => 'Process',

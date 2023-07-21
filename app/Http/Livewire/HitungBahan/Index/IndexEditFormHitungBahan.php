@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\HitungBahan\Index;
 
+use Carbon\Carbon;
 use Livewire\Component;
+use App\Models\WorkStep;
 
 class IndexEditFormHitungBahan extends Component
 {
@@ -11,6 +13,12 @@ class IndexEditFormHitungBahan extends Component
     public function mount($instructionId)
     {
         $this->instructionSelectedId = $instructionId;
+
+        $this->instructionSelectedId = $instructionId;
+        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 4)->update([
+            'user_id' => Auth()->user()->id,
+            'dikerjakan' => Carbon::now()->toDateTimeString(),
+        ]);
     }
     
     public function render()

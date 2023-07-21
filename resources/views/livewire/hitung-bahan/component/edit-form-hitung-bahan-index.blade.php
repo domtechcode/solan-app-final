@@ -834,25 +834,25 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse ($keterangan['fileRincian'] as $key => $file)
-                                                    <tr wire:key="file-{{ $file['file_name'] }}">
-                                                        <td>{{ $file['file_name'] }}</td>
-                                                        <td>
-                                                            <div class="btn-list">
-                                                                <button type="button" class="btn btn-icon btn-sm btn-danger"
-                                                                        wire:click="deleteFileRincian('{{ $file['file_name'] }}', {{ $key }}, {{ $keteranganIndex }})"
-                                                                        wire:loading.attr="disabled"
-                                                                        wire:target="deleteFileRincian('{{ $file['file_name'] }}', {{ $key }}, {{ $keteranganIndex }})">
-                                                                    <i class="fe fe-x"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="2">No Data!</td>
-                                                    </tr>
-                                                @endforelse
+                                                @forelse ($keterangan['fileRincianLast'] as $key => $file)
+                                                        <tr wire:key="file-{{ $file['file_name'] }}">
+                                                            <td>{{ $file['file_name'] }}</td>
+                                                            <td>
+                                                                <div class="btn-list">
+                                                                    <button type="button" class="btn btn-icon btn-sm btn-danger"
+                                                                            wire:click="deleteFileRincian('{{ $file['file_name'] }}', {{ $key }}, {{ $keteranganIndex }})"
+                                                                            wire:loading.attr="disabled"
+                                                                            wire:target="deleteFileRincian('{{ $file['file_name'] }}', {{ $key }}, {{ $keteranganIndex }})">
+                                                                        <i class="fe fe-x"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="2">No Data!</td>
+                                                        </tr>
+                                                    @endforelse
                                             </tbody>
                                         </table>
                                     </div>

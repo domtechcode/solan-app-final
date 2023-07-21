@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\FormRab;
 use App\Models\WorkStep;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -72,5 +73,10 @@ class User extends Authenticatable
     public function notificationLog()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function formRab()
+    {
+        return $this->hasMany(FormRab::class);
     }
 }

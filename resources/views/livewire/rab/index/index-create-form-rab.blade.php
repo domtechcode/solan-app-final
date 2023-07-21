@@ -51,7 +51,7 @@
                             @livewire('component.hitung-bahan-data-view-index', ['instructionId' => $instructionSelectedId])
                         </div>
                         <div class="col-md-5 overflow-auto" style="height: 100vh;">
-                            @livewire('rab.create-form-rab-index', ['instructionId' => $instructionSelectedId])
+                            @livewire('rab.component.create-form-rab-index', ['instructionId' => $instructionSelectedId])
                         </div>
                     </div>
     

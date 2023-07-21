@@ -42,8 +42,8 @@ class LoginController extends Controller
                     return redirect()->route('hitungBahan.dashboard');
                     break;
 
-                case 'admin-kader':
-                    return redirect()->route('admin-kader.dashboard');
+                case 'RAB':
+                    return redirect()->route('rab.dashboard');
                     break;
 
                 default:

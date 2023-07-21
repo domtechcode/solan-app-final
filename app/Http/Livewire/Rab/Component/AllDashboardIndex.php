@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan\Component;
+namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -8,7 +8,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class NewSpkDashboardIndex extends Component
+class AllDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -18,6 +18,7 @@ class NewSpkDashboardIndex extends Component
     public $search = '';
     public $data;
 
+    public $instructionSelectedId;
     public $selectedInstruction;
     public $selectedWorkStep;
     public $selectedFileContoh;
@@ -58,41 +59,23 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.hitung-bahan.component.new-spk-dashboard-index', [
+        return view('livewire.rab.component.all-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 5)
-                                    ->where('state_task', 'Running')
-                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                    ->where('spk_status', 'Running')
-                                    ->where(function ($query) {
-                                        $query->where(function ($subQuery) {
-                                            $subQuery->where('status_id', 1)
-                                                ->where('user_id', NULL);
-                                        })->orWhere(function ($subQuery) {
-                                            $subQuery->where('status_id', 2)
-                                                ->where('user_id', Auth()->user()->id);
-                                        });
-                                    })
-                                    ->whereHas('instruction', function ($query) {
-                                        $query->orderBy('shipping_date', 'asc');
-                                    })
-                                    ->with(['status', 'job', 'workStepList'])
-                                    ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 5)
-                                    ->where('state_task', 'Running')
-                                    ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                    ->where('spk_status', 'Running')
-                                    ->where(function ($query) {
-                                        $query->where(function ($subQuery) {
-                                            $subQuery->where('status_id', 1)
-                                                ->where('user_id', NULL);
-                                        })->orWhere(function ($subQuery) {
-                                            $subQuery->where('status_id', 2)
-                                                ->where('user_id', Auth()->user()->id);
-                                        });
-                                    })
-                                    ->whereHas('instruction', function ($query) {
-                                        $query->where('spk_number', 'like', '%' . $this->search . '%')
+                            WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Running')
+                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+                                        ->whereIn('spk_status', ['Running'])
+                                        ->whereHas('instruction', function ($query) {
+                                            $query->orderBy('shipping_date', 'asc');
+                                        })
+                                        ->with(['status', 'workStepList'])
+                                        ->paginate($this->paginate) :
+                            WorkStep::where('work_step_list_id', 1)
+                                        ->where('state_task', 'Running')
+                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+                                        ->whereIn('spk_status', ['Running'])
+                                        ->whereHas('instruction', function ($query) {
+                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
                                             ->orWhere('customer_name', 'like', '%' . $this->search . '%')
                                             ->orWhere('order_name', 'like', '%' . $this->search . '%')
@@ -100,19 +83,87 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
-                                    })
-                                    
-                                    ->with(['status', 'job', 'workStepList'])
-                                    ->paginate($this->paginate)
+                                        })
+                                        ->with(['status', 'workStepList'])
+                                        ->paginate($this->paginate)
         ])
         ->extends('layouts.app')
-        ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function deleteSpk($instructionDeleteId)
+    {
+        $deleteSpk = WorkStep::where('instruction_id', $instructionDeleteId)->update([
+            'spk_status' => 'Deleted'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Delete Instruksi Kerja',
+            'message' => 'SPK berhasil didelete',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function holdSpk($instructionHoldId)
+    {
+        $holdSpk = WorkStep::where('instruction_id', $instructionHoldId)->update([
+            'spk_status' => 'Hold'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Instruksi Kerja',
+            'message' => 'SPK berhasil dihold',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+        
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function cancelSpk($instructionCancelId)
+    {
+        $cancelSpk = WorkStep::where('instruction_id', $instructionCancelId)->update([
+            'spk_status' => 'Cancel'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Cancel Instruksi Kerja',
+            'message' => 'SPK berhasil dicancel',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function modalInstructionDetailsAll($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
+        $this->instructionSelectedId = $instructionId;
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
@@ -120,10 +171,10 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-all');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupAll($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -138,6 +189,6 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-all');
     }
 }
