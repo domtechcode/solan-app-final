@@ -121,6 +121,8 @@
         </div>
     </div>
     
+    
+    <form wire:submit.prevent="save">
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
@@ -236,10 +238,10 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}">
+                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
                                                                         <option label="Select Langkah Kerja"></option>
                                                                         @foreach ($dataWorkSteps as $dataWorkStep)
-                                                                        <option value="{{ $dataWorkStep->work_step_list_id }}">{{ $dataWorkStep->workStepList->name }}</option>
+                                                                            <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
@@ -249,19 +251,19 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control @error('workSteps.{{ $key }}.target_date') is-invalid @enderror">
+                                                        <input type="date" wire:model="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control @error('workSteps.{{ $key }}.schedule_date') is-invalid @enderror">
+                                                        <input type="date" wire:model="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control @error('workSteps.{{ $key }}.target_time') is-invalid @enderror">
+                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control">
                                                         @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
@@ -270,7 +272,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}">
+                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
                                                                         <option label="Select User"></option>
                                                                         @foreach ($dataUsers as $dataUser)
                                                                         <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
@@ -299,8 +301,8 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-list">         
-                                                        <button class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})"><i class="fe fe-plus"></i></button>
-                                                        <button class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})"><i class="fe fe-x"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})"><i class="fe fe-plus"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})"><i class="fe fe-x"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -425,11 +427,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    {{-- <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
                 </div>
             </div>
         </div>
     </div>
+    </form>
 
     <!-- Modal Group-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">

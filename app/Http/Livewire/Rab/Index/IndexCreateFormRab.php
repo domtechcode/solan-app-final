@@ -17,6 +17,10 @@ class IndexCreateFormRab extends Component
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
         ]);
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
+            'status_id' => 2,
+        ]);
     }
 
     public function render()

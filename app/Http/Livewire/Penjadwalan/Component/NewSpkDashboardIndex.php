@@ -2,12 +2,14 @@
 
 namespace App\Http\Livewire\Penjadwalan\Component;
 
+use DB;
 use App\Models\User;
 use App\Models\Files;
 use App\Models\Machine;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
+use App\Models\WorkStepList;
 use Livewire\WithPagination;
 
 class NewSpkDashboardIndex extends Component
@@ -61,12 +63,12 @@ class NewSpkDashboardIndex extends Component
     public function addField($index)
     {
         array_splice($this->workSteps, $index + 1, 0, [[
-            'work_step_list_id' => '',
-            'target_date' => '',
-            'schedule_date' => '',
-            'target_time' => '',
-            'user_id' => '',
-            'machine_id' => '',
+            'work_step_list_id' => NULL,
+            'target_date' => NULL,
+            'schedule_date' => NULL,
+            'target_time' => NULL,
+            'user_id' => NULL,
+            'machine_id' => NULL,
         ]]);
 
         // Load Event
@@ -96,13 +98,10 @@ class NewSpkDashboardIndex extends Component
 
     public function mount()
     {
-        $this->dataWorkSteps = WorkStep::whereNotIn('work_step_list_id', [1,2,3])->with('workStepList', 'user', 'machine')->get();
+        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
-
-        
-
     }
 
     public function render()
@@ -116,7 +115,7 @@ class NewSpkDashboardIndex extends Component
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Pending Approved'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
+                                        ->whereIn('status_id', [1])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
@@ -126,7 +125,7 @@ class NewSpkDashboardIndex extends Component
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Pending Approved'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
+                                        ->whereIn('status_id', [1])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -145,10 +144,78 @@ class NewSpkDashboardIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
+    public function save()
+    {
+        $this->validate([
+            'workSteps.*.work_step_list_id' => 'required',
+            'workSteps.*.schedule_date' => 'required',
+            'workSteps.*.target_date' => 'required',
+            'workSteps.*.user_id' => 'required',
+        ]);
+
+        $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
+        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+
+        $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                        ->where('step', '>', $firstWorkStep->step)
+                        ->get();
+        
+        if($deleteWorkSteps){
+            foreach($deleteWorkSteps as $dataDeleted){
+                WorkStep::where('id', $dataDeleted->id)->delete();
+            }
+        }
+
+        // Insert new work steps starting from firstWorkStep->step + 1
+        $stepToAdd = $firstWorkStep->step + 1;
+        $newWorkSteps = [];
+
+        foreach ($this->workSteps as $index => $workStepData) {
+            $newWorkSteps[] = [
+                'instruction_id' => $this->selectedInstruction->id,
+                'work_step_list_id' => $workStepData['work_step_list_id'],
+                'target_date' => $workStepData['target_date'],
+                'schedule_date' => $workStepData['schedule_date'],
+                'target_time' => $workStepData['target_time'],
+                'user_id' => $workStepData['user_id'],
+                'machine_id' => $workStepData['machine_id'],
+                'step' => $stepToAdd++,
+                'state_task' => 'Not Running',
+                'status_task' => 'Waiting',
+            ];
+        }
+
+        $inserWorkStep = WorkStep::insert($newWorkSteps);
+
+        $nextWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('step', $firstWorkStep->step + 1)->update([
+            'state_task' => 'Not Running',
+            'status_task' => 'Pending Start',
+        ]);
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'job_id' => $firstWorkStep->work_step_list_id,
+            'status_id' => 2,
+        ]);
+
+        $firstWorkStep->update([
+            'status_task' => 'Process',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Jadwal Instruksi Kerja',
+            'message' => 'Data jadwal berhasil disimpan',
+        ]);
+
+        $this->emit('indexRender');
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
     public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->with('workStepList', 'user', 'machine')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->where('status_task', '!=', 'Complete')->where('state_task', '!=', 'Complete')->with('workStepList', 'user', 'machine')->get();
         
         foreach($this->selectedWorkStep as $key => $dataSelected){
             $workSteps = [
@@ -179,8 +246,6 @@ class NewSpkDashboardIndex extends Component
                 'target'    => '#machine_id-'.$key,
             ]); 
         }
-
-        
 
         // dd($this->workSteps);
 
