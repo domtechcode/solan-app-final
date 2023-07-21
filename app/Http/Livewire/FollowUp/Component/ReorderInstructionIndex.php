@@ -555,12 +555,11 @@ class ReorderInstructionIndex extends Component
                 $stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instruction->id)->where('work_step_list_id', 12)->first();
 
                 if(isset($this->stateWorkStepCetakLabel)){
-                    LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                     if ($this->layoutSettings) {
                         foreach ($this->layoutSettings as $key => $layoutSettingData) {
                             // Buat instance model LayoutSetting
                             $layoutSetting = LayoutSetting::create([
-                                'instruction_id' => $this->currentInstructionId,
+                                'instruction_id' => $instruction->id,
                                 'form_id' => $key,
                                 'state' => $layoutSettingData['state'],
                                 'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
@@ -586,11 +585,10 @@ class ReorderInstructionIndex extends Component
                     }
             
                     if ($this->keterangans) {
-                        Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
                         foreach ($this->keterangans as $index => $keteranganData) {
                                 $keterangan = Keterangan::create([
                                     'form_id' => $index,
-                                    'instruction_id' => $this->currentInstructionId,
+                                    'instruction_id' => $instruction->id,
                                     'notes' => $keteranganData['notes'],
                                 ]);
             
@@ -598,7 +596,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['label'] as $label) {
                                         // Buat instance model KeteranganPlate
                                         $keteranganLabel = $keterangan->keteranganLabel()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'alat_bahan' => $label['alat_bahan'],
                                             'jenis_ukuran' => $label['jenis_ukuran'],
                                             'jumlah' => $label['jumlah'],
@@ -609,7 +607,7 @@ class ReorderInstructionIndex extends Component
                                 }
             
                                 if($keteranganData['fileRincian']){
-                                    $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                                    $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                     $norincian = 1;
                                     foreach ($keteranganData['fileRincian'] as $file) {
                                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
@@ -619,7 +617,7 @@ class ReorderInstructionIndex extends Component
                                         $norincian ++;
             
                                         $keteranganFileRincian= $keterangan->fileRincian()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             "file_name" => $fileName,
                                             "file_path" => $folder,
                                         ]);
@@ -630,11 +628,10 @@ class ReorderInstructionIndex extends Component
                     }
             
                     if ($this->layoutBahans) {
-                        LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
                         foreach ($this->layoutBahans as $key => $layoutBahanData) {
                             // Buat instance model layoutBahan
                             $layoutBahan = LayoutBahan::create([
-                                'instruction_id' => $this->currentInstructionId,
+                                'instruction_id' => $instruction->id,
                                 'form_id' => $key,
                                 'state' => $layoutBahanData['state'],
                                 'include_belakang' => $layoutBahanData['include_belakang'],
@@ -660,7 +657,7 @@ class ReorderInstructionIndex extends Component
                             ]);
             
                             if ($layoutBahanData['fileLayoutCustom']) {
-                                $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                                $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                 $file = $layoutBahanData['fileLayoutCustom'];
                             
                                 $folder = "public/" . $InstructionCurrentDataFile->spk_number . "/hitung-bahan";
@@ -677,11 +674,10 @@ class ReorderInstructionIndex extends Component
                     }
                 }else{
                     if ($this->layoutSettings) {
-                        LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                         foreach ($this->layoutSettings as $key => $layoutSettingData) {
                             // Buat instance model LayoutSetting
                             $layoutSetting = LayoutSetting::create([
-                                'instruction_id' => $this->currentInstructionId,
+                                'instruction_id' => $instruction->id,
                                 'form_id' => $key,
                                 'state' => $layoutSettingData['state'],
                                 'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
@@ -707,11 +703,10 @@ class ReorderInstructionIndex extends Component
                     }
             
                     if ($this->keterangans) {
-                        Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
                         foreach ($this->keterangans as $index => $keteranganData) {
                                 $keterangan = Keterangan::create([
                                     'form_id' => $index,
-                                    'instruction_id' => $this->currentInstructionId,
+                                    'instruction_id' => $instruction->id,
                                     'notes' => $keteranganData['notes'],
                                 ]);
             
@@ -719,7 +714,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['plate'] as $plate) {
                                         // Buat instance model KeteranganPlate
                                         $keteranganPlate = $keterangan->keteranganPlate()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'state_plate' => $plate['state_plate'],
                                             'jumlah_plate' => $plate['jumlah_plate'],
                                             'ukuran_plate' => $plate['ukuran_plate'],
@@ -731,7 +726,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['screen'] as $screen) {
                                         // Buat instance model KeteranganScreen
                                         $keteranganScreen = $keterangan->keteranganScreen()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'state_screen' => $screen['state_screen'],
                                             'jumlah_screen' => $screen['jumlah_screen'],
                                             'ukuran_screen' => $screen['ukuran_screen'],
@@ -743,7 +738,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['pond'] as $pond) {
                                         // Buat instance model KeteranganPisauPond
                                         $keteranganPisauPond = $keterangan->keteranganPisauPond()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'state_pisau' => $pond['state_pisau'],
                                             'jumlah_pisau' => $pond['jumlah_pisau'],
                                         ]);
@@ -754,7 +749,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
                                         // Buat instance model RincianPlate
                                         $rincianPlate = $keterangan->rincianPlate()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'state' => $rincianPlate['state'],
                                             'plate' => $rincianPlate['plate'],
                                             'jumlah_lembar_cetak' => $rincianPlate['jumlah_lembar_cetak'],
@@ -767,7 +762,7 @@ class ReorderInstructionIndex extends Component
                                     foreach ($keteranganData['rincianScreen'] as $rincianScreen) {
                                         // Buat instance model RincianScreen
                                         $rincianScreen = $keterangan->rincianScreen()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             'state' => $rincianScreen['state'],
                                             'screen' => $rincianScreen['screen'],
                                             'jumlah_lembar_cetak' => $rincianScreen['jumlah_lembar_cetak'],
@@ -777,7 +772,7 @@ class ReorderInstructionIndex extends Component
                                 }
             
                                 if(isset($keteranganData['fileRincian'])){
-                                    $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                                    $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                     $norincian = 1;
                                     foreach ($keteranganData['fileRincian'] as $file) {
                                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
@@ -787,7 +782,7 @@ class ReorderInstructionIndex extends Component
                                         $norincian ++;
             
                                         $keteranganFileRincian= $keterangan->fileRincian()->create([
-                                            'instruction_id' => $this->currentInstructionId,
+                                            'instruction_id' => $instruction->id,
                                             "file_name" => $fileName,
                                             "file_path" => $folder,
                                         ]);
@@ -797,11 +792,10 @@ class ReorderInstructionIndex extends Component
                     }
             
                     if ($this->layoutBahans) {
-                        LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
                         foreach ($this->layoutBahans as $key => $layoutBahanData) {
                             // Buat instance model layoutBahan
                             $layoutBahan = LayoutBahan::create([
-                                'instruction_id' => $this->currentInstructionId,
+                                'instruction_id' => $instruction->id,
                                 'form_id' => $key,
                                 'state' => $layoutBahanData['state'],
                                 'include_belakang' => $layoutBahanData['include_belakang'],
@@ -827,7 +821,7 @@ class ReorderInstructionIndex extends Component
                             ]);
             
                             if ($layoutBahanData['fileLayoutCustom']) {
-                                $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                                $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                 $file = $layoutBahanData['fileLayoutCustom'];
                             
                                 $folder = "public/" . $InstructionCurrentDataFile->spk_number . "/hitung-bahan";

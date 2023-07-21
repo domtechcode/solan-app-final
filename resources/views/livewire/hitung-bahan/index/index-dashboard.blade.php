@@ -36,32 +36,22 @@
                                             </button>
                                         </li>
                                         <li>
-                                            <button href="#tab2" class="btn btn-primary mt-1 mb-1 me-3"
+                                            <button href="#tab2" class="btn btn-info mt-1 mb-1 me-3"
+                                                data-bs-toggle="tab">Process
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button href="#tab3" class="btn btn-primary mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">Reject
                                             </button>
                                         </li>
                                         <li>
-                                            <button href="#tab3" class="btn btn-info mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Running
+                                            <button href="#tab4" class="btn btn-warning mt-1 mb-1 me-3"
+                                                data-bs-toggle="tab">Incoming
                                             </button>
                                         </li>
                                         <li>
-                                            <button href="#tab4" class="btn btn-danger mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Hold
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab5" class="btn btn-warning mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Cancel
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab6" class="btn btn-success mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Complete
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab7" class="btn btn-info mt-1 mb-1 me-3"
+                                            <button href="#tab5" class="btn btn-info mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">All
                                             </button>
                                         </li>
@@ -84,7 +74,7 @@
                                                     <h3 class="card-title">New SPK</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.new-spk-dashboard-index')
+                                                    @livewire('hitung-bahan.component.new-spk-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
@@ -96,12 +86,12 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-status bg-primary br-te-7 br-ts-7"></div>
+                                                <div class="card-status bg-info br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Reject</h3>
+                                                    <h3 class="card-title">Process</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.reject-dashboard-index')
+                                                    @livewire('hitung-bahan.component.process-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
@@ -113,12 +103,12 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                                <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Running</h3>
+                                                    <h3 class="card-title">Reject</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.running-dashboard-index')
+                                                    @livewire('hitung-bahan.component.reject-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
@@ -130,12 +120,12 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-status bg-danger br-te-7 br-ts-7"></div>
+                                                <div class="card-status bg-warning br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
-                                                    <h3 class="card-title">Hold</h3>
+                                                    <h3 class="card-title">Incoming</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.hold-dashboard-index')
+                                                    @livewire('hitung-bahan.component.incoming-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
@@ -147,53 +137,18 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="card-status bg-warning br-te-7 br-ts-7"></div>
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Cancel</h3>
-                                                </div>
-                                                <div class="card-body">
-                                                    @livewire('follow-up.component.cancel-dashboard-index')
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- ROW-2 END -->
-                                </div>
-                                <div class="tab-pane" id="tab6">
-                                    <!-- ROW-2-->
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-status bg-success br-te-7 br-ts-7"></div>
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Complete</h3>
-                                                </div>
-                                                <div class="card-body">
-                                                    @livewire('follow-up.component.complete-dashboard-index')
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- ROW-2 END -->
-                                </div>
-                                <div class="tab-pane" id="tab7">
-                                    <!-- ROW-2-->
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
                                                 <div class="card-status bg-info br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
                                                     <h3 class="card-title">All</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.all-dashboard-index')
+                                                    @livewire('hitung-bahan.component.all-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- ROW-2 END -->
                                 </div>
-
                             </div>
                         </div>
                         <!--End Row-->

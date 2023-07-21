@@ -2573,9 +2573,19 @@
             // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
 
             console.log('Canvas created:', canvas);
+            var dataJSON = @this.layoutSettings[index].dataJSON;
+            if(dataJSON){
+                canvas.loadFromJSON(JSON.parse(dataJSON), function () {
+                canvas.renderAll();
+            });
             canvasesSetting[canvasContainer.id] = canvas;
             initCenteringGuidelines(canvas);
             initAligningGuidelines(canvas);
+            }else{
+            canvasesSetting[canvasContainer.id] = canvas;
+            initCenteringGuidelines(canvas);
+            initAligningGuidelines(canvas);
+            }
         }
 
         function addRectangleSetting(index) {
@@ -2731,9 +2741,19 @@
             // Tambahkan kode logika lainnya di sini, seperti menambahkan objek atau event listener
 
             console.log('Canvas created:', canvas);
+            var dataJSON = @this.layoutBahans[indexBahan].dataJSON;
+            if(dataJSON){
+                canvas.loadFromJSON(JSON.parse(dataJSON), function () {
+                canvas.renderAll();
+            });
             canvasesBahan[canvasContainer.id] = canvas;
             initCenteringGuidelines(canvas);
             initAligningGuidelines(canvas);
+            }else{
+            canvasesBahan[canvasContainer.id] = canvas;
+            initCenteringGuidelines(canvas);
+            initAligningGuidelines(canvas);
+            }
         }
 
         function addRectangleBahan(indexBahan) {

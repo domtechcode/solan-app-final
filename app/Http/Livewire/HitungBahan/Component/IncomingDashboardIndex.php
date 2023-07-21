@@ -60,8 +60,8 @@ class IncomingDashboardIndex extends Component
     {
         return view('livewire.hitung-bahan.component.incoming-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 1)
-                                        ->where('state_task', 'Running')
+                            WorkStep::where('work_step_list_id', 5)
+                                        ->where('state_task', 'Not Running')
                                         ->whereIn('status_task', ['Process'])
                                         ->where('spk_status', 'Running')
                                         ->whereIn('status_id', [1, 2, 23])
@@ -70,7 +70,7 @@ class IncomingDashboardIndex extends Component
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 1)
+                            WorkStep::where('work_step_list_id', 5)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Process'])
                                         ->where('spk_status', 'Running')
