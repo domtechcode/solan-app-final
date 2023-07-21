@@ -2,21 +2,25 @@
 
 namespace App\Http\Livewire\HitungBahan\Component;
 
+use Carbon\Carbon;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
+use App\Models\FileRincian;
 use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
 class CreateFormHitungBahanIndex extends Component
 {
     use WithFileUploads;
     public $filerincian = [];
+    public $filerincianlast = [];
     public $layoutSettings = [];
     public $layoutBahans = [];
     public $keterangans = [];
@@ -154,6 +158,7 @@ class CreateFormHitungBahanIndex extends Component
                 
             ],
             'fileRincian' => [],
+            'fileRincianLast' => [],
             'rincianPlate' => [],
             'notes' => '',
         ];
@@ -246,18 +251,25 @@ class CreateFormHitungBahanIndex extends Component
                 'jarak_tambahan_horizontal' => $dataLayoutSetting['jarak_tambahan_horizontal'],
             ];
         }
+       
+        $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
+            ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian')
+            ->get();
 
-        $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'rincianPlate')->get();
-        foreach($keteranganData as $dataKeterangan){
+        foreach ($keteranganData as $dataKeterangan) {
             $keterangan = [
                 'fileRincian' => [],
                 'notes' => $dataKeterangan['notes'],
+                'plate' => [],
+                'screen' => [],
+                'pond' => [],
+                'rincianPlate' => [],
+                'rincianScreen' => [],
+                'fileRincianLast' => [],
             ];
 
-            if($dataKeterangan['keteranganPlate']){
-                $keterangan['plate'] = [];
-            }else{
-                foreach($dataKeterangan['keteranganPlate'] as $dataPlate){
+            if (isset($dataKeterangan['keteranganPlate'])) {
+                foreach ($dataKeterangan['keteranganPlate'] as $dataPlate) {
                     $keterangan['plate'][] = [
                         "state_plate" => $dataPlate['state_plate'],
                         "jumlah_plate" => $dataPlate['jumlah_plate'],
@@ -266,11 +278,8 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-
-            if($dataKeterangan['keteranganScreen']){
-                $keterangan['screen'] = [];
-            }else{
-                foreach($dataKeterangan['keteranganScreen'] as $dataScreen){
+            if (isset($dataKeterangan['keteranganScreen'])) {
+                foreach ($dataKeterangan['keteranganScreen'] as $dataScreen) {
                     $keterangan['screen'][] = [
                         "state_screen" => $dataScreen['state_screen'],
                         "jumlah_screen" => $dataScreen['jumlah_screen'],
@@ -279,11 +288,8 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-
-            if($dataKeterangan['keteranganPisauPond']){
-                $keterangan['pond'] = [];
-            }else{
-                foreach($dataKeterangan['keteranganPisauPond'] as $dataPisau){
+            if (isset($dataKeterangan['keteranganPisauPond'])) {
+                foreach ($dataKeterangan['keteranganPisauPond'] as $dataPisau) {
                     $keterangan['pond'][] = [
                         "state_pisau" => $dataPisau['state_pisau'],
                         "jumlah_pisau" => $dataPisau['jumlah_pisau'],
@@ -291,11 +297,8 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-
-            if($dataKeterangan['rincianPlate']){
-                $keterangan['rincianPlate'] = [];
-            }else{
-                foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
+            if (isset($dataKeterangan['rincianPlate'])) {
+                foreach ($dataKeterangan['rincianPlate'] as $dataRincianPlate) {
                     $keterangan['rincianPlate'][] = [
                         "state" => $dataRincianPlate['state'],
                         "plate" => $dataRincianPlate['plate'],
@@ -305,11 +308,8 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-
-            if($dataKeterangan['rincianScreen']){
-                $keterangan['rincianScreen'] = [];
-            }else{
-                foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
+            if (isset($dataKeterangan['rincianScreen'])) {
+                foreach ($dataKeterangan['rincianScreen'] as $dataRincianScreen) {
                     $keterangan['rincianScreen'][] = [
                         "state" => $dataRincianScreen['state'],
                         "screen" => $dataRincianScreen['screen'],
@@ -319,22 +319,18 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-
-            if($dataKeterangan['fileRincian']){
-                $keterangan['fileRincian'] = [];
-            }else{
-                foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
-                    $keterangan['fileRincian'][] = [
+            if (isset($dataKeterangan['fileRincian'])) {
+                foreach ($dataKeterangan['fileRincian'] as $dataFileRincian) {
+                    $keterangan['fileRincianLast'][] = [
                         "file_name" => $dataFileRincian['file_name'],
                         "file_path" => $dataFileRincian['file_path'],
                     ];
                 }
             }
-            
-            
+
             $this->keterangans[] = $keterangan;
         }
-        
+    
         $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)->get();
         foreach($layoutBahanData as $dataLayoutBahan){
             $this->layoutBahans[] = [
@@ -408,6 +404,7 @@ class CreateFormHitungBahanIndex extends Component
                     
                 ],
                 'fileRincian' => [],
+                'fileRincianLast' => [],
                 'rincianPlate' => [],
                 'rincianScreen' => [],
                 'notes' => '',
@@ -452,6 +449,7 @@ class CreateFormHitungBahanIndex extends Component
     
     public function save()
     {
+        
         $this->validate([
             'layoutSettings' => 'required|array|min:1',
             'layoutSettings.*.panjang_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
@@ -664,17 +662,10 @@ class CreateFormHitungBahanIndex extends Component
             ]);
         }
 
-        $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->first();
-        $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->first();
-        $checkLayoutBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->first();
+        $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
+        $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
+        $checkLayoutBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
 
-        if($checkLayoutSetting){
-            $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
-        }else if($checkKeterangan){
-            $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
-        }else if($checkLayoutBahan){
-            $checkLayoutBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
-        }
 
         if(isset($this->stateWorkStepCetakLabel)){
             if ($this->layoutSettings) {
@@ -732,6 +723,24 @@ class CreateFormHitungBahanIndex extends Component
                             $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
                             $norincian = 1;
                             foreach ($keteranganData['fileRincian'] as $file) {
+                                $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
+    
+                                $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-'.$norincian . '.' . $file->getClientOriginalExtension();
+                                Storage::putFileAs($folder, $file, $fileName);
+                                $norincian ++;
+    
+                                $keteranganFileRincian= $keterangan->fileRincian()->create([
+                                    'instruction_id' => $this->currentInstructionId,
+                                    "file_name" => $fileName,
+                                    "file_path" => $folder,
+                                ]);
+                            }
+                        }
+
+                        if($keteranganData['fileRincianLast']){
+                            $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                            $norincian = 1;
+                            foreach ($keteranganData['fileRincianLast'] as $file) {
                                 $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
     
                                 $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-'.$norincian . '.' . $file->getClientOriginalExtension();
@@ -973,7 +982,39 @@ class CreateFormHitungBahanIndex extends Component
             }
         }
 
-        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+        $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('work_step_list_id', 5)
+                ->first();
+            
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+            
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'schedule_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 8]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 58]);
+            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 59]);
+
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -981,7 +1022,41 @@ class CreateFormHitungBahanIndex extends Component
             'message' => 'Berhasil membuat instruksi kerja',
         ]);
 
+        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+
         return redirect()->route('hitungBahan.dashboard');
+    }
+
+    public function deleteFileRincian($fileName, $key, $keteranganIndex)
+    {
+        $file = FileRincian::where('file_name', $fileName)->first();
+
+        if ($file) {
+            Storage::delete($file->file_path.'/'.$file->file_name);
+            $file->delete();
+            // Hapus juga entry dari array fileRincian di property $keterangans menggunakan index
+            if (isset($this->keterangans[$keteranganIndex]['fileRincianLast'][$key])) {
+                unset($this->keterangans[$keteranganIndex]['fileRincianLast'][$key]);
+            }
+        }
+    }
+
+    public function deleteFileCustomLayout($fileName, $indexBahan)
+    {
+        $file = LayoutBahan::where('layout_custom_file_name', $fileName)->first();
+
+        if ($file) {
+            Storage::delete($file->layout_custom_path.'/'.$file->layout_custom_file_name);
+            $file->update([
+                'layout_custom_file_name' => null,
+                'layout_custom_path' => null,
+            ]);
+            // Hapus juga entry dari array fileRincian di property $keterangans menggunakan index
+            if (isset($this->layoutBahans[$indexBahan]['layout_custom_file_name_last']) && isset($this->layoutBahans[$indexBahan]['layout_custom_path_last'])) {
+                unset($this->layoutBahans[$indexBahan]['layout_custom_file_name_last']);
+                unset($this->layoutBahans[$indexBahan]['layout_custom_path_last']);
+            }
+        }
     }
 
     public function modalInstructionDetails($instructionId)
@@ -1013,5 +1088,15 @@ class CreateFormHitungBahanIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = $arguments['createdMessage'];
+        $selectedConversation = $arguments['selectedConversation'];
+        $receiverUser = $arguments['receiverUser'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

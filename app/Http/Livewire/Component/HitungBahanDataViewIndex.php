@@ -130,7 +130,7 @@ class HitungBahanDataViewIndex extends Component
             ];
         }
 
-        $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'rincianPlate')->get();
+        $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate')->get();
         $this->totalPlate = 0;
         $this->totalLembarCetakPlate = 0;
         $this->totalWastePlate = 0;

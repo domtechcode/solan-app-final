@@ -211,7 +211,7 @@
                                         <h3 class="card-title">Layout Setting - {{ $indexSetting }}</h3>
                                         <img class="img-responsive"
                                             src="{{ $layoutSettings[$indexSetting]['dataURL'] }}"
-                                            style="width: 70%;">
+                                            style="width: 100%;">
                                     </div>
                                 </div>
                             </div>
@@ -1133,7 +1133,7 @@
                                         @else
                                             <img class="img-responsive"
                                                 src="{{ $layoutBahans[$indexBahan]['dataURL'] }}"
-                                                style="width: 70%;">
+                                                style="width: 100%;">
                                         @endif
                                     </div>
                                 </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Rab;
+namespace App\Http\Livewire\Rab\Index;
 
 use Livewire\Component;
 
@@ -15,7 +15,7 @@ class IndexCreateFormRab extends Component
 
     public function render()
     {
-        return view('livewire.rab.index-create-form-rab', [
+        return view('livewire.rab.index.index-create-form-rab', [
             'title' => 'Form Rab'
         ])
         ->extends('layouts.app')

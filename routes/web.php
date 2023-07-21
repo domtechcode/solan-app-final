@@ -44,4 +44,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/group', 'App\Http\Livewire\HitungBahan\Index\IndexGroup')->name('group');
     });
 
+    Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\Rab\Index\IndexDashboard')->name('rab.dashboard');
+        Route::get('/create-form-rab/{instructionId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
+    });
+
 });

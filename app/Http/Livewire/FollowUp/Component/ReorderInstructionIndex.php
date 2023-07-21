@@ -120,8 +120,8 @@ class ReorderInstructionIndex extends Component
         $this->customer_number = $this->instructions->customer_number;
         $this->order_name = $this->instructions->order_name;
         $this->code_style = $this->instructions->code_style;
-        $this->quantity = currency_idr($this->instructions->quantity);
-        $this->price = currency_idr($this->instructions->price);
+        $this->quantity = $this->instructions->quantity;
+        $this->price = $this->instructions->price;
         $this->follow_up = $this->instructions->follow_up;
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
@@ -464,7 +464,7 @@ class ReorderInstructionIndex extends Component
                     ];
                 }
     
-                $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'rincianPlate')->get();
+                $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian')->get();
                 foreach($keteranganData as $dataKeterangan){
                     $keterangan = [
                         'fileRincian' => [],
@@ -606,20 +606,28 @@ class ReorderInstructionIndex extends Component
                                     }
                                 }
             
-                                if($keteranganData['fileRincian']){
-                                    $InstructionCurrentDataFile = Instruction::find($instruction->id);
-                                    $norincian = 1;
-                                    foreach ($keteranganData['fileRincian'] as $file) {
-                                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
-            
-                                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-'.$norincian . '.' . $file->getClientOriginalExtension();
-                                        Storage::putFileAs($folder, $file, $fileName);
-                                        $norincian ++;
-            
-                                        $keteranganFileRincian= $keterangan->fileRincian()->create([
+                                if (isset($keteranganData['fileRincian'])) {
+                                    $instruction = Instruction::find($instruction->id);
+                                    foreach ($keteranganData['fileRincian'] as $fileInfo) {
+                                        $newfolder = "public/".$instruction->spk_number."/hitung-bahan";
+                                        
+                                        // Generate a unique identifier (e.g., timestamp or unique ID) to append to the file name
+                                        $uniqueIdentifier = time(); // You can use any other unique identifier as well
+                                        
+                                        // Extract the file extension from the original file name
+                                        $fileExtension = pathinfo($fileInfo['file_name'], PATHINFO_EXTENSION);
+                                        
+                                        // Generate the new file name with the unique identifier
+                                        $newFileName = $instruction->spk_number . '-file-rincian-' . $uniqueIdentifier . '.' . $fileExtension;
+                                        
+                                        // Copy the file to the desired location with the new unique file name
+                                        Storage::copy($fileInfo['file_path'] . '/' . $fileInfo['file_name'], $newfolder . '/' . $newFileName);
+                                        
+                                        // Create the file record in the database
+                                        $keteranganFileRincian = $keterangan->fileRincian()->create([
                                             'instruction_id' => $instruction->id,
-                                            "file_name" => $fileName,
-                                            "file_path" => $folder,
+                                            "file_name" => $newFileName,
+                                            "file_path" => $newfolder,
                                         ]);
                                     }
                                 }
@@ -771,20 +779,28 @@ class ReorderInstructionIndex extends Component
                                     }
                                 }
             
-                                if(isset($keteranganData['fileRincian'])){
-                                    $InstructionCurrentDataFile = Instruction::find($instruction->id);
-                                    $norincian = 1;
-                                    foreach ($keteranganData['fileRincian'] as $file) {
-                                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/hitung-bahan";
-            
-                                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-'.$norincian . '.' . $file->getClientOriginalExtension();
-                                        Storage::putFileAs($folder, $file, $fileName);
-                                        $norincian ++;
-            
-                                        $keteranganFileRincian= $keterangan->fileRincian()->create([
+                                if (isset($keteranganData['fileRincian'])) {
+                                    $instruction = Instruction::find($instruction->id);
+                                    foreach ($keteranganData['fileRincian'] as $fileInfo) {
+                                        $newfolder = "public/".$instruction->spk_number."/hitung-bahan";
+                                        
+                                        // Generate a unique identifier (e.g., timestamp or unique ID) to append to the file name
+                                        $uniqueIdentifier = time(); // You can use any other unique identifier as well
+                                        
+                                        // Extract the file extension from the original file name
+                                        $fileExtension = pathinfo($fileInfo['file_name'], PATHINFO_EXTENSION);
+                                        
+                                        // Generate the new file name with the unique identifier
+                                        $newFileName = $instruction->spk_number . '-file-rincian-' . $uniqueIdentifier . '.' . $fileExtension;
+                                        
+                                        // Copy the file to the desired location with the new unique file name
+                                        Storage::copy($fileInfo['file_path'] . '/' . $fileInfo['file_name'], $newfolder . '/' . $newFileName);
+                                        
+                                        // Create the file record in the database
+                                        $keteranganFileRincian = $keterangan->fileRincian()->create([
                                             'instruction_id' => $instruction->id,
-                                            "file_name" => $fileName,
-                                            "file_path" => $folder,
+                                            "file_name" => $newFileName,
+                                            "file_path" => $newfolder,
                                         ]);
                                     }
                                 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Rab;
+namespace App\Http\Livewire\Rab\Component;
 
 use Livewire\Component;
 use App\Models\WorkStep;
@@ -214,7 +214,7 @@ class CreateFormRabIndex extends Component
 
     public function render()
     {
-        return view('livewire.rab.create-form-rab-index')->extends('layouts.app')
+        return view('livewire.rab.component.create-form-rab-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form RAB']);
     }
