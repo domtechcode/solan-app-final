@@ -49,4 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/create-form-rab/{instructionId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
     });
 
+    Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\Penjadwalan\Index\IndexDashboard')->name('jadwal.dashboard');
+    });
+
 });

@@ -982,7 +982,7 @@ class CreateFormHitungBahanIndex extends Component
                     $updateNextStep->update([
                         'state_task' => 'Running',
                         'status_task' => 'Pending Approved',
-                        'schedule_date' => Carbon::now(),
+                        'target_date' => Carbon::now(),
                     ]);
 
                     $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([

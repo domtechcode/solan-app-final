@@ -287,7 +287,7 @@ class CreateFormRabIndex extends Component
                 }
             }
 
-        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
+        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => $updateNextStep->user_id]);
 
 
         $this->emit('flashMessage', [

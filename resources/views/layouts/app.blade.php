@@ -170,7 +170,7 @@
                     // console.log(data);
                 });
 
-                
+                Livewire.emit('indexRender');
         });
     </script>
 
