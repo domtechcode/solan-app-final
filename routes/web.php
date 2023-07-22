@@ -20,6 +20,7 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
+Route::get('/form-work-step', 'App\Http\Livewire\Operator\Index\IndexWorkStep')->name('indexWorkStep');
 
 Route::group(['middleware' => ['auth']], function () {
 
@@ -51,6 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Penjadwalan\Index\IndexDashboard')->name('jadwal.dashboard');
+        Route::get('/group', 'App\Http\Livewire\Penjadwalan\Index\IndexGroup')->name('group');
     });
 
 });
