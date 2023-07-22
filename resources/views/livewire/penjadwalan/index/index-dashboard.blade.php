@@ -40,12 +40,12 @@
                                                 data-bs-toggle="tab">New SPK
                                             </button>
                                         </li>
-                                        {{-- <li>
+                                        <li>
                                             <button href="#tab3" class="btn btn-info mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">Running
                                             </button>
                                         </li>
-                                        <li>
+                                        {{-- <li>
                                             <button href="#tab4" class="btn btn-danger mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">Hold
                                             </button>
@@ -108,7 +108,7 @@
                                     </div>
                                     <!-- ROW-2 END -->
                                 </div>
-                                {{-- <div class="tab-pane" id="tab3">
+                                <div class="tab-pane" id="tab3">
                                     <!-- ROW-2-->
                                     <div class="row">
                                         <div class="col-md-12">
@@ -118,14 +118,14 @@
                                                     <h3 class="card-title">Running</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('follow-up.component.running-dashboard-index')
+                                                    @livewire('penjadwalan.component.running-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <!-- ROW-2 END -->
                                 </div>
-                                <div class="tab-pane" id="tab4">
+                                {{-- <div class="tab-pane" id="tab4">
                                     <!-- ROW-2-->
                                     <div class="row">
                                         <div class="col-md-12">

@@ -12,7 +12,7 @@ use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
 
-class NewSpkDashboardIndex extends Component
+class RunningDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -109,13 +109,12 @@ class NewSpkDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
         
-        return view('livewire.penjadwalan.component.new-spk-dashboard-index', [
+        return view('livewire.penjadwalan.component.running-dashboard-index', [
             'instructions' => $this->search === null ?
                             WorkStep::where('work_step_list_id', 2)
                                         ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved'])
+                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
@@ -123,9 +122,8 @@ class NewSpkDashboardIndex extends Component
                                         ->paginate($this->paginate) :
                             WorkStep::where('work_step_list_id', 2)
                                         ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved'])
+                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -144,75 +142,75 @@ class NewSpkDashboardIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function save()
-    {
-        $this->validate([
-            'workSteps.*.work_step_list_id' => 'required',
-            'workSteps.*.schedule_date' => 'required',
-            'workSteps.*.target_date' => 'required',
-            'workSteps.*.user_id' => 'required',
-        ]);
+    // public function save()
+    // {
+    //     $this->validate([
+    //         'workSteps.*.work_step_list_id' => 'required',
+    //         'workSteps.*.schedule_date' => 'required',
+    //         'workSteps.*.target_date' => 'required',
+    //         'workSteps.*.user_id' => 'required',
+    //     ]);
 
-        $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
-        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+    //     $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
+    //     $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
 
-        $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                        ->where('step', '>', $firstWorkStep->step)
-                        ->get();
+    //     $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+    //                     ->where('step', '>', $firstWorkStep->step)
+    //                     ->get();
         
-        if($deleteWorkSteps){
-            foreach($deleteWorkSteps as $dataDeleted){
-                WorkStep::where('id', $dataDeleted->id)->delete();
-            }
-        }
+    //     if($deleteWorkSteps){
+    //         foreach($deleteWorkSteps as $dataDeleted){
+    //             WorkStep::where('id', $dataDeleted->id)->delete();
+    //         }
+    //     }
 
-        // Insert new work steps starting from firstWorkStep->step + 1
-        $stepToAdd = $firstWorkStep->step + 1;
-        $newWorkSteps = [];
+    //     // Insert new work steps starting from firstWorkStep->step + 1
+    //     $stepToAdd = $firstWorkStep->step + 1;
+    //     $newWorkSteps = [];
 
-        foreach ($this->workSteps as $index => $workStepData) {
-            $newWorkSteps[] = [
-                'instruction_id' => $this->selectedInstruction->id,
-                'work_step_list_id' => $workStepData['work_step_list_id'],
-                'target_date' => $workStepData['target_date'],
-                'schedule_date' => $workStepData['schedule_date'],
-                'target_time' => $workStepData['target_time'],
-                'user_id' => $workStepData['user_id'],
-                'machine_id' => $workStepData['machine_id'],
-                'step' => $stepToAdd++,
-                'state_task' => 'Not Running',
-                'status_task' => 'Waiting',
-            ];
-        }
+    //     foreach ($this->workSteps as $index => $workStepData) {
+    //         $newWorkSteps[] = [
+    //             'instruction_id' => $this->selectedInstruction->id,
+    //             'work_step_list_id' => $workStepData['work_step_list_id'],
+    //             'target_date' => $workStepData['target_date'],
+    //             'schedule_date' => $workStepData['schedule_date'],
+    //             'target_time' => $workStepData['target_time'],
+    //             'user_id' => $workStepData['user_id'],
+    //             'machine_id' => $workStepData['machine_id'],
+    //             'step' => $stepToAdd++,
+    //             'state_task' => 'Not Running',
+    //             'status_task' => 'Waiting',
+    //         ];
+    //     }
 
-        $inserWorkStep = WorkStep::insert($newWorkSteps);
+    //     $inserWorkStep = WorkStep::insert($newWorkSteps);
 
-        $nextWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('step', $firstWorkStep->step + 1)->update([
-            'state_task' => 'Not Running',
-            'status_task' => 'Pending Start',
-        ]);
+    //     $nextWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('step', $firstWorkStep->step + 1)->update([
+    //         'state_task' => 'Not Running',
+    //         'status_task' => 'Pending Start',
+    //     ]);
 
-        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-            'job_id' => $firstWorkStep->work_step_list_id,
-            'status_id' => 2,
-        ]);
+    //     $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+    //         'job_id' => $firstWorkStep->work_step_list_id,
+    //         'status_id' => 2,
+    //     ]);
 
-        $firstWorkStep->update([
-            'status_task' => 'Process',
-        ]);
+    //     $firstWorkStep->update([
+    //         'status_task' => 'Process',
+    //     ]);
 
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Jadwal Instruksi Kerja',
-            'message' => 'Data jadwal berhasil disimpan',
-        ]);
+    //     $this->emit('flashMessage', [
+    //         'type' => 'success',
+    //         'title' => 'Jadwal Instruksi Kerja',
+    //         'message' => 'Data jadwal berhasil disimpan',
+    //     ]);
 
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-new-spk');
-    }
+    //     $this->emit('indexRender');
+    //     $this->reset();
+    //     $this->dispatchBrowserEvent('close-modal');
+    // }
 
-    public function modalInstructionDetailsNewSpk($instructionId)
+    public function modalInstructionDetailsRunning($instructionId)
     {
         $this->workSteps = [];
 
@@ -257,13 +255,13 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-running');
     }
 
-    public function modalInstructionDetailsGroupNewSpk($groupId)
+    public function modalInstructionDetailsGroupRunning($groupId)
     {
         $this->workSteps = [];
-
+        
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
 
@@ -277,6 +275,6 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
     }
 }

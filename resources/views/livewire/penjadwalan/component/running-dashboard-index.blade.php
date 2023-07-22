@@ -46,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -98,7 +98,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                         {{-- <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.updateInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a> --}}
                                     </div>
                                 </td>
@@ -122,9 +122,9 @@
     </div>
     
     
-    <form wire:submit.prevent="save">
+    {{-- <form wire:submit.prevent="save"> --}}
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalRunning" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -221,18 +221,29 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th>LANGKAH KERJA</th>
-                                            <th>TARGET SELESAI</th>
-                                            <th>DIJADWALKAN</th>
-                                            <th>TARGET JAM</th>
-                                            <th>OPERATOR/REKANAN</th>
-                                            <th>MACHINE</th>
-                                            <th>ACTION</th>
+                                            <th class="border-bottom-0"></th>
+                                            <th class="border-bottom-0">LANGKAH KERJA</th>
+                                            <th class="border-bottom-0">TARGET SELESAI</th>
+                                            <th class="border-bottom-0">DIJADWALKAN</th>
+                                            <th class="border-bottom-0">TARGET JAM</th>
+                                            <th class="border-bottom-0">OPERATOR/REKANAN</th>
+                                            <th class="border-bottom-0">MACHINE</th>
+                                            <th class="border-bottom-0">STATUS</th>
+                                            <th class="border-bottom-0">ACTIONS</th>
+                                            <th class="border-bottom-0">REJECT</th>
+                                            <th class="border-bottom-0">REJECT FOR</th>
+                                            <th class="border-bottom-0">HASIL</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($workSteps as $key => $dataWork)
                                             <tr>
+                                                <td>
+                                                    <div class="btn-list">         
+                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-plus"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-x"></i></button>
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     <div class="row">
                                                         <div class="col-md-12">
@@ -300,9 +311,26 @@
                                                     </div>
                                                 </td>
                                                 <td>
+                                                    <span class="tag tag-border">Pending Start</span>
+                                                </td>
+                                                <td>
                                                     <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})"><i class="fe fe-plus"></i></button>
-                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})"><i class="fe fe-x"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-left-up"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-slash"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-warning" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-right-down"></i></button>
+                                                    </div>
+                                                </td>
+                                                
+                                                <td>
+                                                    -
+                                                </td>
+                                                <td>
+                                                    -
+                                                </td>
+                                                <td>
+                                                    <div class="btn-list">         
+                                                        <button type="button" class="btn btn-icon btn-sm btn-dark" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-link"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -427,16 +455,16 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    {{-- <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button> --}}
+                    <button type="submit" class="btn btn-primary" >Reschedule</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    </form>
+    {{-- </form> --}}
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupRunning" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -959,17 +987,17 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-new-spk', event =>{
-            $('#detailInstructionModalNewSpk').modal('hide');
-            $('#detailInstructionModalGroupNewSpk').modal('hide');
+        window.addEventListener('close-modal-running', event =>{
+            $('#detailInstructionModalRunning').modal('hide');
+            $('#detailInstructionModalGroupRunning').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal-new-spk', event =>{
-            $('#detailInstructionModalNewSpk').modal('show');
+        window.addEventListener('show-detail-instruction-modal-running', event =>{
+            $('#detailInstructionModalRunning').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group-new-spk', event =>{
-            $('#detailInstructionModalGroupNewSpk').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-running', event =>{
+            $('#detailInstructionModalGroupRunning').modal('show');
         });
     </script>
 @endpush
