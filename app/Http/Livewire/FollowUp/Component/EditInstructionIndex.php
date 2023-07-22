@@ -318,7 +318,7 @@ class EditInstructionIndex extends Component
                     'state_task' => 'Not Running',
                     'status_task' => 'Waiting',
                     'step' => $no,
-                    'task' => 'Running',
+                    'task_priority' => 'Normal',
                     'user_id' => $step['user_id'],
                 ]);
                 $no++;
@@ -355,11 +355,11 @@ class EditInstructionIndex extends Component
                     'status_task' => 'Process',
                 ]);
 
-            // $updateStatus = WorkStep::where('instruction_id', $instruction->id)
-            //     ->update([
-            //         'status_id' => 2,
-            //         'job_id' => $firstWorkStep->work_step_list_id,
-            //     ]);
+            $updateStatus = WorkStep::where('instruction_id', $instruction->id)
+                ->update([
+                    'status_id' => 2,
+                    'job_id' => $updateRejectSource->work_step_list_id,
+                ]);
             
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();

@@ -66,7 +66,7 @@
     </div>
 
     <!-- BACK-TO-TOP -->
-    <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a>
+    {{-- <a href="#top" id="back-to-top"><i class="fa fa-angle-up"></i></a> --}}
 
     <!-- JQUERY JS -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -170,7 +170,7 @@
                     // console.log(data);
                 });
 
-                Livewire.emit('indexRender');
+                // Livewire.emit('indexRender');
         });
     </script>
 

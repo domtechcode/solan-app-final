@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp\Component;
+namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -59,9 +59,9 @@ class HoldDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.component.hold-dashboard-index', [
+        return view('livewire.rab.component.hold-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 3)
+                            WorkStep::where('work_step_list_id', 1)
                                         ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB'])
                                         // ->whereIn('status_id', [5, 25, 24])
                                         ->whereHas('instruction', function ($query) {
@@ -69,7 +69,7 @@ class HoldDashboardIndex extends Component
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 3)
+                            WorkStep::where('work_step_list_id', 1)
                                         ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB'])
                                         // ->whereIn('status_id', [5, 25, 24])
                                         ->whereHas('instruction', function ($query) {
