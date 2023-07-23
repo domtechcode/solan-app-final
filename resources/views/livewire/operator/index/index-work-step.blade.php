@@ -46,14 +46,78 @@
                     {{-- End Notif --}}
                     @endif
 
-                    <div class="row mb-5">
-                        <div class="col-md-7 overflow-auto" style="height: 100vh;">
-                            {{-- @livewire('component.hitung-bahan-data-view-index', ['instructionId' => $instructionSelectedId]) --}}
+                    <div class="row">
+                        <div class="col-md-8">
+                          <div class="row">
+                            <div class="col-lg-12">
+                                <!--Row-->
+                                <div class="panel panel-primary">
+                                    <div class=" tab-menu-heading">
+                                        <div class="tabs-menu1">
+                                            <!-- Tabs -->
+                                            <ul class="nav panel-tabs">
+                                                <li>
+                                                    <button href="#tab1" class="active btn btn-dark mt-1 mb-1 me-3"
+                                                        data-bs-toggle="tab">Order
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button href="#tab2" class="btn btn-primary mt-1 mb-1 me-3"
+                                                        data-bs-toggle="tab">Details
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Row End-->
+                    
+                                <!--Row -->
+                                <div class="panel-body tabs-menu-body">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab1">
+                                            <!-- ROW-2-->
+                                            @livewire('component.hitung-bahan-data-view-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            <!-- ROW-2 END -->
+                                            @livewire('component.operator.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                        </div>
+                                        <div class="tab-pane" id="tab2">
+                                            <!-- ROW-2-->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="card">
+                                                        <div class="card-status bg-primary br-te-7 br-ts-7"></div>
+                                                        <div class="card-header">
+                                                            <h3 class="card-title">Details</h3>
+                                                        </div>
+                                                        <div class="card-body">
+                                                          
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- ROW-2 END -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--End Row-->
+                            </div>
                         </div>
-                        <div class="col-md-5 overflow-auto" style="height: 100vh;">
-                            @livewire('component.timer-index')
                         </div>
-                    </div>
+                        <div class="col-md-4">
+                            @livewire('component.timer-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                            @livewire('component.reject-operator-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                        </div>
+                      </div>
+
+                    {{-- <div class="row mb-5">
+                        <div class="col-md-7">
+                            
+                        </div>
+                        <div class="col-md-5">
+                            
+                        </div>
+                    </div> --}}
     
                     
                     

@@ -60,15 +60,49 @@ class RunningDashboardIndex extends Component
         $this->render();
     }
 
+    public function urgent($instructionSelectedIdUrgent)
+    {
+        $updateUrgent = WorkStep::where('instruction_id', $instructionSelectedIdUrgent)->update([
+            'task_priority' => 'Urgent',
+        ]);
+
+        $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Urgent Instruksi Kerja',
+                    'message' => 'Urgent instruksi kerja berhasil disimpan',
+                ]);
+        
+        $this->emit('indexRender');
+        // $this->reset();
+    }
+
+    public function normal($instructionSelectedIdNormal)
+    {
+        $updateNormal = WorkStep::where('instruction_id', $instructionSelectedIdNormal)->update([
+            'task_priority' => 'Normal',
+        ]);
+
+        $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Normal Instruksi Kerja',
+                    'message' => 'Normal instruksi kerja berhasil disimpan',
+                ]);
+        
+        $this->emit('indexRender');
+        // $this->reset();
+    }
+
     public function addField($index)
     {
         array_splice($this->workSteps, $index + 1, 0, [[
+            'id' => NULL,
             'work_step_list_id' => NULL,
             'target_date' => NULL,
             'schedule_date' => NULL,
             'target_time' => NULL,
             'user_id' => NULL,
             'machine_id' => NULL,
+            'status_task' => 'Pending Start',
         ]]);
 
         // Load Event
@@ -102,6 +136,7 @@ class RunningDashboardIndex extends Component
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
+        
     }
 
     public function render()
@@ -114,7 +149,7 @@ class RunningDashboardIndex extends Component
                             WorkStep::where('work_step_list_id', 2)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->where('spk_status', 'Running')
+                                        ->whereNotIn('spk_status', ['Hold', 'Deleted'])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
@@ -123,7 +158,7 @@ class RunningDashboardIndex extends Component
                             WorkStep::where('work_step_list_id', 2)
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->where('spk_status', 'Running')
+                                        ->whereNotIn('spk_status', ['Hold', 'Deleted'])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -219,12 +254,14 @@ class RunningDashboardIndex extends Component
         
         foreach($this->selectedWorkStep as $key => $dataSelected){
             $workSteps = [
+                'id' => $dataSelected['id'],
                 'work_step_list_id' => $dataSelected['work_step_list_id'],
                 'target_date' => $dataSelected['target_date'],
                 'schedule_date' => $dataSelected['schedule_date'],
                 'target_time' => $dataSelected['target_time'],
                 'user_id' => $dataSelected['user_id'],
                 'machine_id' => $dataSelected['machine_id'],
+                'status_task' => $dataSelected['status_task'],
             ];
             $this->workSteps[] = $workSteps;
 
@@ -276,5 +313,36 @@ class RunningDashboardIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
+    }
+
+    public function startButton($workStepId)
+    {
+        $updateStart = WorkStep::where('id', $workStepId)->first(); // Fetch the record before updating
+        $workStepListId = null;
+
+        if ($updateStart) {
+            // Update the record
+            $updateStart->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+            ]);
+
+            $workStepListId = $updateStart->work_step_list_id;
+        }
+
+        // Use the fetched work_step_list_id in the second update
+        $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'status_id' => 1,
+            'job_id' => $workStepListId,
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-running');
     }
 }

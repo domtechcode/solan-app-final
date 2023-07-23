@@ -29,7 +29,6 @@
                             <th class="border-bottom-0">Style</th>
                             <th class="border-bottom-0">TGL Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
-                            <th class="border-bottom-0">Urgent</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
                             <th class="border-bottom-0">Action</th>
@@ -47,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -57,69 +56,50 @@
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
                                 <td>{{ $dataInstruction->instruction->quantity - $dataInstruction->instruction->stock }}</td>
-                                @if($dataInstruction->task_priority == 'Urgent')
-                                <td>
-                                    <div class="form-group">
-                                        <label class="custom-switch form-switch me-5">
-                                            <input type="radio" wire:click="normal({{ $dataInstruction->instruction->id }})" class="custom-switch-input" checked>
-                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        </label>
-                                    </div>
-                                </td>
-                                @else
-                                <td>
-                                    <div class="form-group">
-                                        <label class="custom-switch form-switch me-5">
-                                            <input type="radio" wire:click="urgent({{ $dataInstruction->instruction->id }})" class="custom-switch-input">
-                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        </label>
-                                    </div>
-                                </td>
-                                @endif
                                 @if(in_array($dataInstruction->status_id, [1, 8]))
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                 </td>
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                 </td>
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                 </td>
                                 <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                     @endif
                                     <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        {{-- <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.updateInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a> --}}
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('indexWorkStep', ['instructionId' =>  $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -142,10 +122,9 @@
     </div>
     
     
-    {{-- <form wire:submit.prevent="save"> --}}
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalRunning" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Detail Instruction</h5>
@@ -170,7 +149,6 @@
                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
-                                            <th class="border-bottom-0">HARGA</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -185,7 +163,6 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->price ?? '-' }}</td>
                                         </tr>
                                         @endif
                                         
@@ -210,7 +187,6 @@
                                             <th class="border-bottom-0">GROUP</th>
                                             <th class="border-bottom-0">NO. SPK LAYOUT</th>
                                             <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                            <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -224,7 +200,6 @@
                                             <td>{{ $selectedInstruction->group_id ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->spk_layout_number ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
                                         </tr>
                                         @endif
                                         
@@ -241,127 +216,25 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="border-bottom-0"></th>
-                                            <th class="border-bottom-0">LANGKAH KERJA</th>
-                                            <th class="border-bottom-0">TARGET SELESAI</th>
-                                            <th class="border-bottom-0">DIJADWALKAN</th>
-                                            <th class="border-bottom-0">TARGET JAM</th>
-                                            <th class="border-bottom-0">OPERATOR/REKANAN</th>
-                                            <th class="border-bottom-0">MACHINE</th>
-                                            <th class="border-bottom-0">STATUS</th>
-                                            <th class="border-bottom-0">ACTIONS</th>
-                                            <th class="border-bottom-0">REJECT</th>
-                                            <th class="border-bottom-0">REJECT FOR</th>
-                                            <th class="border-bottom-0">HASIL</th>
+                                            <th>LANGKAH KERJA</th>
+                                            <th>TARGET SELESAI</th>
+                                            <th>DIJADWALKAN</th>
+                                            <th>OPERATOR/REKANAN</th>
+                                            <th>MACHINE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
-                                        @foreach ($workSteps as $key => $dataWork)
-                                        {{-- {{ dd($workSteps) }} --}}
-                                            <tr>
-                                                <td>
-                                                    <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-plus"></i></button>
-                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-x"></i></button>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
-                                                                        <option label="Select Langkah Kerja"></option>
-                                                                        @foreach ($dataWorkSteps as $dataWorkStep)
-                                                                            <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control">
-                                                        @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
-                                                                        <option label="Select User"></option>
-                                                                        @foreach ($dataUsers as $dataUser)
-                                                                        <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
-                                                                        <option label="Select Machine"></option>
-                                                                        @foreach ($dataMachines as $dataMachine)
-                                                                        <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="tag tag-border">{{ $dataWork['status_task'] }}</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-list">
-                                                        @if($dataWork['status_task'] == 'Pending Start')
-                                                            {{-- <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-left-up"></i></button> --}}
-                                                            <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
-                                                            {{-- <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-slash"></i></button> --}}
-                                                            {{-- <button type="button" class="btn btn-icon btn-sm btn-warning" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-right-down"></i></button> --}}
-
-                                                        @elseif($dataWork['status_task'] == 'Waiting')
-                                                        -
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                
-                                                <td>
-                                                    -
-                                                </td>
-                                                <td>
-                                                    -
-                                                </td>
-                                                <td>
-                                                    <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-dark" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-link"></i></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                        @if ($selectedWorkStep)
+                                            @foreach ($selectedWorkStep as $workstep)
+                                                <tr>
+                                                    <td>{{ $workstep->workStepList->name ?? '-' }}</td>
+                                                    <td>{{ $workstep->target_date ?? '-' }}</td>
+                                                    <td>{{ $workstep->schedule_date ?? '-' }}</td>
+                                                    <td>{{ $workstep->user->name ?? '-' }}</td>
+                                                    <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -438,24 +311,6 @@
                             </div>
                         </div>
                         <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Accounting<hr>
-                                    <ul class="list-group no-margin">
-                                        @if ($selectedFileAccounting)
-                                            @foreach ($selectedFileAccounting as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
-                                                <p>No files found.</p>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
@@ -482,16 +337,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" >Reschedule</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    {{-- </form> --}}
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupRunning" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -528,7 +381,6 @@
                                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
-                                                            <th class="border-bottom-0">HARGA</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -543,7 +395,6 @@
                                                             <td>{{ $selectedInstructionParent->shipping_date ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->quantity ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->price ?? '-' }}</td>
                                                         </tr>
                                                         @endif
                                                         
@@ -568,7 +419,6 @@
                                                             <th class="border-bottom-0">GROUP</th>
                                                             <th class="border-bottom-0">NO. SPK LAYOUT</th>
                                                             <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                                            <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -582,7 +432,6 @@
                                                             <td>{{ $selectedInstructionParent->group_id ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->spk_layout_number ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->spk_sample_number ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->shipping_date_first ?? '-' }}</td>
                                                         </tr>
                                                         @endif
                                                         
@@ -602,7 +451,6 @@
                                                             <th>LANGKAH KERJA</th>
                                                             <th>TARGET SELESAI</th>
                                                             <th>DIJADWALKAN</th>
-                                                            <th>TARGET JAM</th>
                                                             <th>OPERATOR/REKANAN</th>
                                                             <th>MACHINE</th>
                                                         </tr>
@@ -614,7 +462,6 @@
                                                                     <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
-                                                                    <td>{{ $workstep->spk_parent ?? '-' }}</td>
                                                                     <td>{{ $workstep->user->name ?? '-' }}</td>
                                                                     <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
                                                                 </tr>
@@ -696,24 +543,6 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    File Accounting<hr>
-                                                    <ul class="list-group no-margin">
-                                                        @if ($selectedFileAccountingParent)
-                                                            @foreach ($selectedFileAccountingParent as $file)
-                                                            <li class="list-group-item d-flex ps-3">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                            </li>
-                                                            @endforeach
-                                                        @else
-                                                            <li>
-                                                                <p>No files found.</p>
-                                                            </li>
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
@@ -773,7 +602,6 @@
                                                                 <th class="border-bottom-0">TGL. DIKIRIM</th>
                                                                 <th class="border-bottom-0">QTY</th>
                                                                 <th class="border-bottom-0">STOCK</th>
-                                                                <th class="border-bottom-0">HARGA</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -788,7 +616,6 @@
                                                                 <td>{{ $data->shipping_date ?? '-' }}</td>
                                                                 <td>{{ $data->quantity ?? '-' }}</td>
                                                                 <td>{{ $data->stock ?? '-' }}</td>
-                                                                <td>{{ $data->price ?? '-' }}</td>
                                                             </tr>
                                                             @endif
                                                             
@@ -813,7 +640,6 @@
                                                                 <th class="border-bottom-0">GROUP</th>
                                                                 <th class="border-bottom-0">NO. SPK LAYOUT</th>
                                                                 <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                                                <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -827,7 +653,6 @@
                                                                 <td>{{ $data->group_id ?? '-' }}</td>
                                                                 <td>{{ $data->spk_layout_number ?? '-' }}</td>
                                                                 <td>{{ $data->spk_sample_number ?? '-' }}</td>
-                                                                <td>{{ $data->shipping_date_first ?? '-' }}</td>
                                                             </tr>
                                                             @endif
                                                             
@@ -847,7 +672,6 @@
                                                                 <th>LANGKAH KERJA</th>
                                                                 <th>TARGET SELESAI</th>
                                                                 <th>DIJADWALKAN</th>
-                                                                <th>TARGET JAM</th>
                                                                 <th>OPERATOR/REKANAN</th>
                                                                 <th>MACHINE</th>
                                                             </tr>
@@ -859,7 +683,6 @@
                                                                         <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                                         <td>{{ $workstep->target_date ?? '-' }}</td>
                                                                         <td>{{ $workstep->schedule_date ?? '-' }}</td>
-                                                                        <td>{{ $workstep->spk_parent ?? '-' }}</td>
                                                                         <td>{{ $workstep->user->name ?? '-' }}</td>
                                                                         <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
                                                                     </tr>
@@ -947,26 +770,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-xl-4">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        File Accounting<hr>
-                                                        <ul class="list-group no-margin">
-                                                            @if ($data->fileArsip)
-                                                                @foreach ($data->fileArsip as $file)
-                                                                @if($file->type_file == 'accounting')
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
-                                                                @endif
-                                                                @endforeach
-                                                            @else
-                                                                <li>
-                                                                    <p>No files found.</p>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
-                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="expanel expanel-default">
@@ -1014,17 +817,17 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-running', event =>{
-            $('#detailInstructionModalRunning').modal('hide');
-            $('#detailInstructionModalGroupRunning').modal('hide');
+        window.addEventListener('close-modal-new-spk', event =>{
+            $('#detailInstructionModalNewSpk').modal('hide');
+            $('#detailInstructionModalGroupNewSpk').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal-running', event =>{
-            $('#detailInstructionModalRunning').modal('show');
+        window.addEventListener('show-detail-instruction-modal-new-spk', event =>{
+            $('#detailInstructionModalNewSpk').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group-running', event =>{
-            $('#detailInstructionModalGroupRunning').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-new-spk', event =>{
+            $('#detailInstructionModalGroupNewSpk').modal('show');
         });
     </script>
 @endpush
