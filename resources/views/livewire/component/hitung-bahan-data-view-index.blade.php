@@ -91,6 +91,7 @@
                                 </thead>
                                 <tbody>
                                     @php
+                                        $spk_type = '';
                                         $total_qty = 0;
                                     @endphp
                                     @foreach ($instructionData as $key => $instruction)
@@ -125,6 +126,7 @@
                                                 </div>
                                             </td>
                                             @php
+                                                $spk_type = $instruction->spk_type;
                                                 $total_qty += $instruction->quantity - $instruction->stock;
                                             @endphp
                                         
@@ -180,6 +182,7 @@
         </div>
     </div>
 
+    @if($spk_type != 'layout')
     @foreach ($layoutSettings as $indexSetting => $setting)
         <!-- ROW-2-->
         <div class="row">
@@ -1385,6 +1388,7 @@
         </div>
         <!-- ROW-2 END -->
     @endforeach
+    @endif
 
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">

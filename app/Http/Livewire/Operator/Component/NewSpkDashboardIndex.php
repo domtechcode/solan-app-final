@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Penjadwalan\Component;
+namespace App\Http\Livewire\Operator\Component;
 
 use DB;
 use App\Models\User;
@@ -109,23 +109,23 @@ class NewSpkDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
         
-        return view('livewire.penjadwalan.component.new-spk-dashboard-index', [
+        return view('livewire.operator.component.new-spk-dashboard-index', [
             'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 2)
+                            WorkStep::where('user_id', Auth()->user()->id)
                                         ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved'])
+                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1])
+                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 2)
+                            WorkStep::where('user_id', Auth()->user()->id)
                                         ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved'])
+                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1])
+                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
@@ -182,8 +182,6 @@ class NewSpkDashboardIndex extends Component
                 'step' => $stepToAdd++,
                 'state_task' => 'Not Running',
                 'status_task' => 'Waiting',
-                'task_priority' => 'Normal',
-                'spk_status' => 'Running',
             ];
         }
 
@@ -216,43 +214,8 @@ class NewSpkDashboardIndex extends Component
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
-        $this->workSteps = [];
-
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->where('status_task', '!=', 'Complete')->where('state_task', '!=', 'Complete')->with('workStepList', 'user', 'machine')->get();
-        
-        foreach($this->selectedWorkStep as $key => $dataSelected){
-            $workSteps = [
-                'work_step_list_id' => $dataSelected['work_step_list_id'],
-                'target_date' => $dataSelected['target_date'],
-                'schedule_date' => $dataSelected['schedule_date'],
-                'target_time' => $dataSelected['target_time'],
-                'user_id' => $dataSelected['user_id'],
-                'machine_id' => $dataSelected['machine_id'],
-            ];
-            $this->workSteps[] = $workSteps;
-
-            // Load Event
-            $this->dispatchBrowserEvent('pharaonic.select2.load', [
-                'component' => $this->id,
-                'target'    => '#work_step_list_id-'.$key,
-            ]);
-
-            // Load Event
-            $this->dispatchBrowserEvent('pharaonic.select2.load', [
-                'component' => $this->id,
-                'target'    => '#user_id-'.$key,
-            ]); 
-
-            // Load Event
-            $this->dispatchBrowserEvent('pharaonic.select2.load', [
-                'component' => $this->id,
-                'target'    => '#machine_id-'.$key,
-            ]); 
-        }
-
-        // dd($this->workSteps);
-
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
@@ -264,8 +227,6 @@ class NewSpkDashboardIndex extends Component
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
     {
-        $this->workSteps = [];
-
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
 

@@ -34,6 +34,8 @@ class CreateWorkStepsTable extends Migration
             $table->string('step')->nullable();
             $table->string('state_task')->nullable();
             $table->string('status_task')->nullable();
+            $table->string('timer')->nullable();
+            $table->string('alasan_pause')->nullable();
             $table->string('reject_from_id')->nullable();
             $table->string('reject_from_status')->nullable();
             $table->string('reject_from_job')->nullable();

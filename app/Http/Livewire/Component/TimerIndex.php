@@ -9,14 +9,40 @@ class TimerIndex extends Component
 {
     public $timer;
     public $alasanPause;
-    public $timerData = "00:00:23";
+    public $timerData;
+    public $currentInstructionId;
+    public $currentWorkStepId;
 
-
-    public function save()
+    public function mount($instructionId, $workStepId)
     {
-        WorkStep::where('id', 1)->update([
-            'target_time' => $this->timer,
+        $this->currentInstructionId = $instructionId;
+        $this->currentWorkStepId = $workStepId;
+        $workStepData = WorkStep::find($workStepId);
+        $this->timerData = $workStepData->timer ?? '00:00:00';   
+    }
+
+    public function saveDataTimer()
+    {
+        $updateTimer = WorkStep::where('id', $this->currentWorkStepId)->update([
+            'timer' => $this->timer,
         ]);
+    }
+
+    public function saveDataTimerPause()
+    {
+
+        $updatePauase = WorkStep::where('id', $this->currentWorkStepId)->update([
+            'timer' => $this->timer,
+            'alasan_pause' => $this->alasanPause,
+        ]);
+
+        $this->alasanPause = '';
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Timer Pause',
+            'message' => 'Pause Timer Berhasil',
+        ]);        
     }
 
 

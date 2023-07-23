@@ -383,6 +383,11 @@ class CreateInstructionIndex extends Component
             }
             
             if($this->notes){
+                $this->validate([
+                    'notes.*.tujuan' => 'required',
+                    'notes.*.catatan' => 'required',
+                ]);
+
                 foreach ($this->notes as $input) {
                     $catatan = Catatan::create([
                         'tujuan' => $input['tujuan'],

@@ -50,6 +50,10 @@ class LoginController extends Controller
                     return redirect()->route('jadwal.dashboard');
                     break;
 
+                case 'Operator':
+                    return redirect()->route('operator.dashboard');
+                    break;
+
                 default:
                     return redirect()->route('login');
                     break;
