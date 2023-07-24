@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexEditInstruction')->name('followUp.editInstruction');
         Route::get('/update-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction')->name('followUp.updateInstruction');
         Route::get('/reorder-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexReorderInstruction')->name('followUp.reorderInstruction');
-        Route::get('/group', 'App\Http\Livewire\FollowUp\Index\IndexGroup')->name('group');
+        Route::get('/group', 'App\Http\Livewire\FollowUp\Index\IndexGroup')->name('followUp.group');
     });
 
     Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {
@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\HitungBahan\Index\IndexDashboard')->name('hitungBahan.dashboard');
         Route::get('/create-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexCreateFormHitungBahan')->name('hitungBahan.createFormHitungBahan');
         Route::get('/edit-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexEditFormHitungBahan')->name('hitungBahan.editFormHitungBahan');
-        Route::get('/group', 'App\Http\Livewire\HitungBahan\Index\IndexGroup')->name('group');
+        Route::get('/group', 'App\Http\Livewire\HitungBahan\Index\IndexGroup')->name('hitungBahan.group');
     });
 
     Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
@@ -51,7 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Penjadwalan\Index\IndexDashboard')->name('jadwal.dashboard');
-        Route::get('/group', 'App\Http\Livewire\Penjadwalan\Index\IndexGroup')->name('group');
+        Route::get('/group', 'App\Http\Livewire\Penjadwalan\Index\IndexGroup')->name('jadwal.group');
     });
 
     Route::group(['prefix' => 'operator', 'middleware' => ['role:Operator']], function () {

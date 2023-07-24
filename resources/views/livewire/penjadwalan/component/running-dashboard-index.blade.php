@@ -296,7 +296,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control">
+                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>

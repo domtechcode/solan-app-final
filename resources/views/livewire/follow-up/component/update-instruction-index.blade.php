@@ -225,6 +225,7 @@
                                     </label>
                                 </div>
                             </div>
+                            @error('qtyState') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                         </div>
                     </div>
                 </div>
