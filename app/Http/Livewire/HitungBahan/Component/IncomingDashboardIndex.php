@@ -58,36 +58,23 @@ class IncomingDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.hitung-bahan.component.incoming-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Not Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 5)
+                ->where('state_task', 'Not Running')
+                ->where('spk_status', 'Running')
+                ->whereIn('status_id', [1, 2, 23])
+                ->whereHas('instruction', function ($query) {
+                    $query->where('spk_number', 'like', '%' . $this->search . '%')
+                    ->orWhere('spk_type', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('order_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_number', 'like', '%' . $this->search . '%')
+                    ->orWhere('code_style', 'like', '%' . $this->search . '%')
+                    ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+                    ->orderBy('shipping_date', 'asc');
+                })
+                ->with(['status', 'job', 'workStepList'])
+                ->paginate($this->paginate);
+        return view('livewire.hitung-bahan.component.incoming-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

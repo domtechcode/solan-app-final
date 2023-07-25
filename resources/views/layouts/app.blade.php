@@ -158,28 +158,22 @@
         
     </script>
 
-    <script>
-        window.addEventListener('livewire:load', function () {
-            Livewire.emit('indexRender');
-            // Mendengarkan event dari public channel
-            window.Echo.channel('notif.' + {{ Auth::user()->id }})
-                .listen('NotificationSent', function (data) {
-                    // Livewire.emit('refreshIndexDashboard', data);
-                    Livewire.emit('notifSent', data);
-                    
-                    // console.log(data);
-                });
+<script>
+    window.addEventListener('livewire:load', function () {
+        // Mendengarkan event dari public channel
+        window.Echo.channel('notif.' + {{ Auth::user()->id }})
+            .listen('NotificationSent', function (data) {
+                Livewire.emit('notifSent', data);
+            });
 
-                // Livewire.emit('indexRender');
-        });
-    </script>
+        window.Echo.channel('refresh')
+            .listen('IndexRenderEvent', function (e) {
+                Livewire.emit('indexRender');
+            });
+    });
+</script>
 
-    {{-- <script>
-        Echo.channel(`test`)
-        .listen('HelloEvent', (e) => {
-            console.log(e);
-        });
-    </script> --}}
+
 </body>
 
 </html>

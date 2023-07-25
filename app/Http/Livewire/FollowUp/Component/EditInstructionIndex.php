@@ -12,6 +12,7 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
 class EditInstructionIndex extends Component
@@ -61,6 +62,8 @@ class EditInstructionIndex extends Component
     public $fileaccountingCurrent;
 
     public $currentInstructionId;
+    public $keteranganReject;
+    public $keteranganCatatan;
 
 
     public function addField($name, $id)
@@ -88,6 +91,8 @@ class EditInstructionIndex extends Component
     public function mount($instructionId)
     {
         $this->currentInstructionId = $instructionId;
+        $this->keteranganReject = Catatan::where('instruction_id', $this->currentInstructionId)->where('tujuan', 1)->where('kategori', 'reject')->get();
+        $this->keteranganCatatan = Catatan::where('instruction_id', $this->currentInstructionId)->where('tujuan', 1)->where('kategori', 'catatan')->get();
         $this->datacustomers = Customer::all();
         $this->dataparents = Instruction::where('spk_number', 'LIKE', '%-A')->orderByDesc('created_at')->get();
         $this->datalayouts = Instruction::where('spk_type', 'layout')->orderByDesc('created_at')->get();
@@ -307,7 +312,6 @@ class EditInstructionIndex extends Component
             }
         
             $lastWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->get();
-            $rejectFrom = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
             $deleteWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->delete();
 
             $no = 0;
@@ -340,26 +344,34 @@ class EditInstructionIndex extends Component
                     'selesai' => $lastwork->selesai,
                     'task_priority' => $lastwork->task_priority,
                     'spk_status' => $lastwork->spk_status,
+                    'reject_from_id' => $lastwork->reject_from_id,
+                    'reject_from_status' => $lastwork->reject_from_status,
+                    'reject_from_job' => $lastwork->reject_from_job,
                 ]);
             }
-            
-            $rejectFormStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                'status_id' => $rejectFrom->reject_from_status,
-                'reject_from_status' => NULL,
-                'reject_from_job' => NULL,
+
+            $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
+
+            $findSourceReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $currentWorkStep->reject_from_job)->first();
+
+            $findSourceReject->update([
+                'status_task' => 'Pending Approved',
             ]);
 
-            $updateRejectSource = WorkStep::where('id', $rejectFrom->reject_from_id)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Process',
-                ]);
+            $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => $currentWorkStep->reject_from_status,
+                'job_id' => $currentWorkStep->reject_from_job,
+            ]);
 
-            $updateStatus = WorkStep::where('instruction_id', $instruction->id)
-                ->update([
-                    'status_id' => 2,
-                    'job_id' => $updateRejectSource->work_step_list_id,
-                ]);
+            $currentWorkStep->update([
+                'reject_from_id' => null,
+                'reject_from_status' => null,
+                'reject_from_job' => null,
+                'state_task' => 'Running',
+                'status_task' => 'Process',
+                'selesai' => Carbon::now()->toDateTimeString()
+            ]);
+
             
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
@@ -430,18 +442,9 @@ class EditInstructionIndex extends Component
                     ]);
                 }
             }
-
-            $updateFollowUp = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', 0)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Process',
-                    'reject_from_id' => null,
-                    'target_date' => Carbon::now(),
-                    'selesai' => Carbon::now()->toDateTimeString()
-                ]);
             
             //notif
-            $this->messageSent(['receiver' => $updateRejectSource->user_id, 'instruction_id' => $this->currentInstructionId]);
+            $this->messageSent(['receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -449,7 +452,7 @@ class EditInstructionIndex extends Component
                 'message' => 'Berhasil membuat instruksi kerja',
             ]);
 
-            return redirect()->route('dashboard');
+            return redirect()->route('followUp.dashboard');
             
         }else{
 

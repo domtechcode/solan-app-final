@@ -23,6 +23,7 @@ class CreateRincianScreensTable extends Migration
             $table->string('screen');
             $table->string('jumlah_lembar_cetak');
             $table->string('waste');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

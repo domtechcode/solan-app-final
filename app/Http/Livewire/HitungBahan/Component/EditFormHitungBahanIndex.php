@@ -997,10 +997,7 @@ class EditFormHitungBahanIndex extends Component
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
-                        'status_task' => 'Process',
-                        'reject_from_id' => NULL,
-                        'reject_from_status' => NULL,
-                        'reject_from_job' => NULL,
+                        'status_task' => 'Pending Approved',
                     ]);
 
                     $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
@@ -1008,6 +1005,12 @@ class EditFormHitungBahanIndex extends Component
                         'job_id' => $updateNextStep->work_step_list_id,
                     ]);
                 }
+
+                $updateTask->update([
+                    'reject_from_id' => NULL,
+                    'reject_from_status' => NULL,
+                    'reject_from_job' => NULL,
+                ]);
             }
 
             $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => $updateNextStep->user_id]);

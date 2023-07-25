@@ -23,6 +23,7 @@ class CreateRincianPlatesTable extends Migration
             $table->string('plate');
             $table->string('jumlah_lembar_cetak');
             $table->string('waste');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

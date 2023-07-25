@@ -10,6 +10,7 @@ class IndexWorkStep extends Component
 {
     public $instructionSelectedId;
     public $workStepSelectedId;
+    public $workStepData;
 
     public function mount($instructionId, $workStepId)
     {
@@ -22,6 +23,8 @@ class IndexWorkStep extends Component
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
         ]);
+
+        $this->workStepData = WorkStep::find($this->workStepSelectedId);
     }
 
     public function render()

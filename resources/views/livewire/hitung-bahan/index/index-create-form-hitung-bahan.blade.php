@@ -45,9 +45,6 @@
 
                 @livewire('hitung-bahan.component.create-form-hitung-bahan-index', ['instructionId' => $instructionSelectedId])
 
-                
-
-
             </div>
             <!-- CONTAINER CLOSED -->
         </div>

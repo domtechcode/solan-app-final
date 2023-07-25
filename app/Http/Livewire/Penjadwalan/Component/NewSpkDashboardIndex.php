@@ -117,7 +117,8 @@ class NewSpkDashboardIndex extends Component
                                         ->where('spk_status', 'Running')
                                         ->whereIn('status_id', [1])
                                         ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
+                                            $query->where('group_priority', '!=', 'child')
+                                            ->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
@@ -134,6 +135,7 @@ class NewSpkDashboardIndex extends Component
                                             ->orWhere('customer_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+                                            ->where('group_priority', '!=', 'child')
                                             ->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['status', 'job', 'workStepList'])

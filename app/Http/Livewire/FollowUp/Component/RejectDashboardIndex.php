@@ -58,36 +58,25 @@ class RejectDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.component.reject-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 1)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [3, 22])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 1)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [3, 22])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 1)
+        ->where('state_task', 'Running')
+        ->whereIn('status_task', ['Reject', 'Reject Requirements'])
+        ->where('spk_status', 'Running')
+        ->whereIn('status_id', [3, 22])
+        ->whereHas('instruction', function ($query) {
+            $query->where('spk_number', 'like', '%' . $this->search . '%')
+            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
+            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
+            ->orWhere('order_name', 'like', '%' . $this->search . '%')
+            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
+            ->orWhere('code_style', 'like', '%' . $this->search . '%')
+            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+            ->orderBy('shipping_date', 'asc');
+        })
+        ->with(['status', 'job', 'workStepList'])
+        ->paginate($this->paginate);
+
+        return view('livewire.follow-up.component.reject-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

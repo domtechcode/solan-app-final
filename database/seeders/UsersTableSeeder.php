@@ -73,7 +73,8 @@ class UsersTableSeeder extends Seeder
             ["id"=>"56","name"=>"TRIANSYAH","username"=>"TRI","role"=>"Operator","jobdesk"=>"Cetak","current"=>"opcetak8"],
             ["id"=>"57","name"=>"Saiman","username"=>"saiman","role"=>"Operator","jobdesk"=>"Blok Lem","current"=>"opbloklem"],
             ["id"=>"58","name"=>"Tati","username"=>"tati","role"=>"RAB","jobdesk"=>"RAB","current"=>"rabsln2"],
-            ["id"=>"59","name"=>"Tony","username"=>"tony","role"=>"RAB","jobdesk"=>"RAB","current"=>"rabsln3"]
+            ["id"=>"59","name"=>"Tony","username"=>"tony","role"=>"RAB","jobdesk"=>"RAB","current"=>"rabsln3"],
+            ["id"=>"60","name"=>"Tarsalim","username"=>"salimcetak","role"=>"Operator","jobdesk"=>"Cetak","current"=>"opcetak9"],
         ];
         foreach ($data as $user) {
             $user['password'] = bcrypt($user['current']);

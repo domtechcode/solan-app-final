@@ -259,16 +259,20 @@ class UpdateInstructionIndex extends Component
             }
 
             if($this->qtyState == 'Ya'){
-                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                    'status_id' => 25,
-                ]);
                 $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->update([
                     'state_task' => 'Running',
                     'status_task' => 'Revisi Qty',
                 ]);
-                    $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
-                    $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
-                    $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+
+                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                    'status_id' => 26,
+                    'job_id' => 5,
+                ]);
+
+                $this->emit('indexRender');
+                    // $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
+                    // $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
+                    // $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
                 
             }
             

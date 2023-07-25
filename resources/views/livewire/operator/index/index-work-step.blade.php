@@ -78,8 +78,13 @@
                                         <div class="tab-pane active" id="tab1">
                                             <!-- ROW-2-->
                                             @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                            <!-- ROW-2 END -->
-                                            @livewire('component.operator.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+
+                                            @if($workStepData->work_step_list_id == 6)
+                                                <!-- Setting -->
+                                                @livewire('component.operator.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @else
+
+                                            @endif
                                         </div>
                                         <div class="tab-pane" id="tab2">
                                             @livewire('component.detail-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])

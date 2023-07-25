@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\IndexRenderEvent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\FollowUp\Index\IndexGroup;
 use App\Http\Controllers\Auth\LoginContr\LoginController;
@@ -20,6 +21,9 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
+// Route::get('/trigger-index-event', function () {
+//     broadcast(new IndexRenderEvent('test'));
+// });
 
 Route::group(['middleware' => ['auth']], function () {
 

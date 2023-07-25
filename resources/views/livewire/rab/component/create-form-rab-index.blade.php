@@ -95,6 +95,7 @@
                                                             <option value="Jasa Maklun">Jasa Maklun</option>
                                                             <option value="Biaya Packing">Biaya Packing</option>
                                                             <option value="Biaya Pengiriman">Biaya Pengiriman</option>
+                                                            <option value="Biaya Lainnya">Biaya Lainnya</option>
                                                         </select>
                                                         @error('rabItems.'.$index.'.jenisPengeluaran') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                                     </div>

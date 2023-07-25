@@ -40,13 +40,13 @@ class UngroupIndex extends Component
             'instructions' => $this->search === null ?
                             Instruction::whereNotNull('group_id')
                                         ->whereNotNull('group_priority')
-                                        ->where('spk_state', 'Running')
+                                        // ->where('spk_state', 'Running')
                                         ->orderBy('shipping_date', 'asc')
                                         ->with(['workStep', 'workStep.status', 'workStep.job'])
                                         ->paginate($this->paginate) :
                             Instruction::whereNotNull('group_id')
                                         ->whereNotNull('group_priority')
-                                        ->where('spk_state', 'Running')
+                                        // ->where('spk_state', 'Running')
                                         ->orderBy('shipping_date', 'asc')
                                         ->where(function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
@@ -56,6 +56,7 @@ class UngroupIndex extends Component
                                             ->orWhere('customer_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
                                             ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+                                            ->orWhere('group_priority', 'like', '%' . $this->search . '%')
                                             ->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['workStep', 'workStep.status', 'workStep.job'])

@@ -13,6 +13,7 @@ use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
@@ -992,10 +993,11 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 8]);
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 58]);
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 59]);
+            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 8]);
+            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 58]);
+            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 59]);
 
+            
 
         $this->emit('flashMessage', [
             'type' => 'success',
