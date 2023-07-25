@@ -479,6 +479,7 @@
             </div>
 
         </div>
+        <button type="button" class="btn btn-info mt-4 mb-0" wire:click="sampleRecord">Download Sample Record</button>
         <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
 </div>

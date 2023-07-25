@@ -58,32 +58,24 @@ class CancelDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.follow-up.component.cancel-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Cancel')
-                                        // ->whereIn('status_id', [4])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Cancel')
-                                        // ->whereIn('status_id', [4])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 1)
+                ->where('spk_status', 'Cancel')
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->orderBy('shipping_date', 'asc');
+                })
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->paginate($this->paginate);
+
+        return view('livewire.follow-up.component.cancel-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

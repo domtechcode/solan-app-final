@@ -84,36 +84,25 @@ class GroupIndex extends Component
     
     public function render()
     {
-        return view('livewire.component.group-index', [
-            'instructions' => $this->search === null
-                ? Instruction::where('group_id', NULL)
-                    ->where('group_priority', NULL)
-                    ->where('spk_state', 'Running')
-                    ->orderBy('shipping_date', 'asc')
-                    ->with(['workStep', 'workStep.status', 'workStep.job'])
-                    ->paginate($this->paginate)
-                : Instruction::where('group_id', NULL)
-                    ->where('group_priority', NULL)
-                    ->where('spk_state', 'Running')
-                    ->where(function ($query) {
-                        $query->where('spk_number', 'like', '%' . $this->search . '%')
-                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('workStep.status', function ($query) {
-                        $query->where('desc_status', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('workStep.job', function ($query) {
-                        $query->where('desc_job', 'like', '%' . $this->search . '%');
-                    })
-                    ->orderBy('shipping_date', 'asc')
-                    ->with(['workStep', 'workStep.status', 'workStep.job'])
-                    ->paginate($this->paginate),
-        ])
+        $data = Instruction::where(function ($query) {
+                    $query->whereNull('group_id')
+                        ->whereNull('group_priority');
+                })
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where('spk_number', 'like', $searchTerms)
+                        ->orWhere('spk_type', 'like', $searchTerms)
+                        ->orWhere('customer_name', 'like', $searchTerms)
+                        ->orWhere('order_name', 'like', $searchTerms)
+                        ->orWhere('customer_number', 'like', $searchTerms)
+                        ->orWhere('code_style', 'like', $searchTerms)
+                        ->orWhere('shipping_date', 'like', $searchTerms);
+                })
+                ->orderBy('shipping_date', 'asc')
+                ->with(['workStep', 'workStep.status', 'workStep.job'])
+                ->paginate($this->paginate);    
+
+        return view('livewire.component.group-index', ['instructions' => $data ])
         ->extends('layouts.app');
     }
 
@@ -232,6 +221,8 @@ class GroupIndex extends Component
                 'title' => 'Success Add Group',
                 'message' => 'Group baru berhasil ditambahkan',
             ]);
+
+            $this->render();
         }
 
         return redirect()->back();    

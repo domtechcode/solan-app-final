@@ -60,29 +60,40 @@ class NewSpkDashboardIndex extends Component
     {
         $data = WorkStep::where('work_step_list_id', 1)
                 ->where('state_task', 'Running')
-                ->whereIn('status_task', ['Process'])
-                ->where('spk_status', 'Running')
+                ->where('status_task', 'Process')
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
                 ->whereIn('status_id', [1, 2])
                 ->whereHas('instruction', function ($query) {
-                    $query->where('spk_number', 'like', '%' . $this->search . '%')
-                    ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                    ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                    ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                    ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                    ->orderBy('shipping_date', 'asc');
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')
+                            ->orWhereNull('group_priority');
+                    })->orderBy('shipping_date', 'asc');
                 })
-                ->with(['status', 'job', 'workStepList'])
+                ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->paginate($this->paginate);
 
-        return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructions' => $data])
+        $dataCount = WorkStep::where('work_step_list_id', 1)
+                ->where('state_task', 'Running')
+                ->where('status_task', 'Process')
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
+                ->whereIn('status_id', [1, 2])->count();
+
+        return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructions' => $data, 'countNewSpk' => $dataCount])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -92,10 +103,10 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupNewSpk($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -110,6 +121,6 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }
 }

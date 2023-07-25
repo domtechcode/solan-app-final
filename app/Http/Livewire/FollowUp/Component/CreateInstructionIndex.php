@@ -4,6 +4,7 @@ namespace App\Http\Livewire\FollowUp\Component;
 
 use Carbon\Carbon;
 use App\Models\Job;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -13,9 +14,12 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CreateInstructionIndex extends Component
 {
@@ -403,15 +407,23 @@ class CreateInstructionIndex extends Component
 
             //notif
             if ($firstWorkStep->work_step_list_id == 4) {
-                $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Stock')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             } else if ($firstWorkStep->work_step_list_id == 5) {
-                $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             } else {
-                $this->messageSent(['receiver' => 4, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             }
 
             $this->emit('flashMessage', [
@@ -441,7 +453,7 @@ class CreateInstructionIndex extends Component
     public function messageSent($arguments)
     {
         $createdMessage = "info";
-        $selectedConversation = "SPK Baru";
+        $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
@@ -586,5 +598,41 @@ class CreateInstructionIndex extends Component
         // Perbarui nilai input text
         $this->dispatchBrowserEvent('generatedfsc', ['codefsc' => $this->spk_number_fsc]);
 
+    }
+
+    public function sampleRecord()
+    {
+        $this->validate([
+            'spk_number' => 'required',
+            'customer' => 'required',
+            'order_date' => 'required',
+            'order_name' => 'required',
+        ]);
+
+        $customer = Customer::find($this->customer);
+        $customer_name = $customer ? $customer->name : '';
+
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setLoadSheetsOnly('Sheet1');
+        $spreadsheet = $reader->load("samplerecord.xlsx");
+
+        $spreadsheet->getActiveSheet()->setCellValue('B4', $this->order_date);
+        $spreadsheet->getActiveSheet()->setCellValue('J4', $this->spk_number);
+        $spreadsheet->getActiveSheet()->setCellValue('C5', $this->order_name);
+        $spreadsheet->getActiveSheet()->setCellValue('I5', $customer_name);
+
+        // Generate the Excel file in memory
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        // Set the response headers for download
+        $response = new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="Sample-Record-' . $this->spk_number . '.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
     }
 }

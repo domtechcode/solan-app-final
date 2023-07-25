@@ -12,8 +12,11 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EditInstructionIndex extends Component
 {
@@ -444,8 +447,9 @@ class EditInstructionIndex extends Component
             }
             
             //notif
-            $this->messageSent(['receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
-
+            $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
+            broadcast(new IndexRenderEvent('refresh'));
+            
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
@@ -466,13 +470,12 @@ class EditInstructionIndex extends Component
 
     public function messageSent($arguments)
     {
-        $this->createdMessage = "info";
-        $this->selectedConversation = "SPK telah diperbaiki";
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, $receiverUser));
-        broadcast(new NotificationSent(Auth()->user()->id, $this->createdMessage, $this->selectedConversation, $instruction_id, Auth()->user()->id));
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function uploadFiles($instructionId)
@@ -689,5 +692,41 @@ class EditInstructionIndex extends Component
         // Perbarui nilai input text
         $this->dispatchBrowserEvent('generatedfsc', ['codefsc' => $this->spk_number_fsc]);
 
+    }
+
+    public function sampleRecord()
+    {
+        $this->validate([
+            'spk_number' => 'required',
+            'customer' => 'required',
+            'order_date' => 'required',
+            'order_name' => 'required',
+        ]);
+
+        $customer = Customer::find($this->customer);
+        $customer_name = $customer ? $customer->name : '';
+
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setLoadSheetsOnly('Sheet1');
+        $spreadsheet = $reader->load("samplerecord.xlsx");
+
+        $spreadsheet->getActiveSheet()->setCellValue('B4', $this->order_date);
+        $spreadsheet->getActiveSheet()->setCellValue('J4', $this->spk_number);
+        $spreadsheet->getActiveSheet()->setCellValue('C5', $this->order_name);
+        $spreadsheet->getActiveSheet()->setCellValue('I5', $customer_name);
+
+        // Generate the Excel file in memory
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        // Set the response headers for download
+        $response = new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="Sample-Record-' . $this->spk_number . '.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
     }
 }
