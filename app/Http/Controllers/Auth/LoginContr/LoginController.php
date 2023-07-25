@@ -25,7 +25,7 @@ class LoginController extends Controller
 
         // Attempt to log the user in
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
-
+            $request->session()->regenerate();
             // Determine the user's role and redirect to the appropriate dashboard
             $user = Auth::user();
             // dd($user->role);
@@ -64,9 +64,11 @@ class LoginController extends Controller
         return redirect()->back()->withErrors(['username' => 'Invalid credentials']);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect('/');
     }

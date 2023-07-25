@@ -17,10 +17,14 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
         if (Auth::check() && in_array(Auth::user()->role, $roles)) {
             return $next($request);
         }
 
-        return redirect('/');
+         return redirect('/')->with('error', "Kamu Tidak Memiliki Akses !!!");
     }
 }

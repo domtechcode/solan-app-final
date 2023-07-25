@@ -4,6 +4,7 @@ namespace App\Http\Livewire\FollowUp\Component;
 
 use Carbon\Carbon;
 use App\Models\Job;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -13,6 +14,7 @@ use App\Models\Instruction;
 use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -280,14 +282,25 @@ class CreateInstructionKekuranganIndex extends Component
             
             $this->workSteps = [];
 
-            //notif
+            // notif
             if ($firstWorkStep->work_step_list_id == 4) {
-                $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Stock')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             } else if ($firstWorkStep->work_step_list_id == 5) {
-                $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             } else {
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             }
 
             session()->flash('success', 'Instruksi kerja berhasil disimpan.');
@@ -303,13 +316,12 @@ class CreateInstructionKekuranganIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "success";
-        $selectedConversation = "message conversation";
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, Auth()->user()->id));
     }
 
     public function generateCode()

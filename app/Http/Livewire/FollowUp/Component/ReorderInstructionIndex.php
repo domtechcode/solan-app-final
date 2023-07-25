@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\FollowUp\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -15,6 +16,7 @@ use Illuminate\Support\Str;
 use App\Models\WorkStepList;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
@@ -872,17 +874,25 @@ class ReorderInstructionIndex extends Component
             
             $this->workSteps = [];
 
-            //notif
-            if ($firstWorkStep->work_step_list_id == 4) {
-                $this->messageSent(['receiver' => 9, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+           //notif
+           if ($firstWorkStep->work_step_list_id == 4) {
+            $userDestination = User::where('role', 'Stock')->get();
+            foreach($userDestination as $dataUser){
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+            }
+                broadcast(new IndexRenderEvent('refresh'));
             } else if ($firstWorkStep->work_step_list_id == 5) {
-                $this->messageSent(['receiver' => 5, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 6, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             } else {
-                $this->messageSent(['receiver' => 4, 'instruction_id' => $instruction->id]);
-                $this->messageSent(['receiver' => 2, 'instruction_id' => $instruction->id]);
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Repeat telah dibuat', 'instruction_id' => $instruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
             }
             
             $this->emit('flashMessage', [
@@ -910,7 +920,7 @@ class ReorderInstructionIndex extends Component
     public function messageSent($arguments)
     {
         $createdMessage = "info";
-        $selectedConversation = "SPK telah dibuat kembali";
+        $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
