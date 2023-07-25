@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HitungBahan\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -993,10 +994,13 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
-            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 8]);
-            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 58]);
-            // $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 59]);
-
+            if ($updateNextStep->work_step_list_id == 3) {
+                $userDestination = User::where('role', 'RAB')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
+            }
             
 
         $this->emit('flashMessage', [
@@ -1075,9 +1079,9 @@ class CreateFormHitungBahanIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = $arguments['createdMessage'];
-        $selectedConversation = $arguments['selectedConversation'];
-        $receiverUser = $arguments['receiverUser'];
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));

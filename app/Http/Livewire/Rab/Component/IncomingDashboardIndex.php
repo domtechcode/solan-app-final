@@ -58,42 +58,34 @@ class IncomingDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.rab.component.incoming-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Not Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 3)
+                        ->where('state_task', 'Not Running')
+                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
+                        ->whereHas('instruction', function ($query) {
+                            $searchTerms = '%' . $this->search . '%';
+                            $query->where(function ($subQuery) use ($searchTerms) {
+                                $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                                    ->orWhere('spk_type', 'like', $searchTerms)
+                                    ->orWhere('customer_name', 'like', $searchTerms)
+                                    ->orWhere('order_name', 'like', $searchTerms)
+                                    ->orWhere('customer_number', 'like', $searchTerms)
+                                    ->orWhere('code_style', 'like', $searchTerms)
+                                    ->orWhere('shipping_date', 'like', $searchTerms);
+                            })->where(function ($subQuery) {
+                                $subQuery->where('group_priority', '!=', 'child')
+                                    ->orWhereNull('group_priority');
+                            })->orderBy('shipping_date', 'asc');
+                        })
+                        ->with(['status', 'job', 'workStepList', 'instruction'])
+                        ->paginate($this->paginate);
+
+        return view('livewire.rab.component.incoming-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsRunning($instructionId)
+    public function modalInstructionDetailsIncoming($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -103,10 +95,10 @@ class IncomingDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-running');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-incoming');
     }
 
-    public function modalInstructionDetailsGroupRunning($groupId)
+    public function modalInstructionDetailsGroupIncoming($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -121,6 +113,6 @@ class IncomingDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-incoming');
     }
 }

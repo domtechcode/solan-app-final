@@ -15,19 +15,20 @@ class IndexCreateFormHitungBahan extends Component
     public function mount($instructionId)
     {
         $this->instructionSelectedId = $instructionId;
-
-        $this->instructionSelectedId = $instructionId;
-        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 5)->update([
+        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 5)->first();
+        $updateUserWorkStep->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
             'state_task' => 'Running',
             'status_task' => 'Process',
         ]);
 
-        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
-            'status_id' => 2,
-        ]);
-
+        if($updateUserWorkStep->status_id != 26 || $updateUserWorkStep->status_id != 22){
+            $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
+                'status_id' => 2,
+            ]);
+        }
+        
         broadcast(new IndexRenderEvent('refresh'));
     }
 

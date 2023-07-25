@@ -46,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -98,7 +98,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                         <a class="btn btn-icon btn-sm btn-primary" href="{{ route('rab.createFormRab', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
@@ -122,7 +122,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -367,7 +367,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -885,22 +885,21 @@
         </div>
     </div>
 
-    {{-- @livewire('component.detail-instruction') --}}
 </div>
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal', event =>{
-            $('#detailInstructionModal').modal('hide');
-            $('#detailInstructionModalGroup').modal('hide');
+        window.addEventListener('close-modal-new-spk', event =>{
+            $('#detailInstructionModalNewSpk').modal('hide');
+            $('#detailInstructionModalGroupNewSpk').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal', event =>{
-            $('#detailInstructionModal').modal('show');
+        window.addEventListener('show-detail-instruction-modal-new-spk', event =>{
+            $('#detailInstructionModalNewSpk').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group', event =>{
-            $('#detailInstructionModalGroup').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-new-spk', event =>{
+            $('#detailInstructionModalGroupNewSpk').modal('show');
         });
     </script>
 @endpush

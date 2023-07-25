@@ -813,6 +813,7 @@
                                                             wire:model="keterangans.{{ $keteranganIndex }}.fileRincian"
                                                             multiple allowImagePreview imagePreviewMaxHeight="200"
                                                             allowFileTypeValidation allowFileSizeValidation
+                                                            acceptedFileTypes="['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']"
                                                             maxFileSize="1024mb" />
 
                                                         @error('keterangans.' . $keteranganIndex . '.fileRincian')
@@ -1468,6 +1469,7 @@
                                                             wire:model="layoutBahans.{{ $indexBahan }}.fileLayoutCustom"
                                                             allowImagePreview imagePreviewMaxHeight="200"
                                                             allowFileTypeValidation allowFileSizeValidation
+                                                            acceptedFileTypes="['image/png', 'image/jpg', 'image/jpeg']"
                                                             maxFileSize="1024mb" />
 
                                                         @error('layoutBahans.' . $indexBahan . '.fileLayoutCustom')

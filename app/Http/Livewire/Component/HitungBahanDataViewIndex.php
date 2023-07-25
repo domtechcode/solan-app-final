@@ -926,15 +926,20 @@ class HitungBahanDataViewIndex extends Component
     {
         $this->htmlOutputs = [];
 
-        foreach ($this->filePaths as $filePath) {
-            $inputFileType = IOFactory::identify($filePath);
-            $reader = IOFactory::createReader($inputFileType);
-            $spreadsheet = $reader->load($filePath);
-            $writer = IOFactory::createWriter($spreadsheet, 'Html');
-            ob_start();
-            $writer->save('php://output');
-            $this->htmlOutputs[] = ob_get_clean();
+        if(isset($this->filePaths)){
+            foreach ($this->filePaths as $filePath) {
+                $inputFileType = IOFactory::identify($filePath);
+                $reader = IOFactory::createReader($inputFileType);
+                $spreadsheet = $reader->load($filePath);
+                $writer = IOFactory::createWriter($spreadsheet, 'Html');
+                ob_start();
+                $writer->save('php://output');
+                $this->htmlOutputs[] = ob_get_clean();
+            }
+        }else{
+            $this->htmlOutputs[] = '';
         }
+        
     }
     
 }
