@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->workStepList->name }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -1091,6 +1091,7 @@
         window.addEventListener('close-modal', event =>{
             $('#detailInstructionModal').modal('hide');
             $('#detailInstructionModalStock').modal('hide');
+            $('#detailInstructionModalGroup').modal('hide');
         });
 
         window.addEventListener('show-detail-instruction-modal-stock', event =>{

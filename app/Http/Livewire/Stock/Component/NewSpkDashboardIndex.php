@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Stock\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -10,6 +11,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
@@ -63,36 +65,25 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.stock.component.new-spk-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 4)
-                            ->where('state_task', 'Running')
-                            ->whereIn('status_task', ['Pending Approved', 'Process'])
-                            ->where('spk_status', 'Running')
-                            ->whereIn('status_id', [1, 2])
-                            ->whereHas('instruction', function ($query) {
-                                $query->orderBy('shipping_date', 'asc');
-                            })
-                            ->with(['status', 'workStepList'])
-                            ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 4)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 4)
+                        ->where('state_task', 'Running')
+                        ->whereIn('status_task', ['Pending Approved', 'Process'])
+                        ->where('spk_status', 'Running')
+                        ->whereIn('status_id', [1, 2])
+                        ->whereHas('instruction', function ($query) {
+                            $query->where('spk_number', 'like', '%' . $this->search . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+                            ->orderBy('shipping_date', 'asc');
+                        })
+                        ->with(['status', 'workStepList'])
+                        ->paginate($this->paginate);
+
+        return view('livewire.stock.component.new-spk-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -168,7 +159,12 @@ class NewSpkDashboardIndex extends Component
                 }
             }
 
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 2]);
+
+            $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -233,9 +229,19 @@ class NewSpkDashboardIndex extends Component
                 }
             }
 
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 5]);
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 9]);
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai cari stock', 'instruction_id' => $this->selectedInstruction->id, 'receiverUser' => 2]);
+            if ($updateNextStep->work_step_list_id == 5) {
+                $userDestination = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
+            } else {
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
+            }
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -258,8 +264,12 @@ class NewSpkDashboardIndex extends Component
             'status_id' => 2,
             'status_task' => 'Process',
         ]);
-
-        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK sedang diproses oleh stock', 'instruction_id' => $instructionId, 'receiverUser' => 2]);
+        
+        $userDestination = User::where('role', 'Penjadwalan')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang diProses Oleh Stock', 'instruction_id' => $instructionId]);
+        }
+        broadcast(new IndexRenderEvent('refresh'));
 
         $this->catatan = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 4)->get();
 
@@ -307,9 +317,9 @@ class NewSpkDashboardIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = $arguments['createdMessage'];
-        $selectedConversation = $arguments['selectedConversation'];
-        $receiverUser = $arguments['receiverUser'];
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
