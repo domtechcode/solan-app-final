@@ -3,10 +3,13 @@
 namespace App\Http\Livewire\HitungBahan\Component;
 
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class ProcessDashboardIndex extends Component
 {
@@ -39,6 +42,8 @@ class ProcessDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public $keteranganReject;
+
     protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
     public function refreshIndex()
@@ -58,36 +63,37 @@ class ProcessDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.hitung-bahan.component.process-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 5)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2, 23])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 5)
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Process'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
+                ->where(function ($query) {
+                    $query->where(function ($subQuery) {
+                        $subQuery->whereIn('status_id', [1, 23]);
+                    })->orWhere(function ($subQuery) {
+                        $subQuery->where('status_id', 2)
+                            ->where('user_id', Auth()->user()->id);
+                    });
+                })
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')
+                            ->orWhereNull('group_priority');
+                    })->orderBy('shipping_date', 'asc');
+                })
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->paginate($this->paginate);
+
+        return view('livewire.hitung-bahan.component.process-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -122,5 +128,62 @@ class ProcessDashboardIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
+    }
+
+    public function rejectSpk()
+    {
+        $this->validate([
+            'keteranganReject' => 'required',
+        ]);
+
+        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 5)->first();
+        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 1)->first();
+        
+        $workStepDestination->update([
+            'status_task' => 'Reject',
+            'reject_from_id' => $workStepCurrent->id,
+            'reject_from_status' => $workStepCurrent->status_id,
+            'reject_from_job' => $workStepCurrent->job_id,
+            'count_reject' => $workStepDestination->count_reject + 1,
+        ]);
+        
+        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'status_id' => 3,
+            'job_id' => $workStepDestination->work_step_list_id,
+        ]);
+
+        $updateKeterangan = Catatan::create([
+            'tujuan' => 1,
+            'catatan' => $this->keteranganReject,
+            'kategori' => 'reject',
+            'instruction_id' => $this->selectedInstruction->id,
+            'user_id' => Auth()->user()->id,
+        ]);
+
+        $workStepCurrent->update([
+            'user_id' => Auth()->user()->id,
+            'status_task' => 'Waiting For Repair',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Reject Instruksi Kerja',
+            'message' => 'Berhasil reject instruksi kerja',
+        ]);
+
+        $this->keteranganReject = '';
+        $this->dispatchBrowserEvent('close-modal-running');
+        $this->messageSent(['conversation' => 'SPK Reject dari Estimator','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
+        broadcast(new IndexRenderEvent('refresh'));
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "error";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

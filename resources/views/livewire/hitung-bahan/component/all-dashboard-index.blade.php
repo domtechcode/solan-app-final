@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -359,12 +359,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-icon btn-primary" wire:click.prevent="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i> Delete</button>
-                    <button class="btn btn-danger" wire:click="holdSpk({{ $instructionSelectedId }})">Hold</button>
-                    <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i class="fe fe-warning"></i> Cancel</button>
-                    @if($instructionSelectedId)
-                        <a class="btn btn-info" href="{{ route('followUp.reorderInstruction', ['instructionId' =>  $instructionSelectedId]) }}">Reorder</a>
-                    @endif
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -895,7 +889,7 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal', event =>{
+        window.addEventListener('close-modal-all', event =>{
             $('#detailInstructionModalAll').modal('hide');
             $('#detailInstructionModalGroupAll').modal('hide');
         });

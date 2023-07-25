@@ -5,6 +5,7 @@ namespace App\Http\Livewire\HitungBahan\Index;
 use Carbon\Carbon;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
 class IndexCreateFormHitungBahan extends Component
@@ -19,14 +20,15 @@ class IndexCreateFormHitungBahan extends Component
         $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 5)->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
+            'state_task' => 'Running',
+            'status_task' => 'Process',
         ]);
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
         ]);
 
-        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diproses', 'instruction_id' => $this->instructionSelectedId, 'receiverUser' => 5]);
-        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diproses', 'instruction_id' => $this->instructionSelectedId, 'receiverUser' => 6]);
+        broadcast(new IndexRenderEvent('refresh'));
     }
 
     public function render()
