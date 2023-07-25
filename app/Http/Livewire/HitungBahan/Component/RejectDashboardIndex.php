@@ -67,7 +67,14 @@ class RejectDashboardIndex extends Component
                         ->where('state_task', 'Running')
                         ->whereIn('status_task', ['Reject', 'Reject Requirements'])
                         ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
-                        ->whereIn('status_id', [3, 22])
+                        ->where(function ($query) {
+                            $query->where(function ($subQuery) {
+                                $subQuery->whereIn('status_id', [3]);
+                            })->orWhere(function ($subQuery) {
+                                $subQuery->whereIn('status_id', [22, 26])
+                                    ->where('user_id', Auth()->user()->id);
+                            });
+                        })
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {

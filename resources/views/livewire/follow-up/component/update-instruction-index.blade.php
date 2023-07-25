@@ -401,6 +401,7 @@
                             imagePreviewMaxHeight="200"
                             allowFileTypeValidation
                             allowFileSizeValidation
+                            acceptedFileTypes="['image/png', 'image/jpg', 'image/jpeg']"
                             maxFileSize="1024mb"
                         />
     

@@ -14,7 +14,9 @@ use App\Models\LayoutBahan;
 use Illuminate\Support\Arr;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
+use App\Models\KeteranganPlate;
 use App\Events\NotificationSent;
+use App\Models\KeteranganScreen;
 use Illuminate\Support\Facades\Storage;
 
 class EditFormHitungBahanIndex extends Component
@@ -676,6 +678,11 @@ class EditFormHitungBahanIndex extends Component
             ]);
         }
 
+        $currentTotalPlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->sum('jumlah_plate');
+        $currentTotalScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
+        $currentStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
+        $currentStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
+
         if(isset($this->stateWorkStepCetakLabel)){
             LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
             if ($this->layoutSettings) {
@@ -981,10 +988,56 @@ class EditFormHitungBahanIndex extends Component
             }
         }
 
+        $newPlateTotal = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->sum('jumlah_plate');
+        $newScreenTotal = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
+        $newStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
+        $newStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
+        $statePlateDiff = array_diff($newStatePlate, $currentStatePlate);
+        $stateScreenDiff = array_diff($newStateScreen, $currentStateScreen);
+        
         $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
                 ->where('work_step_list_id', 5)
                 ->first();
+
+        if($updateTask->status_id != 3){
+            if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                    ]);
+                
+                    $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', $updateTask + 1)->first();
+                
+                    if ($updateNextStep) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Reject Requirements',
+                        ]);
+    
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'job_id' => $updateNextStep->work_step_list_id,
+                        ]);
+                    }
+
+                    $updateNextStep->update([
+                        'reject_from_id' => $updateTask->reject_from_id,
+                        'reject_from_status' => $updateTask->reject_from_status,
+                        'reject_from_job' => $updateTask->reject_from_job,
+                    ]);
+    
+                    $updateTask->update([
+                        'reject_from_id' => NULL,
+                        'reject_from_status' => NULL,
+                        'reject_from_job' => NULL,
+                    ]);
+                }
+
+                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+            }
             
+        }else{
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -1013,7 +1066,8 @@ class EditFormHitungBahanIndex extends Component
                 ]);
             }
 
-            $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => $updateNextStep->user_id]);
+            $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+        }
 
 
         $this->emit('flashMessage', [
@@ -1093,9 +1147,9 @@ class EditFormHitungBahanIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = $arguments['createdMessage'];
-        $selectedConversation = $arguments['selectedConversation'];
-        $receiverUser = $arguments['receiverUser'];
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));

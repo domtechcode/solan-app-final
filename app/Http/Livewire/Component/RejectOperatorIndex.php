@@ -30,13 +30,26 @@ class RejectOperatorIndex extends Component
 
         $dataWorkStep = WorkStep::find($this->currentWorkStepId);
         $updateWaiting = WorkStep::where('id', $this->currentWorkStepId)->update([
-            'status_task' => 'Waiting Fixing',
+            'status_task' => 'Waiting Repair',
         ]);
 
-        $updateReject = WorkStep::where('id', $this->tujuanReject)->update([
+        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $this->tujuanReject)->update([
             'reject_from_id' => $this->currentWorkStepId, 
             'reject_from_status' => $dataWorkStep->status_id, 
             'reject_from_job' => $dataWorkStep->job_id, 
+            'state_task' => 'Running', 
+            'status_task' => 'Reject Requirements', 
+            'status_id' => 22,
+            'job_id' => $this->tujuanReject,
+        ]);
+
+        $this->messageSent(['conversation' => 'SPK di reject oleh '. $dataWorkStep->user->name, 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Reject Instruksi Kerja',
+            'message' => 'Berhasil reject instruksi kerja',
         ]);
 
         return redirect()->route('operator.dashboard');

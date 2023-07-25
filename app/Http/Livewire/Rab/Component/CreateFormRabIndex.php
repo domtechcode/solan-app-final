@@ -10,6 +10,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use App\Models\KeteranganPlate;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
 class CreateFormRabIndex extends Component
@@ -292,7 +293,7 @@ class CreateFormRabIndex extends Component
                 }
             }
 
-        $this->messageSent(['createdMessage' => 'info', 'selectedConversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => $updateNextStep->user_id]);
+        $this->messageSent(['conversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
 
 
         $this->emit('flashMessage', [
@@ -322,7 +323,9 @@ class CreateFormRabIndex extends Component
             ]);
         }
 
-        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->update([
+        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->first();
+
+        $updateReject->update([
             'state_task' => 'Running',
             'status_task' => 'Reject',
             'status_id' => 3,
@@ -345,9 +348,8 @@ class CreateFormRabIndex extends Component
                     'user_id' => Auth()->user()->id,
         ]);
 
-        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 5]);
-        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 6]);
-
+        $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId]);
+        broadcast(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -355,7 +357,7 @@ class CreateFormRabIndex extends Component
             'message' => 'Berhasil reject instruksi kerja',
         ]);
 
-        $this->emit('indexRender');
+        
 
         return redirect()->route('rab.dashboard');
     }
@@ -420,9 +422,9 @@ class CreateFormRabIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = $arguments['createdMessage'];
-        $selectedConversation = $arguments['selectedConversation'];
-        $receiverUser = $arguments['receiverUser'];
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
         broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
