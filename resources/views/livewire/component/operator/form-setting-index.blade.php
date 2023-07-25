@@ -58,7 +58,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
+                    <button type="submit" id="submitBtn" style="display: none;" class="btn btn-primary mt-4 mb-0" wire:ignore.self>Submit</button>
                 </div>
             </div>
         </div>

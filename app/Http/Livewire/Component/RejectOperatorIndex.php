@@ -23,13 +23,10 @@ class RejectOperatorIndex extends Component
 
     public function rejectWorkStep($dataTujuan, $dataKeterangan)
     {
-        if(empty($this->tujuanReject) || empty($this->keteranganReject)){
-            $this->emit('flashMessage', [
-                'type' => 'error',
-                'title' => 'Error Reject',
-                'message' => 'Tujuan Reject / Keterangan Reject Harus DiIsi',
-            ]);
-        }
+        $this->validate([
+            'tujuanReject' => 'required',
+            'keteranganReject' => 'required',
+        ]);
 
         $dataWorkStep = WorkStep::find($this->currentWorkStepId);
         $updateWaiting = WorkStep::where('id', $this->currentWorkStepId)->update([

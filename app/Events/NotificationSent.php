@@ -39,13 +39,16 @@ class NotificationSent implements ShouldBroadcast
         $this->receiver = $receiver;
         $this->instruction = $instruction;
 
-        Notification::create([
-            'instruction_id' => $instruction,
-            'user_id' => $user,
-            'message' => $message,
-            'conversation' => $conversation,
-            'receiver_id' => $receiver,
-        ]);
+        if($this->user){
+            Notification::create([
+                'instruction_id' => $instruction,
+                'user_id' => $user,
+                'message' => $message,
+                'conversation' => $conversation,
+                'receiver_id' => $receiver,
+            ]);
+        }
+        
     }
 
     /**

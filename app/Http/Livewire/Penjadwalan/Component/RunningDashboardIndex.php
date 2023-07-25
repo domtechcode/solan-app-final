@@ -151,7 +151,8 @@ class RunningDashboardIndex extends Component
                                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
                                         ->whereNotIn('spk_status', ['Hold', 'Deleted'])
                                         ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
+                                            $query->where('group_priority', '!=', 'child')
+                                            ->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['status', 'job', 'workStepList'])
                                         ->paginate($this->paginate) :
@@ -166,7 +167,10 @@ class RunningDashboardIndex extends Component
                                             ->orWhere('order_name', 'like', '%' . $this->search . '%')
                                             ->orWhere('customer_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
+                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%');
+                                        })
+                                        ->whereHas('instruction', function ($query) {
+                                            $query->where('group_priority', '!=', 'child')
                                             ->orderBy('shipping_date', 'asc');
                                         })
                                         ->with(['status', 'job', 'workStepList'])

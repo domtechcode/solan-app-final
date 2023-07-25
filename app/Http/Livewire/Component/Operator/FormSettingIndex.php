@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Component\Operator;
 use Carbon\Carbon;
 use App\Models\Files;
 use Livewire\Component;
+use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
@@ -20,6 +21,19 @@ class FormSettingIndex extends Component
 
     public function mount($instructionId, $workStepId)
     {
+        // $updateFollowUp = WorkStep::where('work_step_list_id', 1)->update([
+        //     'state_task' => 'Running',
+        //     'status_task' => 'Process',
+        // ]);
+
+        // $updateFollowUp = Instruction::where('group_priority', 1)->update([
+        //     'group_priority' => 'parent',
+        // ]);
+
+        // $updateFollowUp = Instruction::where('group_priority', 3)->update([
+        //     'group_priority' => 'child',
+        // ]);
+
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->get();
@@ -65,5 +79,57 @@ class FormSettingIndex extends Component
                 "file_path" => $folder,
             ]);
         }
+
+
+        if($this->catatanProsesPengerjaan){
+            $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
+            $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
+            $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
+                'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
+            ]);
+        }
+
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+
+        // Cek apakah $currentStep ada dan step berikutnya ada
+        if ($currentStep) {
+            $currentStep->update([
+                'state_task' => 'Complete',
+                'status_task' => 'Complete',
+            ]);
+
+            $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
+
+            // Cek apakah step berikutnya ada sebelum melanjutkan
+            if ($nextStep) {
+                $nextStep->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                ]);
+
+                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'job_id' => $nextStep->work_step_list_id,
+                    'status_id' => 1,
+                ]);
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Setting Instruksi Kerja',
+            'message' => 'Data Setting berhasil disimpan',
+        ]);
+
+        return redirect()->route('operator.dashboard');
     }
 }

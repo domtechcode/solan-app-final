@@ -212,6 +212,11 @@ class CreateFormRabIndex extends Component
             'jenisPengeluaran' => 'Biaya Pengiriman',
             'rab' => '',
         ];
+        
+        $this->rabItems[] = [
+            'jenisPengeluaran' => 'Biaya Lainnya',
+            'rab' => '',
+        ];
 
 
     }
@@ -349,6 +354,8 @@ class CreateFormRabIndex extends Component
             'title' => 'Reject Instruksi Kerja',
             'message' => 'Berhasil reject instruksi kerja',
         ]);
+
+        $this->emit('indexRender');
 
         return redirect()->route('rab.dashboard');
     }

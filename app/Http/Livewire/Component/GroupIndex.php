@@ -183,7 +183,7 @@ class GroupIndex extends Component
             'message' => 'Group baru berhasil ditambahkan',
         ]);
 
-        return redirect()->route('group');
+        return redirect()->back();
     }
 
     public function currentGroup()
@@ -234,6 +234,6 @@ class GroupIndex extends Component
             ]);
         }
 
-        return redirect()->route('group');      
+        return redirect()->back();    
     }
 }

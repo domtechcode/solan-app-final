@@ -21,6 +21,7 @@
                     <thead>
                         <tr>
                             <th class="border-bottom-0">No</th>
+                            <th class="border-bottom-0">Pengerjaan</th>
                             <th class="border-bottom-0">No SPK</th>
                             <th class="border-bottom-0">Type SPK</th>
                             <th class="border-bottom-0">Pemesan</th>
@@ -39,6 +40,7 @@
                         @forelse ($instructions as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
+                                <td>{{ $dataInstruction->workStepList->name }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
                                     @if($dataInstruction->instruction->spk_number_fsc)

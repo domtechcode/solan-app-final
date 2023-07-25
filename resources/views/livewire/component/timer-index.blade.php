@@ -11,10 +11,10 @@
                 <div class="card-body">
                     <div class="text-wrap">
                         <div class="text-center timer">
-                            <h3 class="display-3" id="display">{{ $timerData }}</h3>
+                            <h3 class="display-3" id="display">{{ $timerDataWorkStep }}</h3>
                         </div>
                         <div class="form-row">
-                            <div class="col-lg-12" style="padding-bottom: 10px;">
+                            <div class="col-lg-12">
                                 <div class="form-group">
                                     <div class="btn-list text-center">
                                         <button class="btn btn-info" id="start"
@@ -36,7 +36,7 @@
                                 <div class="expanel expanel-default">
                                     <div class="expanel-body">
                                         <label class="form-label mb-3">Alasan Pause</label>
-                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                        <div class="input-group control-group">
                                             <textarea class="form-control mb-4" id="pauseReason" placeholder="Alasan Pause" wire:model.defer="alasanPause"
                                                 rows="4"></textarea>
                                         </div>
@@ -45,7 +45,6 @@
                                         <button class="btn btn-info" onclick="pause()">Submit</button>
                                     </div>
                                 </div>
-                                {{-- <button wire:click="save">asdas</button> --}}
                             </div>
                         </div>
                     </div>
@@ -61,8 +60,7 @@
         let startTime;
         let elapsedTime = 0;
         let isPaused = false;
-        let timerData = @json($timerData);
-        let dataTimer;
+        let timerData = @json($timerDataWorkStep);
 
         function startTimer() {
             if (!timerInterval) {
@@ -74,6 +72,7 @@
                 timerInterval = setInterval(updateTimer, 1000);
                 isPaused = false;
                 document.getElementById("start").style.display = "none";
+                document.getElementById("submitBtn").style.display = "inline-block";
             }
         }
 
@@ -105,9 +104,6 @@
                 savePause();
                 pauseTimer();
             }
-
-            // pauseTimer();
-            // savePause();
         }
 
         function pauseTimer() {
@@ -157,8 +153,6 @@
         function displayTime(time) {
             const formattedTime = formatTime(time);
             document.getElementById("display").textContent = formattedTime;
-            dataTimer = formattedTime;
-            //   console.log(formattedTime);
         }
 
         function formatTime(time) {
@@ -176,17 +170,18 @@
         }
 
         function saveTimer() {
-            @this.set('timer', dataTimer);
-            @this.saveDataTimer();
+            const TimerState = document.getElementById("display").textContent;
+            Livewire.emit('saveDataTimer', TimerState);
         }
 
         function savePause() {
-            @this.set('timer', dataTimer);
-            @this.saveDataTimerPause();
+            const TimerState = document.getElementById("display").textContent;
+            Livewire.emit('saveDataTimerPause', TimerState);
         }
 
         window.addEventListener('beforeunload', function(event) {
             // Panggil method 'save' pada komponen Livewire untuk menyimpan data timer
+            
             saveTimer();
         });
     </script>

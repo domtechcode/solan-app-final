@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -121,6 +121,7 @@
         </div>
     </div>
 
+    <form wire:submit.prevent="rejectSpk">
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
@@ -358,13 +359,29 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <label class="form-label mb-3">Keterangan Reject</label>
+                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                        <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                    </div>
+                                    @error('keteranganReject') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Reject <i class="fe fe-arrow-right"></i> Follow Up</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+    </form>
 
     <!-- Modal Group-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">

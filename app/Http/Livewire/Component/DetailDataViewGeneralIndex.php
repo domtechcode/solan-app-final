@@ -1,23 +1,45 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan\Component;
+namespace App\Http\Livewire\Component;
 
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Models\Keterangan;
+use App\Models\FileRincian;
 use App\Models\Instruction;
-use Livewire\WithPagination;
+use App\Models\LayoutBahan;
+use App\Models\LayoutSetting;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
-class IncomingDashboardIndex extends Component
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+class DetailDataViewGeneralIndex extends Component
 {
-    use WithPagination;
-    protected $paginationTheme = 'bootstrap';
-    protected $updatesQueryString = ['search'];
- 
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    use WithFileUploads;
+    public $filerincian = [];
+    public $layoutSettings = [];
+    public $layoutBahans = [];
+    public $keterangans = [];
+    public $currentInstructionId;
+    public $currentWorkStepId;
+    public $instructionData;
+    public $contohData;
+    public $note;
+    public $notereject;
+    public $notes = [];
+    public $workSteps;
 
+    public $stateWorkStepPlate;
+    public $stateWorkStepSablon;
+    public $stateWorkStepPond;
+    public $stateWorkStepCetakLabel;
+
+    //modal
     public $selectedInstruction;
     public $selectedWorkStep;
     public $selectedFileContoh;
@@ -39,48 +61,54 @@ class IncomingDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
+    public $filePaths;
+    public $htmlOutputs;
 
-    public function refreshIndex()
-    {
-        $this->render();
-    }
+    public $totalPlate;
+    public $totalLembarCetakPlate;
+    public $totalWastePlate;
 
-    public function renderIndex()
+    public $totalScreen;
+    public $totalLembarCetakScreen;
+    public $totalWasteScreen;
+    
+    public function mount($instructionId, $workStepId)
     {
-        $this->render();
-    }
+        $this->currentInstructionId = $instructionId;
+        $this->currentWorkStepId = $workStepId;
 
-    public function mount()
-    {
-        $this->search = request()->query('search', $this->search);
+        $cekGroup = Instruction::where('id', $instructionId)
+            ->whereNotNull('group_id')
+            ->whereNotNull('group_priority')
+            ->first();
+
+        if (!$cekGroup){
+            $this->instructionData = Instruction::where('id', $instructionId)->with('fileArsip')->get();
+        }else{
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->with('fileArsip')->get();
+        }
+
+        $this->contohData = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
+
+        $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 7)->first();
+        $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 23)->first();
+        $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 24)->first();
+        $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+
+       
     }
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 5)
-                ->where('state_task', 'Not Running')
-                ->where('spk_status', 'Running')
-                ->whereIn('status_id', [1, 2, 23])
-                ->whereHas('instruction', function ($query) {
-                    $query->where('spk_number', 'like', '%' . $this->search . '%')
-                    ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                    ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                    ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                    ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                    ->orderBy('shipping_date', 'asc');
-                })
-                ->with(['status', 'job', 'workStepList'])
-                ->paginate($this->paginate);
-        return view('livewire.hitung-bahan.component.incoming-dashboard-index', ['instructions' => $data])
-        ->extends('layouts.app')
+        return view('livewire.component.detail-data-view-general-index')->extends('layouts.app')
         ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+        ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
+    
 
-    public function modalInstructionDetailsRunning($instructionId)
+    public function modalInstructionDetailsDetail($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -90,10 +118,10 @@ class IncomingDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-running');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-detail');
     }
 
-    public function modalInstructionDetailsGroupRunning($groupId)
+    public function modalInstructionDetailsGroupDetail($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -108,6 +136,7 @@ class IncomingDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-detail');
     }
+    
 }

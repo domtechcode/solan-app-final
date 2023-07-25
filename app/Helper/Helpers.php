@@ -2,10 +2,13 @@
 
 if(!function_exists('currency_idr')){
     function currency_idr($value)
-    {
-        // return "Rp. " . number_format($value, 0, ',', '.');
-        return number_format($value, 0, ',', '.');
-    }
+{
+    // Convert $value to a float or integer if it's a string
+    $value = is_numeric($value) ? $value : (float) str_replace(',', '.', str_replace('.', '', $value));
+
+    // Return the formatted number
+    return number_format($value, 0, ',', '.');
+}
 }
 
 if(!function_exists('currency_convert')){
