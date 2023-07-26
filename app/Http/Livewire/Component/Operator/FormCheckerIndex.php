@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Component\Operator;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
@@ -12,7 +14,7 @@ use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
-class FormSettingIndex extends Component
+class FormCheckerIndex extends Component
 {
     use WithFileUploads;
     public $fileLayout = [];
@@ -20,6 +22,7 @@ class FormSettingIndex extends Component
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $catatanProsesPengerjaan;
+    public $catatanRevisi;
 
     public function mount($instructionId, $workStepId)
     {
@@ -40,56 +43,13 @@ class FormSettingIndex extends Component
 
     public function render()
     {
-        return view('livewire.component.operator.form-setting-index');
+        return view('livewire.component.operator.form-checker-index');
     }
 
-    public function saveLayout()
+    public function save()
     {
-        $this->validate([
-            'fileLayout' => 'required',
-        ]);
-        $currentStep = WorkStep::find($this->workStepCurrentId);
-        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-
         $instructionData = Instruction::find($this->instructionCurrentId);
-        $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->count();
-        
-        $folder = "public/".$instructionData->spk_number."/setting";
 
-        if($nextStep->status_task == 'Waiting Revisi'){
-            $nolayout = $fileLayoutData;
-            foreach ($this->fileLayout as $file) {
-                $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
-                Storage::putFileAs($folder, $file, $fileName);
-                $nolayout ++;
-    
-                Files::create([
-                    'instruction_id' => $this->instructionCurrentId,
-                    "user_id" => Auth()->user()->id,
-                    "type_file" => "layout",
-                    "file_name" => $fileName,
-                    "file_path" => $folder,
-                ]);
-            }
-        }else{
-            $nolayout = $fileLayoutData;
-            foreach ($this->fileLayout as $file) {
-                $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
-                Storage::putFileAs($folder, $file, $fileName);
-                $nolayout ++;
-
-                Files::create([
-                    'instruction_id' => $this->instructionCurrentId,
-                    "user_id" => Auth()->user()->id,
-                    "type_file" => "layout",
-                    "file_name" => $fileName,
-                    "file_path" => $folder,
-                ]);
-            }
-        }
-        
         if($this->catatanProsesPengerjaan){
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
@@ -106,6 +66,8 @@ class FormSettingIndex extends Component
             ]);
         }
 
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+
         // Cek apakah $currentStep ada dan step berikutnya ada
         if ($currentStep) {
             $currentStep->update([
@@ -113,27 +75,99 @@ class FormSettingIndex extends Component
                 'status_task' => 'Complete',
             ]);
 
+            $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
+
             // Cek apakah step berikutnya ada sebelum melanjutkan
             if ($nextStep) {
                 $nextStep->update([
                     'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
+                    'status_task' => 'Pending Start',
                 ]);
 
                 $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                    'job_id' => $nextStep->work_step_list_id,
-                    'status_id' => 1,
+                    'job_id' => $currentStep->work_step_list_id,
+                    'status_id' => 7,
+                ]);
+            }else{
+                $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'spk_status' => 'Selesai',
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                ]);
+
+                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'job_id' => $currentStep->work_step_list_id,
+                    'status_id' => 7,
                 ]);
             }
         }
 
-        $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
+        $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
+                }
         broadcast(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Setting Instruksi Kerja',
             'message' => 'Data Setting berhasil disimpan',
+        ]);
+
+        return redirect()->route('operator.dashboard');
+    }
+
+    public function revisiSetting()
+    {
+        $this->validate([
+            'catatanRevisi' => 'required',
+        ]);
+
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+
+        // Cek apakah $currentStep ada dan step berikutnya ada
+        if ($currentStep) {
+            $currentStep->update([
+                'state_task' => 'Not Running',
+                'status_task' => 'Waiting Revisi',
+            ]);
+
+            $lastStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step - 1)
+                ->first();
+
+            // Cek apakah step berikutnya ada sebelum melanjutkan
+            if ($lastStep) {
+                $lastStep->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                    'count_revisi' => $lastStep->count_revisi + 1,
+                ]);
+
+                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'job_id' => $lastStep->work_step_list_id,
+                    'status_id' => 21,
+                ]);
+            }
+        }
+
+        $createCatatan = Catatan::create([
+            'user_id' => Auth()->user()->id,
+            'instruction_id' => $this->instructionCurrentId,
+            'catatan' => $this->catatanRevisi,
+            'tujuan' => $lastStep->work_step_list_id,
+            'kategori' => 'revisi',
+        ]);
+
+        $this->messageSent(['conversation' => 'SPK di reject oleh '. $currentStep->user->name, 'instruction_id' => $this->instructionCurrentId, 'receiver' => $lastStep->user_id]);
+        broadcast(new IndexRenderEvent('refresh'));
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Revisi Instruksi Kerja',
+            'message' => 'Berhasil revisi instruksi kerja',
         ]);
 
         return redirect()->route('operator.dashboard');

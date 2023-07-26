@@ -2,8 +2,11 @@
 
 namespace App\Http\Livewire\Component;
 
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class RejectOperatorIndex extends Component
 {
@@ -33,7 +36,9 @@ class RejectOperatorIndex extends Component
             'status_task' => 'Waiting Repair',
         ]);
 
-        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $this->tujuanReject)->update([
+        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $this->tujuanReject)->first();
+
+        $updateReject->update([
             'reject_from_id' => $this->currentWorkStepId, 
             'reject_from_status' => $dataWorkStep->status_id, 
             'reject_from_job' => $dataWorkStep->job_id, 
@@ -41,10 +46,19 @@ class RejectOperatorIndex extends Component
             'status_task' => 'Reject Requirements', 
             'status_id' => 22,
             'job_id' => $this->tujuanReject,
+            'count_reject' => $updateReject->count_reject + 1,
         ]);
 
-        $this->messageSent(['conversation' => 'SPK di reject oleh '. $dataWorkStep->user->name, 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+        $createCatatan = Catatan::create([
+            'user_id' => Auth()->user()->id,
+            'instruction_id' => $this->currentInstructionId,
+            'catatan' => $this->keteranganReject,
+            'tujuan' => $this->tujuanReject,
+            'kategori' => 'reject',
+        ]);
 
+        $this->messageSent(['conversation' => 'SPK di reject oleh '. $dataWorkStep->user->name, 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateReject->user_id]);
+        broadcast(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -58,5 +72,15 @@ class RejectOperatorIndex extends Component
     public function render()
     {
         return view('livewire.component.reject-operator-index');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

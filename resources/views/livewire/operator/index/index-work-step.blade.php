@@ -82,6 +82,9 @@
                                             @if($workStepData->work_step_list_id == 6)
                                                 <!-- Setting -->
                                                 @livewire('component.operator.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 37)
+                                                <!-- Setting -->
+                                                @livewire('component.operator.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
 
                                             @endif

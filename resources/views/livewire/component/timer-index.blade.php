@@ -72,7 +72,12 @@
                 timerInterval = setInterval(updateTimer, 1000);
                 isPaused = false;
                 document.getElementById("start").style.display = "none";
-                document.getElementById("submitBtn").style.display = "inline-block";
+                var elements = document.querySelectorAll(".submitBtn");
+
+                // Misalnya, kita ingin mengubah display menjadi "inline-block" untuk semua elemen dengan kelas "submitBtn"
+                for (var i = 0; i < elements.length; i++) {
+                elements[i].style.display = "inline-block";
+                }
             }
         }
 

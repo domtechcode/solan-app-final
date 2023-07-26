@@ -45,7 +45,7 @@ class CreateInstructionsTable extends Migration
             $table->date('shipping_date_first')->nullable();
             $table->string('type_ppn')->nullable();
             $table->string('ppn')->nullable();
-            $table->string('revisi')->nullable();
+            $table->string('count')->nullable();
             $table->timestamps();
         });
     }

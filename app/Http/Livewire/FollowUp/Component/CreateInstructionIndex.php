@@ -173,6 +173,10 @@ class CreateInstructionIndex extends Component
             $this->type_order = $this->spk_type;
         }
 
+        if($this->spk_type == 'sample'){
+            $countSample = 1;
+        }
+
         if($dataInstruction == null){
             $instruction = Instruction::create([
                 'spk_type' => $this->spk_type,
@@ -199,7 +203,9 @@ class CreateInstructionIndex extends Component
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
+                'count' => $countSample,
             ]);
+            
 
             $this->workSteps = array_map(function ($workSteps) {
                 $workSteps['user_id'] = null;

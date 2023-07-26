@@ -31,6 +31,7 @@ class HitungBahanDataViewGeneralIndex extends Component
     public $contohData;
     public $note;
     public $notereject;
+    public $noterevisi;
     public $notes = [];
     public $workSteps;
 
@@ -101,8 +102,9 @@ class HitungBahanDataViewGeneralIndex extends Component
 
         $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', $dataWorkStep->work_step_list_id)->get();
         $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', $dataWorkStep->work_step_list_id)->get();
+        $this->noterevisi = Catatan::where('instruction_id', $instructionId)->where('kategori', 'revisi')->where('tujuan', $dataWorkStep->work_step_list_id)->get();
 
-        $dataNotes = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
+        $dataNotes = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', $dataWorkStep->work_step_list_id)->get();
 
         $this->notes = [];
 
