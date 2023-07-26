@@ -15,6 +15,7 @@ use Illuminate\Support\Arr;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
 use App\Models\KeteranganPlate;
+use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use App\Models\KeteranganScreen;
 use Illuminate\Support\Facades\Storage;
@@ -999,7 +1000,7 @@ class EditFormHitungBahanIndex extends Component
                 ->where('work_step_list_id', 5)
                 ->first();
 
-        if($updateTask->status_id != 3){
+        if($updateTask->status_id != 2){
             if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
                 if ($updateTask) {
                     $updateTask->update([
@@ -1046,7 +1047,7 @@ class EditFormHitungBahanIndex extends Component
                 ]);
             
                 $updateNextStep = WorkStep::find($updateTask->reject_from_id);
-            
+                
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
@@ -1067,6 +1068,7 @@ class EditFormHitungBahanIndex extends Component
             }
 
             $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+            broadcast(new IndexRenderEvent('refresh'));
         }
 
 

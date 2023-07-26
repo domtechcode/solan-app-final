@@ -38,6 +38,7 @@ class NewSpkDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+    // public $dataInstruction = [];
 
     protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
@@ -58,6 +59,26 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
+        // $instructions = Instruction::all(); // Mengambil semua data dari tabel 'instructions'
+
+        // $dataInstruction = []; // Inisialisasi array kosong untuk menyimpan data yang akan diubah formatnya
+
+        // foreach ($instructions as $instruction) {
+        //     // Format ulang data ke dalam format yang diinginkan
+        //     $formattedData = [
+        //         'spk_number' => $instruction->spk_number,
+        //         'spk_type' => $instruction->spk_type,
+        //         'category' => $instruction->category,
+        //         'status' => $instruction->status,
+        //         'count' => $instruction->count,
+        //         // Masukkan data lainnya sesuai kolom yang ada di tabel 'instructions'
+        //         // ...
+        //     ];
+
+        //     // Tambahkan data yang sudah diformat ke dalam array $data
+        //     $this->dataInstruction[] = $formattedData;
+        // }
+
         $data = WorkStep::where('work_step_list_id', 1)
                 ->where('state_task', 'Running')
                 ->where('status_task', 'Process')

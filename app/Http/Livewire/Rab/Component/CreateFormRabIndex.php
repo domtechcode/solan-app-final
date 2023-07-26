@@ -297,7 +297,7 @@ class CreateFormRabIndex extends Component
             }
 
         $this->messageSent(['conversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
-
+        broadcast(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -371,6 +371,7 @@ class CreateFormRabIndex extends Component
             'spk_status' => 'Hold RAB',
         ]);
 
+        broadcast(new IndexRenderEvent('refresh'));
         $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
 
         if($this->notes){
@@ -400,6 +401,7 @@ class CreateFormRabIndex extends Component
             'spk_status' => 'Hold Waiting Qty QC',
         ]);
 
+        broadcast(new IndexRenderEvent('refresh'));
         $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
 
         if($this->notes){
