@@ -7,12 +7,14 @@ use App\Models\Catatan;
 use App\Models\FormRab;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
+use App\Models\WarnaPlate;
 use App\Models\FileRincian;
 use App\Models\LayoutBahan;
 use App\Models\Notification;
 use App\Models\RincianPlate;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
+use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\KeteranganPisauPond;
@@ -99,5 +101,10 @@ class Instruction extends Model
     public function formRab()
     {
         return $this->hasMany(FormRab::class);
+    }
+
+    public function warnaPlate()
+    {
+        return $this->hasMany(WarnaPlate::class);
     }
 }

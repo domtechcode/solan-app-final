@@ -23,6 +23,9 @@ class CreateRincianPlatesTable extends Migration
             $table->string('plate');
             $table->string('jumlah_lembar_cetak');
             $table->string('waste');
+            $table->string('name')->nullable();
+            $table->string('tempat_plate')->nullable();
+            $table->date('tgl_pembuatan_plate')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

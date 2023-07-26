@@ -2,31 +2,25 @@
 
 namespace App\Models;
 
-use App\Models\Keterangan;
-use App\Models\WarnaPlate;
 use App\Models\Instruction;
+use App\Models\RincianPlate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RincianPlate extends Model
+class WarnaPlate extends Model
 {
     use HasFactory;
 
-    protected $table = 'rincian_plates';
+    protected $table = 'warna_plates';
     protected $guarded = [];
 
-    public function keterangans()
+    public function rincianPlate()
     {
-        return $this->belongsTo(Keterangan::class);
+        return $this->belongsTo(RincianPlate::class);
     }
 
     public function instruction()
     {
         return $this->belongsTo(Instruction::class);
-    }
-
-    public function warnaPlate()
-    {
-        return $this->hasMany(WarnaPlate::class);
     }
 }
