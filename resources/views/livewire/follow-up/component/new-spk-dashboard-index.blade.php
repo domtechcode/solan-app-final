@@ -48,7 +48,11 @@
                                         <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
-                                <td>{{ $dataInstruction->instruction->spk_type }}</td>
+                                <td>{{ $dataInstruction->instruction->spk_type }}
+                                    @if ($dataInstruction->instruction->spk_type === 'sample' && $dataInstruction->instruction->count !== null)
+                                        - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>

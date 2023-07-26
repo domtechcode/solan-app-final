@@ -46,7 +46,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -98,7 +98,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalIncoming" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -315,24 +315,6 @@
                             </div>
                         </div>
                         <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Accounting<hr>
-                                    <ul class="list-group no-margin">
-                                        @if ($selectedFileAccounting)
-                                            @foreach ($selectedFileAccounting as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
-                                                <p>No files found.</p>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
@@ -366,7 +348,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupIncoming" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -571,24 +553,6 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    File Accounting<hr>
-                                                    <ul class="list-group no-margin">
-                                                        @if ($selectedFileAccountingParent)
-                                                            @foreach ($selectedFileAccountingParent as $file)
-                                                            <li class="list-group-item d-flex ps-3">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                            </li>
-                                                            @endforeach
-                                                        @else
-                                                            <li>
-                                                                <p>No files found.</p>
-                                                            </li>
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
@@ -822,26 +786,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-xl-4">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        File Accounting<hr>
-                                                        <ul class="list-group no-margin">
-                                                            @if ($data->fileArsip)
-                                                                @foreach ($data->fileArsip as $file)
-                                                                @if($file->type_file == 'accounting')
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
-                                                                @endif
-                                                                @endforeach
-                                                            @else
-                                                                <li>
-                                                                    <p>No files found.</p>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
-                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="expanel expanel-default">
@@ -889,17 +833,17 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal', event =>{
-            $('#detailInstructionModal').modal('hide');
-            $('#detailInstructionModalGroup').modal('hide');
+        window.addEventListener('close-modal-incoming', event =>{
+            $('#detailInstructionModalIncoming').modal('hide');
+            $('#detailInstructionModalGroupIncoming').modal('hide');
         });
 
-        window.addEventListener('show-detail-instruction-modal', event =>{
-            $('#detailInstructionModal').modal('show');
+        window.addEventListener('show-detail-instruction-modal-incoming', event =>{
+            $('#detailInstructionModalIncoming').modal('show');
         });
 
-        window.addEventListener('show-detail-instruction-modal-group', event =>{
-            $('#detailInstructionModalGroup').modal('show');
+        window.addEventListener('show-detail-instruction-modal-group-incoming', event =>{
+            $('#detailInstructionModalGroupIncoming').modal('show');
         });
     </script>
 @endpush

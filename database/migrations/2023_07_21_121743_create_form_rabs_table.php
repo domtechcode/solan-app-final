@@ -23,6 +23,7 @@ class CreateFormRabsTable extends Migration
             $table->string('rab')->nullable();
             $table->string('real')->nullable();
             $table->string('catatan')->nullable();
+            $table->string('count')->nullable();
             $table->timestamps();
         });
     }

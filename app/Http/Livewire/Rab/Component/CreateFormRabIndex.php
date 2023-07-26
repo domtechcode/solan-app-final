@@ -242,6 +242,8 @@ class CreateFormRabIndex extends Component
                     'price' => $dataInstructionItem['price'], 
             ]);
         }
+
+        $currentInstructionData = Instruction::find($this->currentInstructionId);
         
         foreach($this->rabItems as $datarabItem){
             $createRab = FormRab::create([
@@ -249,6 +251,7 @@ class CreateFormRabIndex extends Component
                     'user_id' => Auth()->user()->id,
                     'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'], 
                     'rab' => $datarabItem['rab'], 
+                    'count' => $currentInstructionData['count'], 
             ]);
         }
 

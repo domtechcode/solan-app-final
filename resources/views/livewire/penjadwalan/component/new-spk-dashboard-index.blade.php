@@ -82,7 +82,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 17, 18, 22, 24, 26]))
                                 <td>
                                     @if($dataInstruction->spk_status != 'Running')
                                         <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
@@ -99,7 +99,6 @@
                                 <td>
                                     <div class="btn-list">         
                                         <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        {{-- <a class="btn btn-icon btn-sm btn-primary" href="{{ route('followUp.updateInstruction', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a> --}}
                                     </div>
                                 </td>
                             </tr>
@@ -251,19 +250,19 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
+                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
+                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="text" autocomplete="off" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control">
+                                                        <input type="number" autocomplete="off" wire:model.defer="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
@@ -383,24 +382,6 @@
                             </div>
                         </div>
                         <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Accounting<hr>
-                                    <ul class="list-group no-margin">
-                                        @if ($selectedFileAccounting)
-                                            @foreach ($selectedFileAccounting as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
-                                                <p>No files found.</p>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
@@ -641,24 +622,6 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    File Accounting<hr>
-                                                    <ul class="list-group no-margin">
-                                                        @if ($selectedFileAccountingParent)
-                                                            @foreach ($selectedFileAccountingParent as $file)
-                                                            <li class="list-group-item d-flex ps-3">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                            </li>
-                                                            @endforeach
-                                                        @else
-                                                            <li>
-                                                                <p>No files found.</p>
-                                                            </li>
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
@@ -892,26 +855,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-xl-4">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        File Accounting<hr>
-                                                        <ul class="list-group no-margin">
-                                                            @if ($data->fileArsip)
-                                                                @foreach ($data->fileArsip as $file)
-                                                                @if($file->type_file == 'accounting')
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
-                                                                @endif
-                                                                @endforeach
-                                                            @else
-                                                                <li>
-                                                                    <p>No files found.</p>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
-                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="expanel expanel-default">

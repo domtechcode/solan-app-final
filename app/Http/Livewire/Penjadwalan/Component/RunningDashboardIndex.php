@@ -11,6 +11,8 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class RunningDashboardIndex extends Component
 {
@@ -144,38 +146,29 @@ class RunningDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
         
-        return view('livewire.penjadwalan.component.running-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 2)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->whereNotIn('spk_status', ['Hold', 'Deleted'])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('group_priority', '!=', 'child')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 2)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                                        ->whereNotIn('spk_status', ['Hold', 'Deleted'])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%');
-                                        })
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('group_priority', '!=', 'child')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('work_step_list_id', 2)
+                        ->where('state_task', 'Running')
+                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
+                        ->whereHas('instruction', function ($query) {
+                            $searchTerms = '%' . $this->search . '%';
+                            $query->where(function ($subQuery) use ($searchTerms) {
+                                $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                                    ->orWhere('spk_type', 'like', $searchTerms)
+                                    ->orWhere('customer_name', 'like', $searchTerms)
+                                    ->orWhere('order_name', 'like', $searchTerms)
+                                    ->orWhere('customer_number', 'like', $searchTerms)
+                                    ->orWhere('code_style', 'like', $searchTerms)
+                                    ->orWhere('shipping_date', 'like', $searchTerms);
+                            })->where(function ($subQuery) {
+                                $subQuery->where('group_priority', '!=', 'child')
+                                    ->orWhereNull('group_priority');
+                            })->orderBy('shipping_date', 'asc');
+                        })
+                        ->with(['status', 'job', 'workStepList', 'instruction'])
+                        ->paginate($this->paginate);
+
+        return view('livewire.penjadwalan.component.running-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -346,7 +339,18 @@ class RunningDashboardIndex extends Component
             'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
         ]);
 
-        $this->emit('indexRender');
+        $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        $broadcast(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
