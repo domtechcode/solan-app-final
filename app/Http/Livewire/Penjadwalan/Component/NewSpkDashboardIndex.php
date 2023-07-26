@@ -210,6 +210,7 @@ class NewSpkDashboardIndex extends Component
         ]);
 
         broadcast(new IndexRenderEvent('refresh'));
+
         $this->workSteps = [];
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }

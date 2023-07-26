@@ -31,7 +31,7 @@ class CreateWorkStepsTable extends Migration
             $table->date('schedule_date')->nullable();
             $table->string('target_time')->nullable();
 
-            $table->string('step')->nullable();
+            $table->integer('step')->nullable();
             $table->string('state_task')->nullable();
             $table->string('status_task')->nullable();
             $table->string('timer')->nullable();

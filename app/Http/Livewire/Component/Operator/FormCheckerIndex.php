@@ -88,8 +88,17 @@ class FormCheckerIndex extends Component
 
                 $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                     'job_id' => $currentStep->work_step_list_id,
-                    'status_id' => 7,
+                    'status_id' => 1,
                 ]);
+
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
+                }
+                
+                $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
+                broadcast(new IndexRenderEvent('refresh'));
+
             }else{
                 $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                     'spk_status' => 'Selesai',
@@ -101,14 +110,17 @@ class FormCheckerIndex extends Component
                     'job_id' => $currentStep->work_step_list_id,
                     'status_id' => 7,
                 ]);
+
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
+                }
+                
+                broadcast(new IndexRenderEvent('refresh'));
             }
         }
 
-        $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
-                }
-        broadcast(new IndexRenderEvent('refresh'));
+        
 
         $this->emit('flashMessage', [
             'type' => 'success',
