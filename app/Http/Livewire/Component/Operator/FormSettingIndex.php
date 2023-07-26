@@ -6,7 +6,10 @@ use Carbon\Carbon;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Models\Keterangan;
+use App\Models\WarnaPlate;
 use App\Models\Instruction;
+use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
@@ -20,10 +23,29 @@ class FormSettingIndex extends Component
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $catatanProsesPengerjaan;
+    public $keterangans = [];
+    public $dataInstruction;
+
+    public $stateWorkStepPlate;
+    public $stateWorkStepSablon;
+    public $stateWorkStepPond;
+    public $stateWorkStepCetakLabel;
+
+    public function addWarnaField($keteranganIndex, $rincianIndexPlate)
+    {
+        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][] = '';
+    }
+
+    public function removeRincianPlate($keteranganIndex, $rincianIndexPlate)
+    {
+        unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]);
+        $this->keterangans[$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate']);
+    }
 
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
+        $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $this->workStepCurrentId = $workStepId;
         $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->get();
         foreach($dataFileLayout as $dataFile){
@@ -36,11 +58,102 @@ class FormSettingIndex extends Component
 
             $this->fileLayoutData[] = $fileLayout;
         }
+
+        if($this->dataInstruction->spk_type != 'layout'){
+            $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 7)->first();
+            $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 23)->first();
+            $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 24)->first();
+            $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
+            $keteranganData = Keterangan::where('instruction_id', $this->instructionCurrentId)
+                ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian', 'rincianPlate.warnaPlate')
+                ->get();
+
+            foreach ($keteranganData as $dataKeterangan) {
+                $keterangan = [
+                    'rincianPlate' => [],
+                ];
+
+                if (isset($dataKeterangan['rincianPlate'])) {
+                    foreach ($dataKeterangan['rincianPlate'] as $dataRincianPlate) {
+                        $dataWarna = []; // Initialize dataWarna array for each rincianPlate
+
+                        if ($dataRincianPlate['warnaPlate']) {
+                            foreach ($dataRincianPlate['warnaPlate'] as $warna) {
+                                // Use unique keys for each item in dataWarna array
+                                $dataWarna[] = [
+                                    'warna' => $warna['warna'],
+                                    'keterangan' => $warna['keterangan'],
+                                ];
+                            }
+                        }
+
+                        // Add a default entry for "rincianWarna" when WarnaPlate is empty or contains no data
+                        if (empty($dataWarna)) {
+                            $dataWarna[] = [
+                                'warna' => null,
+                                'keterangan' => null,
+                            ];
+                        }
+
+                        if ($dataRincianPlate['status'] != 'Deleted by Setting') {
+                            $keterangan['rincianPlate'][] = [
+                                "state" => $dataRincianPlate['state'],
+                                "plate" => $dataRincianPlate['plate'],
+                                "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
+                                "waste" => $dataRincianPlate['waste'],
+                                "name" => $dataRincianPlate['name'],
+                                "rincianWarna" => $dataWarna,
+                            ];
+                        }
+                    }
+                }
+
+                $this->keterangans[] = $keterangan;
+            }
+
+        }
     }
 
     public function render()
     {
         return view('livewire.component.operator.form-setting-index');
+    }
+
+    public function saveSampleAndProduction()
+    {
+        foreach ($this->keterangans as $key => $item) {
+            foreach ($item['rincianPlate'] as $rincian) {
+                $updateRincianPlate = RincianPlate::updateOrCreate(
+                    [
+                        'instruction_id' => $this->instructionCurrentId,
+                        'plate' => $rincian['plate'],
+                    ],
+                    [
+                        'name' => $rincian['name'],
+                        'jumlah_lembar_cetak' => $rincian['jumlah_lembar_cetak'],
+                        'waste' => $rincian['waste'],
+                    ]
+                );
+        
+                
+        
+                foreach ($rincian['rincianWarna'] as $warna) {
+                    $warnaPlate = WarnaPlate::create([
+                        'instruction_id' => $this->instructionCurrentId,
+                        'rincian_plate_id' => $updateRincianPlate->id,
+                        'warna' => $warna['warna'],
+                        'keterangan' => $warna['keterangan'],
+                    ]);
+                }
+            }
+        }
+
+        $updateRincianPlateDeleted = RincianPlate::where('instruction_id', $this->instructionCurrentId)
+                    ->whereNull('name')
+                    ->update([
+                        'status' => 'Deleted by Setting',
+                    ]);
+        
     }
 
     public function saveLayout()

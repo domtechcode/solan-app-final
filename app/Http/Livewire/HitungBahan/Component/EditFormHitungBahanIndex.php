@@ -455,7 +455,6 @@ class EditFormHitungBahanIndex extends Component
             ];
         }
         
-        
     }
 
     public function render()
