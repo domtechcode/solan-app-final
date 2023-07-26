@@ -340,7 +340,7 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        $broadcast(new IndexRenderEvent('refresh'));
+        broadcast(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
     }
 

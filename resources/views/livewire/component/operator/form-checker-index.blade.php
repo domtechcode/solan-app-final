@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                 <div class="card-header">
-                    <h3 class="card-title">Form Setting</h3>
+                    <h3 class="card-title">Form Checker</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -35,20 +35,11 @@
                             </table>
                         </div>
                         <div class="col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <label class="form-label">File Layout</label>
-                                <x-forms.filepond
-                                    wire:model="fileLayout"
-                                    multiple
-                                    allowImagePreview
-                                    imagePreviewMaxHeight="200"
-                                    allowFileTypeValidation
-                                    allowFileSizeValidation
-                                    maxFileSize="1024mb"
-                                />
-            
-                                @error('fileLayout') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                            <label class="form-label">Revisi</label>
+                            <div class="input-group control-group" style="padding-top: 5px;">
+                                <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanRevisi"></textarea>
                             </div>
+                            @error('catatanRevisi') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                         </div>
                         <div class="col-sm-12 col-md-12">
                             <label class="form-label">Catatan Proses Pengerjaan</label>
@@ -57,7 +48,8 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn" wire:click="saveLayout" wire:ignore.self>Submit</button>
+                    <button type="button" style="display: none;" class="btn btn-primary mt-4 mb-0 submitBtn" wire:click="revisiSetting" wire:ignore.self>Revisi</button>
+                    <button type="button" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn" wire:click="save" wire:ignore.self>Submit & Approve</button>
                 </div>
             </div>
         </div>

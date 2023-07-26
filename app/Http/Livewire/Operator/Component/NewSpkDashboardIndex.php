@@ -115,7 +115,6 @@ class NewSpkDashboardIndex extends Component
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Pending Approved', 'Process'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->orderBy('shipping_date', 'asc');
                                         })
@@ -125,7 +124,6 @@ class NewSpkDashboardIndex extends Component
                                         ->where('state_task', 'Running')
                                         ->whereIn('status_task', ['Pending Approved', 'Process'])
                                         ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')
                                             ->orWhere('spk_type', 'like', '%' . $this->search . '%')
