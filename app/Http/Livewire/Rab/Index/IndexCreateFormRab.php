@@ -9,10 +9,12 @@ use App\Models\WorkStep;
 class IndexCreateFormRab extends Component
 {
     public $instructionSelectedId;
+    public $workStepSelectedId;
 
-    public function mount($instructionId)
+    public function mount($instructionId, $workStepId)
     {
         $this->instructionSelectedId = $instructionId;
+        $this->workStepSelectedId = $workStepId;
         $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 3)->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),

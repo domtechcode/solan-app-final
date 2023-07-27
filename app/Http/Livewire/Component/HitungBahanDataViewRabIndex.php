@@ -18,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class HitungBahanDataViewGeneralIndex extends Component
+class HitungBahanDataViewRabIndex extends Component
 {
     use WithFileUploads;
     public $filerincian = [];
@@ -144,7 +144,7 @@ class HitungBahanDataViewGeneralIndex extends Component
         }
 
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
-        ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
+        ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian')
         ->get();
         
         $this->totalPlate = 0;
@@ -235,45 +235,6 @@ class HitungBahanDataViewGeneralIndex extends Component
                 ],
 
             ];
-
-            if (isset($dataKeterangan['rincianPlate'])) {
-                foreach ($dataKeterangan['rincianPlate'] as $dataRincianPlate) {
-                    $dataWarna = []; // Initialize dataWarna array for each rincianPlate
-
-                    if ($dataRincianPlate['warnaPlate']) {
-                        foreach ($dataRincianPlate['warnaPlate'] as $warna) {
-                            // Use unique keys for each item in dataWarna array
-                            $dataWarna[] = [
-                                'warna' => $warna['warna'],
-                                'keterangan' => $warna['keterangan'],
-                            ];
-                        }
-                    }
-
-                    // Add a default entry for "rincianWarna" when WarnaPlate is empty or contains no data
-                    if (empty($dataWarna)) {
-                        $dataWarna[] = [
-                            'warna' => null,
-                            'keterangan' => null,
-                        ];
-                    }
-
-                    if ($dataRincianPlate['status'] != 'Deleted by Setting') {
-                        $keterangan['rincianPlate'][] = [
-                            "state" => $dataRincianPlate['state'],
-                            "plate" => $dataRincianPlate['plate'],
-                            "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
-                            "waste" => $dataRincianPlate['waste'],
-                            "name" => $dataRincianPlate['name'],
-                            "rincianWarna" => $dataWarna,
-                        ];
-                        $this->totalLembarCetakPlate += $dataRincianPlate['jumlah_lembar_cetak'];
-                        $this->totalWastePlate += $dataRincianPlate['waste'];
-                    }
-
-                    
-                }
-            }
 
             if (isset($dataKeterangan['keteranganPlate'])) {
                 // Convert object to array
@@ -424,6 +385,16 @@ class HitungBahanDataViewGeneralIndex extends Component
                 }
             }
 
+            foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
+                $keterangan['rincianPlate'][] = [
+                    "state" => $dataRincianPlate['state'],
+                    "plate" => $dataRincianPlate['plate'],
+                    "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
+                    "waste" => $dataRincianPlate['waste'],
+                ];
+                $this->totalLembarCetakPlate += $dataRincianPlate['jumlah_lembar_cetak'];
+                $this->totalWastePlate += $dataRincianPlate['waste'];
+            }
 
             foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
                 $keterangan['rincianScreen'][] = [
@@ -561,11 +532,13 @@ class HitungBahanDataViewGeneralIndex extends Component
         if(isset($this->filePaths)){
             $this->loadExcel();
         }
+        
+        
     }
 
     public function render()
     {
-        return view('livewire.component.hitung-bahan-data-view-general-index')->extends('layouts.app')
+        return view('livewire.component.hitung-bahan-data-view-rab-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }

@@ -466,60 +466,91 @@ class ReorderInstructionIndex extends Component
                     ];
                 }
     
-                $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian')->get();
+                $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian')->get();
                 foreach($keteranganData as $dataKeterangan){
                     $keterangan = [
                         'fileRincian' => [],
                         'notes' => $dataKeterangan['notes'],
                     ];
-    
-                    foreach($dataKeterangan['keteranganPlate'] as $dataPlate){
-                        $keterangan['plate'][] = [
-                            "state_plate" => $dataPlate['state_plate'],
-                            "jumlah_plate" => $dataPlate['jumlah_plate'],
-                            "ukuran_plate" => $dataPlate['ukuran_plate']
-                        ];
+                    
+                    if(isset($dataKeterangan['keteranganPlate'])){
+                        foreach($dataKeterangan['keteranganPlate'] as $dataPlate){
+                            $keterangan['plate'][] = [
+                                "state_plate" => $dataPlate['state_plate'],
+                                "jumlah_plate" => $dataPlate['jumlah_plate'],
+                                "ukuran_plate" => $dataPlate['ukuran_plate']
+                            ];
+                        }
                     }
-    
-                    foreach($dataKeterangan['keteranganScreen'] as $dataScreen){
-                        $keterangan['screen'][] = [
-                            "state_screen" => $dataScreen['state_screen'],
-                            "jumlah_screen" => $dataScreen['jumlah_screen'],
-                            "ukuran_screen" => $dataScreen['ukuran_screen']
-                        ];
+                    
+                    if(isset($dataKeterangan['keteranganScreen'])){
+                        foreach($dataKeterangan['keteranganScreen'] as $dataScreen){
+                            $keterangan['screen'][] = [
+                                "state_screen" => $dataScreen['state_screen'],
+                                "jumlah_screen" => $dataScreen['jumlah_screen'],
+                                "ukuran_screen" => $dataScreen['ukuran_screen']
+                            ];
+                        }
                     }
-    
-                    foreach($dataKeterangan['keteranganPisauPond'] as $dataPisau){
-                        $keterangan['pond'][] = [
-                            "state_pisau" => $dataPisau['state_pisau'],
-                            "jumlah_pisau" => $dataPisau['jumlah_pisau'],
-                        ];
+                    
+                    if(isset($dataKeterangan['keteranganPisauPond'])){
+                        foreach($dataKeterangan['keteranganPisauPond'] as $dataPisau){
+                            $keterangan['pond'][] = [
+                                "state_pisau" => $dataPisau['state_pisau'],
+                                "jumlah_pisau" => $dataPisau['jumlah_pisau'],
+                            ];
+                        }
                     }
-    
-                    foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
-                        $keterangan['rincianPlate'][] = [
-                            "state" => $dataRincianPlate['state'],
-                            "plate" => $dataRincianPlate['plate'],
-                            "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
-                            "waste" => $dataRincianPlate['waste'],
-                        ];
+                    
+                    if(isset($dataKeterangan['keteranganFoil'])){
+                        foreach($dataKeterangan['keteranganFoil'] as $dataFoil){
+                            $keterangan['foil'][] = [
+                                "state_foil" => $dataFoil['state_foil'],
+                                "jumlah_foil" => $dataFoil['jumlah_foil'],
+                            ];
+                        }
                     }
-    
-                    foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
-                        $keterangan['rincianScreen'][] = [
-                            "state" => $dataRincianScreen['state'],
-                            "screen" => $dataRincianScreen['screen'],
-                            "jumlah_lembar_cetak" => $dataRincianScreen['jumlah_lembar_cetak'],
-                            "waste" => $dataRincianScreen['waste'],
-                        ];
+                    
+                    if(isset($dataKeterangan['keteranganMatress'])){
+                        foreach($dataKeterangan['keteranganMatress'] as $dataMatress){
+                            $keterangan['matress'][] = [
+                                "state_matress" => $dataMatress['state_matress'],
+                                "jumlah_matress" => $dataMatress['jumlah_matress'],
+                            ];
+                        }
                     }
-    
-                    foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
-                        $keterangan['fileRincian'][] = [
-                            "file_name" => $dataFileRincian['file_name'],
-                            "file_path" => $dataFileRincian['file_path'],
-                        ];
+                    
+                    if(isset($dataKeterangan['rincianPlate'])){
+                        foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
+                            $keterangan['rincianPlate'][] = [
+                                "state" => $dataRincianPlate['state'],
+                                "plate" => $dataRincianPlate['plate'],
+                                "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
+                                "waste" => $dataRincianPlate['waste'],
+                            ];
+                        }
                     }
+                    
+                    if(isset($dataKeterangan['rincianScreen'])){
+                        foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
+                            $keterangan['rincianScreen'][] = [
+                                "state" => $dataRincianScreen['state'],
+                                "screen" => $dataRincianScreen['screen'],
+                                "jumlah_lembar_cetak" => $dataRincianScreen['jumlah_lembar_cetak'],
+                                "waste" => $dataRincianScreen['waste'],
+                            ];
+                        }
+                    }
+                    
+                    if(isset($dataKeterangan['fileRincian'])){
+                        foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
+                            $keterangan['fileRincian'][] = [
+                                "file_name" => $dataFileRincian['file_name'],
+                                "file_path" => $dataFileRincian['file_path'],
+                            ];
+                        }
+                    }
+                    
                     
                     $this->keterangans[] = $keterangan;
                 }
@@ -751,6 +782,28 @@ class ReorderInstructionIndex extends Component
                                             'instruction_id' => $instruction->id,
                                             'state_pisau' => $pond['state_pisau'],
                                             'jumlah_pisau' => $pond['jumlah_pisau'],
+                                        ]);
+                                    }
+                                }
+                                
+                                if(isset($keteranganData['foil'])){
+                                    foreach ($keteranganData['foil'] as $foil) {
+                                        // Buat instance model KeteranganPisauPond
+                                        $keteranganFoil = $keterangan->keteranganFoil()->create([
+                                            'instruction_id' => $instruction->id,
+                                            'state_foil' => $foil['state_foil'],
+                                            'jumlah_foil' => $foil['jumlah_foil'],
+                                        ]);
+                                    }
+                                }
+                                
+                                if(isset($keteranganData['matress'])){
+                                    foreach ($keteranganData['matress'] as $matress) {
+                                        // Buat instance model KeteranganPisauPond
+                                        $keteranganMatress = $keterangan->keteranganMatress()->create([
+                                            'instruction_id' => $instruction->id,
+                                            'state_matress' => $matress['state_matress'],
+                                            'jumlah_matress' => $matress['jumlah_matress'],
                                         ]);
                                     }
                                 }

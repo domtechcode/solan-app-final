@@ -595,6 +595,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('keterangans.' . $keteranganIndex .'.plate')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -713,6 +716,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('keterangans.' . $keteranganIndex .'.screen')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -795,6 +801,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('keterangans.' . $keteranganIndex .'.pond')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>

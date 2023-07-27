@@ -80,6 +80,177 @@
                             @endif
                         </div>
                         <div class="card-body">
+                            <div class="row mt-3">
+                                @if (isset($stateWorkStepFoil) && !isset($stateWorkStepCetakLabel))
+                                <div class="col-lg-6 mb-3">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <h3 class="card-title">Foil</h3>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.0.state_foil"
+                                                            class="custom-switch-input" value="baru">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Baru</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Foil"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.0.jumlah_foil"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.foil.0.state_foil')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.foil.0.jumlah_foil')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.1.state_foil"
+                                                            class="custom-switch-input" value="repeat">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Repeat</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Foil"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.1.jumlah_foil"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.foil.1.state_foil')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.foil.1.jumlah_foil')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.2.state_foil"
+                                                            class="custom-switch-input" value="sample">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Sample</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Foil"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.foil.2.jumlah_foil"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.foil.2.state_foil')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.foil.2.jumlah_foil')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @error('keterangans.' . $keteranganIndex .'.foil')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+
+                                @if (isset($stateWorkStepEmbossDeboss) && !isset($stateWorkStepCetakLabel))
+                                <div class="col-lg-6 mb-3">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <h3 class="card-title">Matress Emboss/Deboss</h3>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.0.state_matress"
+                                                            class="custom-switch-input" value="baru">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Baru</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Matress"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.0.jumlah_matress"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.matress.0.state_matress')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.matress.0.jumlah_matress')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.1.state_matress"
+                                                            class="custom-switch-input" value="repeat">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Repeat</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Matress"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.1.jumlah_matress"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.matress.1.state_matress')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.matress.1.jumlah_matress')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label class="custom-switch form-switch me-5">
+                                                        <input type="checkbox"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.2.state_matress"
+                                                            class="custom-switch-input" value="sample">
+                                                        <span
+                                                            class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                        <span class="custom-switch-description">Sample</span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group">
+                                                        <input type="text" autocomplete="off" class="form-control"
+                                                            placeholder="Jumlah Matress"
+                                                            wire:model="keterangans.{{ $keteranganIndex }}.matress.2.jumlah_matress"
+                                                            {{ empty(data_get($keterangans, $keteranganIndex . '.matress.2.state_matress')) ? 'disabled' : '' }}>
+                                                        @error('keterangans.' . $keteranganIndex .
+                                                            '.matress.2.jumlah_matress')
+                                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @error('keterangans.' . $keteranganIndex .'.matress')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
                             @if(isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
                             <div class="row mt-3">
                                 <div class="col-lg-12">
@@ -233,6 +404,7 @@
                                                                         <input type="text" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.warna" class="form-control" placeholder="Warna">
                                                                         <button class="btn btn-danger" type="button" wire:click="removeWarnaField({{ $keteranganIndex }}, {{ $rincianIndexPlate }}, {{ $indexwarna }})"><i class="fe fe-trash-2"></i></button>
                                                                     </div>
+                                                                    @error('keterangans.' . $keteranganIndex .'.rincianPlate.' . $rincianIndexPlate . '.rincianWarna.' . $indexwarna . '.warna') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                                                 </div>
                                                                 @endforeach
                                                             @endif

@@ -112,7 +112,7 @@
                                 <td>
                                     <div class="btn-list">         
                                         <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('rab.createFormRab', ['instructionId' =>  $dataInstruction->instruction->id]) }}"><i class="fe fe-edit"></i></a>
+                                        <a class="btn btn-icon btn-sm btn-primary" href="{{ route('rab.createFormRab', ['instructionId' =>  $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i class="fe fe-edit"></i></a>
                                     </div>
                                 </td>
                             </tr>
