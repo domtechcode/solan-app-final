@@ -11,9 +11,11 @@ use App\Models\WarnaPlate;
 use App\Models\Instruction;
 use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
+use App\Models\KeteranganFoil;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
+use App\Models\KeteranganMatressEmbossDeboss;
 
 class FormSettingIndex extends Component
 {
@@ -30,10 +32,15 @@ class FormSettingIndex extends Component
     public $stateWorkStepSablon;
     public $stateWorkStepPond;
     public $stateWorkStepCetakLabel;
+    public $stateWorkStepFoil;
+    public $stateWorkStepEmbossDeboss;
 
     public function addWarnaField($keteranganIndex, $rincianIndexPlate)
     {
-        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][] = [
+            'warna' => null,
+            'keterangan' => null,
+        ];
     }
 
     public function removeRincianPlate($keteranganIndex, $rincianIndexPlate)
@@ -64,13 +71,43 @@ class FormSettingIndex extends Component
             $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 23)->first();
             $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 24)->first();
             $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
+            $this->stateWorkStepFoil = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 28)->first();
+            $this->stateWorkStepEmbossDeboss = WorkStep::where('instruction_id', $instructionId)->whereIn('work_step_list_id', [25, 26])->first();
             $keteranganData = Keterangan::where('instruction_id', $this->instructionCurrentId)
-                ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian', 'rincianPlate.warnaPlate')
+                ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian', 'rincianPlate.warnaPlate')
                 ->get();
 
             foreach ($keteranganData as $dataKeterangan) {
                 $keterangan = [
                     'rincianPlate' => [],
+                    'foil' => [
+                        [
+                            "state_foil" => "baru",
+                            "jumlah_foil" => null,
+                        ],
+                        [
+                            "state_foil" => "repeat",
+                            "jumlah_foil" => null,
+                        ],
+                        [
+                            "state_foil" => "sample",
+                            "jumlah_foil" => null,
+                        ],
+                    ],
+                    'matress' => [
+                        [
+                            "state_matress" => "baru",
+                            "jumlah_matress" => null,
+                        ],
+                        [
+                            "state_matress" => "repeat",
+                            "jumlah_matress" => null,
+                        ],
+                        [
+                            "state_matress" => "sample",
+                            "jumlah_matress" => null,
+                        ],
+                    ],
                 ];
 
                 if (isset($dataKeterangan['rincianPlate'])) {
@@ -108,10 +145,78 @@ class FormSettingIndex extends Component
                     }
                 }
 
+                if (isset($dataKeterangan['keteranganFoil'])) {
+                    // Convert object to array
+                    $dataFoilArray = json_decode(json_encode($dataKeterangan['keteranganFoil']), true);
+            
+                    // Populate the foil array with the actual data
+                    foreach ($dataFoilArray as $dataFoil) {
+                        $stateFoil = $dataFoil['state_foil'];
+            
+                        // Check if the state_foil is one of the expected states
+                        if ($stateFoil == 'baru' || $stateFoil == 'repeat' || $stateFoil == 'sample') {
+                            // Find the index of the current state_foil in the $keterangan['foil'] array
+                            $index = array_search($stateFoil, array_column($keterangan['foil'], 'state_foil'));
+            
+                            // Set jumlah_foil based on the state
+                            if ($index !== false) {
+                                $keterangan['foil'][$index]['jumlah_foil'] = $dataFoil['jumlah_foil'];
+                            }
+                        }
+                    }
+            
+                    // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                    foreach ($keterangan['foil'] as &$foilData) {
+                        if (!in_array($foilData['state_foil'], array_column($dataFoilArray, 'state_foil'))) {
+                            $foilData['state_foil'] = null;
+                            $foilData['jumlah_foil'] = null;
+                        }
+                    }
+                }
+
+                if (isset($dataKeterangan['keteranganMatress'])) {
+                    // Convert object to array
+                    $dataMatressArray = json_decode(json_encode($dataKeterangan['keteranganMatress']), true);
+            
+                    // Populate the foil array with the actual data
+                    foreach ($dataMatressArray as $dataMatress) {
+                        $stateMatress = $dataMatress['state_matress'];
+            
+                        // Check if the state_foil is one of the expected states
+                        if ($stateMatress == 'baru' || $stateMatress == 'repeat' || $stateMatress == 'sample') {
+                            // Find the index of the current state_foil in the $keterangan['foil'] array
+                            $index = array_search($stateMatress, array_column($keterangan['matress'], 'state_matress'));
+            
+                            // Set jumlah_matress based on the state
+                            if ($index !== false) {
+                                $keterangan['matress'][$index]['jumlah_matress'] = $dataMatress['jumlah_matress'];
+                            }
+                        }
+                    }
+            
+                    // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataMatress
+                    foreach ($keterangan['matress'] as &$matressData) {
+                        if (!in_array($matressData['state_matress'], array_column($dataMatressArray, 'state_matress'))) {
+                            $matressData['state_matress'] = null;
+                            $matressData['jumlah_matress'] = null;
+                        }
+                    }
+                }
+
                 $this->keterangans[] = $keterangan;
             }
 
+            if (empty($this->keterangans)) {
+                $this->keterangans[] = [
+                    'foil' => [],
+                    'matress' => [],
+                    'rincianPlate' => [],
+                ];
+            }
+
         }
+        
+    
     }
 
     public function render()
@@ -121,7 +226,19 @@ class FormSettingIndex extends Component
 
     public function saveSampleAndProduction()
     {
+        $this->validate([
+            'keterangans.*.rincianPlate.*.name' => 'required',
+            'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+        ],[
+            'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
+            'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+        ]);
+        // dd($this->keterangans);
+
+        $deleteWarna = WarnaPlate::where('instruction_id', $this->instructionCurrentId)->delete();
+
         foreach ($this->keterangans as $key => $item) {
+            $keterangan = Keterangan::where('instruction_id', $this->instructionCurrentId)->where('form_id', $key)->first();
             foreach ($item['rincianPlate'] as $rincian) {
                 $updateRincianPlate = RincianPlate::updateOrCreate(
                     [
@@ -134,15 +251,38 @@ class FormSettingIndex extends Component
                         'waste' => $rincian['waste'],
                     ]
                 );
-        
-                
-        
                 foreach ($rincian['rincianWarna'] as $warna) {
                     $warnaPlate = WarnaPlate::create([
                         'instruction_id' => $this->instructionCurrentId,
                         'rincian_plate_id' => $updateRincianPlate->id,
                         'warna' => $warna['warna'],
                         'keterangan' => $warna['keterangan'],
+                    ]);
+                }
+            }
+
+            if(isset($item['foil'])){
+                $deleteFoil = KeteranganFoil::where('instruction_id', $this->instructionCurrentId)->delete();
+                foreach ($item['foil'] as $foil) {
+                    // Buat instance model KeteranganPisauPond
+                    $keteranganFoil = KeteranganFoil::create([
+                        'instruction_id' => $this->instructionCurrentId,
+                        'keterangan_id' => $keterangan['id'],
+                        'state_foil' => $foil['state_foil'],
+                        'jumlah_foil' => $foil['jumlah_foil'],
+                    ]);
+                }
+            }
+
+            if(isset($item['matress'])){
+                $deleteMatressEmbossDeboss = KeteranganMatressEmbossDeboss::where('instruction_id', $this->instructionCurrentId)->delete();
+                foreach ($item['matress'] as $matress) {
+                    // Buat instance model KeteranganPisauPond
+                    $keteranganMatress = KeteranganMatressEmbossDeboss::create([
+                        'instruction_id' => $this->instructionCurrentId,
+                        'keterangan_id' => $keterangan['id'],
+                        'state_matress' => $matress['state_matress'],
+                        'jumlah_matress' => $matress['jumlah_matress'],
                     ]);
                 }
             }
@@ -153,6 +293,12 @@ class FormSettingIndex extends Component
                     ->update([
                         'status' => 'Deleted by Setting',
                     ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Setting Instruksi Kerja',
+            'message' => 'Data Setting berhasil disimpan',
+        ]);
         
     }
 

@@ -7,11 +7,13 @@ use App\Models\Instruction;
 use App\Models\RincianPlate;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
+use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\KeteranganPisauPond;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\KeteranganMatressEmbossDeboss;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Keterangan extends Model
@@ -49,6 +51,16 @@ class Keterangan extends Model
     public function keteranganPisauPond()
     {
         return $this->hasMany(KeteranganPisauPond::class);
+    }
+
+    public function keteranganFoil()
+    {
+        return $this->hasMany(KeteranganFoil::class);
+    }
+
+    public function keteranganMatress()
+    {
+        return $this->hasMany(KeteranganMatressEmbossDeboss::class);
     }
 
     public function keteranganLabel()

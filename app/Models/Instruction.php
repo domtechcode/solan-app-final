@@ -14,11 +14,13 @@ use App\Models\Notification;
 use App\Models\RincianPlate;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
+use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\KeteranganPisauPond;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\KeteranganMatressEmbossDeboss;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Instruction extends Model
@@ -81,6 +83,16 @@ class Instruction extends Model
     public function keteranganScreen()
     {
         return $this->hasMany(KeteranganScreen::class);
+    }
+
+    public function keteranganFoil()
+    {
+        return $this->hasMany(KeteranganFoil::class);
+    }
+
+    public function keteranganMatress()
+    {
+        return $this->hasMany(KeteranganMatressEmbossDeboss::class);
     }
 
     public function rincianPlate()

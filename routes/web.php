@@ -50,7 +50,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Rab\Index\IndexDashboard')->name('rab.dashboard');
-        Route::get('/create-form-rab/{instructionId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
+        Route::get('/create-form-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
     });
 
     Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {

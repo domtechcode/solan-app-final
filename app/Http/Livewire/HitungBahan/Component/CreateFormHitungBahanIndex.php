@@ -262,40 +262,142 @@ class CreateFormHitungBahanIndex extends Component
             $keterangan = [
                 'fileRincian' => [],
                 'notes' => $dataKeterangan['notes'],
-                'plate' => [],
-                'screen' => [],
-                'pond' => [],
+                'plate' => [
+                    [
+                        "state_plate" => "baru",
+                        "jumlah_plate" => null,
+                        "ukuran_plate" => null,
+                    ],
+                    [
+                        "state_plate" => "repeat",
+                        "jumlah_plate" => null,
+                        "ukuran_plate" => null,
+                    ],
+                    [
+                        "state_plate" => "sample",
+                        "jumlah_plate" => null,
+                        "ukuran_plate" => null,
+                    ],
+                ],
+                'pond' => [
+                    [
+                        "state_pisau" => "baru",
+                        "jumlah_pisau" => null,
+                    ],
+                    [
+                        "state_pisau" => "repeat",
+                        "jumlah_pisau" => null,
+                    ],
+                    [
+                        "state_pisau" => "sample",
+                        "jumlah_pisau" => null,
+                    ],
+                ],
+                'screen' => [
+                    [
+                        "state_screen" => "baru",
+                        "jumlah_screen" => null,
+                    ],
+                    [
+                        "state_screen" => "repeat",
+                        "jumlah_screen" => null,
+                    ],
+                    [
+                        "state_screen" => "sample",
+                        "jumlah_screen" => null,
+                    ],
+                ],
                 'rincianPlate' => [],
                 'rincianScreen' => [],
                 'fileRincianLast' => [],
             ];
 
             if (isset($dataKeterangan['keteranganPlate'])) {
-                foreach ($dataKeterangan['keteranganPlate'] as $dataPlate) {
-                    $keterangan['plate'][] = [
-                        "state_plate" => $dataPlate['state_plate'],
-                        "jumlah_plate" => $dataPlate['jumlah_plate'],
-                        "ukuran_plate" => $dataPlate['ukuran_plate']
-                    ];
+                // Convert object to array
+                $dataPlateArray = json_decode(json_encode($dataKeterangan['keteranganPlate']), true);
+        
+                // Populate the Screen array with the actual data
+                foreach ($dataPlateArray as $dataPlate) {
+                    $statePlate = $dataPlate['state_plate'];
+        
+                    // Check if the state_screen is one of the expected states
+                    if ($statePlate == 'baru' || $statePlate == 'repeat' || $statePlate == 'sample') {
+                        // Find the index of the current state_screen in the $keterangan['foil'] array
+                        $index = array_search($statePlate, array_column($keterangan['plate'], 'state_plate'));
+        
+                        // Set jumlah_plate based on the state
+                        if ($index !== false) {
+                            $keterangan['plate'][$index]['jumlah_plate'] = $dataPlate['jumlah_plate'];
+                            $keterangan['plate'][$index]['ukuran_plate'] = $dataPlate['ukuran_plate'];
+                        }
+                    }
+                }
+        
+                // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                foreach ($keterangan['plate'] as &$plateData) {
+                    if (!in_array($plateData['state_plate'], array_column($dataPlateArray, 'state_plate'))) {
+                        $plateData['state_plate'] = null;
+                        $plateData['jumlah_plate'] = null;
+                        $plateData['ukuran_plate'] = null;
+                    }
                 }
             }
 
             if (isset($dataKeterangan['keteranganScreen'])) {
-                foreach ($dataKeterangan['keteranganScreen'] as $dataScreen) {
-                    $keterangan['screen'][] = [
-                        "state_screen" => $dataScreen['state_screen'],
-                        "jumlah_screen" => $dataScreen['jumlah_screen'],
-                        "ukuran_screen" => $dataScreen['ukuran_screen']
-                    ];
+                // Convert object to array
+                $dataScreenArray = json_decode(json_encode($dataKeterangan['keteranganScreen']), true);
+        
+                // Populate the Screen array with the actual data
+                foreach ($dataScreenArray as $dataScreen) {
+                    $stateScreen = $dataScreen['state_screen'];
+        
+                    // Check if the state_screen is one of the expected states
+                    if ($stateScreen == 'baru' || $stateScreen == 'repeat' || $stateScreen == 'sample') {
+                        // Find the index of the current state_screen in the $keterangan['foil'] array
+                        $index = array_search($stateScreen, array_column($keterangan['screen'], 'state_screen'));
+        
+                        // Set jumlah_screen based on the state
+                        if ($index !== false) {
+                            $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
+                        }
+                    }
+                }
+        
+                // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                foreach ($keterangan['screen'] as &$screenData) {
+                    if (!in_array($screenData['state_screen'], array_column($dataScreenArray, 'state_screen'))) {
+                        $screenData['state_screen'] = null;
+                        $screenData['jumlah_screen'] = null;
+                    }
                 }
             }
 
             if (isset($dataKeterangan['keteranganPisauPond'])) {
-                foreach ($dataKeterangan['keteranganPisauPond'] as $dataPisau) {
-                    $keterangan['pond'][] = [
-                        "state_pisau" => $dataPisau['state_pisau'],
-                        "jumlah_pisau" => $dataPisau['jumlah_pisau'],
-                    ];
+                // Convert object to array
+                $dataPisauPondArray = json_decode(json_encode($dataKeterangan['keteranganPisauPond']), true);
+        
+                // Populate the PisauPond array with the actual data
+                foreach ($dataPisauPondArray as $dataPisauPond) {
+                    $statePisauPond = $dataPisauPond['state_pisau'];
+        
+                    // Check if the state_pisau is one of the expected states
+                    if ($statePisauPond == 'baru' || $statePisauPond == 'repeat' || $statePisauPond == 'sample') {
+                        // Find the index of the current state_pisau in the $keterangan['foil'] array
+                        $index = array_search($statePisauPond, array_column($keterangan['pond'], 'state_pisau'));
+        
+                        // Set jumlah_pisau based on the state
+                        if ($index !== false) {
+                            $keterangan['pond'][$index]['jumlah_pisau'] = $dataPisauPond['jumlah_pisau'];
+                        }
+                    }
+                }
+        
+                // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                foreach ($keterangan['pond'] as &$pondData) {
+                    if (!in_array($pondData['state_pisau'], array_column($dataPisauPondArray, 'state_pisau'))) {
+                        $pondData['state_pisau'] = null;
+                        $pondData['jumlah_pisau'] = null;
+                    }
                 }
             }
 

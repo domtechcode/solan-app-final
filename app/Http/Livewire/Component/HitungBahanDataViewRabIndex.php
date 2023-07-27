@@ -18,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
-class HitungBahanDataViewGeneralIndex extends Component
+class HitungBahanDataViewRabIndex extends Component
 {
     use WithFileUploads;
     public $filerincian = [];
@@ -527,11 +527,13 @@ class HitungBahanDataViewGeneralIndex extends Component
         if(isset($this->filePaths)){
             $this->loadExcel();
         }
+        
+        
     }
 
     public function render()
     {
-        return view('livewire.component.hitung-bahan-data-view-general-index')->extends('layouts.app')
+        return view('livewire.component.hitung-bahan-data-view-rab-index')->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
