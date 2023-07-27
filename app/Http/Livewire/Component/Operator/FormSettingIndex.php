@@ -34,6 +34,24 @@ class FormSettingIndex extends Component
     public $stateWorkStepCetakLabel;
     public $stateWorkStepFoil;
     public $stateWorkStepEmbossDeboss;
+    public $stateWorkStepSpotUV;
+    public $stateWorkStepUV;
+
+    //file
+    public $filePisauPond = [];
+    public $dataPisauPond = [];
+    public $fileFoil = [];
+    public $dataFoil = [];
+    public $fileSablon = [];
+    public $dataSablon = [];
+    public $fileEmbossDeboss = [];
+    public $dataEmbossDeboss = [];
+    public $fileSpotUV = [];
+    public $dataSpotUV = [];
+    public $fileUV = [];
+    public $dataUV = [];
+    public $fileCetakLabel = [];
+    public $dataCetakLabel = [];
 
     public function addWarnaField($keteranganIndex, $rincianIndexPlate)
     {
@@ -74,6 +92,9 @@ class FormSettingIndex extends Component
             $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
             $this->stateWorkStepFoil = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 28)->first();
             $this->stateWorkStepEmbossDeboss = WorkStep::where('instruction_id', $instructionId)->whereIn('work_step_list_id', [25, 26])->first();
+            $this->stateWorkStepSpotUV = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 31)->first();
+            $this->stateWorkStepUV = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 30)->first();
+
             $keteranganData = Keterangan::where('instruction_id', $this->instructionCurrentId)
                 ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian', 'rincianPlate.warnaPlate')
                 ->get();
@@ -215,8 +236,79 @@ class FormSettingIndex extends Component
                 ];
             }
 
+            if(isset($this->stateWorkStepPond)){
+                $dataPisauPond = [
+                    'keperluan' => 'Pisau',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataPisauPond = $dataPisauPond;
+            }
+
+            if(isset($this->stateWorkStepSablon)){
+                $dataSablon = [
+                    'keperluan' => 'Sablon',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataSablon = $dataSablon;
+            }
+
+            if(isset($this->stateWorkStepFoil)){
+                $dataFoil = [
+                    'keperluan' => 'Foil',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataFoil = $dataFoil;
+            }
+
+            if(isset($this->stateWorkStepEmbossDeboss)){
+                $dataEmbossDeboss = [
+                    'keperluan' => 'Emboss/Deboss',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataEmbossDeboss = $dataEmbossDeboss;
+            }
+
+            if(isset($this->stateWorkStepSpotUV)){
+                $dataSpotUV = [
+                    'keperluan' => 'Spot UV',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataSpotUV = $dataSpotUV;
+            }
+
+            if(isset($this->stateWorkStepUV)){
+                $dataUV = [
+                    'keperluan' => ' UV',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataUV = $dataUV;
+            }
+
+            if(isset($this->stateWorkStepCetakLabel)){
+                $dataCetakLabel = [
+                    'keperluan' => ' Label',
+                    'ukuran_film' => '',
+                    'jumlah_film' => '',
+                ];
+
+                $this->dataCetakLabel = $dataCetakLabel;
+            }
+
+
+
         }
-        
     
     }
 
@@ -227,6 +319,7 @@ class FormSettingIndex extends Component
 
     public function saveSampleAndProduction()
     {
+        dd($this->dataPisauPond);
         $this->validate([
             'keterangans.*.rincianPlate.*.name' => 'required',
             'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',

@@ -9,6 +9,7 @@ use App\Models\WorkStep;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\FileRincian;
+use App\Models\FileSetting;
 use App\Models\LayoutBahan;
 use App\Models\Notification;
 use App\Models\RincianPlate;
@@ -43,6 +44,11 @@ class Instruction extends Model
     public function fileArsip()
     {
         return $this->hasMany(Files::class);
+    }
+
+    public function fileSetting()
+    {
+        return $this->hasMany(FileSetting::class);
     }
 
     public function notificationLog()
