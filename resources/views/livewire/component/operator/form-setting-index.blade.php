@@ -158,6 +158,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('keterangans.' . $keteranganIndex .'.foil')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -240,6 +243,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('keterangans.' . $keteranganIndex .'.matress')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>

@@ -297,14 +297,17 @@ class CreateFormHitungBahanIndex extends Component
                     [
                         "state_screen" => "baru",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "repeat",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "sample",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                 ],
                 'rincianPlate' => [],
@@ -359,6 +362,7 @@ class CreateFormHitungBahanIndex extends Component
                         // Set jumlah_screen based on the state
                         if ($index !== false) {
                             $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
+                            $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
                         }
                     }
                 }
@@ -368,6 +372,7 @@ class CreateFormHitungBahanIndex extends Component
                     if (!in_array($screenData['state_screen'], array_column($dataScreenArray, 'state_screen'))) {
                         $screenData['state_screen'] = null;
                         $screenData['jumlah_screen'] = null;
+                        $screenData['ukuran_screen'] = null;
                     }
                 }
             }
@@ -669,6 +674,12 @@ class CreateFormHitungBahanIndex extends Component
         ]);
 
         if(isset($this->stateWorkStepPlate)){
+            foreach ($this->keterangans as $index => $keterangan) {
+                $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
+                    return $plate['state_plate'] !== null || $plate['jumlah_plate'] !== null || $plate['ukuran_plate'] !== null;
+                });
+            }
+            
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
                 'keterangans.*.plate' => 'required|array|min:1',
@@ -699,9 +710,18 @@ class CreateFormHitungBahanIndex extends Component
                 'keterangans.*.rincianPlate.*.waste.required' => 'Waste harus diisi pada keterangan.',
                 'keterangans.*.rincianPlate.*.waste.numeric' => 'Waste harus berupa angka/tidak boleh ada tanda koma(,).',
             ]);
+
+            dd($this->keterangans);
+            
         }
 
         if(isset($this->stateWorkStepSablon)){
+            foreach ($this->keterangans as $index => $keterangan) {
+                $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($screen) {
+                    return $screen['state_screen'] !== null || $screen['jumlah_screen'] !== null;
+                });
+            }
+
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
                 'keterangans.*.screen' => 'required|array|min:1',
@@ -735,6 +755,11 @@ class CreateFormHitungBahanIndex extends Component
         }
 
         if(isset($this->stateWorkStepPond)){
+            foreach ($this->keterangans as $index => $keterangan) {
+                $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($pond) {
+                    return $pond['state_pisau'] !== null || $screen['jumlah_pisau'] !== null;
+                });
+            }
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
                 'keterangans.*.pond' => 'required|array|min:1',
@@ -747,6 +772,7 @@ class CreateFormHitungBahanIndex extends Component
                 'keterangans.*.pond.*.jumlah_pisau.required' => 'Jumlah pisau harus diisi pada keterangan.',
                 'keterangans.*.pond.*.jumlah_pisau.numeric' => 'Jumlah pisau harus berupa angka/tidak boleh ada tanda koma(,).',              
             ]);
+            
         }
 
         if(isset($this->stateWorkStepCetakLabel)){

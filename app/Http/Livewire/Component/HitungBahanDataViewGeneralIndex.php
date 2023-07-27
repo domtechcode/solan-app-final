@@ -144,7 +144,7 @@ class HitungBahanDataViewGeneralIndex extends Component
         }
 
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
-        ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian')
+        ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
         ->get();
         
         $this->totalPlate = 0;
@@ -192,14 +192,17 @@ class HitungBahanDataViewGeneralIndex extends Component
                     [
                         "state_screen" => "baru",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "repeat",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "sample",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                 ],
                 'foil' => [
@@ -232,6 +235,45 @@ class HitungBahanDataViewGeneralIndex extends Component
                 ],
 
             ];
+
+            if (isset($dataKeterangan['rincianPlate'])) {
+                foreach ($dataKeterangan['rincianPlate'] as $dataRincianPlate) {
+                    $dataWarna = []; // Initialize dataWarna array for each rincianPlate
+
+                    if ($dataRincianPlate['warnaPlate']) {
+                        foreach ($dataRincianPlate['warnaPlate'] as $warna) {
+                            // Use unique keys for each item in dataWarna array
+                            $dataWarna[] = [
+                                'warna' => $warna['warna'],
+                                'keterangan' => $warna['keterangan'],
+                            ];
+                        }
+                    }
+
+                    // Add a default entry for "rincianWarna" when WarnaPlate is empty or contains no data
+                    if (empty($dataWarna)) {
+                        $dataWarna[] = [
+                            'warna' => null,
+                            'keterangan' => null,
+                        ];
+                    }
+
+                    if ($dataRincianPlate['status'] != 'Deleted by Setting') {
+                        $keterangan['rincianPlate'][] = [
+                            "state" => $dataRincianPlate['state'],
+                            "plate" => $dataRincianPlate['plate'],
+                            "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
+                            "waste" => $dataRincianPlate['waste'],
+                            "name" => $dataRincianPlate['name'],
+                            "rincianWarna" => $dataWarna,
+                        ];
+                        $this->totalLembarCetakPlate += $dataRincianPlate['jumlah_lembar_cetak'];
+                        $this->totalWastePlate += $dataRincianPlate['waste'];
+                    }
+
+                    
+                }
+            }
 
             if (isset($dataKeterangan['keteranganPlate'])) {
                 // Convert object to array
@@ -280,6 +322,7 @@ class HitungBahanDataViewGeneralIndex extends Component
                         // Set jumlah_screen based on the state
                         if ($index !== false) {
                             $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
+                            $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
                         }
                     }
                 }
@@ -289,6 +332,7 @@ class HitungBahanDataViewGeneralIndex extends Component
                     if (!in_array($screenData['state_screen'], array_column($dataScreenArray, 'state_screen'))) {
                         $screenData['state_screen'] = null;
                         $screenData['jumlah_screen'] = null;
+                        $screenData['ukuran_screen'] = null;
                     }
                 }
             }
@@ -380,16 +424,6 @@ class HitungBahanDataViewGeneralIndex extends Component
                 }
             }
 
-            foreach($dataKeterangan['rincianPlate'] as $dataRincianPlate){
-                $keterangan['rincianPlate'][] = [
-                    "state" => $dataRincianPlate['state'],
-                    "plate" => $dataRincianPlate['plate'],
-                    "jumlah_lembar_cetak" => $dataRincianPlate['jumlah_lembar_cetak'],
-                    "waste" => $dataRincianPlate['waste'],
-                ];
-                $this->totalLembarCetakPlate += $dataRincianPlate['jumlah_lembar_cetak'];
-                $this->totalWastePlate += $dataRincianPlate['waste'];
-            }
 
             foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
                 $keterangan['rincianScreen'][] = [

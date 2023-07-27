@@ -43,10 +43,11 @@ class FormSettingIndex extends Component
         ];
     }
 
-    public function removeRincianPlate($keteranganIndex, $rincianIndexPlate)
+    public function removeWarnaField($keteranganIndex, $rincianIndexPlate, $indexwarna)
     {
-        unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]);
-        $this->keterangans[$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate']);
+        unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]);
+        // Reindex the array after removal to maintain consecutive numeric keys
+        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna']);
     }
 
     public function mount($instructionId, $workStepId)
@@ -233,7 +234,50 @@ class FormSettingIndex extends Component
             'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
             'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
         ]);
-        // dd($this->keterangans);
+
+        
+        if(isset($this->stateWorkStepFoil)){
+            foreach ($this->keterangans as $index => $keterangan) {
+                $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
+                    return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
+                });
+            }
+
+            $this->validate([        
+                'keterangans' => 'required|array|min:1',
+                'keterangans.*.foil' => 'required|array|min:1',
+                'keterangans.*.foil.*.state_foil' => 'required',
+                'keterangans.*.foil.*.jumlah_foil' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            ], [
+                'keterangans.*.foil.required' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                'keterangans.*.foil.min' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                'keterangans.*.foil.*.state_foil.required' => 'State pada data foil harus diisi pada keterangan.',
+                'keterangans.*.foil.*.jumlah_foil.required' => 'Jumlah foil harus diisi pada keterangan.',
+                'keterangans.*.foil.*.jumlah_foil.numeric' => 'Jumlah foil harus berupa angka/tidak boleh ada tanda koma(,).',              
+            ]);
+        }
+        
+        if(isset($this->stateWorkStepEmbossDeboss)){
+            foreach ($this->keterangans as $index => $keterangan) {
+                $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
+                    return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
+                });
+            }
+
+            $this->validate([        
+                'keterangans' => 'required|array|min:1',
+                'keterangans.*.matress' => 'required|array|min:1',
+                'keterangans.*.matress.*.state_matress' => 'required',
+                'keterangans.*.matress.*.jumlah_matress' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            ], [
+                'keterangans.*.matress.required' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                'keterangans.*.matress.min' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                'keterangans.*.matress.*.state_matress.required' => 'State pada data matress harus diisi pada keterangan.',
+                'keterangans.*.matress.*.jumlah_matress.required' => 'Jumlah matress harus diisi pada keterangan.',
+                'keterangans.*.matress.*.jumlah_matress.numeric' => 'Jumlah matress harus berupa angka/tidak boleh ada tanda koma(,).',              
+            ]);
+        }
+
 
         $deleteWarna = WarnaPlate::where('instruction_id', $this->instructionCurrentId)->delete();
 
@@ -294,12 +338,58 @@ class FormSettingIndex extends Component
                         'status' => 'Deleted by Setting',
                     ]);
 
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
+
+        if($this->catatanProsesPengerjaan){
+            $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
+            $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
+            $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
+                'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
+            ]);
+        }
+
+        // Cek apakah $currentStep ada dan step berikutnya ada
+        if ($currentStep) {
+            $currentStep->update([
+                'state_task' => 'Complete',
+                'status_task' => 'Complete',
+            ]);
+
+            // Cek apakah step berikutnya ada sebelum melanjutkan
+            if ($nextStep) {
+                $nextStep->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                ]);
+
+                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'job_id' => $nextStep->work_step_list_id,
+                    'status_id' => 1,
+                ]);
+            }
+        }
+
+        $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
+        broadcast(new IndexRenderEvent('refresh'));
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Setting Instruksi Kerja',
             'message' => 'Data Setting berhasil disimpan',
         ]);
-        
+
+        return redirect()->route('operator.dashboard');
     }
 
     public function saveLayout()

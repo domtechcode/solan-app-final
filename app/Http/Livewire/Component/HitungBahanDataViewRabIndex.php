@@ -192,14 +192,17 @@ class HitungBahanDataViewRabIndex extends Component
                     [
                         "state_screen" => "baru",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "repeat",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                     [
                         "state_screen" => "sample",
                         "jumlah_screen" => null,
+                        "ukuran_screen" => null,
                     ],
                 ],
                 'foil' => [
@@ -280,6 +283,7 @@ class HitungBahanDataViewRabIndex extends Component
                         // Set jumlah_screen based on the state
                         if ($index !== false) {
                             $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
+                            $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
                         }
                     }
                 }
@@ -289,6 +293,7 @@ class HitungBahanDataViewRabIndex extends Component
                     if (!in_array($screenData['state_screen'], array_column($dataScreenArray, 'state_screen'))) {
                         $screenData['state_screen'] = null;
                         $screenData['jumlah_screen'] = null;
+                        $screenData['ukuran_screen'] = null;
                     }
                 }
             }

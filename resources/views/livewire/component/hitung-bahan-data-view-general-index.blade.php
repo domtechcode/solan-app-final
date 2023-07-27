@@ -1065,8 +1065,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
-
+                            </div>                            
 
                             @if (isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
                                 <div class="row mt-3">
@@ -1088,6 +1087,7 @@
                                                                 <th>Plate</th>
                                                                 <th>Jumlah Lembar Cetak</th>
                                                                 <th>Waste</th>
+                                                                <th>Name</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -1162,6 +1162,21 @@
                                                                             @enderror
                                                                         </div>
                                                                     </td>
+                                                                    <td>
+                                                                        <div class="form-group">
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
+                                                                                placeholder="Name"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.name"
+                                                                                disabled>
+                                                                            @error('keterangans.' . $keteranganIndex .
+                                                                                '.rincianPlate.' . $rincianIndexPlate .
+                                                                                '.name')
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
+                                                                            @enderror
+                                                                        </div>
+                                                                    </td>
                                                                 </tr>
                                                             @endforeach
                                                             <tr>
@@ -1177,6 +1192,67 @@
                                         </div>
                                     </div>
                                 </div>
+                            @endif
+
+                            @if(isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
+                            <div class="row mt-3">
+                                <div class="col-lg-12">
+                                    <div class="text-wrap">
+                                        <div class="example">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h3 class="card-title">Rincian Warna Plate</h3>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="table-responsive">
+                                                <table
+                                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plate</th>
+                                                            <th>Warna</th>
+                                                            <th>Keterangan</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-group">
+                                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Plate" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.plate" disabled>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                            @if (is_array($rincian) && isset($rincian['rincianWarna']))
+                                                                @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
+                                                                <div class="form-group">
+                                                                    <div class="input-group mb-2">
+                                                                        <input type="text" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.warna" class="form-control" placeholder="Warna" disabled>
+                                                                    </div>
+                                                                    @error('keterangans.' . $keteranganIndex .'.rincianPlate.' . $rincianIndexPlate . '.rincianWarna.' . $indexwarna . '.warna') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                                                </div>
+                                                                @endforeach
+                                                            @endif
+                                                            </td>
+                                                            <td>
+                                                                @if (is_array($rincian) && isset($rincian['rincianWarna']))
+                                                                @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
+                                                                <div class="form-group">
+                                                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="1" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.keterangan" disabled></textarea>
+                                                                </div>
+                                                                @endforeach
+                                                            @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             @endif
 
                             @if (isset($stateWorkStepSablon) && !isset($stateWorkStepCetakLabel))

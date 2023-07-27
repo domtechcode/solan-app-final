@@ -173,8 +173,10 @@ class CreateInstructionIndex extends Component
             $this->type_order = $this->spk_type;
         }
 
-        if($this->spk_type == 'sample'){
+        if($this->spk_type == 'sample' || $this->spk_type == 'layout'){
             $countSample = 1;
+        }else{
+            $countSample = null;
         }
 
         if($dataInstruction == null){
