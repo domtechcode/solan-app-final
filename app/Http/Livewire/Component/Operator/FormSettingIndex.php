@@ -306,8 +306,6 @@ class FormSettingIndex extends Component
                 $this->dataCetakLabel = $dataCetakLabel;
             }
 
-
-
         }
     
     }
@@ -319,7 +317,6 @@ class FormSettingIndex extends Component
 
     public function saveSampleAndProduction()
     {
-        dd($this->dataPisauPond);
         $this->validate([
             'keterangans.*.rincianPlate.*.name' => 'required',
             'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
@@ -369,8 +366,22 @@ class FormSettingIndex extends Component
                 'keterangans.*.matress.*.jumlah_matress.required' => 'Jumlah matress harus diisi pada keterangan.',
                 'keterangans.*.matress.*.jumlah_matress.numeric' => 'Jumlah matress harus berupa angka/tidak boleh ada tanda koma(,).',              
             ]);
+            
         }
 
+        if(isset($this->stateWorkStepPond)){
+            $this->validate([        
+                'filePisauPond' => 'required',
+                'dataPisauPond.keperluan' => 'required',
+                'dataPisauPond.jumlah_film' => 'required',
+                'dataPisauPond.ukuran_film' => 'required',
+            ], [
+                'filePisauPond.required' => 'File Pisau Pond harus diupload.',           
+                'dataPisauPond.keperluan.required' => 'Data Pisau Pond harus diisi.',           
+                'dataPisauPond.jumlah_film.required' => 'Data Pisau Pond harus diisi.',           
+                'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',           
+            ]);
+        }
 
         $deleteWarna = WarnaPlate::where('instruction_id', $this->instructionCurrentId)->delete();
 
