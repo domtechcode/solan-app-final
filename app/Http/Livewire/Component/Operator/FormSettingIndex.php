@@ -383,60 +383,6 @@ class FormSettingIndex extends Component
 
     public function saveSampleAndProduction()
     {
-        $this->validate([
-            'keterangans.*.rincianPlate.*.name' => 'required',
-            'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
-            'fileLayout' => 'required',
-        ],[
-            'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
-            'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
-            'fileLayout.required' => 'File Layout Harus diisi.',
-        ]);
-
-        
-        if(isset($this->stateWorkStepFoil)){
-            foreach ($this->keterangans as $index => $keterangan) {
-                $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
-                    return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
-                });
-            }
-
-            $this->validate([        
-                'keterangans' => 'required|array|min:1',
-                'keterangans.*.foil' => 'required|array|min:1',
-                'keterangans.*.foil.*.state_foil' => 'required',
-                'keterangans.*.foil.*.jumlah_foil' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            ], [
-                'keterangans.*.foil.required' => 'Setidaknya satu data foil harus diisi pada keterangan.',
-                'keterangans.*.foil.min' => 'Setidaknya satu data foil harus diisi pada keterangan.',
-                'keterangans.*.foil.*.state_foil.required' => 'State pada data foil harus diisi pada keterangan.',
-                'keterangans.*.foil.*.jumlah_foil.required' => 'Jumlah foil harus diisi pada keterangan.',
-                'keterangans.*.foil.*.jumlah_foil.numeric' => 'Jumlah foil harus berupa angka/tidak boleh ada tanda koma(,).',              
-            ]);
-        }
-        
-        if(isset($this->stateWorkStepEmbossDeboss)){
-            foreach ($this->keterangans as $index => $keterangan) {
-                $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
-                    return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
-                });
-            }
-
-            $this->validate([        
-                'keterangans' => 'required|array|min:1',
-                'keterangans.*.matress' => 'required|array|min:1',
-                'keterangans.*.matress.*.state_matress' => 'required',
-                'keterangans.*.matress.*.jumlah_matress' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            ], [
-                'keterangans.*.matress.required' => 'Setidaknya satu data matress harus diisi pada keterangan.',
-                'keterangans.*.matress.min' => 'Setidaknya satu data matress harus diisi pada keterangan.',
-                'keterangans.*.matress.*.state_matress.required' => 'State pada data matress harus diisi pada keterangan.',
-                'keterangans.*.matress.*.jumlah_matress.required' => 'Jumlah matress harus diisi pada keterangan.',
-                'keterangans.*.matress.*.jumlah_matress.numeric' => 'Jumlah matress harus berupa angka/tidak boleh ada tanda koma(,).',              
-            ]);
-            
-        }
-
         $InstructionCurrentDataFile = Instruction::find($this->instructionCurrentId);
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
@@ -445,6 +391,60 @@ class FormSettingIndex extends Component
                 ->first();
 
         if($nextStep->status_task == 'Waiting Revisi'){
+            $this->validate([
+                'keterangans.*.rincianPlate.*.name' => 'required',
+                'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+                'fileLayout' => 'required',
+            ],[
+                'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
+                'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+                'fileLayout.required' => 'File Layout Harus diisi.',
+            ]);
+    
+            
+            if(isset($this->stateWorkStepFoil)){
+                foreach ($this->keterangans as $index => $keterangan) {
+                    $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
+                        return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
+                    });
+                }
+    
+                $this->validate([        
+                    'keterangans' => 'required|array|min:1',
+                    'keterangans.*.foil' => 'required|array|min:1',
+                    'keterangans.*.foil.*.state_foil' => 'required',
+                    'keterangans.*.foil.*.jumlah_foil' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                ], [
+                    'keterangans.*.foil.required' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.min' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.state_foil.required' => 'State pada data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.jumlah_foil.required' => 'Jumlah foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.jumlah_foil.numeric' => 'Jumlah foil harus berupa angka/tidak boleh ada tanda koma(,).',              
+                ]);
+            }
+            
+            if(isset($this->stateWorkStepEmbossDeboss)){
+                foreach ($this->keterangans as $index => $keterangan) {
+                    $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
+                        return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
+                    });
+                }
+    
+                $this->validate([        
+                    'keterangans' => 'required|array|min:1',
+                    'keterangans.*.matress' => 'required|array|min:1',
+                    'keterangans.*.matress.*.state_matress' => 'required',
+                    'keterangans.*.matress.*.jumlah_matress' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                ], [
+                    'keterangans.*.matress.required' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.min' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.state_matress.required' => 'State pada data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.jumlah_matress.required' => 'Jumlah matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.jumlah_matress.numeric' => 'Jumlah matress harus berupa angka/tidak boleh ada tanda koma(,).',              
+                ]);
+                
+            }
+
             if($this->filePisauPond){
                 if(isset($this->stateWorkStepPond)){
                     $this->validate([        
@@ -707,7 +707,63 @@ class FormSettingIndex extends Component
                         ]);
                     }
             }
+        }else if($currentStep->status_task == 'Reject Requirements'){
+            //reject requirement
         }else{
+            $this->validate([
+                'keterangans.*.rincianPlate.*.name' => 'required',
+                'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+                'fileLayout' => 'required',
+            ],[
+                'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
+                'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+                'fileLayout.required' => 'File Layout Harus diisi.',
+            ]);
+    
+            
+            if(isset($this->stateWorkStepFoil)){
+                foreach ($this->keterangans as $index => $keterangan) {
+                    $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
+                        return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
+                    });
+                }
+    
+                $this->validate([        
+                    'keterangans' => 'required|array|min:1',
+                    'keterangans.*.foil' => 'required|array|min:1',
+                    'keterangans.*.foil.*.state_foil' => 'required',
+                    'keterangans.*.foil.*.jumlah_foil' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                ], [
+                    'keterangans.*.foil.required' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.min' => 'Setidaknya satu data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.state_foil.required' => 'State pada data foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.jumlah_foil.required' => 'Jumlah foil harus diisi pada keterangan.',
+                    'keterangans.*.foil.*.jumlah_foil.numeric' => 'Jumlah foil harus berupa angka/tidak boleh ada tanda koma(,).',              
+                ]);
+            }
+            
+            if(isset($this->stateWorkStepEmbossDeboss)){
+                foreach ($this->keterangans as $index => $keterangan) {
+                    $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
+                        return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
+                    });
+                }
+    
+                $this->validate([        
+                    'keterangans' => 'required|array|min:1',
+                    'keterangans.*.matress' => 'required|array|min:1',
+                    'keterangans.*.matress.*.state_matress' => 'required',
+                    'keterangans.*.matress.*.jumlah_matress' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                ], [
+                    'keterangans.*.matress.required' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.min' => 'Setidaknya satu data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.state_matress.required' => 'State pada data matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.jumlah_matress.required' => 'Jumlah matress harus diisi pada keterangan.',
+                    'keterangans.*.matress.*.jumlah_matress.numeric' => 'Jumlah matress harus berupa angka/tidak boleh ada tanda koma(,).',              
+                ]);
+                
+            }
+
             if($this->filePisauPond){
                 if(isset($this->stateWorkStepPond)){
                     $this->validate([        
@@ -1035,7 +1091,7 @@ class FormSettingIndex extends Component
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
 
             // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
             $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
@@ -1047,30 +1103,60 @@ class FormSettingIndex extends Component
             ]);
         }
 
-        // Cek apakah $currentStep ada dan step berikutnya ada
-        if ($currentStep) {
+        if($currentStep->status_task == 'Reject Requirements'){
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
             ]);
 
-            // Cek apakah step berikutnya ada sebelum melanjutkan
-            if ($nextStep) {
-                $nextStep->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
+            $findSourceReject = WorkStep::where('instruction_id', $this->instructionCurrentId)->where('work_step_list_id', $currentStep->reject_from_id)->first();
+
+            $findSourceReject->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+            ]);
+
+            $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                'status_id' => 1,
+                'job_id' => $findSourceReject->work_step_list_id,
+            ]);
+
+            $currentStep->update([
+                'reject_from_id' => null,
+                'reject_from_status' => null,
+                'reject_from_job' => null,
+                'selesai' => Carbon::now()->toDateTimeString()
+            ]);
+
+            $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
+            broadcast(new IndexRenderEvent('refresh'));
+
+        }else{
+            // Cek apakah $currentStep ada dan step berikutnya ada
+            if ($currentStep) {
+                $currentStep->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
                 ]);
 
-                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                    'job_id' => $nextStep->work_step_list_id,
-                    'status_id' => 1,
-                ]);
+                // Cek apakah step berikutnya ada sebelum melanjutkan
+                if ($nextStep) {
+                    $nextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                    ]);
+
+                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'job_id' => $nextStep->work_step_list_id,
+                        'status_id' => 1,
+                    ]);
+                }
             }
+
+            $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
+            broadcast(new IndexRenderEvent('refresh'));
         }
-
-        $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
-        broadcast(new IndexRenderEvent('refresh'));
-
+        
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Setting Instruksi Kerja',
@@ -1131,7 +1217,7 @@ class FormSettingIndex extends Component
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
 
             // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
             $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';

@@ -56,9 +56,26 @@ class RejectOperatorIndex extends Component
             'user_id' => Auth()->user()->id,
             'instruction_id' => $this->currentInstructionId,
             'catatan' => $this->keteranganReject,
-            'tujuan' => $updateReject->tujuanReject,
+            'tujuan' => $updateReject->work_step_list_id,
             'kategori' => 'reject',
         ]);
+
+        if($this->keteranganReject){
+            $dataketeranganReject = WorkStep::find($this->tujuanReject);
+            $dataketeranganRejectSource = WorkStep::find($this->currentWorkStepId);
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingketeranganReject = json_decode($dataketeranganReject->keterangan_reject, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingketeranganReject
+            $timestampedKeterangan = $this->keteranganReject . ' - [' . now() . '] - [' .$dataketeranganRejectSource->workStepList->name. ']';
+            $existingketeranganReject[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $updateCatatanPengerjaan = WorkStep::where('id', $this->tujuanReject)->update([
+                'keterangan_reject' => json_encode($existingketeranganReject),
+            ]);
+        }
 
         $this->messageSent(['conversation' => 'SPK di reject oleh '. $dataWorkStep->user->name, 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateReject->user_id]);
         broadcast(new IndexRenderEvent('refresh'));

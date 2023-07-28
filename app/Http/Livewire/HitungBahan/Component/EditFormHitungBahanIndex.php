@@ -770,7 +770,7 @@ class EditFormHitungBahanIndex extends Component
         if(isset($this->stateWorkStepPond)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($pond) {
-                    return $pond['state_pisau'] !== null || $screen['jumlah_pisau'] !== null;
+                    return $pond['state_pisau'] !== null || $pond['jumlah_pisau'] !== null;
                 });
             }
             $this->validate([        

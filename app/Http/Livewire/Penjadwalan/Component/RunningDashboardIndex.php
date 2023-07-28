@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Penjadwalan\Component;
 use DB;
 use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use App\Models\Machine;
 use Livewire\Component;
 use App\Models\WorkStep;
@@ -50,6 +51,11 @@ class RunningDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+
+    public $stateRejectPenjadwalan;
+    public $note;
+    public $notereject;
+    public $rejectKeterangan;
 
     protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
@@ -279,7 +285,9 @@ class RunningDashboardIndex extends Component
     public function modalInstructionDetailsRunning($instructionId)
     {
         $this->workSteps = [];
-
+        $this->stateRejectPenjadwalan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 2)->where('status_task', 'Reject Requirements')->first();
+        $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
+        $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 2)->get();
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->with('workStepList', 'user', 'machine')->get();
         
@@ -294,6 +302,7 @@ class RunningDashboardIndex extends Component
                 'machine_id' => $dataSelected['machine_id'],
                 'status_task' => $dataSelected['status_task'],
                 'state_task' => $dataSelected['state_task'],
+                'keterangan_reject' => $dataSelected['keterangan_reject'],
             ];
             $this->workSteps[] = $workSteps;
 
@@ -349,8 +358,7 @@ class RunningDashboardIndex extends Component
 
     public function startButton($workStepId)
     {
-        $updateStart = WorkStep::where('id', $workStepId)->first(); // Fetch the record before updating
-        $workStepListId = null;
+        $updateStart = WorkStep::find($workStepId);
 
         if ($updateStart) {
             // Update the record
@@ -359,14 +367,12 @@ class RunningDashboardIndex extends Component
                 'status_task' => 'Pending Approved',
             ]);
 
-            $workStepListId = $updateStart->work_step_list_id;
+            // Use the fetched work_step_list_id in the second update
+            $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                'status_id' => 1,
+                'job_id' => $updateStart->work_step_list_id,
+            ]);
         }
-
-        // Use the fetched work_step_list_id in the second update
-        $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-            'status_id' => 1,
-            'job_id' => $workStepListId,
-        ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -375,6 +381,76 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        broadcast(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-running');
+    }
+
+    public function startButtonReject($workStepId)
+    {
+        $updateStart = WorkStep::find($workStepId);
+
+        if ($updateStart) {
+            // Update the record
+            $updateStart->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+            ]);
+
+            // Use the fetched work_step_list_id in the second update
+            $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                'status_id' => 1,
+                'job_id' => $updateStart->work_step_list_id,
+            ]);
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        broadcast(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-running');
+    }
+
+    public function rejectButton($workStepId)
+    {
+        $currentWorkStepPenjadwalan = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
+        $updateReject = WorkStep::find($workStepId);
+
+        if ($updateReject){
+            $updateReject->update([
+                'reject_from_id' => $currentWorkStepPenjadwalan->reject_from_id,
+                'reject_from_status' => $currentWorkStepPenjadwalan->reject_from_status,
+                'reject_from_job' => $currentWorkStepPenjadwalan->reject_from_job,
+                'count_reject' => $updateReject->count_reject + 1,
+                'state_task' => 'Running',
+                'status_task' => 'Reject Requirements',
+            ]);
+
+            $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                'status_id' => 22,
+                'job_id' => $updateReject->work_step_list_id,
+            ]);
+
+            $currentWorkStepPenjadwalan->update([
+                'reject_from_id' => null,
+                'reject_from_status' => null,
+                'reject_from_job' => null,
+                'state_task' => 'Running',
+                'status_task' => 'Process',
+            ]);
+            
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK Reject', 'instruction_id' => $this->selectedInstruction->id]);
         broadcast(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
     }

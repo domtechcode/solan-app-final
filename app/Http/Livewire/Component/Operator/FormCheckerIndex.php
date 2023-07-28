@@ -77,7 +77,7 @@ class FormCheckerIndex extends Component
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
 
             // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
             $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
@@ -156,17 +156,13 @@ class FormCheckerIndex extends Component
 
     public function saveProductionAndSample()
     {
-        $this->validate([
-            'fileChecker' => 'required',
-        ]);
-
         $instructionData = Instruction::find($this->instructionCurrentId);
 
         if($this->catatanProsesPengerjaan){
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->alasan_pause, true);
+            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
 
             // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
             $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
@@ -178,14 +174,16 @@ class FormCheckerIndex extends Component
             ]);
         }
 
-        
-
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        if($nextStep->status_task == 'Waiting Repair'){
+        if($nextStep->status_task == 'Waiting Repair Revisi'){
+            $this->validate([
+                'fileChecker' => 'required',
+            ]);
+
             if(isset($this->fileChecker)){
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
                 $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
@@ -205,7 +203,12 @@ class FormCheckerIndex extends Component
                     ]);
                 }
             }
+        }else if($nextStep->status_task == 'Reject Requirements'){
+            //reject requirement
         }else{
+            $this->validate([
+                'fileChecker' => 'required',
+            ]);
             if(isset($this->fileChecker)){
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
                 $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
@@ -226,56 +229,84 @@ class FormCheckerIndex extends Component
                 }
             }
         }
-        // Cek apakah $currentStep ada dan step berikutnya ada
-        if ($currentStep) {
+
+        if($currentStep->status_task == 'Reject Requirements'){
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
             ]);
 
-            // Cek apakah step berikutnya ada sebelum melanjutkan
-            if ($nextStep) {
-                $nextStep->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
-                ]);
+            $findSourceReject = WorkStep::where('instruction_id', $this->instructionCurrentId)->where('work_step_list_id', $currentStep->reject_from_id)->first();
 
-                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                    'job_id' => $nextStep->work_step_list_id,
-                    'status_id' => 1,
-                ]);
+            $findSourceReject->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+            ]);
 
-                $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
-                }
-                
-                $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
-                broadcast(new IndexRenderEvent('refresh'));
+            $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                'status_id' => 1,
+                'job_id' => $findSourceReject->work_step_list_id,
+            ]);
 
-            }else{
-                $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                    'spk_status' => 'Selesai',
+            $currentStep->update([
+                'reject_from_id' => null,
+                'reject_from_status' => null,
+                'reject_from_job' => null,
+                'selesai' => Carbon::now()->toDateTimeString()
+            ]);
+
+            $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
+            broadcast(new IndexRenderEvent('refresh'));
+        }else{
+            // Cek apakah $currentStep ada dan step berikutnya ada
+            if ($currentStep) {
+                $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                 ]);
 
-                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                    'job_id' => $currentStep->work_step_list_id,
-                    'status_id' => 7,
-                ]);
+                // Cek apakah step berikutnya ada sebelum melanjutkan
+                if ($nextStep) {
+                    $nextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                    ]);
 
-                $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
+                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'job_id' => $nextStep->work_step_list_id,
+                        'status_id' => 1,
+                    ]);
+
+                    $userDestination = User::where('role', 'Penjadwalan')->get();
+                    foreach($userDestination as $dataUser){
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
+                    }
+                    
+                    $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
+                    broadcast(new IndexRenderEvent('refresh'));
+
+                }else{
+                    $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'spk_status' => 'Selesai',
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                    ]);
+
+                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'job_id' => $currentStep->work_step_list_id,
+                        'status_id' => 7,
+                    ]);
+
+                    $userDestination = User::where('role', 'Penjadwalan')->get();
+                    foreach($userDestination as $dataUser){
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
+                    }
+                    
+                    broadcast(new IndexRenderEvent('refresh'));
                 }
-                
-                broadcast(new IndexRenderEvent('refresh'));
             }
         }
-
         
-
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Setting Instruksi Kerja',
@@ -297,7 +328,7 @@ class FormCheckerIndex extends Component
         if ($currentStep) {
             $currentStep->update([
                 'state_task' => 'Not Running',
-                'status_task' => 'Waiting Revisi',
+                'status_task' => 'Waiting Repair Revisi',
             ]);
 
             $lastStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
