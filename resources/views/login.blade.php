@@ -50,36 +50,19 @@
         <div class="page">
             <div class="">
                 <!-- Theme-Layout -->
-                @if (session()->has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <span class="alert-inner--icon"><i class="fe fe-check-circle"></i></span>
-                    <span class="alert-inner--text"><strong>Berhasil !</strong> Data berhasil disimpan...</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                @endif
-
-                @if (session()->has('error'))
-                <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
-                    <span class="alert-inner--icon"><i class="fe fe-slash"></i></span>
-                    <span class="alert-inner--text"><strong>Gagal !</strong> Periksa Kembali Data....</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                </div>
-                @endif
-
                 
-
-                
-
                 <form method="post" enctype="multipart/form-data"  action="{{ route('loginProcess') }}">
                     @csrf
                     <!-- CONTAINER OPEN -->
                     <div class="container-login100">
                         <div class="wrap-login100 p-6">
-                                <div class="card-body text-center">
+                            @if (session()->has('error'))
+                            <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+                                <span class="alert-inner--icon"><i class="fe fe-slash"></i></span>
+                                <span class="alert-inner--text"><strong>Gagal !</strong> {{ session()->get('error') }}</span>
+                            </div>
+                            @endif
+                                <div class="card-body text-center">  
                                     <span class="avatar avatar-xxl cover-image" data-bs-image-src="{{ asset('assets/images/brand/Solan.png') }}" style="background: url(&quot;{{ asset('assets/images/brand/Solan.png') }}&quot;) center center;"></span>
                                     <h4 class="h4 text-primary mb-0 mt-3"><b>Solan App</b></h4>
                                 </div>

@@ -61,6 +61,8 @@ class LoginController extends Controller
         }
 
         // If authentication fails, redirect back to the login page with an error message
+        session()->flash('error', 'Username/Password Salah.');
+
         return redirect()->back()->withErrors(['username' => 'Invalid credentials']);
     }
 
