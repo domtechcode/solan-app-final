@@ -497,6 +497,62 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse ($dataFileSetting as $file)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
+                                                        download>{{ $file['file_name'] }}</a>
+                                                </td>
+                                                <td>
+                                                    {{ $file['keperluan'] }}
+                                                </td>
+                                                <td>
+                                                    {{ $file['ukuran_film'] }}
+                                                </td>
+                                                <td>
+                                                    {{ $file['jumlah_film'] }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            No Data !!
+                                        @endforelse
+
+                                        @forelse ($fileLayoutData as $file)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
+                                                        download>{{ $file['file_name'] }}</a>
+                                                </td>
+                                                <td>
+                                                    {{ $file['type_file'] }}
+                                                </td>
+                                                <td>
+                                                    -
+                                                </td>
+                                                <td>
+                                                    -
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            No Data !!
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 mb-3">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-bottom-0">Form Untuk Upload File Film</th>
+                                            <th class="border-bottom-0">Keperluan</th>
+                                            <th class="border-bottom-0">Ukuran Film</th>
+                                            <th class="border-bottom-0">Jumlah Film</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         @if (isset($stateWorkStepPond))
                                         <tr>
                                             <td>
@@ -793,10 +849,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success mt-4 mb-0 submitBtn"
+                        <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
                             wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button>
-                        {{-- <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
-                            wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button> --}}
                     </div>
                 </div>
             </div>

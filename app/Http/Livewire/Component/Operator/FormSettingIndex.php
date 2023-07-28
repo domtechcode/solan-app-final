@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
+use App\Models\FileSetting;
 use App\Models\Instruction;
 use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
@@ -27,6 +28,7 @@ class FormSettingIndex extends Component
     public $catatanProsesPengerjaan;
     public $keterangans = [];
     public $dataInstruction;
+    public $dataFileSetting;
 
     public $stateWorkStepPlate;
     public $stateWorkStepSablon;
@@ -94,6 +96,8 @@ class FormSettingIndex extends Component
             $this->stateWorkStepEmbossDeboss = WorkStep::where('instruction_id', $instructionId)->whereIn('work_step_list_id', [25, 26])->first();
             $this->stateWorkStepSpotUV = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 31)->first();
             $this->stateWorkStepUV = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 30)->first();
+
+            $this->dataFileSetting = FileSetting::where('instruction_id', $instructionId)->get();
 
             $keteranganData = Keterangan::where('instruction_id', $this->instructionCurrentId)
                 ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian', 'rincianPlate.warnaPlate')
@@ -237,71 +241,133 @@ class FormSettingIndex extends Component
             }
 
             if(isset($this->stateWorkStepPond)){
-                $dataPisauPond = [
-                    'keperluan' => 'Pisau',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
+                $filePisauPond = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Pisau')->first();
+                if(isset($filePisauPond)){
+                    $dataPisauPond = [
+                        'keperluan' => 'Pisau',
+                        'ukuran_film' => $filePisauPond['ukuran_film'],
+                        'jumlah_film' => $filePisauPond['jumlah_film'],
+                    ];
+                }else{
+                    $dataPisauPond = [
+                        'keperluan' => 'Pisau',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
 
                 $this->dataPisauPond = $dataPisauPond;
             }
 
             if(isset($this->stateWorkStepSablon)){
-                $dataSablon = [
-                    'keperluan' => 'Sablon',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
-
+                $fileSablon = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Sablon')->first();
+                if(isset($fileSablon)){
+                    $dataSablon = [
+                        'keperluan' => 'Sablon',
+                        'ukuran_film' => $fileSablon['ukuran_film'],
+                        'jumlah_film' => $fileSablon['jumlah_film'],
+                    ];
+                }else{
+                    $dataSablon = [
+                        'keperluan' => 'Sablon',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
+                
                 $this->dataSablon = $dataSablon;
             }
 
             if(isset($this->stateWorkStepFoil)){
-                $dataFoil = [
-                    'keperluan' => 'Foil',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
+                $fileFoil = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Foil')->first();
+                if(isset($fileFoil)){
+                    $dataFoil = [
+                        'keperluan' => 'Foil',
+                        'ukuran_film' => $fileFoil['ukuran_film'],
+                        'jumlah_film' => $fileFoil['jumlah_film'],
+                    ];
+                }else{
+                    $dataFoil = [
+                        'keperluan' => 'Foil',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
 
                 $this->dataFoil = $dataFoil;
             }
 
             if(isset($this->stateWorkStepEmbossDeboss)){
-                $dataEmbossDeboss = [
-                    'keperluan' => 'Emboss/Deboss',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
+                $fileEmbossDeboss = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Emboss/Deboss')->first();
+                if(isset($fileEmbossDeboss)){
+                    $dataEmbossDeboss = [
+                        'keperluan' => 'Emboss/Deboss',
+                        'ukuran_film' => $fileEmbossDeboss['ukuran_film'],
+                        'jumlah_film' => $fileEmbossDeboss['jumlah_film'],
+                    ];
+                }else{
+                    $dataEmbossDeboss = [
+                        'keperluan' => 'Emboss/Deboss',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
 
                 $this->dataEmbossDeboss = $dataEmbossDeboss;
             }
 
             if(isset($this->stateWorkStepSpotUV)){
-                $dataSpotUV = [
-                    'keperluan' => 'Spot UV',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
-
+                $fileSpotUV = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Spot UV')->first();
+                if(isset($fileSpotUV)){
+                    $dataSpotUV = [
+                        'keperluan' => 'Spot UV',
+                        'ukuran_film' => $fileSpotUV['ukuran_film'],
+                        'jumlah_film' => $fileSpotUV['jumlah_film'],
+                    ];
+                }else{
+                    $dataSpotUV = [
+                        'keperluan' => 'Spot UV',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
                 $this->dataSpotUV = $dataSpotUV;
             }
 
             if(isset($this->stateWorkStepUV)){
-                $dataUV = [
-                    'keperluan' => ' UV',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
+                $fileUV = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'UV')->first();
+                if(isset($fileUV)){
+                    $dataUV = [
+                        'keperluan' => 'UV',
+                        'ukuran_film' => $fileUV['ukuran_film'],
+                        'jumlah_film' => $fileUV['jumlah_film'],
+                    ];
+                }else{
+                    $dataUV = [
+                        'keperluan' => 'UV',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
 
                 $this->dataUV = $dataUV;
             }
 
             if(isset($this->stateWorkStepCetakLabel)){
-                $dataCetakLabel = [
-                    'keperluan' => ' Label',
-                    'ukuran_film' => '',
-                    'jumlah_film' => '',
-                ];
+                $fileCetakLabel = FileSetting::where('instruction_id', $instructionId)->where('keperluan', 'Label')->first();
+                if(isset($fileCetakLabel)){
+                    $dataCetakLabel = [
+                        'keperluan' => 'Label',
+                        'ukuran_film' => $fileCetakLabel['ukuran_film'],
+                        'jumlah_film' => $fileCetakLabel['jumlah_film'],
+                    ];
+                }else{
+                    $dataCetakLabel = [
+                        'keperluan' => 'Label',
+                        'ukuran_film' => '',
+                        'jumlah_film' => '',
+                    ];
+                }
 
                 $this->dataCetakLabel = $dataCetakLabel;
             }
@@ -320,9 +386,11 @@ class FormSettingIndex extends Component
         $this->validate([
             'keterangans.*.rincianPlate.*.name' => 'required',
             'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+            'fileLayout' => 'required',
         ],[
             'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
             'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+            'fileLayout.required' => 'File Layout Harus diisi.',
         ]);
 
         
@@ -369,18 +437,539 @@ class FormSettingIndex extends Component
             
         }
 
-        if(isset($this->stateWorkStepPond)){
-            $this->validate([        
-                'filePisauPond' => 'required',
-                'dataPisauPond.keperluan' => 'required',
-                'dataPisauPond.jumlah_film' => 'required',
-                'dataPisauPond.ukuran_film' => 'required',
-            ], [
-                'filePisauPond.required' => 'File Pisau Pond harus diupload.',           
-                'dataPisauPond.keperluan.required' => 'Data Pisau Pond harus diisi.',           
-                'dataPisauPond.jumlah_film.required' => 'Data Pisau Pond harus diisi.',           
-                'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',           
-            ]);
+        $InstructionCurrentDataFile = Instruction::find($this->instructionCurrentId);
+
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
+
+        if($nextStep->status_task == 'Waiting Revisi'){
+            if($this->filePisauPond){
+                if(isset($this->stateWorkStepPond)){
+                    $this->validate([        
+                        'filePisauPond' => 'required',
+                        'dataPisauPond.keperluan' => 'required',
+                        'dataPisauPond.jumlah_film' => 'required',
+                        'dataPisauPond.ukuran_film' => 'required',
+                    ], [
+                        'filePisauPond.required' => 'File Pisau Pond harus diupload.',           
+                        'dataPisauPond.keperluan.required' => 'Data Pisau Pond harus diisi.',           
+                        'dataPisauPond.jumlah_film.required' => 'Data Pisau Pond harus diisi.',           
+                        'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',           
+                    ]);
+
+                    $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Pisau')->count();
+                    foreach ($this->filePisauPond as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-revisi-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noPisauPond ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataPisauPond['keperluan'],
+                            'ukuran_film' => $this->dataPisauPond['ukuran_film'],
+                            'jumlah_film' => $this->dataPisauPond['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }                
+            }
+    
+            if($this->fileFoil){
+                if(isset($this->stateWorkStepFoil)){        
+                    $this->validate([        
+                        'fileFoil' => 'required',
+                        'dataFoil.keperluan' => 'required',
+                        'dataFoil.jumlah_film' => 'required',
+                        'dataFoil.ukuran_film' => 'required',
+                    ], [
+                        'fileFoil.required' => 'File Foil harus diupload.',           
+                        'dataFoil.keperluan.required' => 'Data Foil harus diisi.',           
+                        'dataFoil.jumlah_film.required' => 'Data Foil harus diisi.',           
+                        'dataFoil.ukuran_film.required' => 'Data Foil harus diisi.',           
+                    ]);
+
+                    $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Foil')->count();
+                    foreach ($this->fileFoil as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-revisi-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noFoil ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataFoil['keperluan'],
+                            'ukuran_film' => $this->dataFoil['ukuran_film'],
+                            'jumlah_film' => $this->dataFoil['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileSablon){
+                if(isset($this->stateWorkStepSablon)){
+                    $this->validate([        
+                        'fileSablon' => 'required',
+                        'dataSablon.keperluan' => 'required',
+                        'dataSablon.jumlah_film' => 'required',
+                        'dataSablon.ukuran_film' => 'required',
+                    ], [
+                        'fileSablon.required' => 'File Sablon harus diupload.',           
+                        'dataSablon.keperluan.required' => 'Data Sablon harus diisi.',           
+                        'dataSablon.jumlah_film.required' => 'Data Sablon harus diisi.',           
+                        'dataSablon.ukuran_film.required' => 'Data Sablon harus diisi.',           
+                    ]);
+               
+                    $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Sablon')->count();
+                    foreach ($this->fileSablon as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-revisi-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noSablon ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataSablon['keperluan'],
+                            'ukuran_film' => $this->dataSablon['ukuran_film'],
+                            'jumlah_film' => $this->dataSablon['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileEmbossDeboss){
+                if(isset($this->stateWorkStepEmbossDeboss)){
+                    $this->validate([        
+                        'fileEmbossDeboss' => 'required',
+                        'dataEmbossDeboss.keperluan' => 'required',
+                        'dataEmbossDeboss.jumlah_film' => 'required',
+                        'dataEmbossDeboss.ukuran_film' => 'required',
+                    ], [
+                        'fileEmbossDeboss.required' => 'File Emboss/Deboss harus diupload.',           
+                        'dataEmbossDeboss.keperluan.required' => 'Data Emboss/Deboss harus diisi.',           
+                        'dataEmbossDeboss.jumlah_film.required' => 'Data Emboss/Deboss harus diisi.',           
+                        'dataEmbossDeboss.ukuran_film.required' => 'Data Emboss/Deboss harus diisi.',           
+                    ]);
+                    
+                
+                    $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Emboss/Deboss')->count();
+                    foreach ($this->fileEmbossDeboss as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-revisi-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noEmbossDeboss ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataEmbossDeboss['keperluan'],
+                            'ukuran_film' => $this->dataEmbossDeboss['ukuran_film'],
+                            'jumlah_film' => $this->dataEmbossDeboss['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileSpotUV){
+                if(isset($this->stateWorkStepSpotUV)){
+                    $this->validate([        
+                        'fileSpotUV' => 'required',
+                        'dataSpotUV.keperluan' => 'required',
+                        'dataSpotUV.jumlah_film' => 'required',
+                        'dataSpotUV.ukuran_film' => 'required',
+                    ], [
+                        'fileSpotUV.required' => 'File SpotUV harus diupload.',           
+                        'dataSpotUV.keperluan.required' => 'Data SpotUV harus diisi.',           
+                        'dataSpotUV.jumlah_film.required' => 'Data SpotUV harus diisi.',           
+                        'dataSpotUV.ukuran_film.required' => 'Data SpotUV harus diisi.',           
+                    ]);
+
+                    $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Spot UV')->count();
+                    foreach ($this->fileSpotUV as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-revisi-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noSpotUV ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataSpotUV['keperluan'],
+                            'ukuran_film' => $this->dataSpotUV['ukuran_film'],
+                            'jumlah_film' => $this->dataSpotUV['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileUV){
+                if(isset($this->stateWorkStepUV)){
+                    $this->validate([        
+                        'fileUV' => 'required',
+                        'dataUV.keperluan' => 'required',
+                        'dataUV.jumlah_film' => 'required',
+                        'dataUV.ukuran_film' => 'required',
+                    ], [
+                        'fileUV.required' => 'File UV harus diupload.',           
+                        'dataUV.keperluan.required' => 'Data UV harus diisi.',           
+                        'dataUV.jumlah_film.required' => 'Data UV harus diisi.',           
+                        'dataUV.ukuran_film.required' => 'Data UV harus diisi.',           
+                    ]);
+
+                    $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'UV')->count();
+                    foreach ($this->fileUV as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-revisi-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noUV ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataUV['keperluan'],
+                            'ukuran_film' => $this->dataUV['ukuran_film'],
+                            'jumlah_film' => $this->dataUV['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                } 
+            }
+    
+            if($this->fileCetakLabel){
+                if(isset($this->stateWorkStepCetakLabel)){
+                    $this->validate([        
+                        'fileCetakLabel' => 'required',
+                        'dataCetakLabel.keperluan' => 'required',
+                        'dataCetakLabel.jumlah_film' => 'required',
+                        'dataCetakLabel.ukuran_film' => 'required',
+                    ], [
+                        'fileCetakLabel.required' => 'File CetakLabel harus diupload.',           
+                        'dataCetakLabel.keperluan.required' => 'Data CetakLabel harus diisi.',           
+                        'dataCetakLabel.jumlah_film.required' => 'Data CetakLabel harus diisi.',           
+                        'dataCetakLabel.ukuran_film.required' => 'Data CetakLabel harus diisi.',           
+                    ]);
+
+                    $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Label')->count();
+                    foreach ($this->fileCetakLabel as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-revisi-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noCetakLabel ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataCetakLabel['keperluan'],
+                            'ukuran_film' => $this->dataCetakLabel['ukuran_film'],
+                            'jumlah_film' => $this->dataCetakLabel['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileLayout){
+                $this->validate([
+                    'fileLayout' => 'required',
+                ],[
+                    'fileLayout.required' => 'File Layout Harus diisi.',
+                ]);
+
+                $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->count();
+                $nolayout = $fileLayoutData;
+                    foreach ($this->fileLayout as $file) {
+                        $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $nolayout ++;
+        
+                        Files::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            "user_id" => Auth()->user()->id,
+                            "type_file" => "layout",
+                            "file_name" => $fileName,
+                            "file_path" => $folder,
+                        ]);
+                    }
+            }
+        }else{
+            if($this->filePisauPond){
+                if(isset($this->stateWorkStepPond)){
+                    $this->validate([        
+                        'filePisauPond' => 'required',
+                        'dataPisauPond.keperluan' => 'required',
+                        'dataPisauPond.jumlah_film' => 'required',
+                        'dataPisauPond.ukuran_film' => 'required',
+                    ], [
+                        'filePisauPond.required' => 'File Pisau Pond harus diupload.',           
+                        'dataPisauPond.keperluan.required' => 'Data Pisau Pond harus diisi.',           
+                        'dataPisauPond.jumlah_film.required' => 'Data Pisau Pond harus diisi.',           
+                        'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',           
+                    ]);
+
+                    $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Pisau')->count();
+                    foreach ($this->filePisauPond as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noPisauPond ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataPisauPond['keperluan'],
+                            'ukuran_film' => $this->dataPisauPond['ukuran_film'],
+                            'jumlah_film' => $this->dataPisauPond['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }                
+            }
+    
+            if($this->fileFoil){
+                if(isset($this->stateWorkStepFoil)){        
+                    $this->validate([        
+                        'fileFoil' => 'required',
+                        'dataFoil.keperluan' => 'required',
+                        'dataFoil.jumlah_film' => 'required',
+                        'dataFoil.ukuran_film' => 'required',
+                    ], [
+                        'fileFoil.required' => 'File Foil harus diupload.',           
+                        'dataFoil.keperluan.required' => 'Data Foil harus diisi.',           
+                        'dataFoil.jumlah_film.required' => 'Data Foil harus diisi.',           
+                        'dataFoil.ukuran_film.required' => 'Data Foil harus diisi.',           
+                    ]);
+
+                    $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Foil')->count();
+                    foreach ($this->fileFoil as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noFoil ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataFoil['keperluan'],
+                            'ukuran_film' => $this->dataFoil['ukuran_film'],
+                            'jumlah_film' => $this->dataFoil['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileSablon){
+                if(isset($this->stateWorkStepSablon)){
+                    $this->validate([        
+                        'fileSablon' => 'required',
+                        'dataSablon.keperluan' => 'required',
+                        'dataSablon.jumlah_film' => 'required',
+                        'dataSablon.ukuran_film' => 'required',
+                    ], [
+                        'fileSablon.required' => 'File Sablon harus diupload.',           
+                        'dataSablon.keperluan.required' => 'Data Sablon harus diisi.',           
+                        'dataSablon.jumlah_film.required' => 'Data Sablon harus diisi.',           
+                        'dataSablon.ukuran_film.required' => 'Data Sablon harus diisi.',           
+                    ]);
+               
+                    $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Sablon')->count();
+                    foreach ($this->fileSablon as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noSablon ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataSablon['keperluan'],
+                            'ukuran_film' => $this->dataSablon['ukuran_film'],
+                            'jumlah_film' => $this->dataSablon['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileEmbossDeboss){
+                if(isset($this->stateWorkStepEmbossDeboss)){
+                    $this->validate([        
+                        'fileEmbossDeboss' => 'required',
+                        'dataEmbossDeboss.keperluan' => 'required',
+                        'dataEmbossDeboss.jumlah_film' => 'required',
+                        'dataEmbossDeboss.ukuran_film' => 'required',
+                    ], [
+                        'fileEmbossDeboss.required' => 'File Emboss/Deboss harus diupload.',           
+                        'dataEmbossDeboss.keperluan.required' => 'Data Emboss/Deboss harus diisi.',           
+                        'dataEmbossDeboss.jumlah_film.required' => 'Data Emboss/Deboss harus diisi.',           
+                        'dataEmbossDeboss.ukuran_film.required' => 'Data Emboss/Deboss harus diisi.',           
+                    ]);
+                    
+                
+                    $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Emboss/Deboss')->count();
+                    foreach ($this->fileEmbossDeboss as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noEmbossDeboss ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataEmbossDeboss['keperluan'],
+                            'ukuran_film' => $this->dataEmbossDeboss['ukuran_film'],
+                            'jumlah_film' => $this->dataEmbossDeboss['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileSpotUV){
+                if(isset($this->stateWorkStepSpotUV)){
+                    $this->validate([        
+                        'fileSpotUV' => 'required',
+                        'dataSpotUV.keperluan' => 'required',
+                        'dataSpotUV.jumlah_film' => 'required',
+                        'dataSpotUV.ukuran_film' => 'required',
+                    ], [
+                        'fileSpotUV.required' => 'File SpotUV harus diupload.',           
+                        'dataSpotUV.keperluan.required' => 'Data SpotUV harus diisi.',           
+                        'dataSpotUV.jumlah_film.required' => 'Data SpotUV harus diisi.',           
+                        'dataSpotUV.ukuran_film.required' => 'Data SpotUV harus diisi.',           
+                    ]);
+
+                    $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Spot UV')->count();
+                    foreach ($this->fileSpotUV as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noSpotUV ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataSpotUV['keperluan'],
+                            'ukuran_film' => $this->dataSpotUV['ukuran_film'],
+                            'jumlah_film' => $this->dataSpotUV['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileUV){
+                if(isset($this->stateWorkStepUV)){
+                    $this->validate([        
+                        'fileUV' => 'required',
+                        'dataUV.keperluan' => 'required',
+                        'dataUV.jumlah_film' => 'required',
+                        'dataUV.ukuran_film' => 'required',
+                    ], [
+                        'fileUV.required' => 'File UV harus diupload.',           
+                        'dataUV.keperluan.required' => 'Data UV harus diisi.',           
+                        'dataUV.jumlah_film.required' => 'Data UV harus diisi.',           
+                        'dataUV.ukuran_film.required' => 'Data UV harus diisi.',           
+                    ]);
+
+                    $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'UV')->count();
+                    foreach ($this->fileUV as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noUV ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataUV['keperluan'],
+                            'ukuran_film' => $this->dataUV['ukuran_film'],
+                            'jumlah_film' => $this->dataUV['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                } 
+            }
+    
+            if($this->fileCetakLabel){
+                if(isset($this->stateWorkStepCetakLabel)){
+                    $this->validate([        
+                        'fileCetakLabel' => 'required',
+                        'dataCetakLabel.keperluan' => 'required',
+                        'dataCetakLabel.jumlah_film' => 'required',
+                        'dataCetakLabel.ukuran_film' => 'required',
+                    ], [
+                        'fileCetakLabel.required' => 'File CetakLabel harus diupload.',           
+                        'dataCetakLabel.keperluan.required' => 'Data CetakLabel harus diisi.',           
+                        'dataCetakLabel.jumlah_film.required' => 'Data CetakLabel harus diisi.',           
+                        'dataCetakLabel.ukuran_film.required' => 'Data CetakLabel harus diisi.',           
+                    ]);
+
+                    $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Label')->count();
+                    foreach ($this->fileCetakLabel as $file) {
+                        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
+            
+                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $noCetakLabel ++;
+            
+                        $keteranganFileRincian= FileSetting::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'keperluan' => $this->dataCetakLabel['keperluan'],
+                            'ukuran_film' => $this->dataCetakLabel['ukuran_film'],
+                            'jumlah_film' => $this->dataCetakLabel['jumlah_film'],
+                            'file_path' => $folder,
+                            'file_name' => $fileName,
+                        ]);
+                    }
+                }
+            }
+    
+            if($this->fileLayout){
+                $this->validate([
+                    'fileLayout' => 'required',
+                ],[
+                    'fileLayout.required' => 'File Layout Harus diisi.',
+                ]);
+                
+                $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->count();
+                $nolayout = $fileLayoutData;
+                    foreach ($this->fileLayout as $file) {
+                        $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $nolayout ++;
+        
+                        Files::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            "user_id" => Auth()->user()->id,
+                            "type_file" => "layout",
+                            "file_name" => $fileName,
+                            "file_path" => $folder,
+                        ]);
+                    }
+            }
         }
 
         $deleteWarna = WarnaPlate::where('instruction_id', $this->instructionCurrentId)->delete();
@@ -441,11 +1030,6 @@ class FormSettingIndex extends Component
                     ->update([
                         'status' => 'Deleted by Setting',
                     ]);
-
-        $currentStep = WorkStep::find($this->workStepCurrentId);
-        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
 
         if($this->catatanProsesPengerjaan){
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
