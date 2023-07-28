@@ -227,7 +227,7 @@ class FormCetakIndex extends Component
 
                     $userDestination = User::where('role', 'Penjadwalan')->get();
                     foreach($userDestination as $dataUser){
-                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Plate', 'instruction_id' => $this->instructionCurrentId]);
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh '. $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
                     }
                     broadcast(new IndexRenderEvent('refresh'));
 

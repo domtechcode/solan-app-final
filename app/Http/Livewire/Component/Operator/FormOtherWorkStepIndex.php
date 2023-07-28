@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
+use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormPlate;
 use App\Models\FileSetting;
@@ -15,16 +16,18 @@ use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\FormOtherWorkStep;
 use Illuminate\Support\Facades\Storage;
 
-class FormPlateIndex extends Component
+class FormOtherWorkStepIndex extends Component
 {
     use WithFileUploads;
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $dataInstruction;
-    public $tempat_plate;
-    public $plate_gagal;
+    public $jenis_pekerjaan;
+    public $hasil_akhir;
+    public $satuan;
     public $catatanProsesPengerjaan;
 
     public function mount($instructionId, $workStepId)
@@ -32,26 +35,31 @@ class FormPlateIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataPlate)){
-            $this->tempat_plate = $dataPlate['tempat_plate'];
-            $this->plate_gagal = $dataPlate['plate_gagal'];
+        $dataWorkStep = WorkStep::find($workStepId);
+
+        $dataOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
+        if(isset($dataOtherWorkStep)){
+            $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
+            $this->hasil_akhir = $dataOtherWorkStep['hasil_akhir'];
+            $this->satuan = $dataOtherWorkStep['satuan'];
         }else{
-            $this->tempat_plate = '';
-            $this->plate_gagal = '';
+            $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
+            $this->hasil_akhir = '';
+            $this->satuan = '';
         }
     }
 
     public function render()
     {
-        return view('livewire.component.operator.form-plate-index');
+        return view('livewire.component.operator.form-other-work-step-index');
     }
 
     public function save()
     {
         $this->validate([
-            'tempat_plate' => 'required',
-            'plate_gagal' => 'required',
+            'jenis_pekerjaan' => 'required',
+            'hasil_akhir' => 'required',
+            'satuan' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -80,16 +88,12 @@ class FormPlateIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        $deleteFormPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->delete();
-        $createFormPlate = FormPlate::create([
+        $deleteFormPond = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
+        $createFormPond = FormOtherWorkStep::create([
             'instruction_id' => $this->instructionCurrentId,
-            'tempat_plate' => $this->tempat_plate,
-            'plate_gagal' => $this->plate_gagal,
-        ]);
-
-        $updateRincianPlate = RincianPlate::where('instruction_id', $this->instructionCurrentId)->update([
-            'tempat_plate' => $this->tempat_plate,
-            'tgl_pembuatan_plate' => Carbon::now(),
+            'jenis_pekerjaan' => $this->jenis_pekerjaan,
+            'hasil_akhir' => $this->hasil_akhir,
+            'satuan' => $this->satuan,
         ]);
 
         if($currentStep->status_task == 'Reject Requirements'){

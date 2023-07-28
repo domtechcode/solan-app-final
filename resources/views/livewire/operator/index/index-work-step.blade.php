@@ -94,8 +94,15 @@
                                             @elseif($workStepData->work_step_list_id == 10)
                                                 <!-- Cetak -->
                                                 @livewire('component.operator.form-cetak-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 23)
+                                                <!-- Sablon -->
+                                                @livewire('component.operator.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 24)
+                                                <!-- Pond -->
+                                                @livewire('component.operator.form-pond-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
-                                                lain lain
+                                                <!-- WorkStep Lain -->
+                                                @livewire('component.operator.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @endif
                                         </div>
                                         <div class="tab-pane" id="tab2">

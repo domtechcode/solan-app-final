@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
+use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormPlate;
 use App\Models\FileSetting;
@@ -17,14 +18,19 @@ use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
-class FormPlateIndex extends Component
+class FormPondIndex extends Component
 {
     use WithFileUploads;
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $dataInstruction;
-    public $tempat_plate;
-    public $plate_gagal;
+    public $hasil_akhir_pond;
+    public $nama_pisau;
+    public $lokasi_pisau;
+    public $status_pisau;
+    public $nama_matress;
+    public $lokasi_matress;
+    public $status_matress;
     public $catatanProsesPengerjaan;
 
     public function mount($instructionId, $workStepId)
@@ -32,26 +38,41 @@ class FormPlateIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->first();
+        $dataPlate = FormPond::where('instruction_id', $this->instructionCurrentId)->first();
         if(isset($dataPlate)){
-            $this->tempat_plate = $dataPlate['tempat_plate'];
-            $this->plate_gagal = $dataPlate['plate_gagal'];
+            $this->hasil_akhir_pond = $dataPlate['hasil_akhir_pond'];
+            $this->nama_pisau = $dataPlate['nama_pisau'];
+            $this->lokasi_pisau = $dataPlate['lokasi_pisau'];
+            $this->status_pisau = $dataPlate['status_pisau'];
+            $this->nama_matress = $dataPlate['nama_matress'];
+            $this->lokasi_matress = $dataPlate['lokasi_matress'];
+            $this->status_matress = $dataPlate['status_matress'];
         }else{
-            $this->tempat_plate = '';
-            $this->plate_gagal = '';
+            $this->hasil_akhir_pond = '';
+            $this->nama_pisau = '';
+            $this->lokasi_pisau = '';
+            $this->status_pisau = '';
+            $this->nama_matress = '';
+            $this->lokasi_matress = '';
+            $this->status_matress = '';
         }
     }
 
     public function render()
     {
-        return view('livewire.component.operator.form-plate-index');
+        return view('livewire.component.operator.form-pond-index');
     }
 
     public function save()
     {
         $this->validate([
-            'tempat_plate' => 'required',
-            'plate_gagal' => 'required',
+            'hasil_akhir_pond' => 'required',
+            'nama_pisau' => 'required',
+            'lokasi_pisau' => 'required',
+            'status_pisau' => 'required',
+            'nama_matress' => 'required',
+            'lokasi_matress' => 'required',
+            'status_matress' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -80,16 +101,16 @@ class FormPlateIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        $deleteFormPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->delete();
-        $createFormPlate = FormPlate::create([
+        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)->delete();
+        $createFormPond = FormPond::create([
             'instruction_id' => $this->instructionCurrentId,
-            'tempat_plate' => $this->tempat_plate,
-            'plate_gagal' => $this->plate_gagal,
-        ]);
-
-        $updateRincianPlate = RincianPlate::where('instruction_id', $this->instructionCurrentId)->update([
-            'tempat_plate' => $this->tempat_plate,
-            'tgl_pembuatan_plate' => Carbon::now(),
+            'hasil_akhir_pond' => $this->hasil_akhir_pond,
+            'nama_pisau' => $this->nama_pisau,
+            'lokasi_pisau' => $this->lokasi_pisau,
+            'status_pisau' => $this->status_pisau,
+            'nama_matress' => $this->nama_matress,
+            'lokasi_matress' => $this->lokasi_matress,
+            'status_matress' => $this->status_matress,
         ]);
 
         if($currentStep->status_task == 'Reject Requirements'){

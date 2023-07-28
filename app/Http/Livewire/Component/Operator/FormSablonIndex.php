@@ -9,22 +9,21 @@ use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\FormPlate;
+use App\Models\FormSablon;
 use App\Models\FileSetting;
 use App\Models\Instruction;
-use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
 
-class FormPlateIndex extends Component
+class FormSablonIndex extends Component
 {
     use WithFileUploads;
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $dataInstruction;
-    public $tempat_plate;
-    public $plate_gagal;
+    public $hasil_akhir_sablon;
     public $catatanProsesPengerjaan;
 
     public function mount($instructionId, $workStepId)
@@ -32,26 +31,23 @@ class FormPlateIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataPlate)){
-            $this->tempat_plate = $dataPlate['tempat_plate'];
-            $this->plate_gagal = $dataPlate['plate_gagal'];
+        $dataSablon = FormSablon::where('instruction_id', $this->instructionCurrentId)->first();
+        if(isset($dataSablon)){
+            $this->hasil_akhir_sablon = $dataSablon['hasil_akhir_sablon'];
         }else{
-            $this->tempat_plate = '';
-            $this->plate_gagal = '';
+            $this->hasil_akhir_sablon = '';
         }
     }
 
     public function render()
     {
-        return view('livewire.component.operator.form-plate-index');
+        return view('livewire.component.operator.form-sablon-index');
     }
 
     public function save()
     {
         $this->validate([
-            'tempat_plate' => 'required',
-            'plate_gagal' => 'required',
+            'hasil_akhir_sablon' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -72,6 +68,12 @@ class FormPlateIndex extends Component
             ]);
         }
 
+        $deleteFormSablon = FormSablon::where('instruction_id', $this->instructionCurrentId)->delete();
+        $createFormSablon = FormSablon::create([
+            'instruction_id' => $this->instructionCurrentId,
+            'hasil_akhir_sablon' => $this->hasil_akhir_sablon,
+        ]);
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
                 ->where('work_step_list_id', 2)
@@ -80,17 +82,6 @@ class FormPlateIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        $deleteFormPlate = FormPlate::where('instruction_id', $this->instructionCurrentId)->delete();
-        $createFormPlate = FormPlate::create([
-            'instruction_id' => $this->instructionCurrentId,
-            'tempat_plate' => $this->tempat_plate,
-            'plate_gagal' => $this->plate_gagal,
-        ]);
-
-        $updateRincianPlate = RincianPlate::where('instruction_id', $this->instructionCurrentId)->update([
-            'tempat_plate' => $this->tempat_plate,
-            'tgl_pembuatan_plate' => Carbon::now(),
-        ]);
 
         if($currentStep->status_task == 'Reject Requirements'){
             $currentStep->update([

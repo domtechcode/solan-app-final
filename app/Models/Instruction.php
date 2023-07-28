@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
+use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormCetak;
 use App\Models\FormPlate;
+use App\Models\FormSablon;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\FileRincian;
@@ -21,6 +23,7 @@ use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
+use App\Models\FormOtherWorkStep;
 use App\Models\KeteranganPisauPond;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\KeteranganMatressEmbossDeboss;
@@ -136,5 +139,20 @@ class Instruction extends Model
     public function formCetak()
     {
         return $this->hasMany(FormCetak::class);
+    }
+
+    public function formSablon()
+    {
+        return $this->hasMany(FormSablon::class);
+    }
+
+    public function formPond()
+    {
+        return $this->hasMany(FormPond::class);
+    }
+
+    public function formOtherWorkStep()
+    {
+        return $this->hasMany(FormOtherWorkStep::class);
     }
 }
