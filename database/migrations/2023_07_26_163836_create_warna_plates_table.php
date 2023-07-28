@@ -21,6 +21,10 @@ class CreateWarnaPlatesTable extends Migration
             $table->foreign('rincian_plate_id')->references('id')->on('rincian_plates')->onDelete('cascade');
             $table->string('warna')->nullable();
             $table->longtext('keterangan')->nullable();
+            $table->string('de')->nullable();
+            $table->string('l')->nullable();
+            $table->string('a')->nullable();
+            $table->string('b')->nullable();
             $table->timestamps();
         });
     }

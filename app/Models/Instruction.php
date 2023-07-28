@@ -6,6 +6,8 @@ use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
 use App\Models\WorkStep;
+use App\Models\FormCetak;
+use App\Models\FormPlate;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\FileRincian;
@@ -124,5 +126,15 @@ class Instruction extends Model
     public function warnaPlate()
     {
         return $this->hasMany(WarnaPlate::class);
+    }
+
+    public function formPlate()
+    {
+        return $this->hasMany(FormPlate::class);
+    }
+
+    public function formCetak()
+    {
+        return $this->hasMany(FormCetak::class);
     }
 }

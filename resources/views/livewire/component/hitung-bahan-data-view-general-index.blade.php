@@ -1626,7 +1626,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6 col-md-6">
+                                                {{-- <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Harga Bahan</label>
                                                         <input type="text" autocomplete="off" class="form-control"
@@ -1637,7 +1637,7 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jumlah Bahan</label>

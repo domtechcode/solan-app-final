@@ -27,6 +27,10 @@ class CreateRincianPlatesTable extends Migration
             $table->string('tempat_plate')->nullable();
             $table->date('tgl_pembuatan_plate')->nullable();
             $table->string('status')->nullable();
+            $table->string('de')->nullable();
+            $table->string('l')->nullable();
+            $table->string('a')->nullable();
+            $table->string('b')->nullable();
             $table->timestamps();
         });
     }

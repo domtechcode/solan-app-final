@@ -83,10 +83,19 @@
                                                 <!-- Setting -->
                                                 @livewire('component.operator.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @elseif($workStepData->work_step_list_id == 37)
-                                                <!-- Setting -->
+                                                <!-- Checker -->
                                                 @livewire('component.operator.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 7)
+                                                <!-- Plate -->
+                                                @livewire('component.operator.form-plate-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 8 || $workStepData->work_step_list_id == 9)
+                                                <!-- Potong Bahan & Potong Jadi -->
+                                                @livewire('component.operator.form-potong-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 10)
+                                                <!-- Cetak -->
+                                                @livewire('component.operator.form-cetak-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
-asdasd
+                                                lain lain
                                             @endif
                                         </div>
                                         <div class="tab-pane" id="tab2">
