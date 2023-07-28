@@ -122,7 +122,7 @@ class NewSpkDashboardIndex extends Component
                                         ->paginate($this->paginate) :
                             WorkStep::where('user_id', Auth()->user()->id)
                                         ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
+                                        ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
                                         ->where('spk_status', 'Running')
                                         ->whereHas('instruction', function ($query) {
                                             $query->where('spk_number', 'like', '%' . $this->search . '%')

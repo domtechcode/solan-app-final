@@ -28,6 +28,7 @@ class RunningDashboardIndex extends Component
     public $dataUsers;
     public $dataMachines;
     public $workSteps = [];
+    public $keteranganReschedule;
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -104,6 +105,7 @@ class RunningDashboardIndex extends Component
             'target_time' => NULL,
             'user_id' => NULL,
             'machine_id' => NULL,
+            'state_task' => 'Not Running',
             'status_task' => 'Pending Start',
         ]]);
 
@@ -138,7 +140,6 @@ class RunningDashboardIndex extends Component
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
-        
     }
 
     public function render()
@@ -174,73 +175,106 @@ class RunningDashboardIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    // public function save()
-    // {
-    //     $this->validate([
-    //         'workSteps.*.work_step_list_id' => 'required',
-    //         'workSteps.*.schedule_date' => 'required',
-    //         'workSteps.*.target_date' => 'required',
-    //         'workSteps.*.user_id' => 'required',
-    //     ]);
+    public function reschedule()
+    {
+        $this->validate([
+            'workSteps.*.work_step_list_id' => 'required',
+            'workSteps.*.schedule_date' => 'required',
+            'workSteps.*.target_date' => 'required',
+            'workSteps.*.target_time' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'workSteps.*.user_id' => 'required',
+            'keteranganReschedule' => 'required',
+        ], [
+            'workSteps.*.target_time.required' => 'Setidaknya Target Jam harus diisi.',
+            'workSteps.*.target_time.numeric' => 'Target Jam harus berupa angka/tidak boleh ada tanda koma(,).',
+            'keteranganReschedule.required' => 'Setidaknya Keterangan Reschedule harus diisi.',
+        ]);
 
-    //     $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
-    //     $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+        $lastDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->get();
+        $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
 
-    //     $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-    //                     ->where('step', '>', $firstWorkStep->step)
-    //                     ->get();
+        if($this->keteranganReschedule){
+            $dataCatatanReschedule = $firstWorkStep;
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingCatatanReschedule = json_decode($dataCatatanReschedule->keterangan_reschedule, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingCatatanReschedule
+            $timestampedKeterangan = $this->keteranganReschedule . ' - [' . now() . ']';
+            $existingCatatanReschedule[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $firstWorkStep->update([
+                'keterangan_reschedule' => json_encode($existingCatatanReschedule),
+            ]);
+        }
+
+        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+
+        $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                        ->where('step', '>', $firstWorkStep->step)
+                        ->get();
         
-    //     if($deleteWorkSteps){
-    //         foreach($deleteWorkSteps as $dataDeleted){
-    //             WorkStep::where('id', $dataDeleted->id)->delete();
-    //         }
-    //     }
+        if($deleteWorkSteps){
+            foreach($deleteWorkSteps as $dataDeleted){
+                WorkStep::where('id', $dataDeleted->id)->delete();
+            }
+        }
 
-    //     // Insert new work steps starting from firstWorkStep->step + 1
-    //     $stepToAdd = $firstWorkStep->step + 1;
-    //     $newWorkSteps = [];
+        // Insert new work steps starting from firstWorkStep->step + 1
+        $stepToAdd = $firstWorkStep->step + 1;
+        $newWorkSteps = [];
 
-    //     foreach ($this->workSteps as $index => $workStepData) {
-    //         $newWorkSteps[] = [
-    //             'instruction_id' => $this->selectedInstruction->id,
-    //             'work_step_list_id' => $workStepData['work_step_list_id'],
-    //             'target_date' => $workStepData['target_date'],
-    //             'schedule_date' => $workStepData['schedule_date'],
-    //             'target_time' => $workStepData['target_time'],
-    //             'user_id' => $workStepData['user_id'],
-    //             'machine_id' => $workStepData['machine_id'],
-    //             'step' => $stepToAdd++,
-    //             'state_task' => 'Not Running',
-    //             'status_task' => 'Waiting',
-    //         ];
-    //     }
+        foreach ($this->workSteps as $index => $workStepData) {
+            $newWorkSteps[] = [
+                'instruction_id' => $this->selectedInstruction->id,
+                'work_step_list_id' => $workStepData['work_step_list_id'],
+                'target_date' => $workStepData['target_date'],
+                'schedule_date' => $workStepData['schedule_date'],
+                'target_time' => $workStepData['target_time'],
+                'user_id' => $workStepData['user_id'],
+                'machine_id' => $workStepData['machine_id'],
+                'step' => $stepToAdd++,
+                'state_task' => $workStepData['state_task'],
+                'status_task' => $workStepData['status_task'],
+                'spk_status' => 'Running',
+            ];
+        }
 
-    //     $inserWorkStep = WorkStep::insert($newWorkSteps);
+        $inserWorkStep = WorkStep::insert($newWorkSteps);
+        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->get();
+        foreach($lastDataWorkStep as $lastData){
+            $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', $lastData->work_step_list_id)->where('status_task', $lastData->status_task)->where('state_task', $lastData->state_task)->update([
+                'timer' => $lastData['timer'],
+                'alasan_pause' => $lastData['alasan_pause'],
+                'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
+                'reject_from_id' => $lastData['reject_from_id'],
+                'reject_from_status' => $lastData['reject_from_status'],
+                'reject_from_job' => $lastData['reject_from_job'],
+                'count_reject' => $lastData['count_reject'],
+                'count_revisi' => $lastData['count_revisi'],
+                'task_priority' => $lastData['task_priority'],
+                'dikerjakan' => $lastData['dikerjakan'],
+                'selesai' => $lastData['selesai'],
+            ]);
+        }
 
-    //     $nextWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('step', $firstWorkStep->step + 1)->update([
-    //         'state_task' => 'Not Running',
-    //         'status_task' => 'Pending Start',
-    //     ]);
+        $firstWorkStep->update([
+            'status_task' => 'Process',
+        ]);
 
-    //     $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-    //         'job_id' => $firstWorkStep->work_step_list_id,
-    //         'status_id' => 2,
-    //     ]);
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Jadwal Instruksi Kerja',
+            'message' => 'Data jadwal berhasil disimpan',
+        ]);
 
-    //     $firstWorkStep->update([
-    //         'status_task' => 'Process',
-    //     ]);
+        broadcast(new IndexRenderEvent('refresh'));
 
-    //     $this->emit('flashMessage', [
-    //         'type' => 'success',
-    //         'title' => 'Jadwal Instruksi Kerja',
-    //         'message' => 'Data jadwal berhasil disimpan',
-    //     ]);
-
-    //     $this->emit('indexRender');
-    //     $this->reset();
-    //     $this->dispatchBrowserEvent('close-modal');
-    // }
+        $this->workSteps = [];
+        $this->keteranganReschedule = '';
+        $this->dispatchBrowserEvent('close-modal-running');
+    }
 
     public function modalInstructionDetailsRunning($instructionId)
     {
@@ -259,6 +293,7 @@ class RunningDashboardIndex extends Component
                 'user_id' => $dataSelected['user_id'],
                 'machine_id' => $dataSelected['machine_id'],
                 'status_task' => $dataSelected['status_task'],
+                'state_task' => $dataSelected['state_task'],
             ];
             $this->workSteps[] = $workSteps;
 

@@ -86,7 +86,7 @@
                                                 <!-- Setting -->
                                                 @livewire('component.operator.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
-
+asdasd
                                             @endif
                                         </div>
                                         <div class="tab-pane" id="tab2">
@@ -103,19 +103,6 @@
                             @livewire('component.reject-operator-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                         </div>
                       </div>
-
-                    {{-- <div class="row mb-5">
-                        <div class="col-md-7">
-                            
-                        </div>
-                        <div class="col-md-5">
-                            
-                        </div>
-                    </div> --}}
-    
-                    
-                    
-    
                 </div>
                 <!-- CONTAINER CLOSED -->
             </div>

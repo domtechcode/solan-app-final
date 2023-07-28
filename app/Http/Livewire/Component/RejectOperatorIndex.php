@@ -36,7 +36,7 @@ class RejectOperatorIndex extends Component
             'status_task' => 'Waiting Repair',
         ]);
 
-        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $this->tujuanReject)->first();
+        $updateReject = WorkStep::find($this->tujuanReject);
 
         $updateReject->update([
             'reject_from_id' => $this->currentWorkStepId, 
@@ -44,16 +44,19 @@ class RejectOperatorIndex extends Component
             'reject_from_job' => $dataWorkStep->job_id, 
             'state_task' => 'Running', 
             'status_task' => 'Reject Requirements', 
-            'status_id' => 22,
-            'job_id' => $this->tujuanReject,
             'count_reject' => $updateReject->count_reject + 1,
+        ]);
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            'status_id' => 22,
+            'job_id' => $updateReject->work_step_list_id,
         ]);
 
         $createCatatan = Catatan::create([
             'user_id' => Auth()->user()->id,
             'instruction_id' => $this->currentInstructionId,
             'catatan' => $this->keteranganReject,
-            'tujuan' => $this->tujuanReject,
+            'tujuan' => $updateReject->tujuanReject,
             'kategori' => 'reject',
         ]);
 

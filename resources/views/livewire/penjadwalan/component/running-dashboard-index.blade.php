@@ -154,7 +154,7 @@
     </div>
     
     
-    {{-- <form wire:submit.prevent="save"> --}}
+    <form wire:submit.prevent="reschedule">
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalRunning" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
@@ -282,7 +282,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
                                                                         <option label="Select Langkah Kerja"></option>
                                                                         @foreach ($dataWorkSteps as $dataWorkStep)
                                                                             <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
@@ -295,19 +295,19 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
+                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
+                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="text" wire:model="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
+                                                        <input type="text" wire:model.defer="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
                                                         @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                     </div>
                                                 </td>
@@ -316,7 +316,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
                                                                         <option label="Select User"></option>
                                                                         @foreach ($dataUsers as $dataUser)
                                                                         <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
@@ -332,7 +332,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
+                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
                                                                         <option label="Select Machine"></option>
                                                                         @foreach ($dataMachines as $dataMachine)
                                                                         <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
@@ -379,8 +379,18 @@
                         </div>
                     </div>
 
-                    {{-- file --}}
                     <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Keterangan Reschedule</label>
+                                <div class="input-group control-group" style="padding-top: 5px;">
+                                    <textarea class="form-control mb-4" placeholder="Keterangan Reschedule" rows="4" wire:model="keteranganReschedule"></textarea>
+                                </div>
+                                @error('keteranganReschedule') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                        </div>
+                    </div>
+
+                    {{-- file --}}
+                    <div class="row mt-3">
                         <div class="col-xl-4">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
@@ -481,7 +491,7 @@
             </div>
         </div>
     </div>
-    {{-- </form> --}}
+    </form>
 
     <!-- Modal Group-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupRunning" tabindex="-1" role="dialog">
@@ -958,7 +968,8 @@
                     </div>   
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Reschedule</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

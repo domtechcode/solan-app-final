@@ -46,7 +46,7 @@ class CreateWorkStepsTable extends Migration
 
             $table->timestamp('dikerjakan')->nullable();
             $table->timestamp('selesai')->nullable();
-
+            $table->longtext('keterangan_reschedule')->nullable();
             
             $table->string('spk_status')->nullable();
             $table->timestamps();

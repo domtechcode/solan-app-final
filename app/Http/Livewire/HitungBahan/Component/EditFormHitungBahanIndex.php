@@ -725,7 +725,6 @@ class EditFormHitungBahanIndex extends Component
                 'keterangans.*.rincianPlate.*.waste.numeric' => 'Waste harus berupa angka/tidak boleh ada tanda koma(,).',
             ]);
 
-            dd($this->keterangans);
             
         }
 

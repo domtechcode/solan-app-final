@@ -3,8 +3,11 @@
 namespace App\Http\Livewire\Operator\Index;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class IndexWorkStep extends Component
 {
@@ -25,6 +28,22 @@ class IndexWorkStep extends Component
         ]);
 
         $this->workStepData = WorkStep::find($this->workStepSelectedId);
+
+        $userDestination = User::where('role', 'Penjadwalan')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' .Auth()->user()->jobdesk, 'instruction_id' => $this->instructionSelectedId]);
+        }
+        broadcast(new IndexRenderEvent('refresh'));
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function render()
