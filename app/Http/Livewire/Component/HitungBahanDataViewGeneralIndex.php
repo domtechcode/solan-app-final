@@ -34,6 +34,7 @@ class HitungBahanDataViewGeneralIndex extends Component
     public $noterevisi;
     public $notes = [];
     public $workSteps;
+    public $fileCheckerData = [];
 
     public $stateWorkStepPlate;
     public $stateWorkStepSablon;
@@ -478,6 +479,8 @@ class HitungBahanDataViewGeneralIndex extends Component
                 'fileLayoutCustom' => '',
             ];
         }
+
+        $this->fileCheckerData = Files::where('instruction_id', $instructionId)->where('type_file', 'Approved Checker')->get();
         
          // Cek apakah array layoutSettings dan keterangans kosong
         if (empty($this->layoutSettings)) {

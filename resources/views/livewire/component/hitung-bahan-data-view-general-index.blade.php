@@ -1692,6 +1692,30 @@
             </div>
             <!-- ROW-2 END -->
         @endforeach
+
+        @if(isset($fileCheckerData))
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                    <div class="card-header">
+                        <h3 class="card-title">File Approved Checker</h3>
+                    </div>
+                    <div class="card-body" style="height: 100%;">
+                        <div class="row">
+                            <div class="col-sm-12" style="height: 100%;">
+                                @forelse ($fileCheckerData as $file)
+                                <iframe width="100%" height="900" src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"></iframe>
+                            @empty
+                                No Data !!!
+                            @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     @endif
 
     <!-- Modal General-->
