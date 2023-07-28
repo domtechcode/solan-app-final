@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\FormLem;
 use App\Models\FormRab;
+use App\Models\FormFoil;
 use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormCetak;
@@ -17,8 +19,11 @@ use App\Models\FileSetting;
 use App\Models\LayoutBahan;
 use App\Models\Notification;
 use App\Models\RincianPlate;
+use App\Models\FormQcPacking;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
+use App\Models\FormCetakLabel;
+use App\Models\FormPengiriman;
 use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
@@ -154,5 +159,30 @@ class Instruction extends Model
     public function formOtherWorkStep()
     {
         return $this->hasMany(FormOtherWorkStep::class);
+    }
+
+    public function formLem()
+    {
+        return $this->hasMany(FormLem::class);
+    }
+
+    public function formCetakLabel()
+    {
+        return $this->hasMany(FormCetakLabel::class);
+    }
+
+    public function formFoil()
+    {
+        return $this->hasMany(FormFoil::class);
+    }
+
+    public function formQcPacking()
+    {
+        return $this->hasMany(FormQcPacking::class);
+    }
+
+    public function formPengiriman()
+    {
+        return $this->hasMany(FormPengiriman::class);
     }
 }
