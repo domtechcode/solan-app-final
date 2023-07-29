@@ -47,7 +47,11 @@
                     @endif
 
                     <div class="row">
+                        @if($workStepData->work_step_list_id == 36)
+                        <div class="col-md-12">
+                        @else
                         <div class="col-md-8">
+                        @endif
                           <div class="row">
                             <div class="col-lg-12">
                                 <!--Row-->
@@ -76,8 +80,12 @@
                                 <div class="panel-body tabs-menu-body">
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="tab1">
-                                            <!-- ROW-2-->
-                                            @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @if($workStepData->work_step_list_id == 36)
+                                                <!-- ROW-2-->
+                                                @livewire('component.hitung-bahan-data-view-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @else
+                                                @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @endif
 
                                             @if($workStepData->work_step_list_id == 6)
                                                 <!-- Setting -->
@@ -109,6 +117,9 @@
                                             @elseif($workStepData->work_step_list_id == 35)
                                                 <!-- Potong Bahan & Potong Jadi -->
                                                 @livewire('component.operator.form-qc-packing-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 36)
+                                                <!-- Pengiriman -->
+                                                @livewire('component.operator.form-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
                                                 <!-- WorkStep Lain -->
                                                 @livewire('component.operator.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
@@ -124,8 +135,10 @@
                         </div>
                         </div>
                         <div class="col-md-4">
-                            @livewire('component.timer-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                            @livewire('component.reject-operator-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                            @if($workStepData->work_step_list_id != 36)
+                                @livewire('component.timer-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                @livewire('component.reject-operator-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                            @endif
                         </div>
                       </div>
                 </div>

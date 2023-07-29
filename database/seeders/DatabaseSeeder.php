@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\JobsTableSeeder;
 use Database\Seeders\FilesTableSeeder;
 use Database\Seeders\UsersTableSeeder;
+use Database\Seeders\DriversTableSeeder;
 use Database\Seeders\CatatansTableSeeder;
 use Database\Seeders\FormRabsTableSeeder;
 use Database\Seeders\MachinesTableSeeder;
@@ -33,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(InstructionsTableSeeder::class);
         
         $this->call(CustomersTableSeeder::class);
+        $this->call(DriversTableSeeder::class);
         $this->call(WorkStepListTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(JobsTableSeeder::class);

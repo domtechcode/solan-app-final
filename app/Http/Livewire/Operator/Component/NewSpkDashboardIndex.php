@@ -108,35 +108,33 @@ class NewSpkDashboardIndex extends Component
     {
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
+
+        $data = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                ->where('spk_status', 'Running')
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->where(function ($subQuery) {
+                        // Tambahkan kondisi jika work_step_list_id sama dengan 35 atau 36
+                        $subQuery->where('work_step_list_id', '!=', 35)
+                                ->orWhere('work_step_list_id', '!=', 36)
+                                ->orWhere('group_priority', '!=', 'child')
+                                ->orWhereNull('group_priority');
+                    })->orderBy('shipping_date', 'asc');
+                })
+                ->with(['status', 'job', 'workStepList'])
+                ->paginate($this->paginate);
         
-        return view('livewire.operator.component.new-spk-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('user_id', Auth()->user()->id)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('user_id', Auth()->user()->id)
-                                        ->where('state_task', 'Running')
-                                        ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        return view('livewire.operator.component.new-spk-dashboard-index', [ 'instructions' => $data ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
