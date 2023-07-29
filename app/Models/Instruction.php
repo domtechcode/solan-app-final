@@ -19,6 +19,7 @@ use App\Models\FileSetting;
 use App\Models\LayoutBahan;
 use App\Models\Notification;
 use App\Models\RincianPlate;
+use App\Models\FormFinishing;
 use App\Models\FormQcPacking;
 use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
@@ -184,5 +185,10 @@ class Instruction extends Model
     public function formPengiriman()
     {
         return $this->hasMany(FormPengiriman::class);
+    }
+
+    public function formFinishing()
+    {
+        return $this->hasMany(FormFinishing::class);
     }
 }

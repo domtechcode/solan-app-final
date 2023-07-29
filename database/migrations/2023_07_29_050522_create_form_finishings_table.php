@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFormPondsTable extends Migration
+class CreateFormFinishingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,15 @@ class CreateFormPondsTable extends Migration
      */
     public function up()
     {
-        Schema::create('form_ponds', function (Blueprint $table) {
+        Schema::create('form_finishings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('instruction_id');
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->string('jenis_pekerjaan')->nullable();
             $table->string('hasil_akhir')->nullable();
-            $table->string('nama_pisau')->nullable();
-            $table->string('lokasi_pisau')->nullable();
-            $table->string('status_pisau')->nullable();
-            $table->string('nama_matress')->nullable();
-            $table->string('lokasi_matress')->nullable();
-            $table->string('status_matress')->nullable();
+            $table->string('satuan')->nullable();
+            $table->string('nama_anggota')->nullable();
+            $table->string('hasil_per_anggota')->nullable();
             $table->timestamps();
         });
     }
@@ -36,6 +33,6 @@ class CreateFormPondsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('form_ponds');
+        Schema::dropIfExists('form_finishings');
     }
 }

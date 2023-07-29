@@ -7,119 +7,62 @@ use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
+use App\Models\FormFoil;
 use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormPlate;
 use App\Models\FileSetting;
 use App\Models\Instruction;
 use App\Models\RincianPlate;
-use App\Models\FormFinishing;
 use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
-use App\Models\FormOtherWorkStep;
 use Illuminate\Support\Facades\Storage;
 
-class FormOtherWorkStepIndex extends Component
+class FormFoilIndex extends Component
 {
     use WithFileUploads;
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $dataInstruction;
-    public $jenis_pekerjaan;
     public $hasil_akhir;
-    public $satuan;
-    public $dataAnggota;
-    public $anggota = [];
+    public $nama_matress;
+    public $lokasi_matress;
+    public $status_matress;
     public $catatanProsesPengerjaan;
-
-    public function addAnggota()
-    {
-        $this->anggota[] = ['nama' => '', 'hasil' => ''];
-    }
-
-    public function removeAnggota($index)
-    {
-        unset($this->anggota[$index]);
-        $this->anggota = array_values($this->anggota);
-    }
 
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataWorkStep = WorkStep::find($workStepId);
-        $this->dataAnggota = User::where('jobdesk', 'Team Finishing')->get();
-
-        if(Auth()->user()->jobdesk == 'Finishing'){
-            $dataOtherFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
-            if(isset($dataOtherFinishing)){
-                $this->jenis_pekerjaan = $dataOtherFinishing['jenis_pekerjaan'];
-                $this->hasil_akhir = $dataOtherFinishing['hasil_akhir'];
-                $this->satuan = $dataOtherFinishing['satuan'];
-            }else{
-                $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
-                $this->hasil_akhir = '';
-                $this->satuan = '';
-            }
-
-            $dataAnggotaCurrent = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->get();
-            if(isset($dataAnggotaCurrent)){
-                foreach($dataAnggotaCurrent as $item){
-                    $anggota = [
-                        'nama' => $item['nama_anggota'],
-                        'hasil' => $item['hasil_per_anggota'],
-                    ];
-    
-                    $this->anggota[] = $anggota;
-                }
-            }
-    
-            if(empty($this->anggota)){
-                $this->anggota[] = [
-                    'nama' => '',
-                    'hasil' => '',
-                ];
-            }
+        $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->first();
+        if(isset($dataFoil)){
+            $this->hasil_akhir = $dataFoil['hasil_akhir'];
+            $this->nama_matress = $dataFoil['nama_matress'];
+            $this->lokasi_matress = $dataFoil['lokasi_matress'];
+            $this->status_matress = $dataFoil['status_matress'];
         }else{
-            $dataOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
-
-            if(isset($dataOtherWorkStep)){
-                $this->jenis_pekerjaan = $dataOtherWorkStep['jenis_pekerjaan'];
-                $this->hasil_akhir = $dataOtherWorkStep['hasil_akhir'];
-                $this->satuan = $dataOtherWorkStep['satuan'];
-            }else{
-                $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
-                $this->hasil_akhir = '';
-                $this->satuan = '';
-            }
+            $this->hasil_akhir = '';
+            $this->nama_matress = '';
+            $this->lokasi_matress = '';
+            $this->status_matress = '';
         }
-        
     }
 
     public function render()
     {
-        return view('livewire.component.operator.form-other-work-step-index');
+        return view('livewire.component.operator.form-foil-index');
     }
 
     public function save()
     {
-        if(Auth()->user()->jobdesk == 'Finishing'){
-            $this->validate([
-                'anggota.*.nama' => 'required',
-                'anggota.*.hasil' => 'required',
-                'jenis_pekerjaan' => 'required',
-                'hasil_akhir' => 'required',
-                'satuan' => 'required',
-            ]);
-        }else{
-            $this->validate([
-                'jenis_pekerjaan' => 'required',
-                'hasil_akhir' => 'required',
-                'satuan' => 'required',
-            ]);
-        }
+        $this->validate([
+            'hasil_akhir' => 'required',
+            'nama_matress' => 'required',
+            'lokasi_matress' => 'required',
+            'status_matress' => 'required',
+        ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
@@ -146,30 +89,16 @@ class FormOtherWorkStepIndex extends Component
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
                 ->where('step', $currentStep->step + 1)
                 ->first();
-        if(Auth()->user()->jobdesk == 'Finishing'){
-            if(isset($this->anggota)){
-                $deleteFormPond = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
-                foreach($this->anggota as $dataAnggota){
-                    $createFormQcPacking = FormFinishing::create([
-                        'instruction_id' => $this->instructionCurrentId,
-                        'hasil_akhir' => $this->hasil_akhir,
-                        'jenis_pekerjaan' => $this->jenis_pekerjaan,
-                        'satuan' => $this->satuan,
-                        'nama_anggota' => $dataAnggota['nama'],
-                        'hasil_per_anggota' => $dataAnggota['hasil'],
-                    ]);
-                }
-            }
-        }else{
-            $deleteFormPond = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
-            $createFormPond = FormOtherWorkStep::create([
-                'instruction_id' => $this->instructionCurrentId,
-                'jenis_pekerjaan' => $this->jenis_pekerjaan,
-                'hasil_akhir' => $this->hasil_akhir,
-                'satuan' => $this->satuan,
-            ]);
-        }
         
+        $deleteFormFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
+        $createFormFoil = FormFoil::create([
+            'instruction_id' => $this->instructionCurrentId,
+            'hasil_akhir' => $this->hasil_akhir,
+            'nama_matress' => $this->nama_matress,
+            'lokasi_matress' => $this->lokasi_matress,
+            'status_matress' => $this->status_matress,
+        ]);
+
         if($currentStep->status_task == 'Reject Requirements'){
             $currentStep->update([
                 'state_task' => 'Complete',

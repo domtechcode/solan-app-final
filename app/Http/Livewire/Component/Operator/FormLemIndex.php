@@ -35,8 +35,8 @@ class FormLemIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataLem = FormLem::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
         $dataWorkStep = WorkStep::find($workStepId);
+        $dataLem = FormLem::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
 
         if(isset($dataLem)){
             $this->jenis_pekerjaan = $dataLem['jenis_pekerjaan'];

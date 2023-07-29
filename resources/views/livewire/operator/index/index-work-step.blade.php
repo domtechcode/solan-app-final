@@ -97,7 +97,7 @@
                                             @elseif($workStepData->work_step_list_id == 23)
                                                 <!-- Sablon -->
                                                 @livewire('component.operator.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                            @elseif($workStepData->work_step_list_id == 24)
+                                            @elseif($workStepData->work_step_list_id == 24 || $workStepData->work_step_list_id == 25 || $workStepData->work_step_list_id == 26 || $workStepData->work_step_list_id == 27 || $workStepData->work_step_list_id == 29)
                                                 <!-- Pond -->
                                                 @livewire('component.operator.form-pond-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @elseif($workStepData->work_step_list_id == 32 || $workStepData->work_step_list_id == 33)
@@ -106,6 +106,9 @@
                                             @elseif($workStepData->work_step_list_id == 12)
                                                 <!-- Potong Bahan & Potong Jadi -->
                                                 @livewire('component.operator.form-cetak-label-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 35)
+                                                <!-- Potong Bahan & Potong Jadi -->
+                                                @livewire('component.operator.form-qc-packing-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
                                                 <!-- WorkStep Lain -->
                                                 @livewire('component.operator.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])

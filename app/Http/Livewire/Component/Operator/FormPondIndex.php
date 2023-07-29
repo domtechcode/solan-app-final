@@ -24,7 +24,9 @@ class FormPondIndex extends Component
     public $instructionCurrentId;
     public $workStepCurrentId;
     public $dataInstruction;
-    public $hasil_akhir_pond;
+    public $dataWorkSteps;
+    public $jenis_pekerjaan;
+    public $hasil_akhir;
     public $nama_pisau;
     public $lokasi_pisau;
     public $status_pisau;
@@ -38,17 +40,23 @@ class FormPondIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataPlate = FormPond::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataPlate)){
-            $this->hasil_akhir_pond = $dataPlate['hasil_akhir_pond'];
-            $this->nama_pisau = $dataPlate['nama_pisau'];
-            $this->lokasi_pisau = $dataPlate['lokasi_pisau'];
-            $this->status_pisau = $dataPlate['status_pisau'];
-            $this->nama_matress = $dataPlate['nama_matress'];
-            $this->lokasi_matress = $dataPlate['lokasi_matress'];
-            $this->status_matress = $dataPlate['status_matress'];
+        $dataWorkStep = WorkStep::find($workStepId);
+        $this->dataWorkSteps = WorkStep::find($workStepId);
+
+        $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
+
+        if(isset($dataPond)){
+            $this->jenis_pekerjaan = $dataPond['jenis_pekerjaan'];
+            $this->hasil_akhir = $dataPond['hasil_akhir'];
+            $this->nama_pisau = $dataPond['nama_pisau'];
+            $this->lokasi_pisau = $dataPond['lokasi_pisau'];
+            $this->status_pisau = $dataPond['status_pisau'];
+            $this->nama_matress = $dataPond['nama_matress'];
+            $this->lokasi_matress = $dataPond['lokasi_matress'];
+            $this->status_matress = $dataPond['status_matress'];
         }else{
-            $this->hasil_akhir_pond = '';
+            $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
+            $this->hasil_akhir = '';
             $this->nama_pisau = '';
             $this->lokasi_pisau = '';
             $this->status_pisau = '';
@@ -65,15 +73,25 @@ class FormPondIndex extends Component
 
     public function save()
     {
-        $this->validate([
-            'hasil_akhir_pond' => 'required',
-            'nama_pisau' => 'required',
-            'lokasi_pisau' => 'required',
-            'status_pisau' => 'required',
-            'nama_matress' => 'required',
-            'lokasi_matress' => 'required',
-            'status_matress' => 'required',
-        ]);
+        if($this->dataWorkSteps->work_step_list_id == 24){
+            $this->validate([
+                'hasil_akhir' => 'required',
+                'nama_pisau' => 'required',
+                'lokasi_pisau' => 'required',
+                'status_pisau' => 'required',
+                'nama_matress' => 'required',
+                'lokasi_matress' => 'required',
+                'status_matress' => 'required',
+            ]);
+        }else{
+            $this->validate([
+                'hasil_akhir' => 'required',
+                'nama_matress' => 'required',
+                'lokasi_matress' => 'required',
+                'status_matress' => 'required',
+            ]);
+        }
+        
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
@@ -101,10 +119,11 @@ class FormPondIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)->delete();
+        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
         $createFormPond = FormPond::create([
             'instruction_id' => $this->instructionCurrentId,
-            'hasil_akhir_pond' => $this->hasil_akhir_pond,
+            'jenis_pekerjaan' => $this->jenis_pekerjaan,
+            'hasil_akhir' => $this->hasil_akhir,
             'nama_pisau' => $this->nama_pisau,
             'lokasi_pisau' => $this->lokasi_pisau,
             'status_pisau' => $this->status_pisau,

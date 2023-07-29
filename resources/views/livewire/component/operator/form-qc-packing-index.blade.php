@@ -6,11 +6,10 @@
             <div class="card">
                 <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                 <div class="card-header">
-                    <h3 class="card-title">Form {{ $jenis_pekerjaan }}</h3>
+                    <h3 class="card-title">Form {{ $dataWorkSteps->workStepList->name }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        @if(Auth()->user()->jobdesk == 'Finishing')
                         <div class="col-sm-12 col-md-12 mb-5">
                             <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                 <thead>
@@ -61,17 +60,7 @@
                                 
                             </table>
                         </div>
-                        @endif
-                        <div class="col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label class="form-label">Jenis Pekerjaan</label>
-                                <div class="input-group">
-                                    <input type="text" wire:model="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control" autocomplete="off" placeholder="Jenis Pekerjaan" disabled>
-                                </div>
-                                @error('jenis_pekerjaan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="form-label">Hasil Akhir</label>
                                 <div class="input-group">
@@ -80,17 +69,31 @@
                                 @error('hasil_akhir') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Satuan</label>
+                                <label class="form-label">Jumlah Barang Gagal</label>
                                 <div class="input-group">
-                                    <select wire:model="satuan" id="satuan" class="form-control form-select" data-bs-placeholder="Pilih Satuan">
-                                        <option label="-- Pilih Satuan --"></option>
-                                        <option value="Pcs">Pcs</option>
-                                        <option value="Lembar Cetak">Lembar Cetak</option>
-                                    </select>
+                                    <input type="text" wire:model="jumlah_barang_gagal" id="jumlah_barang_gagal" class="form-control" autocomplete="off" placeholder="Jumlah Barang Gagal">
                                 </div>
-                                @error('satuan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                @error('jumlah_barang_gagal') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Jumlah Stock</label>
+                                <div class="input-group">
+                                    <input type="text" wire:model="jumlah_stock" id="jumlah_stock" class="form-control" autocomplete="off" placeholder="Jumlah Stock">
+                                </div>
+                                @error('jumlah_stock') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Lokasi Stock</label>
+                                <div class="input-group">
+                                    <input type="text" wire:model="lokasi_stock" id="lokasi_stock" class="form-control" autocomplete="off" placeholder="Lokasi Stock">
+                                </div>
+                                @error('lokasi_stock') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12">
