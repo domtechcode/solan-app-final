@@ -14,7 +14,7 @@
                             <div class="form-group">
                                 <label class="form-label">Jenis Pekerjaan</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control" autocomplete="off" placeholder="Jenis Pekerjaan" disabled>
+                                    <input type="text" wire:model="jenis_pekerjaan" id="jenis_pekerjaan" class="form-control" autocomplete="off" placeholder="Jenis Pekerjaan">
                                 </div>
                                 @error('jenis_pekerjaan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
@@ -30,15 +30,11 @@
                         </div>
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
-                                <label class="form-label">Satuan</label>
+                                <label class="form-label">Lem Terpakai</label>
                                 <div class="input-group">
-                                    <select wire:model="satuan" id="satuan" class="form-control form-select" data-bs-placeholder="Pilih Satuan">
-                                        <option label="-- Pilih Satuan --"></option>
-                                        <option value="Pcs">Pcs</option>
-                                        <option value="Lembar Cetak">Lembar Cetak</option>
-                                    </select>
+                                    <input type="text" wire:model="lem_terpakai" id="lem_terpakai" class="form-control" autocomplete="off" placeholder="Lem Terpakai">
                                 </div>
-                                @error('satuan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                @error('lem_terpakai') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12">

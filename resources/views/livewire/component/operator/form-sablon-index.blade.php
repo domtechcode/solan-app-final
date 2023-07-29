@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                 <div class="card-header">
-                    <h3 class="card-title">Form Plate</h3>
+                    <h3 class="card-title">Form Sablon</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">

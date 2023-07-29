@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\FormLem;
 use Livewire\Component;
 use App\Models\FormPond;
 use App\Models\WorkStep;
@@ -16,10 +17,9 @@ use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
-use App\Models\FormOtherWorkStep;
 use Illuminate\Support\Facades\Storage;
 
-class FormOtherWorkStepIndex extends Component
+class FormLemIndex extends Component
 {
     use WithFileUploads;
     public $instructionCurrentId;
@@ -27,7 +27,7 @@ class FormOtherWorkStepIndex extends Component
     public $dataInstruction;
     public $jenis_pekerjaan;
     public $hasil_akhir;
-    public $satuan;
+    public $lem_terpakai;
     public $catatanProsesPengerjaan;
 
     public function mount($instructionId, $workStepId)
@@ -35,23 +35,23 @@ class FormOtherWorkStepIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
+        $dataLem = FormLem::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
         $dataWorkStep = WorkStep::find($workStepId);
 
-        $dataOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
-        if(isset($dataOtherWorkStep)){
-            $this->jenis_pekerjaan = $dataOtherWorkStep['jenis_pekerjaan'];
-            $this->hasil_akhir = $dataOtherWorkStep['hasil_akhir'];
-            $this->satuan = $dataOtherWorkStep['satuan'];
+        if(isset($dataLem)){
+            $this->jenis_pekerjaan = $dataLem['jenis_pekerjaan'];
+            $this->hasil_akhir = $dataLem['hasil_akhir'];
+            $this->lem_terpakai = $dataLem['lem_terpakai'];
         }else{
             $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
             $this->hasil_akhir = '';
-            $this->satuan = '';
+            $this->lem_terpakai = '';
         }
     }
 
     public function render()
     {
-        return view('livewire.component.operator.form-other-work-step-index');
+        return view('livewire.component.operator.form-lem-index');
     }
 
     public function save()
@@ -59,7 +59,7 @@ class FormOtherWorkStepIndex extends Component
         $this->validate([
             'jenis_pekerjaan' => 'required',
             'hasil_akhir' => 'required',
-            'satuan' => 'required',
+            'lem_terpakai' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -88,12 +88,12 @@ class FormOtherWorkStepIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
         
-        $deleteFormPond = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
-        $createFormPond = FormOtherWorkStep::create([
+        $deleteFormLem = FormLem::where('instruction_id', $this->instructionCurrentId)->delete();
+        $createFormLem = FormLem::create([
             'instruction_id' => $this->instructionCurrentId,
             'jenis_pekerjaan' => $this->jenis_pekerjaan,
             'hasil_akhir' => $this->hasil_akhir,
-            'satuan' => $this->satuan,
+            'lem_terpakai' => $this->lem_terpakai,
         ]);
 
         if($currentStep->status_task == 'Reject Requirements'){

@@ -100,6 +100,9 @@
                                             @elseif($workStepData->work_step_list_id == 24)
                                                 <!-- Pond -->
                                                 @livewire('component.operator.form-pond-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @elseif($workStepData->work_step_list_id == 8 || $workStepData->work_step_list_id == 9)
+                                                <!-- Potong Bahan & Potong Jadi -->
+                                                @livewire('component.operator.form-lem-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
                                                 <!-- WorkStep Lain -->
                                                 @livewire('component.operator.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
