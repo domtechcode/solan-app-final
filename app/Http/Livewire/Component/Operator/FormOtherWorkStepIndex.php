@@ -148,9 +148,9 @@ class FormOtherWorkStepIndex extends Component
                 ->first();
         if(Auth()->user()->jobdesk == 'Finishing'){
             if(isset($this->anggota)){
-                $deleteFormPond = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
+                $deleteFormFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
                 foreach($this->anggota as $dataAnggota){
-                    $createFormQcPacking = FormFinishing::create([
+                    $createFormFinishing = FormFinishing::create([
                         'instruction_id' => $this->instructionCurrentId,
                         'hasil_akhir' => $this->hasil_akhir,
                         'jenis_pekerjaan' => $this->jenis_pekerjaan,
@@ -161,8 +161,8 @@ class FormOtherWorkStepIndex extends Component
                 }
             }
         }else{
-            $deleteFormPond = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
-            $createFormPond = FormOtherWorkStep::create([
+            $deleteFormOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
+            $createFormOtherWorkStep = FormOtherWorkStep::create([
                 'instruction_id' => $this->instructionCurrentId,
                 'jenis_pekerjaan' => $this->jenis_pekerjaan,
                 'hasil_akhir' => $this->hasil_akhir,

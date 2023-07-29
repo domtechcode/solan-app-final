@@ -11,7 +11,9 @@ use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormCetak;
 use App\Models\FormPlate;
+use App\Models\FormMaklun;
 use App\Models\FormSablon;
+use App\Models\FormSample;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\FileRincian;
@@ -30,7 +32,9 @@ use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\FormOtherWorkStep;
+use App\Models\FormPengajuanMaklun;
 use App\Models\KeteranganPisauPond;
+use App\Models\FormPenerimaanMaklun;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\KeteranganMatressEmbossDeboss;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -190,5 +194,15 @@ class Instruction extends Model
     public function formFinishing()
     {
         return $this->hasMany(FormFinishing::class);
+    }
+
+    public function formPengajuanMaklun()
+    {
+        return $this->hasMany(FormPengajuanMaklun::class);
+    }
+
+    public function formPenerimaanMaklun()
+    {
+        return $this->hasMany(FormPenerimaanMaklun::class);
     }
 }

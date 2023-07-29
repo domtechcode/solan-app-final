@@ -131,7 +131,7 @@ class FormQcPackingIndex extends Component
                 ->first();
         
         if(isset($this->anggota)){
-            $deleteFormPond = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->delete();
+            $deleteFormQcPacking = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->delete();
             foreach($this->anggota as $dataAnggota){
                 $createFormQcPacking = FormQcPacking::create([
                     'instruction_id' => $this->instructionCurrentId,
