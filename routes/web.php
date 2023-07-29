@@ -21,10 +21,6 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middl
 Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-// Route::get('/trigger-index-event', function () {
-//     broadcast(new IndexRenderEvent('test'));
-// });
-
 Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'followup', 'middleware' => ['role:Follow Up']], function () {
