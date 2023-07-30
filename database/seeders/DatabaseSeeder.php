@@ -15,11 +15,15 @@ use Database\Seeders\WorkStepsTableSeeder;
 use Database\Seeders\KeterangansTableSeeder;
 use Database\Seeders\FileRinciansTableSeeder;
 use Database\Seeders\InstructionsTableSeeder;
+use Database\Seeders\LayoutBahansTableSeeder;
 use Database\Seeders\WorkStepListTableSeeder;
+use Database\Seeders\LayoutSettingsTableSeeder;
 use Database\Seeders\FormKeterangansTableSeeder;
+use Database\Seeders\KeteranganFoilsTableSeeder;
 use Database\Seeders\KeteranganPlatesTableSeeder;
 use Database\Seeders\KeteranganScreensTableSeeder;
 use Database\Seeders\KeteranganPisauPondsTableSeeder;
+use Database\Seeders\KeteranganCetakLabelsTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -44,10 +48,13 @@ class DatabaseSeeder extends Seeder
         $this->call(CatatansTableSeeder::class);
         $this->call(FilesTableSeeder::class);
         
-        // $this->call(FormRabsTableSeeder::class);
-        // $this->call(KeterangansTableSeeder::class);
-        // $this->call(KeteranganPisauPondsTableSeeder::class);
-        // $this->call(KeteranganPlatesTableSeeder::class);
+        $this->call(KeterangansTableSeeder::class);
+        $this->call(KeteranganFoilsTableSeeder::class);
+        $this->call(KeteranganCetakLabelsTableSeeder::class);
+        $this->call(KeteranganPisauPondsTableSeeder::class);
+        $this->call(KeteranganPlatesTableSeeder::class);
+        $this->call(LayoutSettingsTableSeeder::class);
+        $this->call(LayoutBahansTableSeeder::class);
         // $this->call(KeteranganScreensTableSeeder::class);
         // $this->call(FileRinciansTableSeeder::class);
     }
