@@ -19,10 +19,10 @@ class CreateRincianPlatesTable extends Migration
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
-            $table->string('state');
-            $table->string('plate');
-            $table->string('jumlah_lembar_cetak');
-            $table->string('waste');
+            $table->string('state')->nullable();
+            $table->string('plate')->nullable();
+            $table->string('jumlah_lembar_cetak')->nullable();
+            $table->string('waste')->nullable();
             $table->string('name')->nullable();
             $table->string('tempat_plate')->nullable();
             $table->date('tgl_pembuatan_plate')->nullable();

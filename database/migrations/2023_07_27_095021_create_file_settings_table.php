@@ -17,11 +17,11 @@ class CreateFileSettingsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('instruction_id');
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
-            $table->string('keperluan')->nullalbe();
-            $table->string('ukuran_film')->nullalbe();
-            $table->string('jumlah_film')->nullalbe();
-            $table->string('file_path')->nullalbe();
-            $table->string('file_name')->nullalbe();
+            $table->string('keperluan')->nullable();
+            $table->string('ukuran_film')->nullable();
+            $table->string('jumlah_film')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_name')->nullable();
             $table->timestamps();
         });
     }

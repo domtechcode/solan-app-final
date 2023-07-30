@@ -13,10 +13,13 @@ use Database\Seeders\MachinesTableSeeder;
 use Database\Seeders\CustomersTableSeeder;
 use Database\Seeders\WorkStepsTableSeeder;
 use Database\Seeders\KeterangansTableSeeder;
+use Database\Seeders\WarnaPlatesTableSeeder;
 use Database\Seeders\FileRinciansTableSeeder;
+use Database\Seeders\FileSettingsTableSeeder;
 use Database\Seeders\InstructionsTableSeeder;
 use Database\Seeders\LayoutBahansTableSeeder;
 use Database\Seeders\WorkStepListTableSeeder;
+use Database\Seeders\RincianPlatesTableSeeder;
 use Database\Seeders\LayoutSettingsTableSeeder;
 use Database\Seeders\FormKeterangansTableSeeder;
 use Database\Seeders\KeteranganFoilsTableSeeder;
@@ -55,7 +58,11 @@ class DatabaseSeeder extends Seeder
         $this->call(KeteranganPlatesTableSeeder::class);
         $this->call(LayoutSettingsTableSeeder::class);
         $this->call(LayoutBahansTableSeeder::class);
-        // $this->call(KeteranganScreensTableSeeder::class);
-        // $this->call(FileRinciansTableSeeder::class);
+        $this->call(KeteranganScreensTableSeeder::class);
+        $this->call(RincianPlatesTableSeeder::class);
+        $this->call(FileRinciansTableSeeder::class);
+        $this->call(FileSettingsTableSeeder::class);
+        $this->call(FormRabsTableSeeder::class);
+        $this->call(WarnaPlatesTableSeeder::class);
     }
 }

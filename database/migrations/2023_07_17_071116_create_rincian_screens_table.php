@@ -19,10 +19,10 @@ class CreateRincianScreensTable extends Migration
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
-            $table->string('state');
-            $table->string('screen');
-            $table->string('jumlah_lembar_cetak');
-            $table->string('waste');
+            $table->string('state')->nullable();
+            $table->string('screen')->nullable();
+            $table->string('jumlah_lembar_cetak')->nullable();
+            $table->string('waste')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });
