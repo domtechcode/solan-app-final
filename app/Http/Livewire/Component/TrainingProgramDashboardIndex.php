@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Rab\Component;
+namespace App\Http\Livewire\Component;
 
 use App\Models\Files;
 use Livewire\Component;
@@ -8,7 +8,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class RejectDashboardIndex extends Component
+class TrainingProgramDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -18,6 +18,7 @@ class RejectDashboardIndex extends Component
     public $search = '';
     public $data;
 
+    public $instructionSelectedId;
     public $selectedInstruction;
     public $selectedWorkStep;
     public $selectedFileContoh;
@@ -58,11 +59,8 @@ class RejectDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 3)
-                        ->where('state_task', 'Running')
-                        ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Training Program'])
-                        ->whereIn('status_id', [3, 22])
+        $data = WorkStep::where('work_step_list_id', 1)
+                        ->whereIn('spk_status', ['Training Program'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
@@ -73,23 +71,89 @@ class RejectDashboardIndex extends Component
                                     ->orWhere('customer_number', 'like', $searchTerms)
                                     ->orWhere('code_style', 'like', $searchTerms)
                                     ->orWhere('shipping_date', 'like', $searchTerms);
-                            })->where(function ($subQuery) {
-                                $subQuery->where('group_priority', '!=', 'child')
-                                    ->orWhereNull('group_priority');
                             })->orderBy('shipping_date', 'asc');
                         })
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->paginate($this->paginate);
 
-        return view('livewire.rab.component.reject-dashboard-index', ['instructions' => $data])
+        return view('livewire.component.training-program-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
-        ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsReject($instructionId)
+    public function deleteSpk($instructionDeleteId)
+    {
+        $deleteSpk = WorkStep::where('instruction_id', $instructionDeleteId)->update([
+            'spk_status' => 'Deleted'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Delete Instruksi Kerja',
+            'message' => 'SPK berhasil didelete',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function holdSpk($instructionHoldId)
+    {
+        $holdSpk = WorkStep::where('instruction_id', $instructionHoldId)->update([
+            'spk_status' => 'Hold'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Instruksi Kerja',
+            'message' => 'SPK berhasil dihold',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+        
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function cancelSpk($instructionCancelId)
+    {
+        $cancelSpk = WorkStep::where('instruction_id', $instructionCancelId)->update([
+            'spk_status' => 'Cancel'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Cancel Instruksi Kerja',
+            'message' => 'SPK berhasil dicancel',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function modalInstructionDetailsTraining($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
+        $this->instructionSelectedId = $instructionId;
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
@@ -97,10 +161,10 @@ class RejectDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-reject');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-training');
     }
 
-    public function modalInstructionDetailsGroupReject($groupId)
+    public function modalInstructionDetailsGroupTraining($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -115,6 +179,6 @@ class RejectDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-training');
     }
 }

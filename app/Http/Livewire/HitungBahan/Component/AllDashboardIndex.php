@@ -60,7 +60,7 @@ class AllDashboardIndex extends Component
     public function render()
     {
         $data = WorkStep::where('work_step_list_id', 1)
-                        ->whereNotIn('spk_status', ['Selesai'])
+                        ->whereNotIn('spk_status', ['Selesai', 'Training Program'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {

@@ -66,7 +66,7 @@ class NewSpkDashboardIndex extends Component
         $data = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Revisi Qty'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Training Program'])
                 ->where(function ($query) {
                     $query->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [1]);
