@@ -65,7 +65,7 @@ class GroupIndex extends Component
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
-        $sortedUniqueGroupIds = Instruction::where('spk_state', '!=', 'Selesai')->whereNotNull('group_id')
+        $sortedUniqueGroupIds = Instruction::whereNotIn('spk_state', ['Selesai', 'Training Program'])->whereNotNull('group_id')
                                 ->select('group_id')
                                 ->distinct()
                                 ->orderBy('group_id', 'asc')
@@ -97,6 +97,9 @@ class GroupIndex extends Component
                         ->orWhere('customer_number', 'like', $searchTerms)
                         ->orWhere('code_style', 'like', $searchTerms)
                         ->orWhere('shipping_date', 'like', $searchTerms);
+                })
+                ->whereHas('workStep', function ($query) {
+                    $query->where('spk_status', '!=', 'Training Program');
                 })
                 ->orderBy('shipping_date', 'asc')
                 ->with(['workStep', 'workStep.status', 'workStep.job'])
