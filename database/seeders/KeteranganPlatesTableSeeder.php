@@ -373,7 +373,7 @@ class KeteranganPlatesTableSeeder extends Seeder
             [ "id" => "1474", "instruction_id" => "1135", "keterangan_id" => "498", "state_plate" => "baru", "jumlah_plate" => "0", "ukuran_plate" => "0", ],
             [ "id" => "1475", "instruction_id" => "1135", "keterangan_id" => "498", "state_plate" => "repeat", "jumlah_plate" => "1", "ukuran_plate" => "52", ],
             [ "id" => "1476", "instruction_id" => "1135", "keterangan_id" => "498", "state_plate" => "sample", "jumlah_plate" => "0", "ukuran_plate" => "0", ],
-            [ "id" => "1477", "instruction_id" => "1087", "keterangan_id" => "499", "state_plate" => "baru", "jumlah_plate" => "POLAR", "ukuran_plate" => "0", ],
+            [ "id" => "1477", "instruction_id" => "1087", "keterangan_id" => "499", "state_plate" => "baru", "jumlah_plate" => "0", "ukuran_plate" => "0", ],
             [ "id" => "1478", "instruction_id" => "1087", "keterangan_id" => "499", "state_plate" => "repeat", "jumlah_plate" => "0", "ukuran_plate" => "0", ],
             [ "id" => "1479", "instruction_id" => "1087", "keterangan_id" => "499", "state_plate" => "sample", "jumlah_plate" => "0", "ukuran_plate" => "0", ],
             [ "id" => "1486", "instruction_id" => "1114", "keterangan_id" => "502", "state_plate" => "baru", "jumlah_plate" => "0", "ukuran_plate" => "0", ],

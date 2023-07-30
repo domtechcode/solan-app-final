@@ -20,7 +20,7 @@ class CreateKeteranganPlatesTable extends Migration
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
             $table->string('state_plate')->nullable();
-            $table->string('jumlah_plate')->nullable();
+            $table->integer('jumlah_plate')->nullable();
             $table->string('ukuran_plate')->nullable();
             $table->timestamps();
         });

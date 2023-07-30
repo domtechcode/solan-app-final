@@ -20,7 +20,7 @@ class CreateKeteranganScreensTable extends Migration
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
             $table->string('state_screen')->nullable();
-            $table->string('jumlah_screen')->nullable();
+            $table->integer('jumlah_screen')->nullable();
             $table->string('ukuran_screen')->nullable();
             $table->timestamps();
         });

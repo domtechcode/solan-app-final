@@ -20,7 +20,7 @@ class CreateKeteranganPisauPondsTable extends Migration
             $table->unsignedBigInteger('keterangan_id');
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
             $table->string('state_pisau')->nullable();
-            $table->string('jumlah_pisau')->nullable();
+            $table->integer('jumlah_pisau')->nullable();
             $table->timestamps();
         });
     }

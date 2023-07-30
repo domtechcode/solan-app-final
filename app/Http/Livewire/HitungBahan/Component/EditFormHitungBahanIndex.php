@@ -932,6 +932,8 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
         }else{
+            
+
             if ($this->layoutSettings) {
                 LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
@@ -1121,10 +1123,11 @@ class EditFormHitungBahanIndex extends Component
         $newStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
         $statePlateDiff = array_diff($newStatePlate, $currentStatePlate);
         $stateScreenDiff = array_diff($newStateScreen, $currentStateScreen);
-        
+
         $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
                 ->where('work_step_list_id', 5)
                 ->first();
+
 
         if($updateTask->status_id != 2){
             if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
@@ -1135,7 +1138,7 @@ class EditFormHitungBahanIndex extends Component
                         'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
                 
-                    $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', $updateTask + 1)->first();
+                    $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', $updateTask->step + 1)->first();
                 
                     if ($updateNextStep) {
                         $updateNextStep->update([
@@ -1162,6 +1165,7 @@ class EditFormHitungBahanIndex extends Component
                 }
 
                 $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                broadcast(new IndexRenderEvent('refresh'));
             }
             
         }else{

@@ -21,7 +21,7 @@ class CreateKeteranganLabelsTable extends Migration
             $table->foreign('keterangan_id')->references('id')->on('keterangans')->onDelete('cascade');
             $table->string('alat_bahan')->nullable();
             $table->string('jenis_ukuran')->nullable();
-            $table->string('jumlah')->nullable();
+            $table->integer('jumlah')->nullable();
             $table->string('ketersediaan')->nullable();
             $table->string('catatan_label')->nullable();
             $table->timestamps();

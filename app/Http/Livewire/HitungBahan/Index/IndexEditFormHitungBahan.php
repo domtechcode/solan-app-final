@@ -22,7 +22,11 @@ class IndexEditFormHitungBahan extends Component
             'status_task' => 'Process',
         ]);
 
-        if($updateUserWorkStep->status_id != 26 || $updateUserWorkStep->status_id != 22){
+        if($updateUserWorkStep->status_id == 26){
+            
+        }elseif($updateUserWorkStep->status_id == 22){
+
+        }else{
             $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
                 'status_id' => 2,
             ]);
