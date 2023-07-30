@@ -40,7 +40,6 @@ class CreateWorkStepsTable extends Migration
             $table->string('reject_from_id')->nullable();
             $table->string('reject_from_status')->nullable();
             $table->string('reject_from_job')->nullable();
-            $table->string('reject_for')->nullable();
             $table->string('count_reject')->nullable();
             $table->string('count_revisi')->nullable();
             $table->string('task_priority')->nullable();
