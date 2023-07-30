@@ -151,7 +151,7 @@ class FormQcPackingIndex extends Component
                 'status_task' => 'Complete',
             ]);
 
-            $findSourceReject = WorkStep::where('instruction_id', $this->instructionCurrentId)->where('work_step_list_id', $currentStep->reject_from_id)->first();
+             $findSourceReject = WorkStep::find($currentStep->reject_from_id);
 
             $findSourceReject->update([
                 'state_task' => 'Running',

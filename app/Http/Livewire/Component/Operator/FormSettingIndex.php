@@ -384,6 +384,7 @@ class FormSettingIndex extends Component
     public function saveSampleAndProduction()
     {
         $InstructionCurrentDataFile = Instruction::find($this->instructionCurrentId);
+        $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
@@ -1109,7 +1110,7 @@ class FormSettingIndex extends Component
                 'status_task' => 'Complete',
             ]);
 
-            $findSourceReject = WorkStep::where('instruction_id', $this->instructionCurrentId)->where('work_step_list_id', $currentStep->reject_from_id)->first();
+            $findSourceReject = WorkStep::find($currentStep->reject_from_id);
 
             $findSourceReject->update([
                 'state_task' => 'Running',

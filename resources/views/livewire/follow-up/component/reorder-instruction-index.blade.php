@@ -147,7 +147,7 @@
                 <div class="form-group">
                     <label class="form-label">Tanggal Permintaan Kirim <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="shipping_date" id="shipping_date" class="form-control @error('shipping_date') is-invalid @enderror" readonly>
+                        <input type="date" wire:model.defer="shipping_date" id="shipping_date" class="form-control @error('shipping_date') is-invalid @enderror">
                     </div>
                     @error('shipping_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>
@@ -167,7 +167,7 @@
                 <div class="form-group">
                     <label class="form-label">No. Po Konsumen</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="customer_number" id="customer_number" class="form-control @error('customer_number') is-invalid @enderror" autocomplete="off" placeholder="No. Po Konsumen" readonly>
+                        <input type="text" wire:model.defer="customer_number" id="customer_number" class="form-control @error('customer_number') is-invalid @enderror" autocomplete="off" placeholder="No. Po Konsumen">
                     </div>
                     @error('customer_number') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                 </div>
