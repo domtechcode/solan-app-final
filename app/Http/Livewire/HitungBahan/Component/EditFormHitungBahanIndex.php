@@ -812,7 +812,7 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepCetakLabel)){
             LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
-            if ($this->layoutSettings) {
+            if (isset($this->layoutSettings)) {
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
                     // Buat instance model LayoutSetting
                     $layoutSetting = LayoutSetting::create([
@@ -841,7 +841,7 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->keterangans) {
+            if (isset($this->keterangans)) {
                 Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->keterangans as $index => $keteranganData) {
                         $keterangan = Keterangan::create([
@@ -885,7 +885,7 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->layoutBahans) {
+            if (isset($this->layoutBahans)) {
                 LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutBahans as $key => $layoutBahanData) {
                     // Buat instance model layoutBahan
@@ -933,8 +933,7 @@ class EditFormHitungBahanIndex extends Component
             }
         }else{
             
-
-            if ($this->layoutSettings) {
+            if (isset($this->layoutSettings)) {
                 LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
                     // Buat instance model LayoutSetting
@@ -964,7 +963,7 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->keterangans) {
+            if (isset($this->keterangans)) {
                 Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->keterangans as $index => $keteranganData) {
                         $keterangan = Keterangan::create([
@@ -1054,7 +1053,7 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->layoutBahans) {
+            if (isset($this->layoutBahans)) {
                 LayoutBahan::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutBahans as $key => $layoutBahanData) {
                     // Buat instance model layoutBahan

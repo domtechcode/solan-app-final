@@ -796,7 +796,7 @@ class CreateFormHitungBahanIndex extends Component
 
 
         if(isset($this->stateWorkStepCetakLabel)){
-            if ($this->layoutSettings) {
+            if (isset($this->layoutSettings)) {
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
                     // Buat instance model LayoutSetting
                     $layoutSetting = LayoutSetting::create([
@@ -825,7 +825,7 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->keterangans) {
+            if (isset($this->keterangans)) {
                 foreach ($this->keterangans as $index => $keteranganData) {
                         $keterangan = Keterangan::create([
                             'form_id' => $index,
@@ -867,7 +867,7 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->layoutBahans) {
+            if (isset($this->layoutBahans)) {
                 foreach ($this->layoutBahans as $key => $layoutBahanData) {
                     // Buat instance model layoutBahan
                     $layoutBahan = LayoutBahan::create([
@@ -913,7 +913,7 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
         }else{
-            if ($this->layoutSettings) {
+            if (isset($this->layoutSettings)) {
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
                     // Buat instance model LayoutSetting
                     $layoutSetting = LayoutSetting::create([
@@ -942,7 +942,7 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->keterangans) {
+            if (isset($this->keterangans)) {
                 foreach ($this->keterangans as $index => $keteranganData) {
                         $keterangan = Keterangan::create([
                             'form_id' => $index,
@@ -950,7 +950,7 @@ class CreateFormHitungBahanIndex extends Component
                             'notes' => $keteranganData['notes'],
                         ]);
     
-                        if($keteranganData['plate']){
+                        if(isset($keteranganData['plate'])){
                             foreach ($keteranganData['plate'] as $plate) {
                                 // Buat instance model KeteranganPlate
                                 $keteranganPlate = $keterangan->keteranganPlate()->create([
@@ -962,7 +962,7 @@ class CreateFormHitungBahanIndex extends Component
                             }
                         }
     
-                        if($keteranganData['screen']){
+                        if(isset($keteranganData['screen'])){
                             foreach ($keteranganData['screen'] as $screen) {
                                 // Buat instance model KeteranganScreen
                                 $keteranganScreen = $keterangan->keteranganScreen()->create([
@@ -974,7 +974,7 @@ class CreateFormHitungBahanIndex extends Component
                             }
                         }
                         
-                        if($keteranganData['pond']){
+                        if(isset($keteranganData['pond'])){
                             foreach ($keteranganData['pond'] as $pond) {
                                 // Buat instance model KeteranganPisauPond
                                 $keteranganPisauPond = $keterangan->keteranganPisauPond()->create([
@@ -985,7 +985,7 @@ class CreateFormHitungBahanIndex extends Component
                             }
                         }
     
-                        if($keteranganData['rincianPlate']){
+                        if(isset($keteranganData['rincianPlate'])){
                             foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
                                 // Buat instance model RincianPlate
                                 $rincianPlate = $keterangan->rincianPlate()->create([
@@ -1011,7 +1011,7 @@ class CreateFormHitungBahanIndex extends Component
                             }
                         }
     
-                        if($keteranganData['fileRincian']){
+                        if(isset($keteranganData['fileRincian'])){
                             $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
                             $norincian = 1;
                             foreach ($keteranganData['fileRincian'] as $file) {
@@ -1032,7 +1032,7 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
     
-            if ($this->layoutBahans) {
+            if (isset($this->layoutBahans)) {
                 foreach ($this->layoutBahans as $key => $layoutBahanData) {
                     // Buat instance model layoutBahan
                     $layoutBahan = LayoutBahan::create([
@@ -1061,7 +1061,7 @@ class CreateFormHitungBahanIndex extends Component
                         'dataJSON' => $layoutBahanData['dataJSON'],
                     ]);
     
-                    if ($layoutBahanData['fileLayoutCustom']) {
+                    if (isset($layoutBahanData['fileLayoutCustom'])) {
                         $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
                         $file = $layoutBahanData['fileLayoutCustom'];
                     
