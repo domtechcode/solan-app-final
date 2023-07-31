@@ -65,6 +65,7 @@ class UpdateInstructionIndex extends Component
     public $currentInstructionId;
     public $qtyState;
 
+    public $dataworksteplists = [];
 
     public function addEmptyNote()
     {
@@ -107,6 +108,7 @@ class UpdateInstructionIndex extends Component
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
         $this->spk_sample_number = $this->instructions->spk_sample_number;
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
 
         $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->whereNotIn('work_step_list_id', [1, 2, 3])
