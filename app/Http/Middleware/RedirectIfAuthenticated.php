@@ -31,6 +31,21 @@ class RedirectIfAuthenticated
                     case 'Stock':
                         return redirect()->route('stock.dashboard');
                         break;
+                    case 'Hitung Bahan':
+                        return redirect()->route('hitungBahan.dashboard');
+                        break;
+                    case 'RAB':
+                        return redirect()->route('rab.dashboard');
+                        break;
+                    case 'Penjadwalan':
+                        return redirect()->route('jadwal.dashboard');
+                        break;
+                    case 'Operator':
+                        return redirect()->route('operator.dashboard');
+                        break;
+                    case 'Accounting':
+                        return redirect()->route('accounting.dashboard');
+                        break;
                     // Tambahkan case untuk peran (role) lain jika diperlukan
                     default:
                         return redirect('/'); // Pengalihan default jika peran tidak cocok dengan yang diberikan dalam switch case
