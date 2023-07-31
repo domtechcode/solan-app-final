@@ -160,7 +160,6 @@
                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
-                                            <th class="border-bottom-0">HARGA</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -175,7 +174,37 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
+                                        </tr>
+                                        @endif
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row -->
+                    <div class="row mb-3">
+                        <div class="col-xl-12">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-bottom-0">HARGA</th>
+                                            <th class="border-bottom-0">PPN</th>
+                                            <th class="border-bottom-0">HARGA TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if($selectedInstruction)
+                                        <tr>
                                             <td>{{ $selectedInstruction->price ?? '-' }}</td>
+                                            <td>{{ $selectedInstruction->type_ppn ?? '-' }}</td>
+                                            @if($selectedInstruction->type_ppn == 'Exclude')
+                                            <td>{{ number_format($selectedInstruction->price / 1.11, 2) }}</td>
+                                            @else
+                                                <td>{{ $selectedInstruction->price ?? '-' }}</td>
+                                            @endif
                                         </tr>
                                         @endif
                                         
