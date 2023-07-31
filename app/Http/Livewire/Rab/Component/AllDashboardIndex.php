@@ -57,6 +57,14 @@ class AllDashboardIndex extends Component
         $this->search = request()->query('search', $this->search);
     }
 
+    public function sumGroup($groupId)
+    {
+        $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
+        $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
+        $totalQuantity = $totalQuantityGroup - $totalStockGroup;
+        return $totalQuantity;
+    }
+
     public function render()
     {
         $data = WorkStep::where('work_step_list_id', 1)
