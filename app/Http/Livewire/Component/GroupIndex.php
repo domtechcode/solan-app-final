@@ -98,9 +98,6 @@ class GroupIndex extends Component
                         ->orWhere('code_style', 'like', $searchTerms)
                         ->orWhere('shipping_date', 'like', $searchTerms);
                 })
-                ->whereHas('workStep', function ($query) {
-                    $query->where('spk_status', '!=', 'Training Program');
-                })
                 ->orderBy('shipping_date', 'asc')
                 ->with(['workStep', 'workStep.status', 'workStep.job'])
                 ->paginate($this->paginate);    
