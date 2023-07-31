@@ -23,6 +23,7 @@ class CreateInstructionKekuranganIndex extends Component
 {
     use WithFileUploads;
     public $notes = [];
+    public $filecontoh = [];
 
     public $title;
 
@@ -120,11 +121,13 @@ class CreateInstructionKekuranganIndex extends Component
             'shipping_date' => 'required',
             'quantity' => 'required',
             'workSteps' => 'required',
+            'filecontoh' => 'required',
         ]);
 
 
         // Copy the Instruction
         $instruction = Instruction::where('id', $this->spkSelected)->first()->replicate();
+
         $instruction->request_kekurangan = $instruction->spk_number;
         $instruction->spk_number = $this->spk_number;
         if ($this->requestKekurangan == 'Pemesan') {
@@ -136,25 +139,23 @@ class CreateInstructionKekuranganIndex extends Component
         }
         $instruction->save();
 
-        $files = Files::where('instruction_id', $this->spkSelected)->get();
-        if ($files) {
-                $folder = "public/".$instruction->spk_number."/follow-up";
-                if($files){
-                    foreach ($files as $file) {
-                        $sourcePath = $file->file_path.'/'.$file->file_name;
-                        $newFileName = $file->file_name;
-                        if (!Storage::exists($folder.'/'.$newFileName)) {
-                            Storage::copy($sourcePath, $folder.'/'.$newFileName);
-                            Files::create([
-                                'instruction_id' => $instruction->id,
-                                "user_id" => Auth()->user()->id,
-                                "type_file" => $file->type_file,
-                                "file_name" => $newFileName,
-                                "file_path" => $folder,
-                            ]);
-                        }
-                    }
-                }
+        if (isset($this->filecontoh)) {
+            $folder = "public/".$instruction->spk_number."/follow-up";
+
+            $nocontoh = 1;
+            foreach ($this->filecontoh as $file) {
+                $fileName = $instruction->spk_number . '-file-contoh-'.$nocontoh . '.' . $file->getClientOriginalExtension();
+                Storage::putFileAs($folder, $file, $fileName);
+                $nocontoh ++;
+
+                Files::create([
+                    'instruction_id' => $instruction->id,
+                    "user_id" => Auth()->user()->id,
+                    "type_file" => "contoh",
+                    "file_name" => $fileName,
+                    "file_path" => $folder,
+                ]);
+            }
         }  
          
         // Menambahkan elemen sebelum array indeks 0
@@ -311,6 +312,8 @@ class CreateInstructionKekuranganIndex extends Component
             ]);
 
             $this->reset();     
+
+            return redirect()->route('followUp.createInstructionKekurangan');
         
     }
 

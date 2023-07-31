@@ -71,7 +71,7 @@ class AllDashboardIndex extends Component
                                     ->orWhere('customer_number', 'like', $searchTerms)
                                     ->orWhere('code_style', 'like', $searchTerms)
                                     ->orWhere('shipping_date', 'like', $searchTerms);
-                            })->orderBy('created_at', 'asc');
+                            })->whereNotIn('spk_type', ['layout', 'sample'])->orderBy('created_at', 'desc');
                         })
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->paginate($this->paginate);

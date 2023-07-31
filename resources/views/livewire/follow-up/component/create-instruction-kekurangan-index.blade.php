@@ -156,7 +156,23 @@
 
                     </div>
                 </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">File Contoh</label>
+                        <x-forms.filepond
+                            wire:model="filecontoh"
+                            multiple
+                            allowImagePreview
+                            imagePreviewMaxHeight="200"
+                            allowFileTypeValidation
+                            allowFileSizeValidation
+                            maxFileSize="1024mb"
+                        />
+                        @error('filecontoh') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                    </div>
+                </div>
             </div>
+            
         </div>
 
         
