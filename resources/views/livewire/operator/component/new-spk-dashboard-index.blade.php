@@ -164,6 +164,7 @@
                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
+                                            <th class="border-bottom-0">HARGA</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -178,6 +179,7 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
+                                            <td>-</td>
                                         </tr>
                                         @endif
                                         
@@ -396,6 +398,7 @@
                                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
+                                                            <th class="border-bottom-0">HARGA</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -410,6 +413,7 @@
                                                             <td>{{ $selectedInstructionParent->shipping_date ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->quantity ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
+                                                            <td>-</td>
                                                         </tr>
                                                         @endif
                                                         
@@ -617,6 +621,7 @@
                                                                 <th class="border-bottom-0">TGL. DIKIRIM</th>
                                                                 <th class="border-bottom-0">QTY</th>
                                                                 <th class="border-bottom-0">STOCK</th>
+                                                                <th class="border-bottom-0">HARGA</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -631,6 +636,7 @@
                                                                 <td>{{ $data->shipping_date ?? '-' }}</td>
                                                                 <td>{{ $data->quantity ?? '-' }}</td>
                                                                 <td>{{ $data->stock ?? '-' }}</td>
+                                                                <td>-</td>
                                                             </tr>
                                                             @endif
                                                             
