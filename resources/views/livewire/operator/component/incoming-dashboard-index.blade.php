@@ -416,7 +416,7 @@
                                                             <th class="border-bottom-0">TGL. DIKIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
-                                                            {{-- <th class="border-bottom-0">HARGA</th> --}}
+                                                            <th class="border-bottom-0">HARGA</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

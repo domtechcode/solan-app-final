@@ -197,7 +197,7 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->price ?? '-' }}</td>
+                                            <td>-</td>
                                         </tr>
                                         @endif
                                         
@@ -431,7 +431,7 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->price ?? '-' }}</td>
+                                            <td>-</td>
                                         </tr>
                                         @endif
                                         
@@ -669,7 +669,7 @@
                                                             <td>{{ $selectedInstructionParent->shipping_date ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->quantity ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->price ?? '-' }}</td>
+                                                            <td>-</td>
                                                         </tr>
                                                         @endif
                                                         
@@ -896,7 +896,7 @@
                                                                 <td>{{ $data->shipping_date ?? '-' }}</td>
                                                                 <td>{{ $data->quantity ?? '-' }}</td>
                                                                 <td>{{ $data->stock ?? '-' }}</td>
-                                                                <td>{{ $data->price ?? '-' }}</td>
+                                                                <td>-</td>
                                                             </tr>
                                                             @endif
                                                             
