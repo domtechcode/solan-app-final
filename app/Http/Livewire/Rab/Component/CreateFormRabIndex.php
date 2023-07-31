@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Rab\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Catatan;
 use App\Models\FormRab;
 use Livewire\Component;
@@ -297,6 +298,13 @@ class CreateFormRabIndex extends Component
             }
 
         $this->messageSent(['conversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+        
+
+        $userDestination = User::where('role', 'Accounting')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK RAB', 'instruction_id' => $this->currentInstructionId]);
+                }
+
         broadcast(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [

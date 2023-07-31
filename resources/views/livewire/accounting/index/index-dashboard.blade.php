@@ -31,13 +31,23 @@
                                     <!-- Tabs -->
                                     <ul class="nav panel-tabs">
                                         <li>
-                                            <button href="#tab1" class="active btn btn-info mt-1 mb-1 me-3"
+                                            <button href="#tab1" class="active btn btn-dark mt-1 mb-1 me-3"
+                                                data-bs-toggle="tab">New SPK RAB
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button href="#tab2" class="btn btn-success mt-1 mb-1 me-3"
+                                                data-bs-toggle="tab">Complete SPK RAB
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button href="#tab3" class="btn btn-info mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">All
                                             </button>
                                         </li>
                                         
                                         <li>
-                                            <button href="#tab8" class="btn btn-info mt-1 mb-1 me-3"
+                                            <button href="#tab4" class="btn btn-info mt-1 mb-1 me-3"
                                                 data-bs-toggle="tab">Last Data Training Program
                                             </button>
                                         </li>
@@ -56,6 +66,40 @@
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="card-status bg-dark br-te-7 br-ts-7"></div>
+                                                <div class="card-header">
+                                                    <h3 class="card-title">New SPK RAB</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    @livewire('accounting.component.new-spk-rab-dashboard-index')
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ROW-2 END -->
+                                </div>
+                                <div class="tab-pane" id="tab2">
+                                    <!-- ROW-2-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-status bg-success br-te-7 br-ts-7"></div>
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Complete SPK RAB</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    @livewire('accounting.component.complete-spk-rab-dashboard-index')
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ROW-2 END -->
+                                </div>
+                                <div class="tab-pane" id="tab3">
+                                    <!-- ROW-2-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-status bg-info br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
                                                     <h3 class="card-title">All</h3>
                                                 </div>

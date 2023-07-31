@@ -434,6 +434,11 @@ class CreateInstructionIndex extends Component
                 broadcast(new IndexRenderEvent('refresh'));
             }
 
+            $userDestination = User::where('role', 'Accounting')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+                }
+
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
