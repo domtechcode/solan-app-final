@@ -65,7 +65,7 @@ class GroupIndex extends Component
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
-        $sortedUniqueGroupIds = Instruction::whereNotIn('spk_state', ['Selesai', 'Training Program'])->whereNotNull('group_id')
+        $sortedUniqueGroupIds = Instruction::whereNotNull('group_id')
                                 ->select('group_id')
                                 ->distinct()
                                 ->orderBy('group_id', 'asc')

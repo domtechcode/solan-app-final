@@ -54,6 +54,10 @@ class LoginController extends Controller
                     return redirect()->route('operator.dashboard');
                     break;
 
+                case 'Accounting':
+                    return redirect()->route('accounting.dashboard');
+                    break;
+
                 default:
                     return redirect()->route('login');
                     break;
