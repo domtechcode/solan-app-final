@@ -161,7 +161,7 @@ class CreateInstructionIndex extends Component
         ]);
 
         $customerList = Customer::find($this->customer);
-        $dataInstruction = Instruction::whereNotNull('customer_number')->where('customer_number', $this->customer_number)->first();
+        $dataInstruction = Instruction::where('sub_spk', '!=', 'sub')->whereNotNull('customer_number')->where('customer_number', $this->customer_number)->first();
         
         
         if($this->spk_type == 'stock'){
