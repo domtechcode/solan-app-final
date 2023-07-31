@@ -57,9 +57,16 @@ class NewSpkDashboardIndex extends Component
         $this->search = request()->query('search', $this->search);
     }
 
+    public function sumGroup($groupId)
+    {
+        $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
+        $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
+        $totalQuantity = $totalQuantityGroup - $totalStockGroup;
+        return $totalQuantity;
+    }
+    
     public function render()
     {
-
         $data = WorkStep::where('work_step_list_id', 1)
                 ->where('state_task', 'Running')
                 ->where('status_task', 'Process')
@@ -90,6 +97,7 @@ class NewSpkDashboardIndex extends Component
                 ->whereIn('status_id', [1, 2])->count();
 
         return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructions' => $data, 'countNewSpk' => $dataCount])
+
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
