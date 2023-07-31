@@ -15,13 +15,11 @@ class IndexCreateFormRab extends Component
     {
         $this->instructionSelectedId = $instructionId;
         $this->workStepSelectedId = $workStepId;
-
-        if($this->$this->workStepSelectedId)
         $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 3)->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
         ]);
-        
+
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
         ]);
