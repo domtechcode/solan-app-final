@@ -21,7 +21,7 @@
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Hasil Akhir</label>
+                                <label class="form-label">Hasil Akhir (Lembar Cetak)</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="hasil_akhir" id="hasil_akhir" class="form-control" autocomplete="off" placeholder="Hasil Akhir">
                                 </div>

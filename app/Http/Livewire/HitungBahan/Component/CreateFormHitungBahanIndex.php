@@ -596,7 +596,7 @@ class CreateFormHitungBahanIndex extends Component
             'layoutBahans.*.jumlah_lembar_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.jumlah_incit' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.total_lembar_cetak' => 'required',
-            'layoutBahans.*.harga_bahan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutBahans.*.harga_bahan' => 'required',
             'layoutBahans.*.jumlah_bahan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.panjang_sisa_bahan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.lebar_sisa_bahan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',

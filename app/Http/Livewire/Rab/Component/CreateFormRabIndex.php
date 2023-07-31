@@ -311,6 +311,15 @@ class CreateFormRabIndex extends Component
         
     }
 
+    public function backBtn()
+    {
+        $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            'status_id' => 1,
+        ]);
+
+        return redirect()->route('rab.dashboard');
+    }
+
     public function rejectRAB()
     {
         $this->validate([

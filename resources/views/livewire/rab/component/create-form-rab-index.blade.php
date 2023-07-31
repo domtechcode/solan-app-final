@@ -9,6 +9,8 @@
                     <h3 class="card-title">Form RAB</h3>
                     <div class="card-options">
                         <div class="btn-list">
+                            <button type="button" class="btn btn-sm btn-dark" wire:click="backBtn"
+                                wire:loading.attr="disabled"><i class="fe fe-danger"></i> Kembali</button>
                             <button type="button" class="btn btn-sm btn-primary" wire:click="holdRAB"
                                 wire:loading.attr="disabled"><i class="fe fe-danger"></i> Hold RAB</button>
                             <button type="button" class="btn btn-sm btn-primary" wire:click="holdQC"

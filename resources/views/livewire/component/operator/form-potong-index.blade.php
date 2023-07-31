@@ -10,6 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        //tambahakan form hasil akhir lembar cetak (potong jadi)
                         <div class="col-sm-12 col-md-12">
                             <label class="form-label">Catatan Proses Pengerjaan</label>
                             <div class="input-group control-group" style="padding-top: 5px;">
