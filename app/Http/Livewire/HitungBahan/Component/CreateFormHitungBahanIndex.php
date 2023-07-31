@@ -998,7 +998,7 @@ class CreateFormHitungBahanIndex extends Component
                             }
                         }
     
-                        if($keteranganData['rincianScreen']){
+                        if(isset($keteranganData['rincianScreen'])){
                             foreach ($keteranganData['rincianScreen'] as $rincianScreen) {
                                 // Buat instance model RincianScreen
                                 $rincianScreen = $keterangan->rincianScreen()->create([
