@@ -1061,19 +1061,19 @@ class CreateFormHitungBahanIndex extends Component
                         'dataJSON' => $layoutBahanData['dataJSON'],
                     ]);
     
-                    if (isset($layoutBahanData['fileLayoutCustom'])) {
-                        $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
-                        $file = $layoutBahanData['fileLayoutCustom'];
+                    //if (isset($layoutBahanData['fileLayoutCustom'])) {
+                      //  $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
+                        //$file = $layoutBahanData['fileLayoutCustom'];
                     
-                        $folder = "public/" . $InstructionCurrentDataFile->spk_number . "/hitung-bahan";
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-custom-layout.' . $file->getClientOriginalExtension();
-                        Storage::putFileAs($folder, $file, $fileName);
+                    //    $folder = "public/" . $InstructionCurrentDataFile->spk_number . "/hitung-bahan";
+                      //  $fileName = $InstructionCurrentDataFile->spk_number . '-file-custom-layout.' . $file->getClientOriginalExtension();
+                        //Storage::putFileAs($folder, $file, $fileName);
                     
-                        $keteranganFileRincian = LayoutBahan::where('id', $layoutBahan->id)->update([
-                            "layout_custom_file_name" => $fileName,
-                            "layout_custom_path" => $folder,
-                        ]);
-                    }
+                    //    $keteranganFileRincian = LayoutBahan::where('id', $layoutBahan->id)->update([
+                      //      "layout_custom_file_name" => $fileName,
+                        //    "layout_custom_path" => $folder,
+                        //]);
+                    //}
     
                 }
             }
