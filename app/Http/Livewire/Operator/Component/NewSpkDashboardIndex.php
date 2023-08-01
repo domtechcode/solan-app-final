@@ -132,15 +132,16 @@ class NewSpkDashboardIndex extends Component
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms);
                     })->where(function ($subQuery) {
-                        // Tambahkan kondisi jika work_step_list_id sama dengan 35 atau 36
-                        $subQuery->where('work_step_list_id', '!=', 35)
-                                ->orWhere('work_step_list_id', '!=', 36)
-                                ->orWhere('group_priority', '!=', 'child')
+                        // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
+                        $subQuery->where(function ($nestedSubQuery) {
+                            $nestedSubQuery->whereIn('work_step_list_id', [35, 36])
                                 ->orWhereNull('group_priority');
+                        })->orWhere('group_priority', 'parent');
                     })->orderBy('shipping_date', 'asc');
                 })
                 ->with(['status', 'job', 'workStepList'])
                 ->paginate($this->paginate);
+
         
         return view('livewire.operator.component.new-spk-dashboard-index', [ 'instructions' => $data ])
         ->extends('layouts.app')

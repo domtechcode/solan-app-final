@@ -382,6 +382,23 @@ class RunningDashboardIndex extends Component
             ]);
         }
 
+        $dataInstruction = Instruction::find($updateStart->instruction_id);
+        if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
+            $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+
+            foreach($datachild as $key => $item){
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                ]);
+
+                $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
+                    'status_id' => 1,
+                    'job_id' => $updateStart->work_step_list_id,
+                ]);
+            }
+        }
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Instruksi Kerja',

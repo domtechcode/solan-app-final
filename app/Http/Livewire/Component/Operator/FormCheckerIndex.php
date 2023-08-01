@@ -277,6 +277,35 @@ class FormCheckerIndex extends Component
                         'status_id' => 1,
                     ]);
 
+                    //group
+                    $dataInstruction = Instruction::find($this->instructionCurrentId);
+                    if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
+                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+
+                        foreach($datachild as $key => $item){
+                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('work_step_list_id', $currentStep->work_step_list_id)->where('user_id', $currentStep->user_id)->first();
+
+                            if(isset($updateChildWorkStep)){
+                                $updateChildWorkStep->update([
+                                    'state_task' => 'Complete',
+                                    'status_task' => 'Complete',
+                                ]);
+    
+                                $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('step', $updateChildWorkStep->step + 1)->first();
+    
+                                $updateChildNextWorkStep->update([
+                                    'state_task' => 'Running',
+                                    'status_task' => 'Pending Approved',
+                                ]);
+    
+                                $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
+                                    'job_id' => $updateChildNextWorkStep->work_step_list_id,
+                                    'status_id' => 1,
+                                ]);
+                            }
+                        }
+                    }
+
                     $userDestination = User::where('role', 'Penjadwalan')->get();
                     foreach($userDestination as $dataUser){
                         $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
@@ -296,6 +325,31 @@ class FormCheckerIndex extends Component
                         'job_id' => $currentStep->work_step_list_id,
                         'status_id' => 7,
                     ]);
+
+                    //group
+                    $dataInstruction = Instruction::find($this->instructionCurrentId);
+                    if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
+                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+
+                        foreach($datachild as $key => $item){
+                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('work_step_list_id', $currentStep->work_step_list_id)->where('user_id', $currentStep->user_id)->first();
+
+                            if(isset($updateChildWorkStep)){
+                                $updateChildWorkStep->update([
+                                    'state_task' => 'Complete',
+                                    'status_task' => 'Complete',
+                                ]);
+    
+                                $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
+                                    'spk_status' => 'Selesai',
+                                    'state_task' => 'Complete',
+                                    'status_task' => 'Complete',
+                                    'job_id' => $currentStep->work_step_list_id,
+                                    'status_id' => 7,
+                                ]);
+                            }
+                        }
+                    }
 
                     $userDestination = User::where('role', 'Penjadwalan')->get();
                     foreach($userDestination as $dataUser){

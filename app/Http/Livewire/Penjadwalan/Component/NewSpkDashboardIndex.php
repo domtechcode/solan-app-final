@@ -212,6 +212,22 @@ class NewSpkDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
+        $dataGroup = Instruction::find($this->selectedInstruction->id);
+        if(isset($dataGroup->group_id) && isset($dataGroup->group_priority)){
+            $datachild = Instruction::where('group_id', $dataGroup->group_id)->where('group_priority', 'child')->get();
+            foreach($datachild as $datachild){
+                $deleteWorkStep = WorkStep::where('instruction_id', $datachild['id'])->delete();
+            
+            $parentWorkStep = WorkStep::where('instruction_id', $dataGroup->id)->get();
+            foreach($parentWorkStep as $key => $item){
+                $childWorkStep = $item->replicate();
+                $childWorkStep->instruction_id = $datachild['id'];
+                $childWorkStep->save();
+            }
+            }
+
+        }
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',

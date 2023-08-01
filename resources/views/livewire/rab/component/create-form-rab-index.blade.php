@@ -32,9 +32,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @php
-                                            $total_Price = 0;
-                                        @endphp
                                         @foreach ($instructionItems as $key => $instructions)
                                         <tr>
                                             <td>
@@ -52,16 +49,8 @@
                                                 </div>
                                                 @error('instructionItems.'.$key.'.price') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </td>
-                                            
-                                            @php
-                                                $total_Price += $instructions['price'];
-                                            @endphp
                                         </tr>
                                         @endforeach
-                                        <tr>
-                                            <td><strong>Total Price</strong></td>
-                                            <td><strong>{{ currency_idr($total_Price) }}</strong></td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
