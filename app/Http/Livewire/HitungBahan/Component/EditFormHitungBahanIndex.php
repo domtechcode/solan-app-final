@@ -915,7 +915,7 @@ class EditFormHitungBahanIndex extends Component
                         'dataJSON' => $layoutBahanData['dataJSON'],
                     ]);
     
-                    if ($layoutBahanData['fileLayoutCustom']) {
+                    if (!empty($layoutBahanData['fileLayoutCustom'])) {
                         $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
                         $file = $layoutBahanData['fileLayoutCustom'];
                     
@@ -1083,7 +1083,7 @@ class EditFormHitungBahanIndex extends Component
                         'dataJSON' => $layoutBahanData['dataJSON'],
                     ]);
     
-                    if ($layoutBahanData['fileLayoutCustom']) {
+                    if (!empty($layoutBahanData['fileLayoutCustom'])) {
                         $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
                         $file = $layoutBahanData['fileLayoutCustom'];
                     

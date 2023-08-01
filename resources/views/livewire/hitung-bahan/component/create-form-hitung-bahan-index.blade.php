@@ -1445,7 +1445,7 @@
                                                             allowImagePreview imagePreviewMaxHeight="200"
                                                             allowFileTypeValidation allowFileSizeValidation
                                                             acceptedFileTypes="['image/png', 'image/jpg', 'image/jpeg']"
-                                                            maxFileSize="1024mb" />
+                                                            maxFileSize="1024mb"/>
 
                                                         @error('layoutBahans.' . $indexBahan . '.fileLayoutCustom')
                                                             <p class="mt-2 text-sm text-danger">{{ $message }}</p>
