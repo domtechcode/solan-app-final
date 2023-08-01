@@ -105,7 +105,7 @@ class NewSpkDashboardIndex extends Component
                 'message' => 'Stock tidak boleh lebih dari quantity',
             ]);
         }else if($this->selectedInstruction->quantity == currency_convert($this->stock)){
-            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 35, 36])->update([
+            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
                 'selesai' => Carbon::now(),
