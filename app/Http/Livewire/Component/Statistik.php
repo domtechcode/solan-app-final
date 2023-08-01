@@ -75,7 +75,10 @@ class Statistik extends Component
                             ->where('status_id', 1);
                         })->count();
 
-        $this->completeOrder = Instruction::where('spk_state', 'Selesai')->count();
+        $this->completeOrder = Instruction::whereHas('workstep', function ($query) {
+                                    $query->where('work_step_list_id', 1)
+                                    ->where('spk_status', 'Selesai');
+                                })->count();
 
         $this->spkLayout = Instruction::where('type_order', 'layout')->count();
         $this->spkSample = Instruction::where('type_order', 'sample')->count();
@@ -122,10 +125,24 @@ class Statistik extends Component
                                     $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
                                 })->count();
 
-        $this->spkCompleteLayout = Instruction::where('type_order', 'layout')->where('spk_state', 'Selesai')->count();
-        $this->spkCompleteSample = Instruction::where('type_order', 'sample')->where('spk_state', 'Selesai')->count();
-        $this->spkCompleteProduction = Instruction::where('type_order', 'production')->where('spk_state', 'Selesai')->count();
-        $this->spkCompleteStock = Instruction::where('type_order', 'stock')->where('spk_state', 'Selesai')->count();
+        $this->spkCompleteLayout = Instruction::where('type_order', 'layout')->whereHas('workstep', function ($query) {
+                                        $query->where('work_step_list_id', 1)
+                                        ->where('spk_status', 'Selesai');
+                                    })->count();
+
+        $this->spkCompleteSample = Instruction::where('type_order', 'sample')->whereHas('workstep', function ($query) {
+                                        $query->where('work_step_list_id', 1)
+                                        ->where('spk_status', 'Selesai');
+                                    })->count();
+
+        $this->spkCompleteProduction = Instruction::where('type_order', 'production')->whereHas('workstep', function ($query) {
+                                        $query->where('work_step_list_id', 1)
+                                        ->where('spk_status', 'Selesai');
+                                    })->count();
+        $this->spkCompleteStock = Instruction::where('type_order', 'stock')->whereHas('workstep', function ($query) {
+                                        $query->where('work_step_list_id', 1)
+                                        ->where('spk_status', 'Selesai');
+                                    })->count();
 
         return view('livewire.component.statistik');
     }
