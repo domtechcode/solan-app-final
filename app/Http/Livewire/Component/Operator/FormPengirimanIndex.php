@@ -91,7 +91,7 @@ class FormPengirimanIndex extends Component
     {
         $this->validate([
             'anggota.*.driver' => 'required',
-            'anggota.*.kernet' => 'required',
+        //    'anggota.*.kernet' => 'required',
             'anggota.*.qty' => 'required',
             'anggota.*.status' => 'required',
         ]);
@@ -156,7 +156,7 @@ class FormPengirimanIndex extends Component
     {
         $this->validate([
             'anggota.*.driver' => 'required',
-            'anggota.*.kernet' => 'required',
+//            'anggota.*.kernet' => 'required',
             'anggota.*.qty' => 'required',
             'anggota.*.status' => 'required',
         ]);
