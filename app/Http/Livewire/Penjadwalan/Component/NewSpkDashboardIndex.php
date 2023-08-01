@@ -48,6 +48,7 @@ class NewSpkDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+    public $workStepHitungBahan;
 
     protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
@@ -229,7 +230,9 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->where('status_task', '!=', 'Complete')->where('state_task', '!=', 'Complete')->with('workStepList', 'user', 'machine')->get();
-        
+        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
+        $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
+
         foreach($this->selectedWorkStep as $key => $dataSelected){
             $workSteps = [
                 'work_step_list_id' => $dataSelected['work_step_list_id'],
