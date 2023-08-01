@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Penjadwalan\Index\IndexDashboard')->name('jadwal.dashboard');
         Route::get('/group', 'App\Http\Livewire\Penjadwalan\Index\IndexGroup')->name('jadwal.group');
+        Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Penjadwalan\Index\IndexWorkStep')->name('jadwal.indexWorkStep');
     });
 
     Route::group(['prefix' => 'operator', 'middleware' => ['role:Operator']], function () {

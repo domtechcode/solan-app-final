@@ -432,9 +432,13 @@
                                                     -
                                                 </td> --}}
                                                 <td>
-                                                    <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-dark" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-link"></i></button>
+                                                    @if($dataWork['status_task'] == 'Complete')       
+                                                    <div class="btn-list">  
+                                                        <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $this->selectedInstruction->id, 'workStepId' => $dataWork['id']]) }}"><i class="fe fe-link"></i></a>
                                                     </div>
+                                                    @else
+                                                        -
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
