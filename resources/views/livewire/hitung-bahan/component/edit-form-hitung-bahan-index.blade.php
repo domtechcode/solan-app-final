@@ -465,9 +465,9 @@
                         <div class="card-status bg-warning br-te-7 br-ts-7"></div>
                         <div class="card-header">
                             @if(!isset($stateWorkStepCetakLabel))
-                            <h3 class="card-title">Form Keterangan Bahan - {{ $keteranganIndex }}</h3>
+                            <h3 class="card-title">Form Keterangan - {{ $keteranganIndex }}</h3>
                             @else
-                            <h3 class="card-title">Form Keterangan Bahan Label - {{ $keteranganIndex }}</h3>
+                            <h3 class="card-title">Form Keterangan Label - {{ $keteranganIndex }}</h3>
                             @endif
                             <div class="card-options">
                                 <div class="btn-list">
