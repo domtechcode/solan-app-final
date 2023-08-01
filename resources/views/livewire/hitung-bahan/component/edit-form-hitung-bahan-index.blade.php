@@ -2380,14 +2380,33 @@
                 snapAngle: 15,
                 snapThreshold: 10,
                 snapToGrid: 10,
-                strokeUniform: true
+                noScaleCache: false,
+                strokeUniform: true,
             });
+
+            // Menambahkan event listener saat scaling dimulai
+            currentCanvas.on("mouse:up", function() {
+                var currObj = currentCanvas.getActiveObject();
+                if (currObj && currObj.type === 'rect') {
+                    var newWidth = currObj.width * currObj.scaleX,
+                        newHeight = currObj.height * currObj.scaleY;
+
+                    currObj.set({
+                        'width': newWidth,
+                        'height': newHeight,
+                        scaleX: 1,
+                        scaleY: 1
+                    });
+                    currentCanvas.renderAll();
+                }
+            });
+
             currentCanvas.add(rect);
         }
 
         function addTextSetting(index) {
             var currentCanvas = getCurrentCanvasSetting(index);
-            var text = new fabric.Textbox('Sample Text', {
+            var text = new fabric.IText('Sample Text', {
                 left: 50,
                 top: 50,
                 width: 200,
@@ -2397,7 +2416,8 @@
                 snapAngle: 15,
                 snapThreshold: 10,
                 snapToGrid: 10,
-                strokeUniform: true
+                strokeUniform: true,
+                lockUniScaling: true,
             });
             currentCanvas.add(text);
         }
@@ -2548,14 +2568,33 @@
                 snapAngle: 15,
                 snapThreshold: 10,
                 snapToGrid: 10,
-                strokeUniform: true
+                noScaleCache: false,
+                strokeUniform: true,
             });
+
+            // Menambahkan event listener saat scaling dimulai
+            currentCanvas.on("mouse:up", function() {
+                var currObj = currentCanvas.getActiveObject();
+                if (currObj && currObj.type === 'rect') {
+                    var newWidth = currObj.width * currObj.scaleX,
+                        newHeight = currObj.height * currObj.scaleY;
+
+                    currObj.set({
+                        'width': newWidth,
+                        'height': newHeight,
+                        scaleX: 1,
+                        scaleY: 1
+                    });
+                    currentCanvas.renderAll();
+                }
+            });
+
             currentCanvas.add(rect);
         }
 
         function addTextBahan(indexBahan) {
             var currentCanvas = getCurrentCanvasBahan(indexBahan);
-            var text = new fabric.Textbox('Sample Text', {
+            var text = new fabric.IText('Sample Text', {
                 left: 50,
                 top: 50,
                 width: 200,
@@ -2565,7 +2604,8 @@
                 snapAngle: 15,
                 snapThreshold: 10,
                 snapToGrid: 10,
-                strokeUniform: true
+                strokeUniform: true,
+                lockUniScaling: true,
             });
             currentCanvas.add(text);
         }
