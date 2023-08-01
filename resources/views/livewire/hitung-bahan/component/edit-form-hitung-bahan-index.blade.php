@@ -609,7 +609,7 @@
                                         <div class="example">
                                             <h3 class="card-title">Screen</h3>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.screen.0.state_screen"
@@ -619,7 +619,7 @@
                                                         <span class="custom-switch-description">Baru</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah screen"
@@ -631,7 +631,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Ukuran screen"
@@ -645,7 +645,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.screen.1.state_screen"
@@ -655,7 +655,7 @@
                                                         <span class="custom-switch-description">Repeat</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah screen"
@@ -667,7 +667,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Ukuran screen"
@@ -681,7 +681,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.screen.2.state_screen"
@@ -691,7 +691,7 @@
                                                         <span class="custom-switch-description">Sample</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah screen"
@@ -703,7 +703,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Ukuran screen"
@@ -730,7 +730,7 @@
                                         <div class="example">
                                             <h3 class="card-title">Pond</h3>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.pond.0.state_pisau"
@@ -740,7 +740,7 @@
                                                         <span class="custom-switch-description">Baru</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-8">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah Pisau"
@@ -754,7 +754,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.pond.1.state_pisau"
@@ -764,7 +764,7 @@
                                                         <span class="custom-switch-description">Repeat</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-8">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah Pisau"
@@ -778,7 +778,7 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <label class="custom-switch form-switch me-5">
                                                         <input type="checkbox"
                                                             wire:model="keterangans.{{ $keteranganIndex }}.pond.2.state_pisau"
@@ -788,7 +788,7 @@
                                                         <span class="custom-switch-description">Sample</span>
                                                     </label>
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-8">
                                                     <div class="form-group">
                                                         <input type="text" autocomplete="off" class="form-control"
                                                             placeholder="Jumlah Pisau"
