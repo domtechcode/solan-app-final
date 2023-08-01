@@ -111,7 +111,7 @@
                                     </div>
                                     <!-- ROW-2 END -->
                                 </div>
-                                <div class="tab-pane" id="tab8">
+                                <div class="tab-pane" id="tab4">
                                     <!-- ROW-2-->
                                     <div class="row">
                                         <div class="col-md-12">
