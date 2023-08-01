@@ -68,7 +68,7 @@ class IncomingDashboardIndex extends Component
     {
         $data = WorkStep::where('work_step_list_id', 3)
                         ->where('state_task', 'Not Running')
-                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Training Program'])
+                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
