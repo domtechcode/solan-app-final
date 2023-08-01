@@ -62,6 +62,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['role:Accounting']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Accounting\Index\IndexDashboard')->name('accounting.dashboard');
+        Route::get('/data-customer', 'App\Http\Livewire\Accounting\Index\IndexCustomer')->name('accounting.dataCustomer');
     });
     
 });
