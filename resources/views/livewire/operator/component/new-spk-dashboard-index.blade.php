@@ -57,7 +57,7 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if($dataInstruction->instruction->group_id)
+                                @if($dataInstruction->instruction->group_id && Auth()->user()->jobdesk != 'Qc Packing' && Auth()->user()->jobdesk != 'Pengiriman')
                                 <td>
                                     {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
                                 </td>

@@ -198,6 +198,17 @@ class FormQcPackingIndex extends Component
                     }
                     broadcast(new IndexRenderEvent('refresh'));
 
+                }else{
+                    $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'spk_status' => 'Selesai',
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                    ]);
+
+                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'job_id' => $currentStep->work_step_list_id,
+                        'status_id' => 7,
+                    ]);
                 }
             }
         }

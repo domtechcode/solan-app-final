@@ -387,15 +387,18 @@ class RunningDashboardIndex extends Component
             $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
 
             foreach($datachild as $key => $item){
-                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
-                ]);
-
-                $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
-                    'status_id' => 1,
-                    'job_id' => $updateStart->work_step_list_id,
-                ]);
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->first();
+                if(isset($updateChildWorkStep)){
+                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                    ]);
+    
+                    $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
+                        'status_id' => 1,
+                        'job_id' => $updateStart->work_step_list_id,
+                    ]);
+                }
             }
         }
 

@@ -561,7 +561,11 @@ class HitungBahanDataViewPengirimanIndex extends Component
             ];
         }
         
-        if(isset($this->filePaths)){
+        if (empty($this->filePaths)){
+            $this->filePaths[] = '';
+        }
+
+        if(!empty($this->filePaths)){
             $this->loadExcel();
         }
     }
@@ -576,15 +580,24 @@ class HitungBahanDataViewPengirimanIndex extends Component
     public function loadExcel()
     {
         $this->htmlOutputs = [];
-
-        foreach ($this->filePaths as $filePath) {
-            $inputFileType = IOFactory::identify($filePath);
-            $reader = IOFactory::createReader($inputFileType);
-            $spreadsheet = $reader->load($filePath);
-            $writer = IOFactory::createWriter($spreadsheet, 'Html');
-            ob_start();
-            $writer->save('php://output');
-            $this->htmlOutputs[] = ob_get_clean();
+        if(isset($this->filePaths)){
+            foreach ($this->filePaths as $filePath) {
+                if (file_exists($filePath)) {
+                    $inputFileType = IOFactory::identify($filePath);
+                    $reader = IOFactory::createReader($inputFileType);
+                    $spreadsheet = $reader->load($filePath);
+                    $writer = IOFactory::createWriter($spreadsheet, 'Html');
+                    ob_start();
+                    $writer->save('php://output');
+                    $this->htmlOutputs[] = ob_get_clean();
+                } else {
+                    // File tidak ditemukan, berikan pesan kesalahan atau lakukan tindakan lain
+                    // Misalnya:
+                    // echo "File $filePath tidak ditemukan.";
+                    // atau
+                    // Log::error("File $filePath tidak ditemukan.");
+                }
+            }
         }
     }
 

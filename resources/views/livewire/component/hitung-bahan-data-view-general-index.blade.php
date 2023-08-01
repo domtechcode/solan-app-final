@@ -1046,7 +1046,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    @if (isset($filePaths))
+                                                    @if (!empty($filePaths))
                                                         @forelse($htmlOutputs as $htmlOutput)
                                                             <td>
                                                                 {!! $htmlOutput !!}
