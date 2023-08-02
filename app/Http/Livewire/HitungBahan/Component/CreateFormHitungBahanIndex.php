@@ -1101,6 +1101,7 @@ class CreateFormHitungBahanIndex extends Component
                     'status_task' => 'Complete',
                     'selesai' => Carbon::now()->toDateTimeString(),
                     'target_date' => Carbon::now(),
+                    'target_time' => 1,
                 ]);
             
                 $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)

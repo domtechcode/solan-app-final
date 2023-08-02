@@ -140,6 +140,7 @@ class NewSpkDashboardIndex extends Component
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
                 'selesai' => Carbon::now()->toDateTimeString(),
+                'target_time' => 1,
             ]);
 
             if($this->fileRincian){
@@ -191,6 +192,7 @@ class NewSpkDashboardIndex extends Component
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                     'selesai' => Carbon::now()->toDateTimeString(),
+                    'target_time' => 1,
                 ]);
             
                 $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
