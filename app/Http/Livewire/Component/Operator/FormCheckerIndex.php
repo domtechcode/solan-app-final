@@ -178,8 +178,11 @@ class FormCheckerIndex extends Component
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
                 ->where('step', $currentStep->step + 1)
                 ->first();
+        $lastStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step - 1)
+                ->first();
         
-        if($nextStep->status_task == 'Waiting Repair Revisi'){
+        if($lastStep->status_task == 'Waiting Repair Revisi'){
             $this->validate([
                 'fileChecker' => 'required',
             ]);
@@ -203,7 +206,7 @@ class FormCheckerIndex extends Component
                     ]);
                 }
             }
-        }else if($nextStep->status_task == 'Reject Requirements'){
+        }else if($currentStep->status_task == 'Reject Requirements'){
             //reject requirement
         }else{
             $this->validate([

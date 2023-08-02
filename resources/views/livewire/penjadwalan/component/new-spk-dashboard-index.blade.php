@@ -234,7 +234,7 @@
 
                     <div class="row mb-3">
                         <div class="col d-flex justify-content-center">
-                            @if($selectedInstruction)
+                            @if(isset($workStepHitungBahan))
                                 <div class="btn-list">  
                                     <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
                                 </div>
