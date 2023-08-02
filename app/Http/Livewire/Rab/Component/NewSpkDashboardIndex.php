@@ -41,6 +41,11 @@ class NewSpkDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
     public function mount()
     {
         $this->search = request()->query('search', $this->search);

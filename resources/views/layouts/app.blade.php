@@ -164,12 +164,13 @@
         window.Echo.channel('notif.' + {{ Auth::user()->id }})
             .listen('NotificationSent', function (data) {
                 Livewire.emit('notifSent', data);
-            });
-
-        window.Echo.channel('refresh')
-            .listen('IndexRenderEvent', function (e) {
                 Livewire.emit('indexRender');
             });
+
+        // window.Echo.channel('refresh')
+        //     .listen('IndexRenderEvent', function (e) {
+        //         Livewire.emit('indexRender');
+        //     });
     });
 </script>
 

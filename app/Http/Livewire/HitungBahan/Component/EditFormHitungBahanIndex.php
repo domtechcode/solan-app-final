@@ -1128,7 +1128,7 @@ class EditFormHitungBahanIndex extends Component
                 ->first();
 
 
-        if($updateTask->status_id == 22){
+        if($updateTask->status_id == 22 || $updateTask->status_id == 2){
             if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
                 if ($updateTask) {
                     $updateTask->update([
