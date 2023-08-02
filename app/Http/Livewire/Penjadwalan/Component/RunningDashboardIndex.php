@@ -237,6 +237,14 @@ class RunningDashboardIndex extends Component
         $stepToAdd = $firstWorkStep->step + 1;
         $newWorkSteps = [];
 
+        // Buat array dengan work_step_list_id yang ingin dihapus
+        $workStepListIdsToRemove = [1, 2, 3, 4, 5];
+
+        // Gunakan array_filter untuk menyaring array dan hanya menyimpan elemen-elemen yang tidak memiliki work_step_list_id dalam $workStepListIdsToRemove
+        $this->workSteps = array_filter($this->workSteps, function ($item) use ($workStepListIdsToRemove) {
+            return !in_array($item['work_step_list_id'], $workStepListIdsToRemove);
+        });
+
         foreach ($this->workSteps as $index => $workStepData) {
             $newWorkSteps[] = [
                 'instruction_id' => $this->selectedInstruction->id,
@@ -250,12 +258,15 @@ class RunningDashboardIndex extends Component
                 'state_task' => $workStepData['state_task'],
                 'status_task' => $workStepData['status_task'],
                 'spk_status' => 'Running',
-                //status dan job nya lupa
             ];
         }
 
-        $inserWorkStep = WorkStep::insert($newWorkSteps);
-        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->get();
+        if(isset($newWorkSteps)){
+            $inserWorkStep = WorkStep::insert($newWorkSteps);
+        }
+
+        
+        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])->get();
         foreach($lastDataWorkStep as $lastData){
             $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', $lastData->work_step_list_id)->where('status_task', $lastData->status_task)->where('state_task', $lastData->state_task)->update([
                 'timer' => $lastData['timer'],
@@ -281,6 +292,8 @@ class RunningDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
+        
+        $this->dispatchBrowserEvent('close-modal-running');
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
@@ -291,7 +304,6 @@ class RunningDashboardIndex extends Component
 
         $this->workSteps = [];
         $this->keteranganReschedule = '';
-        $this->dispatchBrowserEvent('close-modal-running');
     }
 
     public function modalInstructionDetailsRunning($instructionId)
