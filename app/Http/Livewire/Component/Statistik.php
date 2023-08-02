@@ -36,7 +36,7 @@ class Statistik extends Component
     public $spkCompleteStock;
 
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
+    protected $listeners = ['notifSent' => 'refreshIndex'];
 
     public function refreshIndex($data)
     {
@@ -55,12 +55,6 @@ class Statistik extends Component
                     ]);
             }
     }
-
-    public function renderIndex()
-    {
-        $this->render();
-    }
-
    
     public function render()
     {

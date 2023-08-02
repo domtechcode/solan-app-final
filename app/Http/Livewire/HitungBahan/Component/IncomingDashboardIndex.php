@@ -39,7 +39,7 @@ class IncomingDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {

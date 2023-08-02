@@ -44,12 +44,7 @@ class RejectDashboardIndex extends Component
 
     public $keteranganReject;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
-
-    public function refreshIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {

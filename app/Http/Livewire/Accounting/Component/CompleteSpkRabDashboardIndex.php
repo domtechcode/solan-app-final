@@ -43,12 +43,7 @@ class CompleteSpkRabDashboardIndex extends Component
     public $dataRab = [];
     public $catatanRab;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
-
-    public function refreshIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {

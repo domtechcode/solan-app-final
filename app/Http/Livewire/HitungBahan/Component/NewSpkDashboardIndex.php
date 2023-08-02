@@ -44,7 +44,7 @@ class NewSpkDashboardIndex extends Component
 
     public $keteranganReject;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {

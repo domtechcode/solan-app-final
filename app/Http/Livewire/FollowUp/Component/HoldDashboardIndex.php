@@ -40,12 +40,7 @@ class HoldDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
-
-    public function refreshIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {

@@ -51,9 +51,9 @@ class NewSpkDashboardIndex extends Component
     public $stock;
     public $fileRincian = [];
 
-    protected $listeners = ['notifSent' => 'refreshIndex'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
-    public function refreshIndex($data)
+    public function renderIndex()
     {
         $this->render();
     }

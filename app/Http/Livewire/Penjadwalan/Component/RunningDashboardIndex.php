@@ -57,12 +57,7 @@ class RunningDashboardIndex extends Component
     public $notereject;
     public $rejectKeterangan;
 
-    protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
-
-    public function refreshIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {
