@@ -1128,7 +1128,7 @@ class EditFormHitungBahanIndex extends Component
                 ->first();
 
 
-        if($updateTask->status_id != 2){
+        if($updateTask->status_id == 22){
             if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
                 if ($updateTask) {
                     $updateTask->update([
@@ -1163,7 +1163,38 @@ class EditFormHitungBahanIndex extends Component
                     ]);
                 }
 
-                // $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                broadcast(new IndexRenderEvent('refresh'));
+            }else{
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                    ]);
+                
+                    $updateNextStep = WorkStep::find($updateTask->reject_from_id);
+                    
+                    if ($updateNextStep) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+    
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 1,
+                            'job_id' => $updateNextStep->work_step_list_id,
+                        ]);
+                    }
+    
+                    $updateTask->update([
+                        'reject_from_id' => NULL,
+                        'reject_from_status' => NULL,
+                        'reject_from_job' => NULL,
+                    ]);
+                }
+    
+                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
                 broadcast(new IndexRenderEvent('refresh'));
             }
             
