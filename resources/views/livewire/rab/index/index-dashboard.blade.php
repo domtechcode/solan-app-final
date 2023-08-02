@@ -29,38 +29,7 @@
                             <div class=" tab-menu-heading">
                                 <div class="tabs-menu1">
                                     <!-- Tabs -->
-                                    <ul class="nav panel-tabs">
-                                        <li>
-                                            <button href="#tab1" class="active btn btn-dark mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">New SPK
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab2" class="btn btn-primary mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Reject
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab3" class="btn btn-warning mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Incoming
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab4" class="btn btn-danger mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Hold
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab5" class="btn btn-info mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">All
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button href="#tab6" class="btn btn-info mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">Last Data Training Program
-                                            </button>
-                                        </li>
-                                    </ul>
+                                    @livewire('rab.component.tab-dashboard-index')
                                 </div>
                             </div>
                         </div>

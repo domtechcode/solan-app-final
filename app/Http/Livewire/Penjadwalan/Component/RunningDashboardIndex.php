@@ -252,6 +252,7 @@ class RunningDashboardIndex extends Component
                 'state_task' => $workStepData['state_task'],
                 'status_task' => $workStepData['status_task'],
                 'spk_status' => 'Running',
+                //status dan job nya lupa
             ];
         }
 
@@ -272,6 +273,11 @@ class RunningDashboardIndex extends Component
                 'selesai' => $lastData['selesai'],
             ]);
         }
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'status_id' => $firstWorkStep->status_id,
+            'job_id' => $firstWorkStep->job_id,
+        ]);
 
         $firstWorkStep->update([
             'status_task' => 'Process',
