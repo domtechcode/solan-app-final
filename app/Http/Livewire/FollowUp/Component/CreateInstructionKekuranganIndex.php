@@ -130,6 +130,7 @@ class CreateInstructionKekuranganIndex extends Component
 
         $instruction->request_kekurangan = $instruction->spk_number;
         $instruction->spk_number = $this->spk_number;
+        $instruction->quantity = $this->quantity;
         if ($this->requestKekurangan == 'Pemesan') {
             $instruction->spk_state = 'Kekurangan Request Pemesan';
         } else if ($this->requestKekurangan == 'QC') {
