@@ -66,9 +66,12 @@ class AllDashboardIndex extends Component
                                     ->orWhere('customer_number', 'like', $searchTerms)
                                     ->orWhere('code_style', 'like', $searchTerms)
                                     ->orWhere('shipping_date', 'like', $searchTerms);
-                            })->whereNotIn('spk_type', ['layout', 'sample'])->orderBy('created_at', 'desc');
+                            })->whereNotIn('spk_type', ['layout', 'sample']);
                         })
+                        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                        ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
+                        ->orderBy('instructions.created_at', 'desc')
                         ->paginate($this->paginate);
 
         return view('livewire.accounting.component.all-dashboard-index', ['instructions' => $data])

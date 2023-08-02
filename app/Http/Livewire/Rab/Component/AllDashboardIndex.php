@@ -74,9 +74,12 @@ class AllDashboardIndex extends Component
                                     ->orWhere('customer_number', 'like', $searchTerms)
                                     ->orWhere('code_style', 'like', $searchTerms)
                                     ->orWhere('shipping_date', 'like', $searchTerms);
-                            })->orderBy('shipping_date', 'asc');
+                            });
                         })
+                        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                        ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
+                        ->orderBy('instructions.shipping_date', 'asc')
                         ->paginate($this->paginate);
 
         return view('livewire.rab.component.all-dashboard-index', ['instructions' => $data])

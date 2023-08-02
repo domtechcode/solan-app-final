@@ -132,9 +132,12 @@ class NewSpkDashboardIndex extends Component
                             $nestedSubQuery->whereIn('work_step_list_id', [35, 36])
                                 ->orWhereNull('group_priority');
                         })->orWhere('group_priority', 'parent');
-                    })->orderBy('shipping_date', 'asc');
+                    });
                 })
-                ->with(['status', 'job', 'workStepList'])
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
                 ->paginate($this->paginate);
 
         

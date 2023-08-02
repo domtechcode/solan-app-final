@@ -77,10 +77,12 @@ class NewSpkDashboardIndex extends Component
                             ->orWhere('order_name', 'like', '%' . $this->search . '%')
                             ->orWhere('customer_number', 'like', '%' . $this->search . '%')
                             ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                            ->orderBy('shipping_date', 'asc');
+                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%');
                         })
-                        ->with(['status', 'workStepList'])
+                        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                        ->select('work_steps.*')
+                        ->with(['status', 'job', 'workStepList', 'instruction'])
+                        ->orderBy('instructions.shipping_date', 'asc')
                         ->paginate($this->paginate);
 
         return view('livewire.stock.component.new-spk-dashboard-index', ['instructions' => $data])

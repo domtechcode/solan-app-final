@@ -80,18 +80,15 @@ class NewSpkDashboardIndex extends Component
                     })->where(function ($subQuery) {
                         $subQuery->where('group_priority', '!=', 'child')
                             ->orWhereNull('group_priority');
-                    })->orderBy('shipping_date', 'asc');
+                    });
                 })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
                 ->paginate($this->paginate);
 
-        $dataCount = WorkStep::where('work_step_list_id', 1)
-                ->where('state_task', 'Running')
-                ->where('status_task', 'Process')
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC'])
-                ->whereIn('status_id', [1, 2])->count();
-
-        return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructions' => $data, 'countNewSpk' => $dataCount])
+        return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructions' => $data])
 
         ->extends('layouts.app')
         ->section('content')

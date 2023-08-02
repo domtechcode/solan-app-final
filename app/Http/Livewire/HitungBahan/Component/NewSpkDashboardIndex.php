@@ -91,9 +91,12 @@ class NewSpkDashboardIndex extends Component
                     })->where(function ($subQuery) {
                         $subQuery->where('group_priority', '!=', 'child')
                             ->orWhereNull('group_priority');
-                    })->orderBy('shipping_date', 'asc');
+                    });
                 })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
                 ->paginate($this->paginate);
 
         return view('livewire.hitung-bahan.component.new-spk-dashboard-index', ['instructions' => $data])
