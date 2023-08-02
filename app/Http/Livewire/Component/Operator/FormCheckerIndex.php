@@ -183,9 +183,15 @@ class FormCheckerIndex extends Component
                 ->first();
         
         if($lastStep->status_task == 'Waiting Repair Revisi'){
+<<<<<<< HEAD
             //$this->validate([
               //  'fileChecker' => 'required',
             //]);
+=======
+            // $this->validate([
+            //     'fileChecker' => 'required',
+            // ]);
+>>>>>>> c995877b2e8f02876132fa47c00e07d135d684f6
 
             if(isset($this->fileChecker)){
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
@@ -209,9 +215,15 @@ class FormCheckerIndex extends Component
         }else if($currentStep->status_task == 'Reject Requirements'){
             //reject requirement
         }else{
+<<<<<<< HEAD
             //$this->validate([
                // 'fileChecker' => 'required',
             //]);
+=======
+            // $this->validate([
+            //     'fileChecker' => 'required',
+            // ]);
+>>>>>>> c995877b2e8f02876132fa47c00e07d135d684f6
             if(isset($this->fileChecker)){
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
                 $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();

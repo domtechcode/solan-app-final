@@ -1163,7 +1163,7 @@ class EditFormHitungBahanIndex extends Component
                     ]);
                 }
 
-                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                // $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
                 broadcast(new IndexRenderEvent('refresh'));
             }
             
@@ -1196,7 +1196,11 @@ class EditFormHitungBahanIndex extends Component
                 ]);
             }
 
+<<<<<<< HEAD
             //$this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+=======
+            // $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+>>>>>>> c995877b2e8f02876132fa47c00e07d135d684f6
             broadcast(new IndexRenderEvent('refresh'));
         }
 

@@ -41,11 +41,6 @@ class IncomingDashboardIndex extends Component
 
     protected $listeners = ['notifSent' => 'refreshIndex', 'indexRender' => 'renderIndex'];
 
-    public function refreshIndex()
-    {
-        $this->render();
-    }
-
     public function renderIndex()
     {
         $this->render();
