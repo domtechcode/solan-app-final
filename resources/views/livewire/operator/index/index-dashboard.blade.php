@@ -103,7 +103,7 @@
                                                     <h3 class="card-title">Layout Acc Customer</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                   
+                                                   @livewire('operator.component.complete-customer-checker-dashboard-index')
                                                 </div>
                                             </div>
                                         </div>

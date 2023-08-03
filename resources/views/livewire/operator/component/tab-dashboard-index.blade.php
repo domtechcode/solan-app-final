@@ -14,12 +14,12 @@
         @if(Auth()->user()->jobdesk == 'Checker')
         <li>
             <button href="#tab3" class="btn btn-success mt-1 mb-1 me-3"
-                data-bs-toggle="tab">Complete Checker - 
+                data-bs-toggle="tab">Complete Checker - {{ $dataCountCompleteChecker }}
             </button>
         </li>
         <li>
             <button href="#tab4" class="btn btn-success mt-1 mb-1 me-3"
-                data-bs-toggle="tab">Layout Acc Customer - 
+                data-bs-toggle="tab">Layout Acc Customer - {{ $dataCountCompleteCustomerChecker }}
             </button>
         </li>
         @endif

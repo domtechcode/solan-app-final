@@ -3,18 +3,24 @@
 namespace App\Http\Livewire\Operator\Component;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use App\Models\Machine;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use App\Events\NotificationSent;
+use Illuminate\Support\Facades\Storage;
 
-class NewSpkDashboardIndex extends Component
+class CompleteCustomerCheckerDashboardIndex extends Component
 {
     use WithPagination;
+    use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
@@ -70,10 +76,9 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
+
         $data = WorkStep::where('user_id', Auth()->user()->id)
-                ->where('state_task', 'Running')
-                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-                ->where('spk_status', 'Running')
+                ->whereIn('spk_status', ['Acc'])
                 ->whereHas('instruction', function ($query) {
                     $searchTerms = '%' . $this->search . '%';
                     $query->where(function ($subQuery) use ($searchTerms) {
@@ -99,13 +104,13 @@ class NewSpkDashboardIndex extends Component
                 ->paginate($this->paginate);
 
         
-        return view('livewire.operator.component.new-spk-dashboard-index', [ 'instructions' => $data ])
+        return view('livewire.operator.component.complete-customer-checker-dashboard-index', [ 'instructions' => $data ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsNewSpk($instructionId)
+    public function modalInstructionDetailsCompleteCustomerChecker($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -115,10 +120,10 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-complete-customer-checker');
     }
 
-    public function modalInstructionDetailsGroupNewSpk($groupId)
+    public function modalInstructionDetailsGroupCompleteCustomerChecker($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -133,6 +138,6 @@ class NewSpkDashboardIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-complete-customer-checker');
     }
 }

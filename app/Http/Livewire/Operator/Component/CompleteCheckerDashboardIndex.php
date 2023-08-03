@@ -78,9 +78,6 @@ class CompleteCheckerDashboardIndex extends Component
 
     public function mount()
     {
-        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
-        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
-        $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
     }
 
@@ -94,8 +91,6 @@ class CompleteCheckerDashboardIndex extends Component
 
     public function render()
     {
-        // Init Event
-        $this->dispatchBrowserEvent('pharaonic.select2.init');
 
         $data = WorkStep::where('user_id', Auth()->user()->id)
                 ->where('state_task', 'Complete')
@@ -240,6 +235,21 @@ class CompleteCheckerDashboardIndex extends Component
         $this->dispatchBrowserEvent('pondReset');
         $this->alasan_revisi = '';
         // $this->reset();
+
+        $this->dispatchBrowserEvent('close-modal-complete-checker');
+    }
+
+    public function accCustomer()
+    {
+        $dataCurrentWorkStepAcc = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'spk_status' => 'Acc',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Acc Instruksi Kerja',
+            'message' => 'Berhasil Acc instruksi kerja',
+        ]);
 
         $this->dispatchBrowserEvent('close-modal-complete-checker');
     }
