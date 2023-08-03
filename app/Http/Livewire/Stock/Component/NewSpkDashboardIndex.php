@@ -50,6 +50,7 @@ class NewSpkDashboardIndex extends Component
 
     public $stock;
     public $fileRincian = [];
+    public $keteranganReject;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -259,6 +260,53 @@ class NewSpkDashboardIndex extends Component
         }
 
 
+    }
+
+    public function rejectSpk()
+    {
+        $this->validate([
+            'keteranganReject' => 'required',
+        ]);
+
+        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 4)->first();
+        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 1)->first();
+        
+        $workStepDestination->update([
+            'status_task' => 'Reject',
+            'reject_from_id' => $workStepCurrent->id,
+            'reject_from_status' => $workStepCurrent->status_id,
+            'reject_from_job' => $workStepCurrent->job_id,
+            'count_reject' => $workStepDestination->count_reject + 1,
+        ]);
+        
+        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'status_id' => 3,
+            'job_id' => $workStepDestination->work_step_list_id,
+        ]);
+
+        $updateKeterangan = Catatan::create([
+            'tujuan' => 1,
+            'catatan' => $this->keteranganReject,
+            'kategori' => 'reject',
+            'instruction_id' => $this->selectedInstruction->id,
+            'user_id' => Auth()->user()->id,
+        ]);
+
+        $workStepCurrent->update([
+            'user_id' => Auth()->user()->id,
+            'status_task' => 'Waiting For Repair',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Reject Instruksi Kerja',
+            'message' => 'Berhasil reject instruksi kerja',
+        ]);
+
+        $this->keteranganReject = '';
+        $this->dispatchBrowserEvent('close-modal');
+        $this->messageSent(['conversation' => 'SPK Reject dari Stock','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
+        broadcast(new IndexRenderEvent('refresh'));
     }
 
     public function modalInstructionStock($instructionId)

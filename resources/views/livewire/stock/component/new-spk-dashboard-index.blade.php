@@ -276,6 +276,13 @@
                                                 @error('fileRincian') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </div>
                                         </div>
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Keterangan Reject</label>
+                                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                                @error('keteranganReject') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                 </div>
@@ -383,7 +390,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" wire:click="save()">Submit</button>
+                    <button type="button" class="btn btn-primary" wire:click="rejectSpk()">Reject Ke Follow Up</button>
+                    <button type="button" class="btn btn-success" wire:click="save()">Submit</button>
                 </div>
             </div>
         </div>
