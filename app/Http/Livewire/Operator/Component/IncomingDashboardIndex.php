@@ -61,36 +61,32 @@ class IncomingDashboardIndex extends Component
 
     public function render()
     {
-        return view('livewire.operator.component.incoming-dashboard-index', [
-            'instructions' => $this->search === null ?
-                            WorkStep::where('work_step_list_id', 2)
-                                        ->where('state_task', 'Not Running')
-                                        ->whereIn('status_task', ['Waiting'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate) :
-                            WorkStep::where('work_step_list_id', 2)
-                                        ->where('state_task', 'Not Running')
-                                        ->whereIn('status_task', ['Waiting'])
-                                        ->where('spk_status', 'Running')
-                                        ->whereIn('status_id', [1, 2])
-                                        ->whereHas('instruction', function ($query) {
-                                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%')
-                                            ->orderBy('shipping_date', 'asc');
-                                        })
-                                        ->with(['status', 'job', 'workStepList'])
-                                        ->paginate($this->paginate)
-        ])
+        $data = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Not Running')
+                ->whereIn('status_task', ['Waiting'])
+                ->where('spk_status', 'Running')
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->search . '%';
+                    $query->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')
+                            ->orWhereNull('group_priority');
+                    });
+                })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
+                ->paginate($this->paginate);
+
+        return view('livewire.operator.component.incoming-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

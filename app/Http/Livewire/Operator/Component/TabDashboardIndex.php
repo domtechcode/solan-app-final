@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Http\Livewire\Operator\Component;
+
+use App\Models\Files;
+use Livewire\Component;
+use App\Models\WorkStep;
+use App\Models\Instruction;
+use Livewire\WithPagination;
+
+class TabDashboardIndex extends Component
+{
+    public $dataCountNewSpk;
+    public $dataCountIncomingSpk;
+
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+    
+    public function render()
+    {
+        $this->dataCountNewSpk = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                ->where('spk_status', 'Running')
+                ->whereHas('instruction', function ($query) {
+                    $query->where('group_priority', '!=', 'child')
+                         ->orWhereNull('group_priority');
+                })->orderBy('shipping_date', 'asc')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->count();
+
+        $this->dataCountIncomingSpk = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Not Running')
+                ->whereIn('status_task', ['Waiting'])
+                ->where('spk_status', 'Running')
+                ->whereHas('instruction', function ($query) {
+                    $query->where('group_priority', '!=', 'child')
+                         ->orWhereNull('group_priority');
+                })->orderBy('shipping_date', 'asc')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->count();
+
+        return view('livewire.operator.component.tab-dashboard-index')
+
+        ->extends('layouts.app')
+        ->section('content')
+        ->layoutData(['title' => 'Dashboard']);
+    }
+}
+
