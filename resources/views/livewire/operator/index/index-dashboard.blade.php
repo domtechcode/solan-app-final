@@ -74,6 +74,44 @@
                                     <!-- ROW-2 END -->
                                 </div>
                                 
+                                @if(Auth()->user()->jobdesk == 'Checker')
+                                <div class="tab-pane" id="tab3">
+                                    <!-- ROW-2-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-status bg-success br-te-7 br-ts-7"></div>
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Complete Checker</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    @livewire('operator.component.complete-checker-dashboard-index')
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ROW-2 END -->
+                                </div>
+                                
+                                <div class="tab-pane" id="tab4">
+                                    <!-- ROW-2-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-status bg-success br-te-7 br-ts-7"></div>
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Layout Acc Customer</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ROW-2 END -->
+                                </div>
+                                @endif
+                                
 
                             </div>
                         </div>

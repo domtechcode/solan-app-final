@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Penjadwalan\Component;
 use DB;
 use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use App\Models\Machine;
 use Livewire\Component;
 use App\Models\WorkStep;
@@ -49,6 +50,7 @@ class NewSpkDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
     public $workStepHitungBahan;
+    public $notes;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
     
@@ -286,6 +288,7 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->notes = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
     }

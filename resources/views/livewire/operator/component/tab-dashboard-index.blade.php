@@ -11,5 +11,17 @@
                 data-bs-toggle="tab">Incoming - {{ $dataCountIncomingSpk }}
             </button>
         </li>
+        @if(Auth()->user()->jobdesk == 'Checker')
+        <li>
+            <button href="#tab3" class="btn btn-success mt-1 mb-1 me-3"
+                data-bs-toggle="tab">Complete Checker - 
+            </button>
+        </li>
+        <li>
+            <button href="#tab4" class="btn btn-success mt-1 mb-1 me-3"
+                data-bs-toggle="tab">Layout Acc Customer - 
+            </button>
+        </li>
+        @endif
     </ul>
 </div>
