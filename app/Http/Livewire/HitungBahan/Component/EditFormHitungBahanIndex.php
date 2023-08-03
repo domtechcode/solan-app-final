@@ -689,10 +689,16 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepPlate)){
             foreach ($this->keterangans as $index => $keterangan) {
+                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
-                    return $plate['state_plate'] !== null || $plate['jumlah_plate'] !== null || $plate['ukuran_plate'] !== null;
+                    return $plate['state_plate'] !== false && $plate['jumlah_plate'] !== null && $plate['ukuran_plate'] !== null;
                 });
             }
+            
+            // Hapus elemen kosong di dalam array keterangans
+            $this->keterangans = array_filter($this->keterangans, function ($keterangan) {
+                return !empty($keterangan['plate']);
+            });
             
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
@@ -726,14 +732,23 @@ class EditFormHitungBahanIndex extends Component
             ]);
 
             
+
+            
         }
 
         if(isset($this->stateWorkStepSablon)){
             foreach ($this->keterangans as $index => $keterangan) {
-                $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($screen) {
-                    return $screen['state_screen'] !== null || $screen['jumlah_screen'] !== null;
+                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
+                $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($plate) {
+                    return $plate['state_screen'] !== false && $plate['jumlah_screen'];
                 });
             }
+            
+            // Hapus elemen kosong di dalam array keterangans
+            $this->keterangans = array_filter($this->keterangans, function ($keterangan) {
+                return !empty($keterangan['screen']);
+            });
+
 
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
@@ -769,10 +784,17 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepPond)){
             foreach ($this->keterangans as $index => $keterangan) {
-                $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($pond) {
-                    return $pond['state_pisau'] !== null || $pond['jumlah_pisau'] !== null;
+                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
+                $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($plate) {
+                    return $plate['state_pisau'] !== false && $plate['jumlah_pisau'] !== null;
                 });
             }
+            
+            // Hapus elemen kosong di dalam array keterangans
+            $this->keterangans = array_filter($this->keterangans, function ($keterangan) {
+                return !empty($keterangan['pond']);
+            });
+            
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
                 'keterangans.*.pond' => 'required|array|min:1',
@@ -809,6 +831,9 @@ class EditFormHitungBahanIndex extends Component
         $currentTotalScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
         $currentStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
         $currentStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
+        $currentHargaBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('harga_bahan');
+        $currentJumlahBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('jumlah_bahan');
+        $currentTotalHargaBahan = $currentHargaBahan * $currentJumlahBahan;
 
         if(isset($this->stateWorkStepCetakLabel)){
             LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
@@ -1120,6 +1145,9 @@ class EditFormHitungBahanIndex extends Component
         $newScreenTotal = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
         $newStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
         $newStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
+        $newHargaBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('harga_bahan');
+        $newJumlahBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('jumlah_bahan');
+        $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
         $statePlateDiff = array_diff($newStatePlate, $currentStatePlate);
         $stateScreenDiff = array_diff($newStateScreen, $currentStateScreen);
 
@@ -1129,7 +1157,7 @@ class EditFormHitungBahanIndex extends Component
 
 
         if($updateTask->status_id == 22 || $updateTask->status_id == 2){
-            if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen){
+            if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen || $newTotalHargaBahan > $currentTotalHargaBahan){
                 if ($updateTask) {
                     $updateTask->update([
                         'state_task' => 'Complete',
@@ -1227,7 +1255,7 @@ class EditFormHitungBahanIndex extends Component
                 ]);
             }
 
-            //$this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+            $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
             broadcast(new IndexRenderEvent('refresh'));
         }
 

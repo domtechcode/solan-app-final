@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
@@ -86,6 +87,7 @@ class RejectDashboardIndex extends Component
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
                         ->paginate($this->paginate);
+
 
         return view('livewire.rab.component.reject-dashboard-index', ['instructions' => $data])
         ->extends('layouts.app')

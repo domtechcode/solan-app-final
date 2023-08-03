@@ -24,6 +24,7 @@ class CreateFormRabsTable extends Migration
             $table->string('real')->nullable();
             $table->string('catatan')->nullable();
             $table->string('count')->nullable();
+            $table->integer('updated_count')->nullable();
             $table->timestamps();
         });
     }

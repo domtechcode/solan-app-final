@@ -14,7 +14,7 @@ use App\Models\KeteranganPlate;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
-class CreateFormRabIndex extends Component
+class EditFormRabIndex extends Component
 {
     public $rabItems = [];
     public $instructionItems = [];
@@ -77,157 +77,39 @@ class CreateFormRabIndex extends Component
         }
 
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
-        $dataWorkSteps = WorkStep::where('instruction_id', $instructionId)->get();
 
-        $priceBahanBaku = LayoutBahan::where('instruction_id', $instructionId)->get();
-        $totalPrice = 0;
+        $formRab = FormRab::where('instruction_id', $instructionId)->get();
 
-        foreach ($priceBahanBaku as $layoutBahan) {
-            $totalPrice += $layoutBahan->jumlah_bahan * $layoutBahan->harga_bahan;
-        }
+        $newHargaBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('harga_bahan');
+        $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
+        $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
-        $this->rabItems[] = [
-            'jenisPengeluaran' => 'Bahan Baku',
-            'rab' => currency_idr($totalPrice),
-        ];
-
-        $plateTotal = KeteranganPlate::where('instruction_id', $instructionId)->get();
-        $totalPlate = 0;
-
-        foreach ($plateTotal as $keteranganPlate) {
-            $totalPlate += $keteranganPlate->jumlah_plate;
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 7) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Plate',
-                    'rab' => $totalPlate,
-                ];
+        if(isset($formRab)){
+            foreach($formRab as $dataRab){
+                if($dataRab['jenis_pengeluaran'] == 'Bahan Baku'){
+                    $rab = [
+                        'jenisPengeluaran' => $dataRab['jenis_pengeluaran'],
+                        'rab' => currency_idr($newTotalHargaBahan),
+                    ];
+                }else{
+                    $rab = [
+                        'jenisPengeluaran' => $dataRab['jenis_pengeluaran'],
+                        'rab' => currency_idr($dataRab['rab']),
+                    ];
+                }
+                
+                $this->rabItems[] = $rab;
             }
+            
         }
-
-        $this->rabItems[] = [
-            'jenisPengeluaran' => 'Film',
-            'rab' => '',
-        ];
-
-        $shouldAddUVWB = false;
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 16 || $workStep->work_step_list_id == 17 || $workStep->work_step_list_id == 18 || $workStep->work_step_list_id == 23 || $workStep->work_step_list_id == 30) {
-                $shouldAddUVWB = true;
-            }
-        }
-
-        if ($shouldAddUVWB) {
-            $this->rabItems[] = [
-                'jenisPengeluaran' => 'UV/WB/Laminating',
-                'rab' => '',
-            ];
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 31) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Spot UV',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 24) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Pisau Pon',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 32) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Blok Lem',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 33) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Lem Lainnya',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        $shouldAddMatress = false;
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 25 || $workStep->work_step_list_id == 26 || $workStep->work_step_list_id == 28) {
-                $shouldAddMatress = true;
-            }
-        }
-
-        if ($shouldAddMatress) {
-            $this->rabItems[] = [
-                'jenisPengeluaran' => 'Matress Foil/Emboss',
-                'rab' => '',
-            ];
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 34) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Mata Itik + Pasang',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 14) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Tali + Pasang',
-                    'rab' => '',
-                ];
-            }
-        }
-
-        $this->rabItems[] = [
-            'jenisPengeluaran' => 'Jasa Maklun',
-            'rab' => '',
-        ];
-
-        foreach ($dataWorkSteps as $workStep) {
-            if ($workStep->work_step_list_id == 12) {
-                $this->rabItems[] = [
-                    'jenisPengeluaran' => 'Biaya Packing',
-                    'rab' => '',
-                ];
-            }
-        }
-        
-        $this->rabItems[] = [
-            'jenisPengeluaran' => 'Biaya Pengiriman',
-            'rab' => '',
-        ];
-        
-        $this->rabItems[] = [
-            'jenisPengeluaran' => 'Biaya Lainnya',
-            'rab' => '',
-        ];
-
 
     }
 
     public function render()
     {
-        return view('livewire.rab.component.create-form-rab-index')->extends('layouts.app')
+        return view('livewire.rab.component.edit-form-rab-index')->extends('layouts.app')
         ->section('content')
-        ->layoutData(['title' => 'Form RAB']);
+        ->layoutData(['title' => 'Form Edit RAB']);
     }
 
     public function save()
@@ -245,7 +127,8 @@ class CreateFormRabIndex extends Component
         }
 
         $currentInstructionData = Instruction::find($this->currentInstructionId);
-        
+        $dataRabCount = FormRab::where('instruction_id', $currentInstructionData->id)->whereNotNull('updated_count')->count();
+
         foreach($this->rabItems as $datarabItem){
             $createRab = FormRab::create([
                     'instruction_id' => $this->currentInstructionId,
@@ -253,6 +136,7 @@ class CreateFormRabIndex extends Component
                     'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'], 
                     'rab' => $datarabItem['rab'], 
                     'count' => $currentInstructionData['count'], 
+                    'updated_count' => $dataRabCount + 1, 
             ]);
         }
 
@@ -271,7 +155,39 @@ class CreateFormRabIndex extends Component
         $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
                 ->where('work_step_list_id', 3)
                 ->first();
+
+        if($updateTask->status_id == 22){
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
             
+                $updateNextStep = WorkStep::find($updateTask->reject_from_id);
+                
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+
+                $updateTask->update([
+                    'reject_from_id' => NULL,
+                    'reject_from_status' => NULL,
+                    'reject_from_job' => NULL,
+                ]);
+            }
+
+            $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+            broadcast(new IndexRenderEvent('refresh'));
+        }else{
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -307,6 +223,9 @@ class CreateFormRabIndex extends Component
 
         broadcast(new IndexRenderEvent('refresh'));
 
+        }
+            
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Create Instruksi Kerja',
@@ -322,7 +241,7 @@ class CreateFormRabIndex extends Component
     public function backBtn()
     {
         $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-            'status_id' => 1,
+            'status_id' => 22,
         ]);
 
         return redirect()->route('rab.dashboard');
@@ -347,17 +266,17 @@ class CreateFormRabIndex extends Component
 
         $updateReject->update([
             'state_task' => 'Running',
-            'status_task' => 'Reject',
-            'status_id' => 3,
-            'job_id' => 5,
-            'reject_from_id' => $currentWorkStep->id,
-            'reject_from_status' => $currentWorkStep->status_id,
-            'reject_from_job' => $currentWorkStep->work_step_list_id,
+            'status_task' => 'Reject Requirements', 
             'count_reject' => $updateReject->count_reject + 1,
+            'status_id' => 22,
+            'job_id' => 5,
+            'reject_from_id' => $currentWorkStep->reject_from_id,
+            'reject_from_status' => $currentWorkStep->reject_from_status,
+            'reject_from_job' => $currentWorkStep->reject_from_job,
         ]);
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-            'status_id' => 3,
+            'status_id' => 22,
             'job_id' => 5,
         ]);
         
