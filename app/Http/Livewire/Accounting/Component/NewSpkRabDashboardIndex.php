@@ -80,6 +80,9 @@ class NewSpkRabDashboardIndex extends Component
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms);
+                    })->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')
+                            ->orWhereNull('group_priority');
                     });
                 })
                 ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
@@ -142,7 +145,7 @@ class NewSpkRabDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
+        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->where('real', null)->get();
         
         if(isset($dataInstructionRab)){
             foreach($dataInstructionRab as $item){
