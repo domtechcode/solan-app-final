@@ -88,6 +88,76 @@ class AllDashboardIndex extends Component
     }
 
 
+    public function deleteSpk($instructionDeleteId)
+    {
+        $deleteSpk = WorkStep::where('instruction_id', $instructionDeleteId)->update([
+            'spk_status' => 'Deleted'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Delete Instruksi Kerja',
+            'message' => 'SPK berhasil didelete',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function holdSpk($instructionHoldId)
+    {
+        $holdSpk = WorkStep::where('instruction_id', $instructionHoldId)->update([
+            'spk_status' => 'Hold'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Instruksi Kerja',
+            'message' => 'SPK berhasil dihold',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+        
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+    public function cancelSpk($instructionCancelId)
+    {
+        $cancelSpk = WorkStep::where('instruction_id', $instructionCancelId)->update([
+            'spk_status' => 'Cancel'
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Cancel Instruksi Kerja',
+            'message' => 'SPK berhasil dicancel',
+        ]);
+
+        $this->emit('notifSent', [
+            'instruction_id' => '',
+            'user_id' => '',
+            'message' => '',
+            'conversation_id' => '',
+            'receiver_id' => '',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal');
+    }
+
+
     public function modalInstructionDetailsAll($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);

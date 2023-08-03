@@ -48,7 +48,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
-                                    @if ($dataInstruction->instruction->spk_type === 'sample' && $dataInstruction->instruction->count !== null)
+                                    @if ($dataInstruction->instruction->spk_type !== 'production' && $dataInstruction->instruction->count !== null)
                                         - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
                                     @endif
                                 </td>

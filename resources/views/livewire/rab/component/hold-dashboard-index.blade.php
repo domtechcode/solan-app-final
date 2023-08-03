@@ -49,7 +49,11 @@
                                         <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupHold({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
-                                <td>{{ $dataInstruction->instruction->spk_type }}</td>
+                                <td>{{ $dataInstruction->instruction->spk_type }}
+                                    @if ($dataInstruction->instruction->spk_type !== 'production' && $dataInstruction->instruction->count !== null)
+                                        - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
@@ -378,7 +382,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-warning" wire:click="unholdSpk({{ $instructionSelectedId }})">Unhold</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

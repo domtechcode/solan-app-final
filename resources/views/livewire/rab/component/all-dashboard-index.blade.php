@@ -49,7 +49,11 @@
                                         <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
-                                <td>{{ $dataInstruction->instruction->spk_type }}</td>
+                                <td>{{ $dataInstruction->instruction->spk_type }}
+                                    @if ($dataInstruction->instruction->spk_type !== 'production' && $dataInstruction->instruction->count !== null)
+                                        - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
@@ -381,9 +385,6 @@
                     <button type="submit" class="btn btn-icon btn-primary" wire:click.prevent="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i> Delete</button>
                     <button class="btn btn-danger" wire:click="holdSpk({{ $instructionSelectedId }})">Hold</button>
                     <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i class="fe fe-warning"></i> Cancel</button>
-                    @if($instructionSelectedId)
-                        <a class="btn btn-info" href="{{ route('followUp.reorderInstruction', ['instructionId' =>  $instructionSelectedId]) }}">Reorder</a>
-                    @endif
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
