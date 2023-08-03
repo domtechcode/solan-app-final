@@ -46,6 +46,7 @@ class CreateInstructionsTable extends Migration
             $table->string('type_ppn')->nullable();
             $table->string('ppn')->nullable();
             $table->string('count')->nullable();
+            $table->longtext('alasan_revisi')->nullable();
             $table->timestamps();
         });
     }

@@ -2,11 +2,16 @@
 
 namespace App\Http\Livewire\FollowUp\Component;
 
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class CompleteDashboardIndex extends Component
 {
@@ -17,6 +22,7 @@ class CompleteDashboardIndex extends Component
     public $paginate = 10;
     public $search = '';
     public $data;
+    public $notes = [];
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -38,12 +44,25 @@ class CompleteDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+    public $alasan_revisi;
+    public $workSteps;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
     {
         $this->render();
+    }
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
     }
 
     public function mount()
@@ -87,6 +106,110 @@ class CompleteDashboardIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
+    public function revisiSample()
+    {
+        $this->validate([
+            'alasan_revisi' => 'required',
+        ]);
+
+        $updateAlasanRevisi = Instruction::find($this->selectedInstruction->id);
+
+        if($this->alasan_revisi){
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingCatatanAlasanRevisi = json_decode($updateAlasanRevisi->alasan_revisi, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
+            $timestampedKeterangan = $this->alasan_revisi . ' - [' . now() . ']';
+            $existingCatatanAlasanRevisi[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $updateAlasanRevisi->update([
+                'alasan_revisi' => json_encode($existingCatatanAlasanRevisi),
+            ]);
+        }
+
+        $updateAlasanRevisi->update([
+            'count' => $updateAlasanRevisi->count + 1,
+        ]);
+
+        if(!empty($this->notes)){
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $updateAlasanRevisi->id,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
+        $dataCurrentWorkStep = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->update([
+            'spk_status' => 'Running',
+            'state_task' => 'Not Running',
+            'status_task' => 'Waiting Running',
+            'target_date' => null,
+            'schedule_date' => null,
+        ]);
+
+        $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 0)->first();
+        $workStepNext = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 1)->first();
+
+        $workStepCurrent->update([
+            'state_task' => 'Running',
+            'status_task' => 'Process',
+        ]);
+
+        $workStepNext->update([
+            'state_task' => 'Running',
+            'status_task' => 'Pending Approved',
+            'dikerjakan' => Carbon::now()->toDateTimeString(),
+            'schedule_date' => Carbon::now(),
+            'target_date' => Carbon::now(),
+        ]);
+
+        $dataCurrentWorkStepStatusJob = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->update([
+            'status_id' => 1,
+            'job_id' => $workStepNext->work_step_list_id,
+        ]);
+
+        //notif
+        if ($workStepNext->work_step_list_id == 4) {
+            $userDestination = User::where('role', 'Stock')->get();
+            foreach($userDestination as $dataUser){
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
+            }
+        } else if ($workStepNext->work_step_list_id == 5) {
+            $userDestination = User::where('role', 'Hitung Bahan')->get();
+            foreach($userDestination as $dataUser){
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
+            }
+        } else {
+            $userDestination = User::where('role', 'Penjadwalan')->get();
+            foreach($userDestination as $dataUser){
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Create Instruksi Kerja',
+            'message' => 'Berhasil membuat instruksi kerja',
+        ]);
+
+        $this->notes = [];
+        $this->alasan_revisi = '';
+        // $this->reset();
+
+        $this->dispatchBrowserEvent('close-modal-complete');
+    }
+
     public function modalInstructionDetailsComplete($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
@@ -96,8 +219,22 @@ class CompleteDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
         $this->dispatchBrowserEvent('show-detail-instruction-modal-complete');
+    }
+
+    public function modalInstructionDetailsRevisiSample($instructionId)
+    {
+        $this->notes[] = '';
+        $this->selectedInstruction = Instruction::find($instructionId);
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-revisi-sample');
     }
 
     public function modalInstructionDetailsGroupComplete($groupId)
@@ -116,5 +253,15 @@ class CompleteDashboardIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-complete');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
