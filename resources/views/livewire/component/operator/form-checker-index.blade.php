@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="col-sm-12 col-md-12">
-                            <label class="form-label">Revisi</label>
+                            <label class="form-label">History Revisi</label>
                             <div class="input-group control-group" style="padding-top: 5px;">
                                 <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanRevisi"></textarea>
                             </div>
@@ -164,7 +164,7 @@
                             <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="border-bottom-0">Revisi</th>
+                                        <th class="border-bottom-0">History Revisi</th>
                                         <th class="border-bottom-0">Tanggal</th>
                                     </tr>
                                 </thead>

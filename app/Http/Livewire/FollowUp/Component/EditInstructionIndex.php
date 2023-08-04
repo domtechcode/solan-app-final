@@ -381,13 +381,12 @@ class EditInstructionIndex extends Component
                     'status_task' => 'Revisi Qty',
                 ]);
 
-                
-
                 $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                     'status_id' => 26,
                     'job_id' => 5,
                     'state_task' => 'Running',
                     'status_task' => 'Process',
+                    'spk_status' => 'Running',
                 ]);
 
                 $userDestination = User::where('role', 'Hitung Bahan')->get();
