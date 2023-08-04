@@ -483,7 +483,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i> Follow Up</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
                 </div>
             </div>
         </div>

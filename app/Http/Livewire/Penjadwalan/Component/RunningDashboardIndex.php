@@ -508,7 +508,7 @@ class RunningDashboardIndex extends Component
 
         $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
         $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 1)->first();
-        
+       
         $workStepDestination->update([
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
