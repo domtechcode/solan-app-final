@@ -72,9 +72,9 @@ class NewSpkDashboardIndex extends Component
                 ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
                 ->where(function ($query) {
                     $query->where(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [1]);
+                        $subQuery->whereIn('status_id', [1, 26]);
                     })->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [2, 26])
+                        $subQuery->whereIn('status_id', [2])
                             ->where('user_id', Auth()->user()->id);
                     });
                 })

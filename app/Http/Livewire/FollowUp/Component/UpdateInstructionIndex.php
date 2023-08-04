@@ -282,8 +282,6 @@ class UpdateInstructionIndex extends Component
                 }
                 broadcast(new IndexRenderEvent('refresh'));
             }
-
-            broadcast(new IndexRenderEvent('refresh'));
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',
