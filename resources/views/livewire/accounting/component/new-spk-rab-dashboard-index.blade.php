@@ -208,7 +208,7 @@
                                         <tr>
                                             <td>{{ $selectedInstruction->price ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->type_ppn ?? '-' }}</td>
-                                            @if($selectedInstruction->type_ppn == 'Exclude')
+                                            @if($selectedInstruction->type_ppn == 'Include')
                                             <td>{{ number_format($selectedInstruction->price / 1.11, 2) }}</td>
                                             @else
                                                 <td>{{ $selectedInstruction->price ?? '-' }}</td>
@@ -406,6 +406,16 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col d-flex justify-content-center">
+                            @if(isset($workStepHitungBahanNew))
+                                <div class="btn-list">  
+                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('accounting.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                                </div>
+                            @endif
                         </div>
                     </div>
 

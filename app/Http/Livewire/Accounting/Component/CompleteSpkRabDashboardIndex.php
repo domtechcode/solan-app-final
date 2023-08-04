@@ -43,6 +43,8 @@ class CompleteSpkRabDashboardIndex extends Component
     public $dataRab = [];
     public $catatanRab;
 
+    public $workStepHitungBahan;
+
     protected $listeners = ['indexRender' => 'renderIndex'];
 
     public function renderIndex()
@@ -108,6 +110,12 @@ class CompleteSpkRabDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+
+        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
+        if(isset($dataworkStepHitungBahan)){
+            $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
+        }
+        
         $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
         
         if(isset($dataInstructionRab)){
@@ -131,6 +139,43 @@ class CompleteSpkRabDashboardIndex extends Component
         }
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-complete-spk');
+    }
+
+    public function editRab()
+    {
+        $this->validate([
+            'dataRab.*.id' => 'required',
+            'dataRab.*.jenis_pengeluaran' => 'required',
+            'dataRab.*.rab' => 'required',
+            'dataRab.*.real' => 'required',
+        ]);
+
+        if(isset($this->dataRab)){
+            foreach($this->dataRab as $key => $data){
+                $updateRab = FormRab::find($data['id']);
+                $updateRab->update([
+                    'jenis_pengeluaran' => $data['jenis_pengeluaran'],
+                    'rab' => currency_convert($data['rab']),
+                    'real' => currency_convert($data['real']),
+                ]);
+            }
+        }
+
+        $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 3)->update([
+            'state_task' => 'Complete Accounting',
+        ]);
+
+        $this->dataRab = [];
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'RAB Instruksi Kerja',
+            'message' => 'Berhasil menyimpan data RAB',
+        ]);
+
+        broadcast(new IndexRenderEvent('refresh'));
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal-complete-spk');
     }
 
     public function modalInstructionDetailsGroupCompleteSpk($groupId)

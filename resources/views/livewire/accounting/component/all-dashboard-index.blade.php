@@ -204,7 +204,7 @@
                                         <tr>
                                             <td>{{ $selectedInstruction->price ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->type_ppn ?? '-' }}</td>
-                                            @if($selectedInstruction->type_ppn == 'Exclude')
+                                            @if($selectedInstruction->type_ppn == 'Include')
                                             <td>{{ number_format($selectedInstruction->price / 1.11, 2) }}</td>
                                             @else
                                                 <td>{{ $selectedInstruction->price ?? '-' }}</td>

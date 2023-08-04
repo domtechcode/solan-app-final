@@ -42,6 +42,7 @@ class NewSpkRabDashboardIndex extends Component
     public $selectedGroupChild;
     public $dataRab = [];
     public $catatanRab;
+    public $workStepHitungBahanNew;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -145,6 +146,13 @@ class NewSpkRabDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+
+        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
+        if(isset($dataworkStepHitungBahanNew)){
+            $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
+        }
+
+
         $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->where('real', null)->get();
         
         if(isset($dataInstructionRab)){

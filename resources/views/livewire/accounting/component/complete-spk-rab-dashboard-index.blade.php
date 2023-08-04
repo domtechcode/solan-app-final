@@ -208,7 +208,7 @@
                                         <tr>
                                             <td>{{ $selectedInstruction->price ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->type_ppn ?? '-' }}</td>
-                                            @if($selectedInstruction->type_ppn == 'Exclude')
+                                            @if($selectedInstruction->type_ppn == 'Include')
                                             <td>{{ number_format($selectedInstruction->price / 1.11, 2) }}</td>
                                             @else
                                                 <td>{{ $selectedInstruction->price ?? '-' }}</td>
@@ -409,6 +409,16 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col d-flex justify-content-center">
+                            @if(isset($workStepHitungBahan))
+                                <div class="btn-list">  
+                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('accounting.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -428,7 +438,7 @@
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.jenis_pengeluaran" class="form-control" autocomplete="off" placeholder="Pengeluaran" readonly>
+                                                        <input type="text" wire:model="dataRab.{{ $key }}.jenis_pengeluaran" class="form-control" autocomplete="off" placeholder="Pengeluaran">
                                                     </div>
                                                     @error('dataRab.'.$key.'.jenis_pengeluaran') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                 </div>
@@ -436,7 +446,7 @@
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.rab" class="form-control" autocomplete="off" placeholder="RAB" readonly>
+                                                        <input type="text" wire:model="dataRab.{{ $key }}.rab" class="form-control" autocomplete="off" placeholder="RAB">
                                                     </div>
                                                     @error('dataRab.'.$key.'.rab') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                 </div>
@@ -444,7 +454,7 @@
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.real" class="form-control" autocomplete="off" placeholder="REAL" readonly>
+                                                        <input type="text" wire:model="dataRab.{{ $key }}.real" class="form-control" autocomplete="off" placeholder="REAL">
                                                     </div>
                                                     @error('dataRab.'.$key.'.real') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                 </div>
@@ -459,6 +469,7 @@
                     </div>                    
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-success" wire:click="editRab">Edit</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
