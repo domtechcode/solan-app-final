@@ -382,7 +382,7 @@ class EditInstructionIndex extends Component
                     'status_id' => 26,
                     'job_id' => 5,
                     'state_task' => 'Running',
-                'status_task' => 'Process',
+                    'status_task' => 'Process',
                 ]);
 
                 $userDestination = User::where('role', 'Hitung Bahan')->get();
