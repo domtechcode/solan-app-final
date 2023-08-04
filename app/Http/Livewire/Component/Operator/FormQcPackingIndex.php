@@ -211,6 +211,19 @@ class FormQcPackingIndex extends Component
                     ]);
                 }
             }
+
+            $searchWaitingSpkQc = Instruction::where('waiting_spk_qc', $instructionData->spk_number)->first();
+
+            if(isset($searchWaitingSpkQc)){
+                $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
+                    'spk_status' => 'Running',
+                ]);
+            }else{
+                $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
+                    'spk_status' => 'Failed Waiting Qty QC',
+                ]);
+            }
+
         }
         
         $this->emit('flashMessage', [

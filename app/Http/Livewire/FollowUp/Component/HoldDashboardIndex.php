@@ -39,6 +39,8 @@ class HoldDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+    public $waitingSpkHoldQc;
+    public $spkProduction;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -49,6 +51,7 @@ class HoldDashboardIndex extends Component
 
     public function mount()
     {
+        $this->spkProduction = Instruction::where('spk_type', 'production')->get();
         $this->search = request()->query('search', $this->search);
     }
 
@@ -62,8 +65,11 @@ class HoldDashboardIndex extends Component
 
     public function render()
     {
+        // Init Event
+        $this->dispatchBrowserEvent('pharaonic.select2.init');
+
         $data = WorkStep::where('work_step_list_id', 1)
-                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB'])
+                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
@@ -103,9 +109,31 @@ class HoldDashboardIndex extends Component
             'message' => 'SPK berhasil dijalankan kembali',
         ]);
 
-        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-hold');
+    }
 
-        $this->dispatchBrowserEvent('close-modal');
+    public function updateSpkHoldQc($instructionHoldQcId)
+    {
+        $this->validate([
+            'waitingSpkHoldQc' => 'required',
+        ]);
+
+        $updateInstruction = Instruction::find($instructionHoldQcId);
+        $updateInstruction->update([
+            'waiting_spk_qc' => $this->waitingSpkHoldQc,
+        ]);
+
+        $currentWorkStep = WorkStep::where('instruction_id', $updateInstruction->id)->update([
+            'spk_status' => 'Hold Waiting Qty QC',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Qc Instruksi Kerja',
+            'message' => 'SPK berhasil disimpan',
+        ]);
+
+        $this->dispatchBrowserEvent('close-modal-hold');
     }
 
     public function modalInstructionDetailsHold($instructionId)
@@ -120,6 +148,27 @@ class HoldDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-hold');
+    }
+
+    public function modalInstructionDetailsHoldQc($instructionId)
+    {
+        $this->selectedInstruction = Instruction::find($instructionId);
+        $this->instructionSelectedId = $instructionId;
+        $this->waitingSpkHoldQc = $this->selectedInstruction->waiting_spk_qc;
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        
+
+
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target'    => '#waitingSpkHoldQc',
+        ]);
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-hold-qc');
     }
 
     public function modalInstructionDetailsGroupHold($groupId)

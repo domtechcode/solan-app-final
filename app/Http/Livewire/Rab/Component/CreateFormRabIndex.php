@@ -390,7 +390,7 @@ class CreateFormRabIndex extends Component
         ]);
 
         broadcast(new IndexRenderEvent('refresh'));
-        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
+        $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
         if($this->notes){
             foreach ($this->notes as $input) {
@@ -416,11 +416,11 @@ class CreateFormRabIndex extends Component
     public function holdQC()
     {
         $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-            'spk_status' => 'Hold Waiting Qty QC',
+            'spk_status' => 'Hold QC',
         ]);
 
         broadcast(new IndexRenderEvent('refresh'));
-        $this->messageSent(['createdMessage' => 'error', 'selectedConversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiverUser' => 2]);
+        $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
         if($this->notes){
             foreach ($this->notes as $input) {
