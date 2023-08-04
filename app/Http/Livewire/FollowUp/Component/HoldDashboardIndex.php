@@ -69,7 +69,7 @@ class HoldDashboardIndex extends Component
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
         $data = WorkStep::where('work_step_list_id', 1)
-                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc'])
+                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc', 'Failed Waiting Qty QC'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {

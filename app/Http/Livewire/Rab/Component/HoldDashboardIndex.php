@@ -63,7 +63,7 @@ class HoldDashboardIndex extends Component
     public function render()
     {
         $data = WorkStep::where('work_step_list_id', 3)
-                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB'])
+                        ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc', 'Failed Waiting Qty QC'])
                         ->whereHas('instruction', function ($query) {
                             $searchTerms = '%' . $this->search . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {

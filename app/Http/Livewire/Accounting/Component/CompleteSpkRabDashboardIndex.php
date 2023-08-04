@@ -71,7 +71,7 @@ class CompleteSpkRabDashboardIndex extends Component
                 ->where('state_task', 'Complete Accounting')
                 ->where('status_task', 'Complete')
                 ->where('user_id', '!=', null)
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
                 ->whereHas('instruction', function ($query) {
                     $searchTerms = '%' . $this->search . '%';
                     $query->where(function ($subQuery) use ($searchTerms) {
