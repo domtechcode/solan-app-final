@@ -174,7 +174,12 @@ class CreateFormHitungBahanIndex extends Component
 
     public function addRincianPlate($keteranganIndex)
     {
-        $this->keterangans[$keteranganIndex]['rincianPlate'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianPlate'][] = [
+            'state' => '', // Set default values here
+            'plate' => '',
+            'jumlah_lembar_cetak' => '',
+            'waste' => '',
+        ];
     }
 
     public function removeRincianPlate($index, $keteranganIndex, $rincianIndexPlate)

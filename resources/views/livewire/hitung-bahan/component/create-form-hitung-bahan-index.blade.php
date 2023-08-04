@@ -936,6 +936,10 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <?php
+                                                                $totalLembarCetakPlate = 0;
+                                                                $totalWastePlate = 0;
+                                                            ?>
                                                             @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
                                                                 <tr>
                                                                     <td>
@@ -1013,7 +1017,25 @@
                                                                         </div>
                                                                     </td>
                                                                 </tr>
+                                                                <?php
+                                                                    $jumlahLembarCetak = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'];
+                                                                    $waste = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] ?? 0;
+
+                                                                    if (is_numeric($jumlahLembarCetak)) {
+                                                                        $totalLembarCetakPlate += $jumlahLembarCetak;
+                                                                    }
+
+                                                                    if (is_numeric($waste)) {
+                                                                        $totalWastePlate += $waste;
+                                                                    }
+                                                                ?>
                                                             @endforeach
+                                                            <tr>
+                                                                <td>Total</td>
+                                                                <td>-</td>
+                                                                <td>{{ $totalLembarCetakPlate }}</td>
+                                                                <td>{{ $totalWastePlate }}</td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -1052,6 +1074,10 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            <?php
+                                                                $totalLembarCetakScreen = 0;
+                                                                $totalWasteScreen = 0;
+                                                            ?>
                                                             @foreach ($keterangan['rincianScreen'] ?? [] as $rincianIndexScreen => $rincian)
                                                                 <tr>
                                                                     <td>
@@ -1129,7 +1155,25 @@
                                                                         </div>
                                                                     </td>
                                                                 </tr>
+                                                                <?php
+                                                                    $jumlahLembarCetakScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['jumlah_lembar_cetak'];
+                                                                    $wasteScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['waste'] ?? 0;
+
+                                                                    if (is_numeric($jumlahLembarCetakScreen)) {
+                                                                        $totalLembarCetakScreen += $jumlahLembarCetakScreen;
+                                                                    }
+
+                                                                    if (is_numeric($wasteScreen)) {
+                                                                        $totalWasteScreen += $wasteScreen;
+                                                                    }
+                                                                ?>
                                                             @endforeach
+                                                            <tr>
+                                                                <td>Total</td>
+                                                                <td>-</td>
+                                                                <td>{{ $totalLembarCetakScreen }}</td>
+                                                                <td>{{ $totalWasteScreen }}</td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
