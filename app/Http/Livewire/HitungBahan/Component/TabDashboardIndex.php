@@ -28,7 +28,7 @@ class TabDashboardIndex extends Component
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Revisi Qty'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->where(function ($query) {
                         $query->where(function ($subQuery) {
                             $subQuery->whereIn('status_id', [1]);
@@ -47,7 +47,7 @@ class TabDashboardIndex extends Component
         $this->dataCountProcessSpk = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Process'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->where(function ($query) {
                 $query->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [1, 23]);
@@ -66,7 +66,7 @@ class TabDashboardIndex extends Component
         $this->dataCountRejectSpk = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->where(function ($query) {
                         $query->where(function ($subQuery) {
                             $subQuery->whereIn('status_id', [3, 22, 26]);
@@ -84,7 +84,7 @@ class TabDashboardIndex extends Component
 
         $this->dataCountIncomingSpk = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Not Running')
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->where(function ($query) {
                 $query->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [3]);

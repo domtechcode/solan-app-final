@@ -28,7 +28,7 @@ class TabDashboardIndex extends Component
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 3)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Revisi Qty'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->where(function ($query) {
                 $query->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [1, 26]);
@@ -47,7 +47,7 @@ class TabDashboardIndex extends Component
         $this->dataCountRejectSpk = WorkStep::where('work_step_list_id', 3)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->whereIn('status_id', [3, 22])
                 ->whereHas('instruction', function ($query) {
                     $query->where('group_priority', '!=', 'child')
@@ -58,7 +58,7 @@ class TabDashboardIndex extends Component
 
         $this->dataCountIncomingSpk = WorkStep::where('work_step_list_id', 3)
                 ->where('state_task', 'Not Running')
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                 ->whereHas('instruction', function ($query) {
                     $query->where('group_priority', '!=', 'child')
                          ->orWhereNull('group_priority');
@@ -67,7 +67,7 @@ class TabDashboardIndex extends Component
                 ->count();
 
         $this->dataCountHoldSpk = WorkStep::where('work_step_list_id', 3)
-                ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB'])
+                ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc', 'Failed Waiting Qty QC'])
                 ->whereHas('instruction', function ($query) {
                     $query->where('group_priority', '!=', 'child')
                          ->orWhereNull('group_priority');
