@@ -47,6 +47,7 @@ class CreateInstructionsTable extends Migration
             $table->string('ppn')->nullable();
             $table->string('count')->nullable();
             $table->longtext('alasan_revisi')->nullable();
+            $table->string('waiting_spk_qc')->nullable();
             $table->timestamps();
         });
     }
