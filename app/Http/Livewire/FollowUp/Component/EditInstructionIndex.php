@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\FollowUp\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -67,6 +68,7 @@ class EditInstructionIndex extends Component
     public $currentInstructionId;
     public $keteranganReject;
     public $keteranganCatatan;
+    public $qtyState;
 
 
     public function addField($name, $id)
@@ -185,6 +187,7 @@ class EditInstructionIndex extends Component
             'order_name' => 'required',
             'quantity' => 'required',
             'workSteps' => 'required',
+            'qtyState' => 'required',
         ]);
 
         $customerList = Customer::find($this->customer);
@@ -350,21 +353,57 @@ class EditInstructionIndex extends Component
                     'reject_from_id' => $lastwork->reject_from_id,
                     'reject_from_status' => $lastwork->reject_from_status,
                     'reject_from_job' => $lastwork->reject_from_job,
+                    'count_reject' => $lastwork->count_reject,
+                    'count_revisi' => $lastwork->count_revisi,
+                    'task_priority' => $lastwork->task_priority,
+                    'dikerjakan' => $lastwork->dikerjakan,
+                    'selesai' => $lastwork->selesai,
+                    'keterangan_reject' => $lastwork->keterangan_reject,
+                    'keterangan_reschedule' => $lastwork->keterangan_reschedule,
+                    'spk_status' => $lastwork->spk_status,
                 ]);
             }
 
+            
             $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 1)->first();
-
             $findSourceReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $currentWorkStep->reject_from_job)->first();
+            
+            if($this->qtyState == 'Ya'){
+                $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->first();
 
-            $findSourceReject->update([
-                'status_task' => 'Pending Approved',
-            ]);
+                $updateWorkStepEstimator->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Revisi Qty',
+                ]);
 
-            $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                'status_id' => $currentWorkStep->reject_from_status,
-                'job_id' => $currentWorkStep->reject_from_job,
-            ]);
+                
+
+                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                    'status_id' => 26,
+                    'job_id' => 5,
+                    'state_task' => 'Running',
+                'status_task' => 'Process',
+                ]);
+
+                $userDestination = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
+            }else{
+                $findSourceReject->update([
+                    'status_task' => 'Pending Approved',
+                ]);
+    
+                $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                    'status_id' => $currentWorkStep->reject_from_status,
+                    'job_id' => $currentWorkStep->reject_from_job,
+                ]);
+                
+                //notif
+                $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
+                broadcast(new IndexRenderEvent('refresh'));
+            }
 
             $currentWorkStep->update([
                 'reject_from_id' => null,
@@ -375,7 +414,6 @@ class EditInstructionIndex extends Component
                 'selesai' => Carbon::now()->toDateTimeString()
             ]);
 
-            
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
                 $files = Files::where('instruction_id', $selectedLayout->id)->where('type_file', 'layout')->get();
@@ -446,9 +484,7 @@ class EditInstructionIndex extends Component
                 }
             }
             
-            //notif
-            $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
-            broadcast(new IndexRenderEvent('refresh'));
+            
             
             $this->emit('flashMessage', [
                 'type' => 'success',
