@@ -35,6 +35,32 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <div class="col-sm-12 col-md-12 mb-3">
+                            <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="border-bottom-0">Revisi</th>
+                                        <th class="border-bottom-0">Tanggal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($historyRevisi as $item)
+                                    <tr>
+                                        <td>
+                                            {{ $item['catatan'] }}
+                                        </td>
+                                        <td>
+                                            {{ $item['created_at'] }}
+                                        </td>
+                                    </tr> 
+                                    @empty
+                                        No Data !!
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
                         <div class="col-sm-12 col-md-12">
                             <label class="form-label">Revisi</label>
                             <div class="input-group control-group" style="padding-top: 5px;">
@@ -133,6 +159,32 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="col-sm-12 col-md-12 mb-3">
+                            <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="border-bottom-0">Revisi</th>
+                                        <th class="border-bottom-0">Tanggal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($historyRevisi as $item)
+                                    <tr>
+                                        <td>
+                                            {{ $item['catatan'] }}
+                                        </td>
+                                        <td>
+                                            {{ $item['created_at'] }}
+                                        </td>
+                                    </tr> 
+                                    @empty
+                                        No Data !!
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
                         <div class="col-sm-12 col-md-12">
                             <label class="form-label">Revisi</label>
                             <div class="input-group control-group" style="padding-top: 5px;">

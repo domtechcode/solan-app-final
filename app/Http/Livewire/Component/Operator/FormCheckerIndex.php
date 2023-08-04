@@ -27,6 +27,7 @@ class FormCheckerIndex extends Component
     public $dataInstruction;
     public $catatanProsesPengerjaan;
     public $catatanRevisi;
+    public $historyRevisi;
 
     public function mount($instructionId, $workStepId)
     {
@@ -62,6 +63,8 @@ class FormCheckerIndex extends Component
                 $this->fileFilmData[] = $fileFilm;
             }
         }
+
+        $this->historyRevisi = Catatan::where('instruction_id', $this->instructionCurrentId)->where('tujuan', 6)->where('kategori', 'revisi')->get();
     }
 
     public function render()
