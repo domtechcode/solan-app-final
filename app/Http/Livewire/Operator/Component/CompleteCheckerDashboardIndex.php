@@ -57,6 +57,7 @@ class CompleteCheckerDashboardIndex extends Component
     public $alasan_revisi;
     public $notes = [];
     public $filearsiprevisi = [];
+    public $filearsipacc = [];
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -165,7 +166,7 @@ class CompleteCheckerDashboardIndex extends Component
         ]);
 
         if(!empty($this->filearsiprevisi)){
-            $folder = "public/".$updateAlasanRevisi->spk_number."/follow-up";
+            $folder = "public/".$updateAlasanRevisi->spk_number."/checker";
 
             $norevisi = Files::where('instruction_id', $updateAlasanRevisi->id)->where('type_file', 'arsip')->count();
             foreach ($this->filearsiprevisi as $file) {
@@ -250,6 +251,10 @@ class CompleteCheckerDashboardIndex extends Component
 
     public function accCustomer()
     {
+        $this->validate([
+            'filearsipacc' => 'required',
+        ]);
+
         $dataCurrentWorkStepAcc = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
             'spk_status' => 'Acc',
         ]);
@@ -260,12 +265,33 @@ class CompleteCheckerDashboardIndex extends Component
             'message' => 'Berhasil Acc instruksi kerja',
         ]);
 
+        $updateAcc = Instruction::find($this->selectedInstruction->id);
+
+        if(!empty($this->filearsipacc)){
+            $folder = "public/".$updateAcc->spk_number."/checker";
+
+            $noarispacc = Files::where('instruction_id', $updateAcc->id)->where('type_file', 'arsip')->count();
+            foreach ($this->filearsipacc as $file) {
+                $fileName = $updateAcc->id . '-file-arsip-acc-customer-'.$noarispacc . '.' . $file->getClientOriginalExtension();
+                Storage::putFileAs($folder, $file, $fileName);
+                $noarispacc ++;
+
+                Files::create([
+                    'instruction_id' => $updateAcc->id,
+                    "user_id" => Auth()->user()->id,
+                    "type_file" => "arsip",
+                    "file_name" => $fileName,
+                    "file_path" => $folder,
+                ]);
+            }
+        }
+
         $this->dispatchBrowserEvent('close-modal-complete-checker');
     }
 
     public function modalInstructionDetailsRevisiLayout($instructionId)
     {
-        $this->notes[] = '';
+        $this->notes = [];
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();

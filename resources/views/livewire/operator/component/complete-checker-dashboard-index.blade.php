@@ -397,7 +397,7 @@
                                     </div>
                                     <div class="input-group control-group" style="padding-top: 5px;">
                                         <textarea class="form-control mb-4" placeholder="Alasan Revisi Layout" rows="4"
-                                            wire:model.defer="alasan_revisi"></textarea>
+                                            wire:model="alasan_revisi"></textarea>
                                     </div>
                                     @error('alasan_revisi')<span class="text-danger">{{ $message }}</span>@enderror
 
@@ -413,7 +413,7 @@
                                             maxFileSize="1024mb"
                                         />
                     
-                                        @error('filearsip') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                        @error('filearsiprevisi') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -457,6 +457,25 @@
                                         </div>
                                     @endforeach
 
+                                </div>
+                            </div>
+
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="form-group">
+                                        <label class="form-label general">File ACC Customer</label>
+                                        <x-forms.filepond
+                                            wire:model="filearsipacc"
+                                            multiple
+                                            allowImagePreview
+                                            imagePreviewMaxHeight="200"
+                                            allowFileTypeValidation
+                                            allowFileSizeValidation
+                                            maxFileSize="1024mb"
+                                        />
+                    
+                                        @error('filearsipacc') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                    </div>
                                 </div>
                             </div>
                         </div>
