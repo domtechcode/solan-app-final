@@ -144,7 +144,7 @@ class UpdateInstructionIndex extends Component
 
     public function update()
     {
-       $this->validate([
+        $this->validate([
             'spk_type' => 'required',
             'spk_number' => 'required',
             'customer' => 'required',
@@ -152,7 +152,11 @@ class UpdateInstructionIndex extends Component
             'shipping_date' => 'required',
             'order_name' => 'required',
             'quantity' => 'required',
+            'workSteps' => 'required',
             'qtyState' => 'required',
+            'price' => 'numeric|regex:/^\d*(\.\d{1,2})?$/',
+        ], [
+            'price.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
         $customerList = Customer::find($this->customer);
@@ -180,7 +184,7 @@ class UpdateInstructionIndex extends Component
                 'order_name' => $this->order_name,
                 'code_style' => $this->code_style,
                 'quantity' => currency_convert($this->quantity),
-                'price' => currency_convert($this->price),
+                'price' => $this->price,
                 'shipping_date_first' => $this->shipping_date,
                 'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,

@@ -158,6 +158,9 @@ class CreateInstructionIndex extends Component
             'order_name' => 'required',
             'quantity' => 'required',
             'workSteps' => 'required',
+            'price' => 'numeric|regex:/^\d*(\.\d{1,2})?$/',
+        ], [
+            'price.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
         $customerList = Customer::find($this->customer);
@@ -191,7 +194,7 @@ class CreateInstructionIndex extends Component
                 'order_name' => $this->order_name,
                 'code_style' => $this->code_style,
                 'quantity' => currency_convert($this->quantity),
-                'price' => currency_convert($this->price),
+                'price' => $this->price,
                 'shipping_date_first' => $this->shipping_date,
                 'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,
