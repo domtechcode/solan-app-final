@@ -190,7 +190,12 @@ class CreateFormHitungBahanIndex extends Component
 
     public function addRincianScreen($keteranganIndex)
     {
-        $this->keterangans[$keteranganIndex]['rincianScreen'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianScreen'][] = [
+            'state' => '', // Set default values here
+            'screen' => '',
+            'jumlah_lembar_cetak' => '',
+            'waste' => '',
+        ];
     }
 
     public function removeRincianScreen($index, $keteranganIndex, $rincianIndexScreen)
