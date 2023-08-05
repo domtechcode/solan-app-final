@@ -53,8 +53,8 @@
                                 <div class="input-group">
                                     <select wire:model="status_pisau" id="type_ppn" class="form-control form-select" data-bs-placeholder="Pilih Status Pisau">
                                         <option label="-- Pilih Status Pisau --"></option>
-                                        <option value="Baru">Baru</option>
-                                        <option value="Repeat">Repeat</option>
+                                        <option value="Bagus">Bagus</option>
+                                        <option value="Jelek">Jelek</option>
                                     </select>
                                 </div>
                                 @error('status_pisau') <div><span class="text-danger">{{ $message }}</span></div> @enderror
@@ -85,8 +85,8 @@
                                 <div class="input-group">
                                     <select wire:model="status_matress" id="type_ppn" class="form-control form-select" data-bs-placeholder="Pilih Status Matress">
                                         <option label="-- Pilih Status Matress --"></option>
-                                        <option value="Baru">Baru</option>
-                                        <option value="Repeat">Repeat</option>
+                                        <option value="Bagus">Bagus</option>
+                                        <option value="Jelek">Jelek</option>
                                     </select>
                                 </div>
                                 @error('status_matress') <div><span class="text-danger">{{ $message }}</span></div> @enderror
