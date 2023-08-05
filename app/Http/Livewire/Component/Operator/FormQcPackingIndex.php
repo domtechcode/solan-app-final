@@ -216,7 +216,7 @@ class FormQcPackingIndex extends Component
 
             if(isset($searchWaitingSpkQc)){
                 $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
-                    'spk_status' => 'Running',
+                    'spk_status' => 'Qty QC Tersedia',
                 ]);
             }else{
                 $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([

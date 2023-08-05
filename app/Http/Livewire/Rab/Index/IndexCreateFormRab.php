@@ -22,6 +22,7 @@ class IndexCreateFormRab extends Component
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
+            'spk_status' => 'Running',
         ]);
     }
 
