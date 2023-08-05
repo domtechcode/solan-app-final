@@ -104,7 +104,7 @@ class PengajuanBarangSpkIndex extends Component
         $this->reset();
     }
 
-    public function testq($PengajuanBarangSelectedAccountingId)
+    public function ajukanAccountingBarang($PengajuanBarangSelectedAccountingId)
     {
         $this->validate([
             'harga_satuan' => 'required',
@@ -112,7 +112,7 @@ class PengajuanBarangSpkIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
-
+        
         $updateAccounting = PengajuanBarangSpk::find($PengajuanBarangSelectedAccountingId);
         $updateAccounting->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
