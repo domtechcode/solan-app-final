@@ -27,6 +27,7 @@ use App\Models\LayoutSetting;
 use App\Models\RincianScreen;
 use App\Models\FormCetakLabel;
 use App\Models\FormPengiriman;
+use App\Models\FormPotongJadi;
 use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
@@ -204,5 +205,10 @@ class Instruction extends Model
     public function formPenerimaanMaklun()
     {
         return $this->hasMany(FormPenerimaanMaklun::class);
+    }
+
+    public function formPotongJadi()
+    {
+        return $this->hasMany(FormPotongJadi::class);
     }
 }

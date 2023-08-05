@@ -12,6 +12,7 @@ use App\Models\FormPlate;
 use App\Models\FileSetting;
 use App\Models\Instruction;
 use Livewire\WithFileUploads;
+use App\Models\FormPotongJadi;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
@@ -23,12 +24,27 @@ class FormPotongIndex extends Component
     public $workStepCurrentId;
     public $dataInstruction;
     public $catatanProsesPengerjaan;
+    public $stateWorkStep;
+    public $hasil_akhir;
 
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
+        $dataWorkStep = WorkStep::find($this->workStepCurrentId);
+
+        $this->stateWorkStep = $dataWorkStep->work_step_list_id;
+
+        if($dataWorkStep->work_step_list_id == 9){
+            $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
+
+            if(isset($currentPotongJadi)){
+                $this->hasil_akhir = $currentPotongJadi->hasil_akhir;
+            }else{
+                $this->hasil_akhir = '';
+            }
+        }
     }
 
     public function render()
@@ -64,6 +80,22 @@ class FormPotongIndex extends Component
                 ->where('step', $currentStep->step + 1)
                 ->first();
 
+        $dataWorkStep = WorkStep::find($this->workStepCurrentId);
+         if($dataWorkStep->work_step_list_id == 9){
+            $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
+            if(isset($currentPotongJadi)){
+                $currentPotongJadi->update([
+                    'hasil_akhir' => $this->hasil_akhir,
+                ]);
+            }else{
+                $createPotongJadi = FormPotongJadi::create([
+                    'instruction_id' => $this->instructionCurrentId,
+                    'hasil_akhir' => $this->hasil_akhir,
+                ]);
+            }
+            
+        }
+        
         if($currentStep->status_task == 'Reject Requirements'){
             $currentStep->update([
                 'state_task' => 'Complete',
