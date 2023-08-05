@@ -51,6 +51,7 @@ class NewSpkDashboardIndex extends Component
     public $stock;
     public $fileRincian = [];
     public $keteranganReject;
+    public $catatanHitungBahan;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -248,6 +249,16 @@ class NewSpkDashboardIndex extends Component
                 broadcast(new IndexRenderEvent('refresh'));
             }
 
+            if(isset($this->catatanHitungBahan)){
+                $catatan = Catatan::create([
+                    'tujuan' => 5,
+                    'catatan' => $this->catatanHitungBahan,
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Stock Instruksi Kerja',
@@ -258,8 +269,6 @@ class NewSpkDashboardIndex extends Component
             $this->dispatchBrowserEvent('pondReset');
             $this->dispatchBrowserEvent('close-modal');
         }
-
-
     }
 
     public function rejectSpk()

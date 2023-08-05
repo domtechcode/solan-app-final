@@ -283,6 +283,13 @@
                                                 @error('keteranganReject') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </div>
                                         </div>
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Catatan Untuk Hitung Bahan</label>
+                                                <textarea class="form-control mb-4" placeholder="Catatan Untuk Hitung Bahan" rows="4" wire:model="catatanHitungBahan"></textarea>
+                                                @error('catatanHitungBahan') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                 </div>
@@ -292,6 +299,8 @@
 
                         
                     </div>
+
+                    .
 
                     {{-- file --}}
                     <div class="row">
