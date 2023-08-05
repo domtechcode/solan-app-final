@@ -1703,9 +1703,9 @@
                     </div>
                     <div class="card-body" style="height: 100%;">
                         <div class="row">
-                            <div class="col-sm-12" style="height: 100%;" wire.loading>
+                            <div class="col-sm-12" style="height: 100%;" wire:loading.attr="disabled">
                                 @forelse ($fileCheckerData as $file)
-                                <iframe width="100%" height="900" src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"></iframe>
+                                <iframe wire:loading.attr="disabled" width="100%" height="900" src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"></iframe>
                             @empty
                                 No Data !!!
                             @endforelse
