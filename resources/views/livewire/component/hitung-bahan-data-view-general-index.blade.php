@@ -206,7 +206,7 @@
         </div>
     </div>
 
-    @if ($spk_type != 'layout')
+    @if ($spk_type == 'sample' || $spk_type == 'production')
         @foreach ($layoutSettings as $indexSetting => $setting)
             <!-- ROW-2-->
             <div class="row">
@@ -1693,7 +1693,7 @@
             <!-- ROW-2 END -->
         @endforeach
 
-        @if(isset($fileCheckerData))
+        @if(!empty($fileCheckerData))
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -1705,10 +1705,10 @@
                         <div class="row">
                             <div class="col-sm-12" style="height: 100%;">
                                 @forelse ($fileCheckerData as $file)
-                                <iframe width="100%" height="900" src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"></iframe>
-                            @empty
-                                No Data !!!
-                            @endforelse
+                                <embed type="application/pdf" width="100%" height="900" src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"></embed>
+                                @empty
+                                    No Data !!!
+                                @endforelse
                             </div>
                         </div>
                     </div>

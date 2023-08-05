@@ -482,6 +482,9 @@ class HitungBahanDataViewGeneralIndex extends Component
 
         $this->fileCheckerData = Files::where('instruction_id', $instructionId)->where('type_file', 'Approved Checker')->get();
         
+        
+
+
          // Cek apakah array layoutSettings dan keterangans kosong
         if (empty($this->layoutSettings)) {
             $this->layoutSettings[] = [
