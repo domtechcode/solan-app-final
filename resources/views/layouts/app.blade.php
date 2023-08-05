@@ -159,19 +159,10 @@
     </script>
 
 <script>
-    window.addEventListener('livewire:load', function () {
-        // Mendengarkan event dari public channel
-        window.Echo.channel('notif.' + {{ Auth::user()->id }})
+    Echo.channel('notif.' + {{ Auth::user()->id }})
             .listen('NotificationSent', function (data) {
-                Livewire.emit('notifSent', data);
                 Livewire.emit('indexRender');
             });
-
-        // window.Echo.channel('refresh')
-        //     .listen('IndexRenderEvent', function (e) {
-        //         Livewire.emit('indexRender');
-        //     });
-    });
 </script>
 
 {{-- <script>

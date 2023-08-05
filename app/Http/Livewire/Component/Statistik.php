@@ -34,9 +34,16 @@ class Statistik extends Component
     public $spkCompleteSample;
     public $spkCompleteProduction;
     public $spkCompleteStock;
+    public $userId;
 
+    // protected $listeners = ['notifSent' => 'refreshIndex'];
 
-    protected $listeners = ['notifSent' => 'refreshIndex'];
+    public function getListeners()
+    {
+        return [
+            "echo:notif.{$this->userId},NotificationSent" => 'refreshIndex',
+        ];
+    }
 
     public function refreshIndex($data)
     {
@@ -53,11 +60,20 @@ class Statistik extends Component
                             'title' => $conversation_id,
                             'message' => 'SPK '.$instructionData->spk_number,
                     ]);
+            }else{
+                $this->emit('flashMessage', [
+                        'type' => 'info',
+                        'title' => 'Data Baru',
+                        'message' => 'Data Baru SPK',
+                ]);
             }
+
+            $this->render();
     }
    
     public function render()
     {
+        $this->userId = Auth()->user()->id;
         $this->totalOrder = Instruction::count();
         $this->prosesOrder = Instruction::whereHas('workstep', function ($query) {
                             $query->where('spk_state', '!=', 'Training Program')
