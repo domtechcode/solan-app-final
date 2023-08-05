@@ -57,6 +57,11 @@ class LoginController extends Controller
                 case 'Accounting':
                     return redirect()->route('accounting.dashboard');
                     break;
+                    break;
+
+                case 'Purchase':
+                    return redirect()->route('purchase.dashboard');
+                    break;
 
                 default:
                     return redirect()->route('login');

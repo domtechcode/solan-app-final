@@ -174,6 +174,11 @@
     });
 </script>
 
+<script>
+    window.livewire.onError(statusCode => {
+        return false
+    });
+</script>
 
 </body>
 

@@ -46,6 +46,9 @@ class RedirectIfAuthenticated
                     case 'Accounting':
                         return redirect()->route('accounting.dashboard');
                         break;
+                    case 'Purchase':
+                        return redirect()->route('purchase.dashboard');
+                        break;
                     // Tambahkan case untuk peran (role) lain jika diperlukan
                     default:
                         return redirect('/'); // Pengalihan default jika peran tidak cocok dengan yang diberikan dalam switch case

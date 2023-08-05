@@ -71,5 +71,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/data-customer', 'App\Http\Livewire\Accounting\Index\IndexCustomer')->name('accounting.dataCustomer');
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Accounting\Index\IndexWorkStep')->name('accounting.indexWorkStep');
     });
+
+    Route::group(['prefix' => 'purchase', 'middleware' => ['role:Purchase']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\Purchase\Index\IndexDashboard')->name('purchase.dashboard');
+    });
     
 });
