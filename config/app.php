@@ -174,7 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Davcpas1234\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
+        //Davcpas1234\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
 
     ],
 
