@@ -18,6 +18,7 @@ use App\Models\RincianPlate;
 use App\Models\FormQcPacking;
 use Livewire\WithFileUploads;
 use App\Models\FormPengiriman;
+use App\Models\FormPotongJadi;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use App\Models\FormPengajuanMaklun;
@@ -38,6 +39,8 @@ class FormMaklunIndex extends Component
     public $catatanProsesPengerjaan;
     public $maklunPengajuan = [];
     public $maklunPenerimaan = [];
+    public $collectStep;
+    public $collectHasilAkhir;
 
 
     public function addMaklunPengajuan()
@@ -82,6 +85,22 @@ class FormMaklunIndex extends Component
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $this->dataWorkSteps = WorkStep::find($workStepId);
+
+        $stateBefore = WorkStep::where('instruction_id', $this->dataWorkSteps->instruction_id)->where('step', $this->dataWorkSteps->step - 1)->first();
+
+        if(isset($stateBefore)){
+            if($stateBefore->work_step_list_id == 9){
+                $collect = FormPotongJadi::where('instruction_id', $this->dataWorkSteps->instruction_id)->first();
+                $this->collectStep = 'Potong Jadi';
+                $this->collectHasilAkhir = $collect->hasil_akhir;
+            }else if($stateBefore->work_step_list_id == 24){
+                $collect = FormPond::where('instruction_id', $this->dataWorkSteps->instruction_id)->first();
+                $this->collectStep = 'Pond';
+                $this->collectHasilAkhir = $collect->hasil_akhir;
+            }else{
+
+            }
+        }
         
         $dataMaklunPengajuan = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)->get();
         if(isset($dataMaklunPengajuan)){
