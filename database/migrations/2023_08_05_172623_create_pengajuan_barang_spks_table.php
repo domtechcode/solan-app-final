@@ -30,6 +30,10 @@ class CreatePengajuanBarangSpksTable extends Migration
             $table->string('nama_barang')->nullable();
             $table->string('qty_barang')->nullable();
             $table->longtext('keterangan')->nullable();
+            $table->string('harga_satuan')->nullable();
+            $table->string('qty_purchase')->nullable();
+            $table->string('stock')->nullable();
+            $table->string('total_harga')->nullable();
             $table->timestamps();
         });
     }

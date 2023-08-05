@@ -174,11 +174,11 @@
     });
 </script>
 
-<script>
+{{-- <script>
     window.livewire.onError(statusCode => {
         return false
     });
-</script>
+</script> --}}
 
 </body>
 
