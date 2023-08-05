@@ -413,7 +413,7 @@
                         <div class="col d-flex justify-content-center">
                             @if(isset($workStepHitungBahanNew))
                                 <div class="btn-list">  
-                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('accounting.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('accounting.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahanNew]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
                                 </div>
                             @endif
                         </div>
