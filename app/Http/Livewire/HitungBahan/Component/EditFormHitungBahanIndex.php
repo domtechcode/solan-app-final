@@ -178,10 +178,15 @@ class EditFormHitungBahanIndex extends Component
 
     public function addRincianPlate($keteranganIndex)
     {
-        $this->keterangans[$keteranganIndex]['rincianPlate'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianPlate'][] = [
+            'state' => '', // Set default values here
+            'plate' => '',
+            'jumlah_lembar_cetak' => '',
+            'waste' => '',
+        ];
     }
 
-    public function removeRincianPlate($index, $keteranganIndex, $rincianIndexPlate)
+    public function removeRincianPlate($keteranganIndex, $rincianIndexPlate)
     {
         unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]);
         $this->keterangans[$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate']);
@@ -189,10 +194,15 @@ class EditFormHitungBahanIndex extends Component
 
     public function addRincianScreen($keteranganIndex)
     {
-        $this->keterangans[$keteranganIndex]['rincianScreen'][] = '';
+        $this->keterangans[$keteranganIndex]['rincianScreen'][] = [
+            'state' => '', // Set default values here
+            'screen' => '',
+            'jumlah_lembar_cetak' => '',
+            'waste' => '',
+        ];
     }
 
-    public function removeRincianScreen($index, $keteranganIndex, $rincianIndexScreen)
+    public function removeRincianScreen($keteranganIndex, $rincianIndexScreen)
     {
         unset($this->keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]);
         $this->keterangans[$keteranganIndex]['rincianScreen'] = array_values($this->keterangans[$keteranganIndex]['rincianScreen']);
@@ -729,11 +739,7 @@ class EditFormHitungBahanIndex extends Component
                 'keterangans.*.rincianPlate.*.jumlah_lembar_cetak.numeric' => 'Jumlah lembar cetak harus berupa angka/tidak boleh ada tanda koma(,).',
                 'keterangans.*.rincianPlate.*.waste.required' => 'Waste harus diisi pada keterangan.',
                 'keterangans.*.rincianPlate.*.waste.numeric' => 'Waste harus berupa angka/tidak boleh ada tanda koma(,).',
-            ]);
-
-            
-
-            
+            ]);            
         }
 
         if(isset($this->stateWorkStepSablon)){
@@ -1170,11 +1176,12 @@ class EditFormHitungBahanIndex extends Component
                     if ($updateNextStep) {
                         $updateNextStep->update([
                             'state_task' => 'Running',
-                            'status_task' => 'Reject Requirements',
+                            'status_task' => 'Pending Approved',
                         ]);
     
                         $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                             'job_id' => $updateNextStep->work_step_list_id,
+                            'status_id' => 1,
                         ]);
                     }
 

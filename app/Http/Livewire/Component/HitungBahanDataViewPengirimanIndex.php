@@ -293,6 +293,8 @@ class HitungBahanDataViewPengirimanIndex extends Component
                         if ($index !== false) {
                             $keterangan['plate'][$index]['jumlah_plate'] = $dataPlate['jumlah_plate'];
                             $keterangan['plate'][$index]['ukuran_plate'] = $dataPlate['ukuran_plate'];
+
+                            $this->totalPlate += $keterangan['plate'][$index]['jumlah_plate'] = $dataPlate['jumlah_plate'];
                         }
                     }
                 }
@@ -324,6 +326,8 @@ class HitungBahanDataViewPengirimanIndex extends Component
                         if ($index !== false) {
                             $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
                             $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
+
+                            $this->totalScreen += $keterangan['screen'][$index]['jumlah_screen'] = $dataPlate['jumlah_screen'];
                         }
                     }
                 }

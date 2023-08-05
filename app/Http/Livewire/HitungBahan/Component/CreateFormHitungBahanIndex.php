@@ -182,7 +182,7 @@ class CreateFormHitungBahanIndex extends Component
         ];
     }
 
-    public function removeRincianPlate($index, $keteranganIndex, $rincianIndexPlate)
+    public function removeRincianPlate($keteranganIndex, $rincianIndexPlate)
     {
         unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]);
         $this->keterangans[$keteranganIndex]['rincianPlate'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate']);
@@ -198,7 +198,7 @@ class CreateFormHitungBahanIndex extends Component
         ];
     }
 
-    public function removeRincianScreen($index, $keteranganIndex, $rincianIndexScreen)
+    public function removeRincianScreen($keteranganIndex, $rincianIndexScreen)
     {
         unset($this->keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]);
         $this->keterangans[$keteranganIndex]['rincianScreen'] = array_values($this->keterangans[$keteranganIndex]['rincianScreen']);
@@ -480,7 +480,6 @@ class CreateFormHitungBahanIndex extends Component
             ];
         }
         
-         // Cek apakah array layoutSettings dan keterangans kosong
         if (empty($this->layoutSettings)) {
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => '',
