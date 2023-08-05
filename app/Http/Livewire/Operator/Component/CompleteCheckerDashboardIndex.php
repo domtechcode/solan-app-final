@@ -149,6 +149,15 @@ class CompleteCheckerDashboardIndex extends Component
             $updateAlasanRevisi->update([
                 'alasan_revisi' => json_encode($existingCatatanAlasanRevisi),
             ]);
+
+
+            $catatanRevisi = Catatan::create([
+                'tujuan' => 6,
+                'catatan' => $this->alasan_revisi,
+                'kategori' => 'revisi',
+                'instruction_id' => $updateAlasanRevisi->id,
+                'user_id' => Auth()->user()->id,
+            ]);
         }
 
         $updateAlasanRevisi->update([
