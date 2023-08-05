@@ -33,6 +33,7 @@ use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
 use App\Models\KeteranganScreen;
 use App\Models\FormOtherWorkStep;
+use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 use App\Models\KeteranganPisauPond;
 use App\Models\FormPenerimaanMaklun;
@@ -210,5 +211,10 @@ class Instruction extends Model
     public function formPotongJadi()
     {
         return $this->hasMany(FormPotongJadi::class);
+    }
+
+    public function pengajuanBarangSpk()
+    {
+        return $this->hasMany(PengajuanBarangSpk::class);
     }
 }

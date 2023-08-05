@@ -7,6 +7,7 @@ use App\Models\Catatan;
 use App\Models\FormRab;
 use App\Models\WorkStep;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\PengajuanBarangSpk;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -78,5 +79,10 @@ class User extends Authenticatable
     public function formRab()
     {
         return $this->hasMany(FormRab::class);
+    }
+
+    public function pengajuanBarangSpk()
+    {
+        return $this->hasMany(PengajuanBarangSpk::class);
     }
 }
