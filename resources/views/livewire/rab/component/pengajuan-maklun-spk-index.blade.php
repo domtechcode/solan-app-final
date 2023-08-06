@@ -67,13 +67,6 @@
                             <td>
                                 <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->pekerjaan }}</span>
                             </td>
-                            @elseif(in_array($itemPengajuanMaklunSpk->status, ['Reject Accounting', 'Reject RAB']))
-                            <td>
-                                <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->status }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->pekerjaan }}</span>
-                            </td>
                             @else
                             <td>
                                 <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->status }}</span>
@@ -270,29 +263,8 @@
                 </div>
                 <div class="modal-footer">
                     @if(isset($dataMaklun))
-                        @if($dataMaklun->pekerjaan == 'Purchase')
-                            @if($dataMaklun->status == 'Pengajuan Purchase')
-                                <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            @elseif(in_array($dataMaklun->status, ['Approve Accounting', 'Approve RAB']))
-                                <button class="btn btn-success" wire:click="completeMaklun({{ $dataMaklun->id }})">Complete</button>
-                                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            @elseif($dataMaklun->status == 12)
-                                <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                            @elseif(in_array($dataMaklun->status, [13, 14]))
-                                <button class="btn btn-info" wire:click="beliMaklun({{ $dataMaklun->id }})">Beli</button>
-                            @elseif($dataMaklun->status == 15)
-                                <button class="btn btn-success" wire:click="completeMaklun({{ $dataMaklun->id }})">Complete</button>
-                            @else
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            @endif
-                        @elseif($dataMaklun->state == 'Accounting')
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        @else
-                            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        @endif
+                        <button class="btn btn-success" wire:click="approveMaklun({{ $dataMaklun->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectMaklun({{ $dataMaklun->id }})">Reject</button>
                     @endif
                 </div>
             </div>

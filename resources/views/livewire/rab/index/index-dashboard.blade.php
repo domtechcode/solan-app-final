@@ -130,6 +130,23 @@
                                             <div class="card">
                                                 <div class="card-status bg-info br-te-7 br-ts-7"></div>
                                                 <div class="card-header">
+                                                    <h3 class="card-title">Pengajuan Maklun SPK</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    @livewire('rab.component.pengajuan-maklun-spk-index')
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ROW-2 END -->
+                                </div>
+                                <div class="tab-pane" id="tab7">
+                                    <!-- ROW-2-->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                                <div class="card-header">
                                                     <h3 class="card-title">All</h3>
                                                 </div>
                                                 <div class="card-body">
@@ -140,7 +157,7 @@
                                     </div>
                                     <!-- ROW-2 END -->
                                 </div>
-                                <div class="tab-pane" id="tab7">
+                                <div class="tab-pane" id="tab8">
                                     <!-- ROW-2-->
                                     <div class="row">
                                         <div class="col-md-12">

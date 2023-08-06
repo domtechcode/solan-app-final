@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -64,19 +64,19 @@ class PengajuanMaklunSpkIndex extends Component
     
     public function render()
     {
-        $dataPengajuanMaklunSpk = FormPengajuanMaklun::where('pekerjaan', 'Purchase')
+        $dataPengajuanMaklunSpk = FormPengajuanMaklun::where('pekerjaan', 'RAB')
                 ->with(['instruction'])
                 ->orderBy('tgl_keluar', 'asc')
                 ->paginate($this->paginate);
 
-        return view('livewire.purchase.component.pengajuan-maklun-spk-index', ['pengajuanMaklunSpk' => $dataPengajuanMaklunSpk])
+        return view('livewire.rab.component.pengajuan-maklun-spk-index', ['pengajuanMaklunSpk' => $dataPengajuanMaklunSpk])
 
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function ajukanAccountingMaklun($PengajuanMaklunSelectedAccountingId)
+    public function approveMaklun($PengajuanMaklunSelectedApproveId)
     {
         $this->validate([
             'harga_satuan_maklun' => 'required',
@@ -84,14 +84,15 @@ class PengajuanMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
-        $updateAccounting = FormPengajuanMaklun::find($PengajuanMaklunSelectedAccountingId);
-        $updateAccounting->update([
+        $updateApprove = FormPengajuanMaklun::find($PengajuanMaklunSelectedApproveId);
+        $destinationPrevious = $updateApprove->previous_state;
+        $updateApprove->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
             'qty_purchase_maklun' => currency_convert($this->qty_purchase_maklun),
             'total_harga_maklun' => currency_convert($this->total_harga_maklun),
-            'status' => 'Pengajuan Accounting',
-            'pekerjaan' => 'Accounting',
-            'previous_state' => 'Purchase',
+            'status' => 'Approve RAB',
+            'pekerjaan' => $updateApprove->previous_state,
+            'previous_state' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [
@@ -100,16 +101,16 @@ class PengajuanMaklunSpkIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
-        $userDestination = User::where('role', 'Accounting')->get();
+        $userDestination = User::where('role', $destinationPrevious)->get();
         foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateAccounting->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateApprove->instruction_id]);
         }
         
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
 
-    public function ajukanRabMaklun($PengajuanMaklunSelectedRABId)
+    public function rejectMaklun($PengajuanMaklunSelectedRejectId)
     {
         $this->validate([
             'harga_satuan_maklun' => 'required',
@@ -117,14 +118,15 @@ class PengajuanMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
-        $updateRAB = FormPengajuanMaklun::find($PengajuanMaklunSelectedRABId);
-        $updateRAB->update([
+        $updateReject = FormPengajuanMaklun::find($PengajuanMaklunSelectedRejectId);
+        $destinationPrevious = $updateReject->previous_state;
+        $updateReject->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
             'qty_purchase_maklun' => currency_convert($this->qty_purchase_maklun),
             'total_harga_maklun' => currency_convert($this->total_harga_maklun),
-            'status' => 'Pengajuan RAB',
-            'pekerjaan' => 'RAB',
-            'previous_state' => 'Purchase',
+            'status' => 'Reject RAB',
+            'pekerjaan' => $updateApprove->previous_state,
+            'previous_state' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [
@@ -133,38 +135,10 @@ class PengajuanMaklunSpkIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
-        $userDestination = User::where('role', 'RAB')->get();
+        $userDestination = User::where('role', $destinationPrevious)->get();
         foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateRAB->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateReject->instruction_id]);
         }
-        
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
-    }
-
-    public function completeMaklun($PengajuanMaklunSelectedCompleteId)
-    {
-        $this->validate([
-            'harga_satuan_maklun' => 'required',
-            'qty_purchase_maklun' => 'required',
-            'total_harga_maklun' => 'required',
-        ]);
-
-        $updateComplete = FormPengajuanMaklun::find($PengajuanMaklunSelectedCompleteId);
-        $updateComplete->update([
-            'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
-            'qty_purchase_maklun' => currency_convert($this->qty_purchase_maklun),
-            'total_harga_maklun' => currency_convert($this->total_harga_maklun),
-            'status' => 'Complete',
-            'pekerjaan' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Maklun Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
         
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');

@@ -86,6 +86,7 @@ class PengajuanBarangSpkIndex extends Component
         ]);
 
         $updateApprove = PengajuanBarangSpk::find($PengajuanBarangSelectedApproveId);
+        $destinationPrevious = $updateApprove->previous_state;
         $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -93,7 +94,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 14,
             'state' => $updateApprove->previous_state,
-            'previous_state' => $updateApprove->previous_state,
+            'previous_state' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [
@@ -102,7 +103,7 @@ class PengajuanBarangSpkIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
-        $userDestination = User::where('role', $updateApprove->previous_state)->get();
+        $userDestination = User::where('role', $destinationPrevious)->get();
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Keputusan Pengajuan Barang SPK', 'instruction_id' => $updateApprove->instruction_id]);
         }
@@ -122,6 +123,7 @@ class PengajuanBarangSpkIndex extends Component
         ]);
 
         $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
+        $destinationPrevious = $updateReject->previous_state;
         $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -129,7 +131,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 17,
             'state' => $updateReject->previous_state,
-            'previous_state' => $updateReject->previous_state,
+            'previous_state' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [
@@ -138,7 +140,7 @@ class PengajuanBarangSpkIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
-        $userDestination = User::where('role', $updateReject->previous_state)->get();
+        $userDestination = User::where('role', $destinationPrevious)->get();
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Keputusan Pengajuan Barang SPK', 'instruction_id' => $updateReject->instruction_id]);
         }
