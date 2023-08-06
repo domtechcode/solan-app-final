@@ -57,7 +57,7 @@ class CustomerIndex extends Component
         ]);
         
         $this->reset();
-        $this->render();
+        $this->reset();
         $this->dispatchBrowserEvent('close-detail-customer-edit');
     }
 

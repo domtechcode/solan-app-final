@@ -57,7 +57,7 @@ class NewSpkDashboardIndex extends Component
 
     public function renderIndex()
     {
-        $this->render();
+        $this->reset();
     }
 
     public function mount()

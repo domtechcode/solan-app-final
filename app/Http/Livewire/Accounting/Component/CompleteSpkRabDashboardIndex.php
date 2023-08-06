@@ -49,7 +49,7 @@ class CompleteSpkRabDashboardIndex extends Component
 
     public function renderIndex()
     {
-        $this->render();
+        $this->reset();
     }
 
     public function mount()
