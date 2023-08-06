@@ -95,6 +95,7 @@ class PengajuanBarangSpkIndex extends Component
             'status_id' => 14,
             'state' => $updateApprove->previous_state,
             'previous_state' => 'RAB',
+            'rab' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [
@@ -132,6 +133,7 @@ class PengajuanBarangSpkIndex extends Component
             'status_id' => 17,
             'state' => $updateReject->previous_state,
             'previous_state' => 'RAB',
+            'rab' => 'RAB',
         ]);
 
         $this->emit('flashMessage', [

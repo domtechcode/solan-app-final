@@ -92,6 +92,7 @@ class PengajuanMaklunSpkIndex extends Component
             'status' => 'Pengajuan RAB',
             'pekerjaan' => 'RAB',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -125,6 +126,7 @@ class PengajuanMaklunSpkIndex extends Component
             'status' => 'Approve Accounting',
             'pekerjaan' => 'Purchase',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -158,6 +160,7 @@ class PengajuanMaklunSpkIndex extends Component
             'status' => 'Reject Accounting',
             'pekerjaan' => 'Purchase',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [

@@ -94,6 +94,7 @@ class PengajuanBarangSpkIndex extends Component
             'status_id' => 11,
             'state' => 'RAB',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -130,6 +131,7 @@ class PengajuanBarangSpkIndex extends Component
             'status_id' => 13,
             'state' => 'Purchase',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -166,6 +168,7 @@ class PengajuanBarangSpkIndex extends Component
             'status_id' => 18,
             'state' => 'Purchase',
             'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
