@@ -23,11 +23,16 @@
         </li>
         <li>
             <button href="#tab5" class="btn btn-info mt-1 mb-1 me-3"
-                data-bs-toggle="tab">All - {{ $dataCountAllSpk }}
+                data-bs-toggle="tab">Pengajuan Barang SPK
             </button>
         </li>
         <li>
             <button href="#tab6" class="btn btn-info mt-1 mb-1 me-3"
+                data-bs-toggle="tab">All - {{ $dataCountAllSpk }}
+            </button>
+        </li>
+        <li>
+            <button href="#tab7" class="btn btn-info mt-1 mb-1 me-3"
                 data-bs-toggle="tab">Last Data Training Program
             </button>
         </li>
