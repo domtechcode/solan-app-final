@@ -52,6 +52,7 @@ class FormMaklunIndex extends Component
             'qty_keluar' => '',
             'satuan_keluar' => '',
             'status' => 'Pengajuan Purchase',
+            'pekerjaan' => 'Purchase',
         ];
     }
 
@@ -112,6 +113,7 @@ class FormMaklunIndex extends Component
                     'qty_keluar' => $item['qty_keluar'],
                     'satuan_keluar' => $item['satuan_keluar'],
                     'status' => $item['status'],
+                    'pekerjaan' => $item['pekerjaan'],
                 ];
 
                 $this->maklunPengajuan[] = $maklunPengajuan;
@@ -126,6 +128,7 @@ class FormMaklunIndex extends Component
                 'qty_keluar' => '',
                 'satuan_keluar' => '',
                 'status' => 'Pengajuan Purchase',
+                'pekerjaan' => 'Purchase',
             ];
         } 
         
@@ -185,6 +188,7 @@ class FormMaklunIndex extends Component
                     'qty_keluar' => $dataMaklunPengajuan['qty_keluar'],
                     'satuan_keluar' => $dataMaklunPengajuan['satuan_keluar'],
                     'status' => $dataMaklunPengajuan['status'],
+                    'pekerjaan' => $dataMaklunPengajuan['pekerjaan'],
                 ]);
             }
         }

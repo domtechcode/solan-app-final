@@ -46,6 +46,9 @@ class PengajuanMaklunSpkIndex extends Component
     public $workStepHitungBahanNew;
 
     public $dataMaklun;
+    public $harga_satuan_maklun;
+    public $qty_purchase_maklun;
+    public $total_harga_maklun;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -73,24 +76,87 @@ class PengajuanMaklunSpkIndex extends Component
         ->layoutData(['title' => 'Dashboard']);
     }
 
-
-    public function cekTotalHarga()
+    public function ajukanAccountingMaklun($PengajuanMaklunSelectedAccountingId)
     {
         $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
+            'harga_satuan_maklun' => 'required',
+            'qty_purchase_maklun' => 'required',
+            'total_harga_maklun' => 'required',
         ]);
 
-        $hargaSatuanSelected = currency_convert($this->harga_satuan);
-        $qtyPurchaseSelected = currency_convert($this->qty_purchase);
-        $stockSelected = currency_convert($this->stock);
+        $updateAccounting = FormPengajuanMaklun::find($PengajuanMaklunSelectedAccountingId);
+        $updateAccounting->update([
+            'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
+            'qty_purchase_maklun' => currency_convert($this->qty_purchase_maklun),
+            'total_harga_maklun' => currency_convert($this->total_harga_maklun),
+            'status' => 'Pengajuan Accounting',
+            'pekerjaan' => 'Accounting',
+            'previous_state' => 'Purchase',
+        ]);
 
-        $this->total_harga =  $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
-        $this->total_harga = currency_idr($this->total_harga);
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Maklun Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Accounting')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateAccounting->instruction_id]);
+        }
+        
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
 
-    public function modalPengajuanBarangSpk($PengajuanBarangId, $instructionId)
+    public function ajukanRabMaklun($PengajuanMaklunSelectedRABId)
+    {
+        $this->validate([
+            'harga_satuan_maklun' => 'required',
+            'qty_purchase_maklun' => 'required',
+            'total_harga_maklun' => 'required',
+        ]);
+
+        $updateRAB = FormPengajuanMaklun::find($PengajuanMaklunSelectedRABId);
+        $updateRAB->update([
+            'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
+            'qty_purchase_maklun' => currency_convert($this->qty_purchase_maklun),
+            'total_harga_maklun' => currency_convert($this->total_harga_maklun),
+            'status' => 'Pengajuan RAB',
+            'pekerjaan' => 'RAB',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Maklun Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'RAB')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateAccounting->instruction_id]);
+        }
+        
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
+    }
+
+    public function cekTotalHargaMaklun()
+    {
+        $this->validate([
+            'harga_satuan_maklun' => 'required',
+            'qty_purchase_maklun' => 'required',
+        ]);
+
+        $hargaSatuanMaklunSelected = currency_convert($this->harga_satuan_maklun);
+        $qtyPurchaseMaklunSelected = currency_convert($this->qty_purchase_maklun);
+
+        $this->total_harga_maklun =  $hargaSatuanMaklunSelected * $qtyPurchaseMaklunSelected;
+        $this->total_harga_maklun = currency_idr($this->total_harga_maklun);
+    }
+
+    public function modalPengajuanMaklunSpk($PengajuanMaklunId, $instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
 
@@ -99,17 +165,16 @@ class PengajuanMaklunSpkIndex extends Component
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
 
-        $this->dataBarang = PengajuanBarangSpk::find($PengajuanBarangId);
+        $this->dataMaklun = FormPengajuanMaklun::find($PengajuanMaklunId);
 
-        $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-        $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-        $this->stock = currency_idr($this->dataBarang->stock);
-        $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        $this->harga_satuan_maklun = currency_idr($this->dataMaklun->harga_satuan_maklun);
+        $this->qty_purchase_maklun = currency_idr($this->dataMaklun->qty_purchase_maklun);
+        $this->total_harga_maklun = currency_idr($this->dataMaklun->total_harga_maklun);
 
-        $this->dispatchBrowserEvent('show-detail-pengajuan-barang-spk');
+        $this->dispatchBrowserEvent('show-detail-pengajuan-maklun-spk');
     }
 
-    public function modalInstructionDetailsGroupPengajuanBarangSpk($groupId)
+    public function modalInstructionDetailsGroupPengajuanMaklunSpk($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
@@ -124,7 +189,7 @@ class PengajuanMaklunSpkIndex extends Component
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-barang-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-maklun-spk');
     }
 
     public function messageSent($arguments)

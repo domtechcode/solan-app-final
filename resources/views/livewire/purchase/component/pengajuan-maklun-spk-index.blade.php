@@ -53,48 +53,28 @@
                             <td>
                                 {{ $itemPengajuanMaklunSpk->satuan_keluar }}
                             </td>
+                            @if($itemPengajuanMaklunSpk->status == 'Pengajuan Purchase')
                             <td>
-                                {{ $itemPengajuanMaklunSpk->status }}
+                                <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->status }}</span>
                             </td>
                             <td>
-                                {{ $itemPengajuanMaklunSpk->pekerjaan }}
+                                <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->pekerjaan }}</span>
                             </td>
-                            {{-- @if(in_array($itemPengajuanBarangSpk->status_id, [8]))
+                            @elseif(in_array($itemPengajuanMaklunSpk->status, ['Pengajuan Accounting', 'Pengajuan RAB']))
                             <td>
-                                <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
-                            </td>
-                            @elseif(in_array($itemPengajuanBarangSpk->status_id, [9, 10, 11, 15]))
-                            <td>
-                                <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
+                                <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->status }}</span>
                             </td>
                             <td>
-                                <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
-                            </td>
-                            @elseif(in_array($itemPengajuanBarangSpk->status_id, [12]))
-                            <td>
-                                <span class="badge bg-warning rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-warning rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
-                            </td>
-                            @elseif(in_array($itemPengajuanBarangSpk->status_id, [17, 18]))
-                            <td>
-                                <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
+                                <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->pekerjaan }}</span>
                             </td>
                             @else
                             <td>
-                                <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
+                                <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->status }}</span>
                             </td>
                             <td>
-                                <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
+                                <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanMaklunSpk->pekerjaan }}</span>
                             </td>
-                            @endif --}}
+                            @endif
                             <td>
                                 <div class="btn-list">         
                                     <button class="btn btn-icon btn-sm btn-dark" wire:click="modalPengajuanMaklunSpk({{ $itemPengajuanMaklunSpk->id }}, {{ $itemPengajuanMaklunSpk->instruction_id }})"><i class="fe fe-eye"></i></button>
@@ -120,7 +100,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="modalPengajuanBarangSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modalPengajuanMaklunSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -226,19 +206,21 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="border-bottom-0">LANGKAH KERJA</th>
-                                            <th class="border-bottom-0">NAMA BARANG</th>
-                                            <th class="border-bottom-0">QTY PENGAJUAN</th>
-                                            <th class="border-bottom-0">KETERANGAN</th>
+                                            <th class="border-bottom-0">BENTUK MAKLUN</th>
+                                            <th class="border-bottom-0">REKANAN</th>
+                                            <th class="border-bottom-0">TGL KELUAR</th>
+                                            <th class="border-bottom-0">QTY KELUAR</th>
+                                            <th class="border-bottom-0">SATUAN KELUAR</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(isset($dataBarang))
+                                        @if(isset($dataMaklun))
                                         <tr>
-                                            <td>{{ $dataBarang->workStepList->name }}</td>
-                                            <td>{{ $dataBarang->nama_barang }}</td>
-                                            <td>{{ $dataBarang->qty_barang }}</td>
-                                            <td>{{ $dataBarang->keterangan }}</td>
+                                            <td>{{ $dataMaklun->bentuk_maklun }}</td>
+                                            <td>{{ $dataMaklun->rekanan }}</td>
+                                            <td>{{ $dataMaklun->tgl_keluar }}</td>
+                                            <td>{{ $dataMaklun->qty_keluar }}</td>
+                                            <td>{{ $dataMaklun->satuan_keluar }}</td>
                                         </tr>
                                         @endif
                                     </tbody>
@@ -251,65 +233,56 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Harga Satuan</label>
+                                <label class="form-label">Harga Satuan Maklun</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model="harga_satuan" id="harga_satuan" class="form-control" autocomplete="off" placeholder="Harga Satuan" type-currency="IDR">
+                                    <input type="text" wire:model="harga_satuan_maklun" id="harga_satuan_maklun" class="form-control" autocomplete="off" placeholder="Harga Satuan Maklun" type-currency="IDR">
                                 </div>
-                                @error('harga_satuan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                @error('harga_satuan_maklun') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Qty Purchase</label>
+                                <label class="form-label">Qty Purchase Maklun</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model="qty_purchase" id="qty_purchase" class="form-control" autocomplete="off" placeholder="Qty Purchase" type-currency="IDR">
+                                    <input type="text" wire:model="qty_purchase_maklun" id="qty_purchase_maklun" class="form-control" autocomplete="off" placeholder="Qty Purchase" type-currency="IDR">
                                 </div>
-                                @error('qty_purchase') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                @error('qty_purchase_maklun') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="form-group">
-                                <label class="form-label">Stock</label>
+                                <label class="form-label">Total Harga Maklun</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model="stock" id="stock" class="form-control" autocomplete="off" placeholder="Stock" type-currency="IDR">
+                                    <input type="text" wire:model="total_harga_maklun" id="total_harga_maklun" class="form-control" autocomplete="off" placeholder="Total Harga Maklun" readonly>
+                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHargaMaklun()">Cek Total</button>
                                 </div>
-                                @error('stock') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="form-label">Total Harga Barang</label>
-                                <div class="input-group">
-                                    <input type="text" wire:model="total_harga" id="total_harga" class="form-control" autocomplete="off" placeholder="Total Harga Barang" readonly>
-                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHarga()">Cek Total</button>
-                                </div>
-                                @error('total_harga') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                @error('total_harga_maklun') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
                         </div>
                     </div>  
                 </div>
                 <div class="modal-footer">
-                    @if(isset($dataBarang))
-                        @if($dataBarang->state == 'Purchase')
-                            @if($dataBarang->status_id == 8)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                                <button class="btn btn-warning" wire:click="stockBarang({{ $dataBarang->id }})">Check Stock</button>
-                            @elseif($dataBarang->status_id == 9)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                            @elseif($dataBarang->status_id == 12)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})">Complete</button>
-                            @elseif(in_array($dataBarang->status_id, [13, 14]))
-                                <button class="btn btn-info" wire:click="beliBarang({{ $dataBarang->id }})">Beli</button>
-                            @elseif($dataBarang->status_id == 15)
-                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})">Complete</button>
+                    @if(isset($dataMaklun))
+                        @if($dataMaklun->pekerjaan == 'Purchase')
+                            @if($dataMaklun->status == 'Pengajuan Purchase')
+                                <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            @elseif($dataMaklun->status == 9)
+                                <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                            @elseif($dataMaklun->status == 12)
+                                <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                                <button class="btn btn-success" wire:click="completeMaklun({{ $dataMaklun->id }})">Complete</button>
+                            @elseif(in_array($dataMaklun->status, [13, 14]))
+                                <button class="btn btn-info" wire:click="beliMaklun({{ $dataMaklun->id }})">Beli</button>
+                            @elseif($dataMaklun->status == 15)
+                                <button class="btn btn-success" wire:click="completeMaklun({{ $dataMaklun->id }})">Complete</button>
                             @else
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             @endif
-                        @elseif($dataBarang->state == 'Accounting')
+                        @elseif($dataMaklun->state == 'Accounting')
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         @else
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -321,7 +294,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupMaklunSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -861,13 +834,13 @@
             });
         }
 
-        window.addEventListener('close-modal-pengajuan-barang-spk', event =>{
-            $('#modalPengajuanBarangSpk').modal('hide');
+        window.addEventListener('close-modal-pengajuan-maklun-spk', event =>{
+            $('#modalPengajuanMaklunSpk').modal('hide');
             // $('#detailInstructionModalGroupNewSpk').modal('hide');
         });
 
-        window.addEventListener('show-detail-pengajuan-barang-spk', event =>{
-            $('#modalPengajuanBarangSpk').modal('show');
+        window.addEventListener('show-detail-pengajuan-maklun-spk', event =>{
+            $('#modalPengajuanMaklunSpk').modal('show');
             addCurrencyListener();
         });
 
