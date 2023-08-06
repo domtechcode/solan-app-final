@@ -82,7 +82,7 @@
                                                     <h3 class="card-title">Pengajuan Barang SPK</h3>
                                                 </div>
                                                 <div class="card-body">
-                                                    @livewire('purchase.component.pengajuan-barang-spk-index');
+                                                    @livewire('purchase.component.pengajuan-barang-spk-index')
                                                 </div>
                                             </div>
                                         </div>
@@ -116,7 +116,7 @@
                                                     <h3 class="card-title">Pengajuan Maklun</h3>
                                                 </div>
                                                 <div class="card-body">
-
+                                                    @livewire('purchase.component.pengajuan-maklun-spk-index')
                                                 </div>
                                             </div>
                                         </div>
