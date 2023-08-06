@@ -48,6 +48,7 @@
                                         <th class="border-bottom-0">Tgl Keluar</th>
                                         <th class="border-bottom-0">QTY Keluar</th>
                                         <th class="border-bottom-0">Satuan</th>
+                                        <th class="border-bottom-0">Status</th>
                                         <th class="border-bottom-0">Action</th>
                                     </tr>
                                 </thead>
@@ -103,6 +104,9 @@
                                                     </div>
                                                     @error('maklunPengajuan.'.$index.'.satuan_keluar') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                 </div>
+                                            </td>
+                                            <td>
+                                                {{ $data['status'] }}
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-danger"
