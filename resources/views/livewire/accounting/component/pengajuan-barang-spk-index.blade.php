@@ -288,9 +288,14 @@
                 </div>
                 <div class="modal-footer">
                     @if(isset($dataBarang))
-                    <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                    <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
-                    <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                        @if($dataBarang->status_id == 10)
+                        <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                        @else
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                        @endif
                     @endif
                 </div>
             </div>
