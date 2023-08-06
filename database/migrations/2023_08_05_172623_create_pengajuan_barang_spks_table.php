@@ -34,6 +34,7 @@ class CreatePengajuanBarangSpksTable extends Migration
             $table->string('qty_purchase')->nullable();
             $table->string('stock')->nullable();
             $table->string('total_harga')->nullable();
+            $table->string('previous_state')->nullable();
             $table->string('rab')->nullable();
             $table->string('accounting')->nullable();
             $table->timestamps();

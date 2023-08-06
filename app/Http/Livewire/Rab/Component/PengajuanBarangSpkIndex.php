@@ -62,7 +62,7 @@ class PengajuanBarangSpkIndex extends Component
     
     public function render()
     {
-        $dataPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 10)
+        $dataPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 11)
                 ->with(['status', 'workStepList', 'instruction', 'user'])
                 ->orderBy('tgl_target_datang', 'asc')
                 ->paginate($this->paginate);
@@ -91,6 +91,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 14,
             'state' => 'Purchase',
+            'previous_state' => $updateApprove->previous_state,
         ]);
 
         $this->emit('flashMessage', [
@@ -121,6 +122,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 17,
             'state' => 'Purchase',
+            'previous_state' => $updateApprove->previous_state,
         ]);
 
         $this->emit('flashMessage', [

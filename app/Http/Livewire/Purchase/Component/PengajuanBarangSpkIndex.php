@@ -91,6 +91,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 12,
             'state' => 'Purchase',
+            'previous_state' => 'Purchase',
         ]);
 
         $this->emit('flashMessage', [
@@ -121,6 +122,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 10,
             'state' => 'Accounting',
+            'previous_state' => 'Purchase',
         ]);
 
         $this->emit('flashMessage', [
@@ -150,6 +152,7 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 11,
             'state' => 'RAB',
+            'previous_state' => 'Purchase',
         ]);
 
         $this->emit('flashMessage', [
