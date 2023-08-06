@@ -35,7 +35,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
                         @forelse ($instructions as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
@@ -145,349 +144,430 @@
     
     
     <form wire:submit.prevent="save">
-    <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detail Instruction</h5>
-                    <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+        <!-- Modal General-->
+        <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detail Instruction</h5>
+                        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
 
-                    @if (isset($notes))
-                    @foreach ($notes as $datanote)
-                        @if (isset($datanote))
-                            <div class="row row-sm mb-5">
-                                <div class="text-wrap">
-                                    <div class="">
-                                        <div class="alert alert-info">
-                                            <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40"
-                                                    viewBox="0 0 24 24">
-                                                    <path fill="#70a9ee"
-                                                        d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
-                                                    <circle cx="12" cy="17" r="1" fill="#1170e4" />
-                                                    <path fill="#1170e4" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
-                                                </svg></span>
-                                            <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
-                                            <hr class="message-inner-separator">
-                                            <p>{{ $datanote->catatan }}</p>
-                                            <div class="d-flex justify-content-end">
-                                                <small>{{ $datanote->created_at }}</small>
+                        @if (isset($notes))
+                        @foreach ($notes as $datanote)
+                            @if (isset($datanote))
+                                <div class="row row-sm mb-5">
+                                    <div class="text-wrap">
+                                        <div class="">
+                                            <div class="alert alert-info">
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40"
+                                                        viewBox="0 0 24 24">
+                                                        <path fill="#70a9ee"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1" fill="#1170e4" />
+                                                        <path fill="#1170e4" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
+                                                <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                                                <hr class="message-inner-separator">
+                                                <p>{{ $datanote->catatan }}</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <small>{{ $datanote->created_at }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                        @endif
+                        <!-- Row -->
+                        <div class="row mb-3">
+                            <div class="col-xl-12">
+                                <div class="table-responsive">
+                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">NO. SPK</th>
+                                                <th class="border-bottom-0">PEMESAN</th>
+                                                <th class="border-bottom-0">NO. PO</th>
+                                                <th class="border-bottom-0">ORDER</th>
+                                                <th class="border-bottom-0">CODE STYLE</th>
+                                                <th class="border-bottom-0">TGL. PO MASUK</th>
+                                                <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                <th class="border-bottom-0">QTY</th>
+                                                <th class="border-bottom-0">STOCK</th>
+                                                <th class="border-bottom-0">HARGA</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if($selectedInstruction)
+                                            <tr>
+                                                <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->customer_number ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->order_name ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->code_style ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->order_date ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->stock ?? '-' }}</td>
+                                                <td>-</td>
+                                            </tr>
+                                            @endif
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row -->
+                        <div class="row mb-3">
+                            <div class="col-xl-12">
+                                <div class="table-responsive">
+                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">FOLLOW UP</th>
+                                                <th class="border-bottom-0">TYPE SPK</th>
+                                                <th class="border-bottom-0">PAJAK</th>
+                                                <th class="border-bottom-0">MASTER SPK</th>
+                                                <th class="border-bottom-0">SUB SPK</th>
+                                                <th class="border-bottom-0">GROUP</th>
+                                                <th class="border-bottom-0">NO. SPK LAYOUT</th>
+                                                <th class="border-bottom-0">NO. SPK SAMPLE</th>
+                                                <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if($selectedInstruction)
+                                            <tr>
+                                                <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->taxes_type ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->spk_parent ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->sub_spk ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->group_id ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->spk_layout_number ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
+                                                <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
+                                            </tr>
+                                            @endif
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col d-flex justify-content-center">
+                                @if(isset($workStepHitungBahan))
+                                    <div class="btn-list">  
+                                        <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row mb-3">
+                            <div class="col-xl-12">
+                                <div class="table-responsive">
+                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>LANGKAH KERJA</th>
+                                                <th>TARGET SELESAI</th>
+                                                <th>DIJADWALKAN</th>
+                                                <th>TARGET JAM</th>
+                                                <th>OPERATOR/REKANAN</th>
+                                                <th>MACHINE</th>
+                                                <th>BARANG</th>
+                                                <th>ACTION</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($workSteps as $key => $dataWork)
+                                                <tr>
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div wire:ignore>
+                                                                    <div class="form-group">
+                                                                        <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
+                                                                            <option label="Select Langkah Kerja"></option>
+                                                                            @foreach ($dataWorkSteps as $dataWorkStep)
+                                                                                <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="date" wire:model.defer="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
+                                                            @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="date" wire:model.defer="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
+                                                            @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="number" autocomplete="off" wire:model.defer="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
+                                                            @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div wire:ignore>
+                                                                    <div class="form-group">
+                                                                        <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
+                                                                            <option label="Select User"></option>
+                                                                            @foreach ($dataUsers as $dataUser)
+                                                                            <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div wire:ignore>
+                                                                    <div class="form-group">
+                                                                        <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
+                                                                            <option label="Select Machine"></option>
+                                                                            @foreach ($dataMachines as $dataMachine)
+                                                                            <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-list">         
+                                                            <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="addPengajuanBarang({{ $dataWork['work_step_list_id'] }})"><i class="fe fe-plus"></i>  Ajukan Barang</button>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-list">         
+                                                            <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})"><i class="fe fe-plus"></i></button>
+                                                            <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})"><i class="fe fe-x"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row mb-3">
+                            <div class="col-xl-12">
+                                <div class="table-responsive">
+                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>LANGKAH KERJA</th>
+                                                <th>NAMA BARANG</th>
+                                                <th>TARGET TERSEDIA</th>
+                                                <th>QTY</th>
+                                                <th>KETERANGAN</th>
+                                                <th>STATUS</th>
+                                                <th>ACTION</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if(isset($pengajuanBarang))
+                                                @foreach ($pengajuanBarang as $key => $dataPengajuan)
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" wire:model.defer="pengajuanBarang.{{ $key }}.work_step_list" class="form-control" readonly>
+                                                                @error('pengajuanBarang.{{ $key }}.work_step_list') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" wire:model.defer="pengajuanBarang.{{ $key }}.nama_barang" placeholder="Nama Barang" class="form-control" required>
+                                                                @error('pengajuanBarang.{{ $key }}.nama_barang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="date" autocomplete="off" wire:model.defer="pengajuanBarang.{{ $key }}.tgl_target_datang" id="pengajuanBarang.{{ $key }}.tgl_target_datang" placeholder="Target Tersedia" class="form-control" required>
+                                                                @error('pengajuanBarang.{{ $key }}.tgl_target_datang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" wire:model.defer="pengajuanBarang.{{ $key }}.qty_barang" class="form-control" placeholder="QTY" required>
+                                                                @error('pengajuanBarang.{{ $key }}.qty_barang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group control-group">
+                                                                <textarea class="form-control" placeholder="Keterangan" rows="1" wire:model="pengajuanBarang.{{ $key }}.keterangan"></textarea>
+                                                            </div>
+                                                            @error('pengajuanBarang.{{ $key }}.keterangan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        </td>
+                                                        <td>
+                                                            {{ $pengajuanBarang[$key]['status'] }}
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-list">
+                                                                <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removePengajuanBarang({{ $key }})"><i class="fe fe-x"></i></button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="btn-list text-center">         
+                                                        <button type="button" class="btn btn-success" wire:click="ajukanBarang">Ajukan Barang</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- file --}}
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="expanel expanel-default">
+                                    <div class="expanel-body">
+                                        File Contoh <hr>
+                                        <div class="d-flex text-center">
+                                            <ul>
+                                                @if ($selectedFileContoh)
+                                                    @foreach ($selectedFileContoh as $file)
+                                                        <li class="mb-3">
+                                                            <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
+                                                            <div class="expanel expanel-default">
+                                                                <div class="expanel-body">
+                                                                    <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    @endforeach
+                                                @else
+                                                    <p>No files found.</p>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="expanel expanel-default">
+                                    <div class="expanel-body">
+                                        File Arsip <hr>
+                                        <ul class="list-group no-margin">
+                                            @if ($selectedFileArsip)
+                                                @foreach ($selectedFileArsip as $file)
+                                                <li class="list-group-item d-flex ps-3">
+                                                    <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                </li>
+                                                @endforeach
+                                            @else
+                                                <li>
+                                                    <p>No files found.</p>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="expanel expanel-default">
+                                            <div class="expanel-body">
+                                                File Sample <hr>
+                                                <ul class="list-group no-margin">
+                                                    @if ($selectedFileSample)
+                                                        @foreach ($selectedFileSample as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                        @endforeach
+                                                    @else
+                                                        <li>
+                                                            <p>No files found.</p>
+                                                        </li>
+                                                    @endif
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @endif
-                    @endforeach
-                    @endif
-                    <!-- Row -->
-                    <div class="row mb-3">
-                        <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">NO. SPK</th>
-                                            <th class="border-bottom-0">PEMESAN</th>
-                                            <th class="border-bottom-0">NO. PO</th>
-                                            <th class="border-bottom-0">ORDER</th>
-                                            <th class="border-bottom-0">CODE STYLE</th>
-                                            <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
-                                            <th class="border-bottom-0">QTY</th>
-                                            <th class="border-bottom-0">STOCK</th>
-                                            <th class="border-bottom-0">HARGA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($selectedInstruction)
-                                        <tr>
-                                            <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->customer_number ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->order_name ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->code_style ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->order_date ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            <td>-</td>
-                                        </tr>
-                                        @endif
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Row -->
-                    <div class="row mb-3">
-                        <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">FOLLOW UP</th>
-                                            <th class="border-bottom-0">TYPE SPK</th>
-                                            <th class="border-bottom-0">PAJAK</th>
-                                            <th class="border-bottom-0">MASTER SPK</th>
-                                            <th class="border-bottom-0">SUB SPK</th>
-                                            <th class="border-bottom-0">GROUP</th>
-                                            <th class="border-bottom-0">NO. SPK LAYOUT</th>
-                                            <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                            <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($selectedInstruction)
-                                        <tr>
-                                            <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->taxes_type ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->spk_parent ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->sub_spk ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->group_id ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->spk_layout_number ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
-                                        </tr>
-                                        @endif
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col d-flex justify-content-center">
-                            @if(isset($workStepHitungBahan))
-                                <div class="btn-list">  
-                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                    <!-- Row -->
-                    <div class="row mb-3">
-                        <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>LANGKAH KERJA</th>
-                                            <th>TARGET SELESAI</th>
-                                            <th>DIJADWALKAN</th>
-                                            <th>TARGET JAM</th>
-                                            <th>OPERATOR/REKANAN</th>
-                                            <th>MACHINE</th>
-                                            <th>ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($workSteps as $key => $dataWork)
-                                            <tr>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
-                                                                        <option label="Select Langkah Kerja"></option>
-                                                                        @foreach ($dataWorkSteps as $dataWorkStep)
-                                                                            <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <input type="number" autocomplete="off" wire:model.defer="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
-                                                                        <option label="Select User"></option>
-                                                                        @foreach ($dataUsers as $dataUser)
-                                                                        <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div wire:ignore>
-                                                                <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
-                                                                        <option label="Select Machine"></option>
-                                                                        @foreach ($dataMachines as $dataMachine)
-                                                                        <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})"><i class="fe fe-plus"></i></button>
-                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})"><i class="fe fe-x"></i></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- file --}}
-                    <div class="row">
-                        <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Contoh <hr>
-                                    <div class="d-flex text-center">
-                                        <ul>
-                                            @if ($selectedFileContoh)
-                                                @foreach ($selectedFileContoh as $file)
-                                                    <li class="mb-3">
-                                                        <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
-                                                        <div class="expanel expanel-default">
-                                                            <div class="expanel-body">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            @else
-                                                <p>No files found.</p>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Arsip <hr>
-                                    <ul class="list-group no-margin">
-                                        @if ($selectedFileArsip)
-                                            @foreach ($selectedFileArsip as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
-                                                <p>No files found.</p>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="expanel expanel-default">
-                                        <div class="expanel-body">
-                                            File Sample <hr>
-                                            <ul class="list-group no-margin">
-                                                @if ($selectedFileSample)
-                                                    @foreach ($selectedFileSample as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
-                                                        <p>No files found.</p>
-                                                    </li>
-                                                @endif
-                                            </ul>
+                            <div class="col-xl-4">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="expanel expanel-default">
+                                            <div class="expanel-body">
+                                                File Layout <hr>
+                                                <ul class="list-group no-margin">
+                                                    @if ($selectedFileLayout)
+                                                        @foreach ($selectedFileLayout as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                        @endforeach
+                                                    @else
+                                                        <li>
+                                                            <p>No files found.</p>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="expanel expanel-default">
-                                        <div class="expanel-body">
-                                            File Layout <hr>
-                                            <ul class="list-group no-margin">
-                                                @if ($selectedFileLayout)
-                                                    @foreach ($selectedFileLayout as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
-                                                        <p>No files found.</p>
-                                                    </li>
-                                                @endif
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    <label class="form-label mb-3">Keterangan Reject</label>
-                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="expanel expanel-default">
+                                    <div class="expanel-body">
+                                        <label class="form-label mb-3">Keterangan Reject</label>
+                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                            <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                        </div>
+                                        @error('keteranganReject') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                     </div>
-                                    @error('keteranganReject') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i> Follow Up</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i> Follow Up</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </form>
 
     <!-- Modal Group-->

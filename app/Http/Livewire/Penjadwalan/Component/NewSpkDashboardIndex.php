@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Penjadwalan\Component;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
@@ -14,6 +15,7 @@ use App\Models\WorkStepList;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\PengajuanBarangSpk;
 
 class NewSpkDashboardIndex extends Component
 {
@@ -54,11 +56,13 @@ class NewSpkDashboardIndex extends Component
     public $notes;
     public $keteranganReject;
 
+    public $pengajuanBarang;
+
     protected $listeners = ['indexRender' => 'renderIndex'];
     
     public function renderIndex()
     {
-        $this->render();
+        $this->reset();
     }
 
     public function addField($index)
@@ -97,10 +101,32 @@ class NewSpkDashboardIndex extends Component
         $this->workSteps = array_values($this->workSteps);
     }
 
+    public function addPengajuanBarang($workStepListId)
+    {
+        $dataWorkStepList = WorkStepList::find($workStepListId);
+        $this->pengajuanBarang[] = [
+            'work_step_list' => $dataWorkStepList->name, 
+            'work_step_list_id' => $dataWorkStepList->id, 
+            'nama_barang' => '',
+            'tgl_target_datang' => '',
+            'qty_barang' => '',
+            'keterangan' => '',
+            'status_id' => '8',
+            'status' => 'Pending',
+            'state_pengajuan' => 'New',
+        ];
+    }
+
+    public function removePengajuanBarang($indexBarang)
+    {
+        unset($this->pengajuanBarang[$indexBarang]);
+        $this->pengajuanBarang = array_values($this->pengajuanBarang);
+    }
+
     public function mount()
     {
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
-        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
+        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
         $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
     }
@@ -157,11 +183,8 @@ class NewSpkDashboardIndex extends Component
             'workSteps.*.work_step_list_id' => 'required',
             'workSteps.*.schedule_date' => 'required',
             'workSteps.*.target_date' => 'required',
-            'workSteps.*.target_time' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'workSteps.*.target_time' => 'required',
             'workSteps.*.user_id' => 'required',
-        ], [
-            'workSteps.*.target_time.required' => 'Setidaknya Target Jam harus diisi.',
-            'workSteps.*.target_time.numeric' => 'Target Jam harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
         $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
@@ -236,23 +259,86 @@ class NewSpkDashboardIndex extends Component
             'message' => 'Data jadwal berhasil disimpan',
         ]);
 
-        broadcast(new IndexRenderEvent('refresh'));
-
         $this->workSteps = [];
+        $this->dispatchBrowserEvent('close-modal-new-spk');
+    }
+
+    public function ajukanBarang()
+    {
+        $this->validate([
+            'pengajuanBarang.*.work_step_list_id' => 'required',
+            'pengajuanBarang.*.tgl_target_datang' => 'required',
+            'pengajuanBarang.*.qty_barang' => 'required',
+        ]);
+
+        if(isset($this->pengajuanBarang)){
+            foreach($this->pengajuanBarang as $key => $item){
+                if($item['state_pengajuan'] == 'New'){
+                    $createPengajuan = PengajuanBarangSpk::create([
+                        'instruction_id' => $this->selectedInstruction->id,
+                        'work_step_list_id' => $item['work_step_list_id'],
+                        'nama_barang' => $item['nama_barang'],
+                        'user_id' => Auth()->user()->id,
+                        'tgl_pengajuan' => Carbon::now(),
+                        'tgl_target_datang' => $item['tgl_target_datang'],
+                        'qty_barang' => $item['qty_barang'],
+                        'keterangan' => $item['keterangan'],
+                        'status_id' => $item['status_id'],
+                        'state' => 'Purchase',
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
+            'message' => 'Data Pengajuan Barang berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang SPK', 'instruction_id' => $this->selectedInstruction->id]);
+        }
+        
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->workSteps = [];
-
+        $this->pengajuanBarang = [];
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->where('status_task', '!=', 'Complete')->where('state_task', '!=', 'Complete')->with('workStepList', 'user', 'machine')->get();
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
+        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)->with('workStepList', 'status')->get();
+
+        if(isset($dataPengajuanBarang)){
+            foreach($dataPengajuanBarang as $key => $dataBarang){
+                $dataPengajuan = [
+                    'work_step_list' => $dataBarang->workStepList->name, 
+                    'work_step_list_id' => $dataBarang->work_step_list_id,
+                    'nama_barang' => $dataBarang->nama_barang,
+                    'tgl_target_datang' => $dataBarang->tgl_target_datang,
+                    'qty_barang' => $dataBarang->qty_barang,
+                    'keterangan' => $dataBarang->keterangan,
+                    'status_id' => $dataBarang->status_id,
+                    'status' => $dataBarang->status->desc_status,
+                    'state_pengajuan' => 'Exist',
+                ];
+    
+                $this->pengajuanBarang[] = $dataPengajuan;
+            }
+            
+        }
+
+        if(empty($this->pengajuanBarang)){
+            $this->pengajuanBarang = [];
+        }
+
         if(isset($dataworkStepHitungBahan)){
             $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
         }
-
 
         foreach($this->selectedWorkStep as $key => $dataSelected){
             $workSteps = [
@@ -263,6 +349,7 @@ class NewSpkDashboardIndex extends Component
                 'user_id' => $dataSelected['user_id'],
                 'machine_id' => $dataSelected['machine_id'],
             ];
+
             $this->workSteps[] = $workSteps;
 
             // Load Event

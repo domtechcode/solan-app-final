@@ -62,7 +62,7 @@ class RunningDashboardIndex extends Component
 
     public function renderIndex()
     {
-        $this->render();
+        $this->reset();
     }
 
     public function urgent($instructionSelectedIdUrgent)
@@ -78,7 +78,6 @@ class RunningDashboardIndex extends Component
                 ]);
         
         $this->emit('indexRender');
-        // $this->reset();
     }
 
     public function normal($instructionSelectedIdNormal)
@@ -94,7 +93,6 @@ class RunningDashboardIndex extends Component
                 ]);
         
         $this->emit('indexRender');
-        // $this->reset();
     }
 
     public function addField($index)
