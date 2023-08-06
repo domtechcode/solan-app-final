@@ -395,7 +395,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if(isset($pengajuanBarang))
+                                            @if(!empty($pengajuanBarang))
                                                 @foreach ($pengajuanBarang as $key => $dataPengajuan)
                                                     <tr>
                                                         <td>
@@ -406,19 +406,19 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <input type="text" wire:model.defer="pengajuanBarang.{{ $key }}.nama_barang" placeholder="Nama Barang" class="form-control" required>
+                                                                <input type="text" wire:model="pengajuanBarang.{{ $key }}.nama_barang" placeholder="Nama Barang" class="form-control" required>
                                                                 @error('pengajuanBarang.{{ $key }}.nama_barang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <input type="date" autocomplete="off" wire:model.defer="pengajuanBarang.{{ $key }}.tgl_target_datang" id="pengajuanBarang.{{ $key }}.tgl_target_datang" placeholder="Target Tersedia" class="form-control" required>
+                                                                <input type="date" autocomplete="off" wire:model="pengajuanBarang.{{ $key }}.tgl_target_datang" id="pengajuanBarang.{{ $key }}.tgl_target_datang" placeholder="Target Tersedia" class="form-control" required>
                                                                 @error('pengajuanBarang.{{ $key }}.tgl_target_datang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <input type="text" wire:model.defer="pengajuanBarang.{{ $key }}.qty_barang" class="form-control" placeholder="QTY" required>
+                                                                <input type="text" wire:model="pengajuanBarang.{{ $key }}.qty_barang" class="form-control" placeholder="QTY" required>
                                                                 @error('pengajuanBarang.{{ $key }}.qty_barang') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                                             </div>
                                                         </td>

@@ -266,7 +266,7 @@ class NewSpkDashboardIndex extends Component
     public function ajukanBarang()
     {
         $this->validate([
-            'pengajuanBarang.*.work_step_list_id' => 'required',
+            'pengajuanBarang.*.nama_barang' => 'required',
             'pengajuanBarang.*.tgl_target_datang' => 'required',
             'pengajuanBarang.*.qty_barang' => 'required',
         ]);
