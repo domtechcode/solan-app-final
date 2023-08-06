@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Purchase\Component;
 
+use App\Models\User;
 use App\Models\Files;
 use App\Models\FormRab;
 use Livewire\Component;
@@ -9,6 +10,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 use App\Models\PengajuanBarangSpk;
 
 class PengajuanBarangSpkIndex extends Component
@@ -131,6 +133,11 @@ class PengajuanBarangSpkIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
+        $userDestination = User::where('role', 'Accounting')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateAccounting->instruction_id]);
+        }
+        
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
     }
@@ -160,6 +167,11 @@ class PengajuanBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
+
+        $userDestination = User::where('role', 'RAB')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
+        }
 
         $this->reset();
         
@@ -217,5 +229,15 @@ class PengajuanBarangSpkIndex extends Component
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-barang-spk');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
