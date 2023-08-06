@@ -54,7 +54,7 @@ class PengajuanBarangSpkIndex extends Component
 
     public function renderIndex()
     {
-        $this->render();
+        $this->reset();
     }
 
     public function mount()
@@ -172,6 +172,68 @@ class PengajuanBarangSpkIndex extends Component
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
+
+        $this->reset();
+        
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
+    }
+
+    public function beliBarang($PengajuanBarangSelectedBeliId)
+    {
+        $this->validate([
+            'harga_satuan' => 'required',
+            'qty_purchase' => 'required',
+            'total_harga' => 'required',
+            'stock' => 'required',
+        ]);
+
+        $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
+        $updateBeli->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 15,
+            'state' => 'Purchase',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Stock Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $this->reset();
+        
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
+    }
+
+    public function completeBarang($PengajuanBarangSelectedCompleteId)
+    {
+        $this->validate([
+            'harga_satuan' => 'required',
+            'qty_purchase' => 'required',
+            'total_harga' => 'required',
+            'stock' => 'required',
+        ]);
+
+        $updateComplete = PengajuanBarangSpk::find($PengajuanBarangSelectedCompleteId);
+        $updateComplete->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 16,
+            'state' => 'Purchase',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Stock Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
 
         $this->reset();
         

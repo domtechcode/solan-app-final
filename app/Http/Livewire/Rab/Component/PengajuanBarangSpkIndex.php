@@ -92,7 +92,7 @@ class PengajuanBarangSpkIndex extends Component
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
             'status_id' => 14,
-            'state' => 'Purchase',
+            'state' => $updateApprove->previous_state,
             'previous_state' => $updateApprove->previous_state,
         ]);
 
@@ -128,8 +128,8 @@ class PengajuanBarangSpkIndex extends Component
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
             'status_id' => 17,
-            'state' => 'Purchase',
-            'previous_state' => $updateApprove->previous_state,
+            'state' => $updateReject->previous_state,
+            'previous_state' => $updateReject->previous_state,
         ]);
 
         $this->emit('flashMessage', [

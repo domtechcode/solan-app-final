@@ -64,7 +64,7 @@ class PengajuanBarangSpkIndex extends Component
     
     public function render()
     {
-        $dataPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 10)
+        $dataPengajuanBarangSpk = PengajuanBarangSpk::where('state', 'Accounting')
                 ->with(['status', 'workStepList', 'instruction', 'user'])
                 ->orderBy('tgl_target_datang', 'asc')
                 ->paginate($this->paginate);
