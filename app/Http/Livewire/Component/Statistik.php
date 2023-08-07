@@ -68,7 +68,7 @@ class Statistik extends Component
                 ]);
             }
 
-            $this->reset();
+            $this->render();
     }
    
     public function render()

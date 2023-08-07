@@ -43,7 +43,7 @@ class IncomingDashboardIndex extends Component
 
     public function renderIndex()
     {
-        $this->reset();
+        $this->render();
     }
 
     public function mount()

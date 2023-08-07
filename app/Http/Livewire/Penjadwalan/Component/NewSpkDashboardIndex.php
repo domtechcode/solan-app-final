@@ -62,7 +62,7 @@ class NewSpkDashboardIndex extends Component
     
     public function renderIndex()
     {
-        $this->reset();
+        $this->render();
     }
 
     public function addField($index)
