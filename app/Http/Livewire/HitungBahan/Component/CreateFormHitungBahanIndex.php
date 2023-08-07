@@ -802,12 +802,14 @@ class CreateFormHitungBahanIndex extends Component
                 'keterangans.*.label.*.jenis_ukuran' => 'required',
                 'keterangans.*.label.*.jumlah' => 'required',
                 'keterangans.*.label.*.ketersediaan' => 'required',
+                'keterangans.*.label.*.catatan_label' => 'required',
             ], [
-                'keterangans.*.label.min' => 'Setidaknya satu data label harus diisi pada keterangan.',
-                'keterangans.*.label.*.alat_bahan.required' => 'State pada data label harus diisi pada keterangan.',
+                'keterangans.*.label.min' => 'Setidaknya satu data Label harus diisi pada keterangan.',
+                'keterangans.*.label.*.alat_bahan.required' => 'State pada data Label harus diisi pada keterangan.',
                 'keterangans.*.label.*.jenis_ukuran.required' => 'Jenis Ukuran harus diisi pada keterangan.',
                 'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
                 'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
+                'keterangans.*.label.*.catatan_label.required' => 'Catatan harus diisi pada keterangan.',
             ]);
         }
 
