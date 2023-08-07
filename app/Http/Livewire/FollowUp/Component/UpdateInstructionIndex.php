@@ -152,7 +152,6 @@ class UpdateInstructionIndex extends Component
             'shipping_date' => 'required',
             'order_name' => 'required',
             'quantity' => 'required',
-            'workSteps' => 'required',
             'qtyState' => 'required',
             'price' => 'numeric|regex:/^\d*(\.\d{1,2})?$/',
         ], [
