@@ -271,7 +271,39 @@ class CreateFormRabIndex extends Component
         $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
                 ->where('work_step_list_id', 3)
                 ->first();
+        
+        if($updateTask->reject_from_id != null){
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
             
+                $updateNextStep = WorkStep::find($updateTask->reject_from_id);
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'schedule_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+        $this->messageSent(['conversation' => 'SPK selesai di perbaiki', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+        
+
+        $userDestination = User::where('role', 'Accounting')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK RAB', 'instruction_id' => $this->currentInstructionId]);
+                }
+        }else{
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -304,6 +336,8 @@ class CreateFormRabIndex extends Component
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK RAB', 'instruction_id' => $this->currentInstructionId]);
                 }
+        }
+            
 
         broadcast(new IndexRenderEvent('refresh'));
 

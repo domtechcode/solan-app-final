@@ -845,8 +845,8 @@ class EditFormHitungBahanIndex extends Component
             ]);
         }
 
-        $currentTotalPlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->sum('jumlah_plate');
-        $currentTotalScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
+        $currentTotalPlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->where('state_plate', 'baru')->sum('jumlah_plate');
+        $currentTotalScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->where('state_screen', 'baru')->sum('jumlah_screen');
         $currentStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
         $currentStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
         $currentHargaBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('harga_bahan');
@@ -1159,12 +1159,13 @@ class EditFormHitungBahanIndex extends Component
             }
         }
 
-        $newPlateTotal = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->sum('jumlah_plate');
-        $newScreenTotal = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->sum('jumlah_screen');
+        $newPlateTotal = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->where('state_plate', 'baru')->sum('jumlah_plate');
+        $newScreenTotal = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->where('state_screen', 'baru')->sum('jumlah_screen');
         $newStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
         $newStateScreen = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->pluck('state_screen')->toArray();
         $newHargaBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('harga_bahan');
         $newJumlahBahan = LayoutBahan::where('instruction_id', $this->currentInstructionId)->sum('jumlah_bahan');
+
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
         $statePlateDiff = array_diff($newStatePlate, $currentStatePlate);
         $stateScreenDiff = array_diff($newStateScreen, $currentStateScreen);
@@ -1244,7 +1245,41 @@ class EditFormHitungBahanIndex extends Component
                 $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
                 broadcast(new IndexRenderEvent('refresh'));
             }
+        }else if($updateTask->status_id == 26){
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                    'target_date' => Carbon::now(),
+                    'target_time' => 1,
+                ]);
             
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
+            
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'target_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+            if ($updateNextStep->work_step_list_id == 3) {
+                $userDestination = User::where('role', 'RAB')->get();
+                foreach($userDestination as $dataUser){
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Perbaikan QTY', 'instruction_id' => $this->currentInstructionId]);
+                }
+                broadcast(new IndexRenderEvent('refresh'));
+            }
         }else{
             if ($updateTask) {
                 $updateTask->update([
