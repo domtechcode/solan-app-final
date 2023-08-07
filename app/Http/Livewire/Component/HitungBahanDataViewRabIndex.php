@@ -287,7 +287,7 @@ class HitungBahanDataViewRabIndex extends Component
                             $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
                             $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
 
-                            $this->totalScreen += $keterangan['screen'][$index]['jumlah_screen'] = $dataPlate['jumlah_screen'];
+                            $this->totalScreen += $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
                         }
                     }
                 }
