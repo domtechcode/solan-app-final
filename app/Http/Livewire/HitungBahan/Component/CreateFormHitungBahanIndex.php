@@ -579,8 +579,7 @@ class CreateFormHitungBahanIndex extends Component
     }
     
     public function save()
-    {
-        
+    {  
         $this->validate([
             'layoutSettings' => 'required|array|min:1',
             'layoutSettings.*.panjang_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
@@ -694,7 +693,7 @@ class CreateFormHitungBahanIndex extends Component
             'layoutBahans.*.lebar_sisa_bahan.numeric' => 'Lebar Sisa Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
-        if(isset($this->stateWorkStepPlate)){
+        if(isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
                     return $plate['state_plate'] !== null || $plate['jumlah_plate'] !== null || $plate['ukuran_plate'] !== null;
@@ -795,22 +794,22 @@ class CreateFormHitungBahanIndex extends Component
             
         }
 
-        // if(isset($this->stateWorkStepCetakLabel)){
-        //     $this->validate([        
-        //         'keterangans' => 'required|array|min:1',
-        //         'keterangans.*.label' => 'required|array|min:1',
-        //         'keterangans.*.label.*.alat_bahan' => 'required',
-        //         'keterangans.*.label.*.jenis_ukuran' => 'required',
-        //         'keterangans.*.label.*.jumlah' => 'required',
-        //         'keterangans.*.label.*.ketersediaan' => 'required',
-        //     ], [
-        //         'keterangans.*.label.min' => 'Setidaknya satu data label harus diisi pada keterangan.',
-        //         'keterangans.*.label.*.alat_bahan.required' => 'State pada data label harus diisi pada keterangan.',
-        //         'keterangans.*.label.*.jenis_ukuran.required' => 'Jenis Ukuran harus diisi pada keterangan.',
-        //         'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
-        //         'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
-        //     ]);
-        // }
+        if(isset($this->stateWorkStepCetakLabel)){
+            $this->validate([        
+                'keterangans' => 'required|array|min:1',
+                'keterangans.*.label' => 'required|array|min:1',
+                'keterangans.*.label.*.alat_bahan' => 'required',
+                'keterangans.*.label.*.jenis_ukuran' => 'required',
+                'keterangans.*.label.*.jumlah' => 'required',
+                'keterangans.*.label.*.ketersediaan' => 'required',
+            ], [
+                'keterangans.*.label.min' => 'Setidaknya satu data label harus diisi pada keterangan.',
+                'keterangans.*.label.*.alat_bahan.required' => 'State pada data label harus diisi pada keterangan.',
+                'keterangans.*.label.*.jenis_ukuran.required' => 'Jenis Ukuran harus diisi pada keterangan.',
+                'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
+                'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
+            ]);
+        }
 
         $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
         $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->delete();

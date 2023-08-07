@@ -709,7 +709,7 @@ class EditFormHitungBahanIndex extends Component
             'layoutBahans.*.lebar_sisa_bahan.numeric' => 'Lebar Sisa Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
-        if(isset($this->stateWorkStepPlate)){
+        if(isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)){
             foreach ($this->keterangans as $index => $keterangan) {
                 // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
