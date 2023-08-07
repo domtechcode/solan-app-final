@@ -441,6 +441,18 @@ class HitungBahanDataViewGeneralIndex extends Component
                 $this->totalWasteScreen += $dataRincianScreen['waste'];
             }
 
+            if (isset($dataKeterangan['keteranganLabel'])) {
+                foreach ($dataKeterangan['keteranganLabel'] as $dataketeranganLabel) {
+                    $keterangan['label'][] = [
+                        "alat_bahan" => $dataketeranganLabel['alat_bahan'],
+                        "jenis_ukuran" => $dataketeranganLabel['jenis_ukuran'],
+                        "jumlah" => $dataketeranganLabel['jumlah'],
+                        "ketersediaan" => $dataketeranganLabel['ketersediaan'],
+                        "catatan_label" => $dataketeranganLabel['catatan_label'],
+                    ];
+                }
+            }
+
             foreach($dataKeterangan['fileRincian'] as $dataFileRincian){
                 $keterangan['fileRincian'][] = [
                     "file_name" => $dataFileRincian['file_name'],
