@@ -125,9 +125,7 @@ class NewSpkDashboardIndex extends Component
 
     public function mount()
     {
-        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
-        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
-        $this->dataMachines = Machine::all();
+        
         $this->search = request()->query('search', $this->search);
     }
 
@@ -308,6 +306,9 @@ class NewSpkDashboardIndex extends Component
     {
         $this->workSteps = [];
         $this->pengajuanBarang = [];
+        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
+        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
+        $this->dataMachines = Machine::all();
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->where('status_task', '!=', 'Complete')->where('state_task', '!=', 'Complete')->with('workStepList', 'user', 'machine')->get();
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();

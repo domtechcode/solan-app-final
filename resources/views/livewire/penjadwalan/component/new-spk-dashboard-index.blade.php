@@ -291,6 +291,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @if(isset($workSteps))
                                             @foreach ($workSteps as $key => $dataWork)
                                                 <tr>
                                                     <td>
@@ -372,6 +373,7 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>

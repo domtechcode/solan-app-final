@@ -136,9 +136,6 @@ class RunningDashboardIndex extends Component
 
     public function mount()
     {
-        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
-        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
-        $this->dataMachines = Machine::all();
         $this->search = request()->query('search', $this->search);
     }
 
@@ -308,6 +305,9 @@ class RunningDashboardIndex extends Component
     public function modalInstructionDetailsRunning($instructionId)
     {
         $this->workSteps = [];
+        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
+        $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
+        $this->dataMachines = Machine::all();
         $this->stateRejectPenjadwalan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 2)->where('status_task', 'Reject Requirements')->first();
         $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
         $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 2)->get();
