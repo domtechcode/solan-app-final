@@ -447,6 +447,19 @@ class CreateFormHitungBahanIndex extends Component
                 }
             }
 
+            if (isset($dataKeterangan['keteranganLabel'])) {
+                foreach ($dataKeterangan['keteranganLabel'] as $dataketeranganLabel) {
+                    $keterangan['label'][] = [
+                        "alat_bahan" => $dataketeranganLabel['alat_bahan'],
+                        "jenis_ukuran" => $dataketeranganLabel['jenis_ukuran'],
+                        "jumlah" => $dataketeranganLabel['jumlah'],
+                        "ketersediaan" => $dataketeranganLabel['ketersediaan'],
+                        "catatan_label" => $dataketeranganLabel['catatan_label'],
+                    ];
+                }
+            }
+
+
             $this->keterangans[] = $keterangan;
         }
     

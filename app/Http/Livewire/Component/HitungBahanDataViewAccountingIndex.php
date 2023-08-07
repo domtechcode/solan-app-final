@@ -450,6 +450,18 @@ class HitungBahanDataViewAccountingIndex extends Component
                 $filePath = storage_path('app/' . $dataFileRincian['file_path'] . '/' . $dataFileRincian['file_name']);
                 $this->filePaths[] = $filePath;
             }
+
+            if (isset($dataKeterangan['keteranganLabel'])) {
+                foreach ($dataKeterangan['keteranganLabel'] as $dataketeranganLabel) {
+                    $keterangan['label'][] = [
+                        "alat_bahan" => $dataketeranganLabel['alat_bahan'],
+                        "jenis_ukuran" => $dataketeranganLabel['jenis_ukuran'],
+                        "jumlah" => $dataketeranganLabel['jumlah'],
+                        "ketersediaan" => $dataketeranganLabel['ketersediaan'],
+                        "catatan_label" => $dataketeranganLabel['catatan_label'],
+                    ];
+                }
+            }
             
             $this->keterangans[] = $keterangan;
         }
