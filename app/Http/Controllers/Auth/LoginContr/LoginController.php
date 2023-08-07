@@ -12,6 +12,51 @@ class LoginController extends Controller
     {
         $data['title'] = "Login";
 
+        // Attempt to log the user in
+        if (Auth::check()) {
+            // Determine the user's role and redirect to the appropriate dashboard
+            $user = Auth::user();
+            // dd($user->role);
+            switch ($user->role) {
+                case 'Follow Up':
+                    return redirect()->route('followUp.dashboard');
+                    break;
+
+                case 'Stock':
+                    return redirect()->route('stock.dashboard');
+                    break;
+
+                case 'Hitung Bahan':
+                    return redirect()->route('hitungBahan.dashboard');
+                    break;
+
+                case 'RAB':
+                    return redirect()->route('rab.dashboard');
+                    break;
+
+                case 'Penjadwalan':
+                    return redirect()->route('jadwal.dashboard');
+                    break;
+
+                case 'Operator':
+                    return redirect()->route('operator.dashboard');
+                    break;
+
+                case 'Accounting':
+                    return redirect()->route('accounting.dashboard');
+                    break;
+                    break;
+
+                case 'Purchase':
+                    return redirect()->route('purchase.dashboard');
+                    break;
+
+                default:
+                    return redirect()->route('login');
+                    break;
+            }
+        }
+
         return view('login', $data);
     }
     
