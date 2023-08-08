@@ -296,7 +296,10 @@ class CreateFormRabIndex extends Component
                 }
             }
 
-        $this->messageSent(['conversation' => 'SPK selesai di perbaiki', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+            if(isset($updateNextStep->user_id)){
+                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                broadcast(new IndexRenderEvent('refresh'));
+            }
         
 
         $userDestination = User::where('role', 'Accounting')->get();

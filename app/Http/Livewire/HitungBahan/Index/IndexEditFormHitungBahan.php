@@ -18,8 +18,8 @@ class IndexEditFormHitungBahan extends Component
         $updateUserWorkStep->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
-            'state_task' => 'Running',
-            'status_task' => 'Process',
+            // 'state_task' => 'Running',
+            // 'status_task' => 'Process',
         ]);
 
         if($updateUserWorkStep->status_id == 26){

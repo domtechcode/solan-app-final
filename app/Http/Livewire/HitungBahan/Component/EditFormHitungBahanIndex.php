@@ -1178,12 +1178,12 @@ class EditFormHitungBahanIndex extends Component
                     if ($updateNextStep) {
                         $updateNextStep->update([
                             'state_task' => 'Running',
-                            'status_task' => 'Pending Approved',
+                            'status_task' => 'Reject Requirements',
                         ]);
     
                         $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                             'job_id' => $updateNextStep->work_step_list_id,
-                            'status_id' => 1,
+                            'status_id' => 22,
                         ]);
                     }
 
@@ -1251,12 +1251,12 @@ class EditFormHitungBahanIndex extends Component
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
+                        'status_task' => 'Revisi Qty',
                         'target_date' => Carbon::now(),
                     ]);
 
                     $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                        'status_id' => 1,
+                        'status_id' => 26,
                         'job_id' => $updateNextStep->work_step_list_id,
                     ]);
                 }

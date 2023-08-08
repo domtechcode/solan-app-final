@@ -377,9 +377,7 @@ class EditInstructionIndex extends Component
             $findSourceReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $currentWorkStep->reject_from_job)->first();
             
             if($this->qtyState == 'Ya'){
-                $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->first();
-
-                $updateWorkStepEstimator->update([
+                $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->update([
                     'state_task' => 'Running',
                     'status_task' => 'Revisi Qty',
                 ]);
@@ -392,11 +390,21 @@ class EditInstructionIndex extends Component
                     'spk_status' => 'Running',
                 ]);
 
-                $userDestination = User::where('role', 'Hitung Bahan')->get();
-                foreach($userDestination as $dataUser){
+                $updateWorkStepRab = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 3)->update([
+                    'state_task' => 'Not Running',
+                    'status_task' => 'Waiting',
+                ]);
+
+                $userDestinationEstimator = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestinationEstimator as $dataUser){
                     $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+
+
+                $userDestinationEstimator = User::where('role', 'RAB')->get();
+                foreach($userDestinationEstimator as $dataUser){
+                    $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
+                }
             }else{
                 $findSourceReject->update([
                     'status_task' => 'Pending Approved',
