@@ -711,9 +711,8 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)){
             foreach ($this->keterangans as $index => $keterangan) {
-                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
-                    return $plate['state_plate'] !== false && $plate['jumlah_plate'] !== null && $plate['ukuran_plate'] !== null;
+                    return $plate['state_plate'] !== null && $plate['state_plate'] !== 'false' && $plate['state_plate'] !== '' && $plate['jumlah_plate'] !== null && $plate['jumlah_plate'] !== 'false' && $plate['jumlah_plate'] !== '' && $plate['ukuran_plate'] !== null && $plate['ukuran_plate'] !== 'false' && $plate['ukuran_plate'] !== '';
                 });
             }
             
@@ -756,16 +755,10 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepSablon)){
             foreach ($this->keterangans as $index => $keterangan) {
-                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
-                $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($plate) {
-                    return $plate['state_screen'] !== false && $plate['jumlah_screen'];
+                $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($screen) {
+                    return $screen['state_screen'] !== null && $screen['state_screen'] !== 'false' && $screen['state_screen'] !== '' && $screen['jumlah_screen'] !== null && $screen['jumlah_screen'] !== 'false' && $screen['jumlah_screen'] !== '';
                 });
             }
-            
-            // Hapus elemen kosong di dalam array keterangans
-            $this->keterangans = array_filter($this->keterangans, function ($keterangan) {
-                return !empty($keterangan['screen']);
-            });
 
 
             $this->validate([        
@@ -802,16 +795,10 @@ class EditFormHitungBahanIndex extends Component
 
         if(isset($this->stateWorkStepPond)){
             foreach ($this->keterangans as $index => $keterangan) {
-                // Gunakan array_filter untuk menyaring elemen-elemen pada array plate yang memiliki state_plate true, jumlah_plate tidak null, atau ukuran_plate tidak null
-                $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($plate) {
-                    return $plate['state_pisau'] !== false && $plate['jumlah_pisau'] !== null;
+                $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($pond) {
+                    return $pond['state_pisau'] !== null && $pond['state_pisau'] !== 'false' && $pond['state_pisau'] !== '' && $pond['jumlah_pisau'] !== null && $pond['jumlah_pisau'] !== 'false' && $pond['jumlah_pisau'] !== '';
                 });
             }
-            
-            // Hapus elemen kosong di dalam array keterangans
-            $this->keterangans = array_filter($this->keterangans, function ($keterangan) {
-                return !empty($keterangan['pond']);
-            });
             
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
@@ -836,12 +823,14 @@ class EditFormHitungBahanIndex extends Component
                 'keterangans.*.label.*.jenis_ukuran' => 'required',
                 'keterangans.*.label.*.jumlah' => 'required',
                 'keterangans.*.label.*.ketersediaan' => 'required',
+                'keterangans.*.label.*.catatan_label' => 'required',
             ], [
-                'keterangans.*.label.min' => 'Setidaknya satu data pond harus diisi pada keterangan.',
-                'keterangans.*.label.*.alat_bahan.required' => 'State pada data pond harus diisi pada keterangan.',
+                'keterangans.*.label.min' => 'Setidaknya satu data Label harus diisi pada keterangan.',
+                'keterangans.*.label.*.alat_bahan.required' => 'State pada data Label harus diisi pada keterangan.',
                 'keterangans.*.label.*.jenis_ukuran.required' => 'Jenis Ukuran harus diisi pada keterangan.',
                 'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
                 'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
+                'keterangans.*.label.*.catatan_label.required' => 'Catatan harus diisi pada keterangan.',
             ]);
         }
 

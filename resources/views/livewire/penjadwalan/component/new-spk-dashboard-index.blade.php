@@ -448,7 +448,7 @@
                                                 @endforeach
                                             @endif
                                             <tr>
-                                                <td colspan="6">
+                                                <td colspan="7">
                                                     <div class="btn-list text-center">         
                                                         <button type="button" class="btn btn-success" wire:click="ajukanBarang">Ajukan Barang</button>
                                                     </div>
