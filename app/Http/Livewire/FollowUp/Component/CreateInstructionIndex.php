@@ -158,6 +158,7 @@ class CreateInstructionIndex extends Component
             'order_name' => 'required',
             'quantity' => 'required',
             'workSteps' => 'required',
+            'filecontoh' => 'required',
             'price' => 'numeric|regex:/^\d*(\.\d{1,2})?$/',
         ], [
             'price.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',

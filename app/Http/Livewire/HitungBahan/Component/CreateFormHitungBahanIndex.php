@@ -696,7 +696,7 @@ class CreateFormHitungBahanIndex extends Component
         if(isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
-                    return $plate['state_plate'] !== null || $plate['jumlah_plate'] !== null || $plate['ukuran_plate'] !== null;
+                    return $plate['state_plate'] !== null && $plate['state_plate'] !== 'false' && $plate['state_plate'] !== '' && $plate['jumlah_plate'] !== null && $plate['jumlah_plate'] !== 'false' && $plate['jumlah_plate'] !== '' && $plate['ukuran_plate'] !== null && $plate['ukuran_plate'] !== 'false' && $plate['ukuran_plate'] !== '';
                 });
             }
             
@@ -737,7 +737,7 @@ class CreateFormHitungBahanIndex extends Component
         if(isset($this->stateWorkStepSablon)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['screen'] = array_filter($keterangan['screen'], function ($screen) {
-                    return $screen['state_screen'] !== null || $screen['jumlah_screen'] !== null;
+                    return $screen['state_screen'] !== null && $screen['state_screen'] !== 'false' && $screen['state_screen'] !== '' && $screen['jumlah_screen'] !== null && $screen['jumlah_screen'] !== 'false' && $screen['jumlah_screen'] !== '';
                 });
             }
 
@@ -776,9 +776,10 @@ class CreateFormHitungBahanIndex extends Component
         if(isset($this->stateWorkStepPond)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['pond'] = array_filter($keterangan['pond'], function ($pond) {
-                    return $pond['state_pisau'] !== null || $pond['jumlah_pisau'] !== null;
+                    return $pond['state_pisau'] !== null && $pond['state_pisau'] !== 'false' && $pond['state_pisau'] !== '' && $pond['jumlah_pisau'] !== null && $pond['jumlah_pisau'] !== 'false' && $pond['jumlah_pisau'] !== '';
                 });
             }
+
             $this->validate([        
                 'keterangans' => 'required|array|min:1',
                 'keterangans.*.pond' => 'required|array|min:1',
@@ -812,6 +813,7 @@ class CreateFormHitungBahanIndex extends Component
                 'keterangans.*.label.*.catatan_label.required' => 'Catatan harus diisi pada keterangan.',
             ]);
         }
+
 
         $checkLayoutSetting = LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
         $checkKeterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->delete();
