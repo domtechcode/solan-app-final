@@ -203,7 +203,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if($selectedInstruction)
+                                            @if(isset($selectedInstruction))
                                             <tr>
                                                 <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
                                                 <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
@@ -243,7 +243,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if($selectedInstruction)
+                                            @if(isset($selectedInstruction))
                                             <tr>
                                                 <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
                                                 <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
@@ -301,9 +301,11 @@
                                                                     <div class="form-group">
                                                                         <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
                                                                             <option label="Select Langkah Kerja"></option>
-                                                                            @foreach ($dataWorkSteps as $dataWorkStep)
+                                                                            @forelse ($dataWorkSteps as $dataWorkStep)
                                                                                 <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
-                                                                            @endforeach
+                                                                            @empty
+                                                                                <option label="Select Langkah Kerja"></option>
+                                                                            @endforelse 
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -335,9 +337,11 @@
                                                                     <div class="form-group">
                                                                         <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
                                                                             <option label="Select User"></option>
-                                                                            @foreach ($dataUsers as $dataUser)
-                                                                            <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
-                                                                            @endforeach
+                                                                            @forelse ($dataUsers as $dataUser)
+                                                                                <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
+                                                                            @empty
+                                                                                <option label="Select User"></option>
+                                                                            @endforelse 
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -351,9 +355,11 @@
                                                                     <div class="form-group">
                                                                         <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#detailInstructionModalNewSpk" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
                                                                             <option label="Select Machine"></option>
-                                                                            @foreach ($dataMachines as $dataMachine)
-                                                                            <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
-                                                                            @endforeach
+                                                                            @forelse ($dataMachines as $dataMachine)
+                                                                                <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
+                                                                            @empty
+                                                                                <option label="Select Machine"></option>
+                                                                            @endforelse 
                                                                         </select>
                                                                     </div>
                                                                 </div>
