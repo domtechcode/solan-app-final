@@ -99,7 +99,7 @@ class EditInstructionIndex extends Component
         $this->keteranganReject = Catatan::where('instruction_id', $this->currentInstructionId)->where('tujuan', 1)->where('kategori', 'reject')->get();
         $this->keteranganCatatan = Catatan::where('instruction_id', $this->currentInstructionId)->where('tujuan', 1)->where('kategori', 'catatan')->get();
         $this->datacustomers = Customer::all();
-        $this->dataparents = Instruction::where('spk_number', 'LIKE', '%-A')->orderByDesc('created_at')->get();
+        $this->dataparents = Instruction::where('spk_parent', null)->where('sub_spk', 'sub')->orderByDesc('created_at')->get();
         $this->datalayouts = Instruction::where('spk_type', 'layout')->orderByDesc('created_at')->get();
         $this->datasamples = Instruction::where('spk_type', 'sample')->orderByDesc('created_at')->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
@@ -658,7 +658,8 @@ class EditInstructionIndex extends Component
 
         if($this->spk_type == 'layout' || $this->spk_type == 'sample'){
             $count_spk = Instruction::whereIn('spk_type', ['layout', 'sample'])->count();
-            $this->spk_number = 'P-' . sprintf("1%04d", $count_spk + 1);
+            $nomor_urut = $count_spk + 447;
+            $this->spk_number = 'P-' . sprintf("1%04d", $nomor_urut + 1);
         }else if($this->spk_type == 'production'){
             if(isset($this->spk_parent)){
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
@@ -689,30 +690,54 @@ class EditInstructionIndex extends Component
 
             
             if($datacustomerlist->taxes == 'pajak' && empty($this->sub_spk) && empty($this->spk_parent)){
-                $nomor_urut = $nomor_spk + 534;
+                $nomor_urut = $nomor_spk + 537;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut + 1);
             }else if($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && empty($this->spk_parent)){
-                $nomor_urut = $nomor_spk + 534;
+                $nomor_urut = $nomor_spk + 537;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '-A';
             }else if($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && isset($this->spk_parent)){
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }if($datacustomerlist->taxes == 'nonpajak' && empty($this->sub_spk) && empty($this->spk_parent)){
-                $nomor_urut = $nomor_spk + 153;
+                $nomor_urut = $nomor_spk + 145;
                 $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1);
             }else if($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && empty($this->spk_parent)){
-                $nomor_urut = $nomor_spk + 153;
+                $nomor_urut = $nomor_spk + 145;
                 $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '-A';
             }else if($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && isset($this->spk_parent)){
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
 
         }else if($this->spk_type == 'stock'){
-            $nomor_spk = Instruction::where('spk_type', 'production')
-                                    ->where('spk_parent', NULL)
-                                    ->where('taxes_type', 'nonpajak')
-                                    ->count();
-            $nomor_urut = $nomor_spk + 153;
-            $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '(STK)';
+            if(isset($this->spk_parent)){
+                $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
+                                        ->where('spk_type', $this->spk_type)
+                                        ->where('taxes_type', $datacustomerlist->taxes)
+                                        ->latest('spk_number')->first();
+                $nomor_parent = Str::between($this->spk_parent, '-', '-');
+            }else{
+                $nomor_spk = Instruction::where('spk_type', 'production')
+                    ->where('spk_parent', NULL)
+                    ->where('taxes_type', 'nonpajak')
+                    ->count();
+                
+            }
+
+            if (isset($nomor_spk_parent)) {
+                $code_alphabet = substr($nomor_spk_parent['spk_number'], -1);
+            } else {
+                $code_alphabet = 'A';
+            }
+            
+            if(empty($this->sub_spk) && empty($this->spk_parent)){
+                $nomor_urut = $nomor_spk + 145;
+                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '(STK)';
+            }else if(isset($this->sub_spk) && empty($this->spk_parent)){
+                $nomor_urut = $nomor_spk + 145;
+                $this->spk_number = date('y') . '-' . sprintf("1%04d", $nomor_urut + 1). '-A(STK)';
+            }else if(isset($this->sub_spk) && isset($this->spk_parent)){
+                $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet).'(STK)';
+            }
+            
         }
 
         // Perbarui nilai input text
