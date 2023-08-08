@@ -475,7 +475,10 @@
             </div>
             <!-- ROW-2 END -->
         @endforeach
+        
+        <form wire:submit.prevent="saveSampleAndProduction" enctype="multipart/form-data">
 
+        
         <!-- ROW-2-->
         <div class="row">
             <div class="col-md-12">
@@ -849,13 +852,16 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
-                            wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button>
+                        {{-- <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
+                            wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button> --}}
+                        <button type="submit" class="btn btn-success mt-4 mb-0 submitBtn"
+                            >Submit</button>
                     </div>
                 </div>
             </div>
         </div>
         <!-- ROW-2 END -->
+    </form>
 
     @endif
 </div>
