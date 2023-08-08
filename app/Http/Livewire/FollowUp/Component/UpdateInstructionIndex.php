@@ -277,13 +277,26 @@ class UpdateInstructionIndex extends Component
                 $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                     'status_id' => 26,
                     'job_id' => 5,
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                    'spk_status' => 'Running',
                 ]);
 
-                $userDestination = User::where('role', 'Hitung Bahan')->get();
-                foreach($userDestination as $dataUser){
+                $updateWorkStepRab = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 3)->update([
+                    'state_task' => 'Not Running',
+                    'status_task' => 'Waiting',
+                ]);
+
+                $userDestinationEstimator = User::where('role', 'Hitung Bahan')->get();
+                foreach($userDestinationEstimator as $dataUser){
                     $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+
+
+                $userDestinationEstimator = User::where('role', 'RAB')->get();
+                foreach($userDestinationEstimator as $dataUser){
+                    $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
+                }
             }
             $this->emit('flashMessage', [
                 'type' => 'success',
