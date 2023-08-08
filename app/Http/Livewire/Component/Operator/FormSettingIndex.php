@@ -463,8 +463,12 @@ class FormSettingIndex extends Component
                     $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Pisau')->count();
                     foreach ($this->filePisauPond as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-revisi-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-revisi-'.$noPisauPond . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-revisi-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noPisauPond ++;
             
@@ -497,8 +501,12 @@ class FormSettingIndex extends Component
                     $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Foil')->count();
                     foreach ($this->fileFoil as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-revisi-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-revisi-'.$noFoil . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-revisi-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noFoil ++;
             
@@ -531,8 +539,12 @@ class FormSettingIndex extends Component
                     $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Sablon')->count();
                     foreach ($this->fileSablon as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-revisi-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-revisi-'.$noSablon . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-revisi-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noSablon ++;
             
@@ -566,8 +578,12 @@ class FormSettingIndex extends Component
                     $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Emboss/Deboss')->count();
                     foreach ($this->fileEmbossDeboss as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-revisi-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-revisi-'.$noEmbossDeboss . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-revisi-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noEmbossDeboss ++;
             
@@ -600,8 +616,12 @@ class FormSettingIndex extends Component
                     $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Spot UV')->count();
                     foreach ($this->fileSpotUV as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-revisi-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-revisi-'.$noSpotUV . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-revisi-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noSpotUV ++;
             
@@ -634,8 +654,12 @@ class FormSettingIndex extends Component
                     $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'UV')->count();
                     foreach ($this->fileUV as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-revisi-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-revisi-'.$noUV . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-revisi-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noUV ++;
             
@@ -668,8 +692,12 @@ class FormSettingIndex extends Component
                     $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Label')->count();
                     foreach ($this->fileCetakLabel as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-revisi-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-revisi-'.$noCetakLabel . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-revisi-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noCetakLabel ++;
             
@@ -695,7 +723,12 @@ class FormSettingIndex extends Component
                 $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->count();
                 $nolayout = $fileLayoutData;
                     foreach ($this->fileLayout as $file) {
-                        $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-revisi-'.$nolayout . '.cdr';
+                        }else{
+                            $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $nolayout ++;
         
@@ -782,8 +815,12 @@ class FormSettingIndex extends Component
                     $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Pisau')->count();
                     foreach ($this->filePisauPond as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-'.$noPisauPond . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-'.$noPisauPond . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noPisauPond ++;
             
@@ -816,8 +853,12 @@ class FormSettingIndex extends Component
                     $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Foil')->count();
                     foreach ($this->fileFoil as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-'.$noFoil . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-'.$noFoil . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noFoil ++;
             
@@ -850,8 +891,12 @@ class FormSettingIndex extends Component
                     $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Sablon')->count();
                     foreach ($this->fileSablon as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-'.$noSablon . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-'.$noSablon . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noSablon ++;
             
@@ -885,8 +930,12 @@ class FormSettingIndex extends Component
                     $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Emboss/Deboss')->count();
                     foreach ($this->fileEmbossDeboss as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-'.$noEmbossDeboss . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-'.$noEmbossDeboss . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noEmbossDeboss ++;
             
@@ -919,8 +968,12 @@ class FormSettingIndex extends Component
                     $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Spot UV')->count();
                     foreach ($this->fileSpotUV as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-'.$noSpotUV . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-'.$noSpotUV . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noSpotUV ++;
             
@@ -953,8 +1006,12 @@ class FormSettingIndex extends Component
                     $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'UV')->count();
                     foreach ($this->fileUV as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-'.$noUV . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-'.$noUV . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noUV ++;
             
@@ -987,8 +1044,12 @@ class FormSettingIndex extends Component
                     $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)->where('keperluan', 'Label')->count();
                     foreach ($this->fileCetakLabel as $file) {
                         $folder = "public/".$InstructionCurrentDataFile->spk_number."/setting";
-            
-                        $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-'.$noCetakLabel . '.cdr';
+                        }else{
+                            $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-'.$noCetakLabel . '.' . $file->getClientOriginalExtension();
+                        }
+                        
                         Storage::putFileAs($folder, $file, $fileName);
                         $noCetakLabel ++;
             
@@ -1014,7 +1075,12 @@ class FormSettingIndex extends Component
                 $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->count();
                 $nolayout = $fileLayoutData;
                     foreach ($this->fileLayout as $file) {
-                        $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        if($file->getClientOriginalExtension() == 'bin'){
+                            $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-'.$nolayout . '.cdr';
+                        }else{
+                            $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                        }
+                            
                         Storage::putFileAs($folder, $file, $fileName);
                         $nolayout ++;
         
@@ -1253,7 +1319,12 @@ class FormSettingIndex extends Component
         if($nextStep->status_task == 'Waiting Revisi'){
             $nolayout = $fileLayoutData;
             foreach ($this->fileLayout as $file) {
-                $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                if($file->getClientOriginalExtension() == 'bin'){
+                    $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-revisi-'.$nolayout . '.cdr';
+                }else{
+                    $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-revisi-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                }
+                
                 Storage::putFileAs($folder, $file, $fileName);
                 $nolayout ++;
     
@@ -1268,7 +1339,12 @@ class FormSettingIndex extends Component
         }else{
             $nolayout = $fileLayoutData;
             foreach ($this->fileLayout as $file) {
-                $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                if($file->getClientOriginalExtension() == 'bin'){
+                    $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-'.$nolayout . '.cdr';
+                }else{
+                    $fileName = Carbon::now()->format('Ymd') . '-' . $instructionData->spk_number . '-file-layout-'.$nolayout . '.' . $file->getClientOriginalExtension();
+                }
+                
                 Storage::putFileAs($folder, $file, $fileName);
                 $nolayout ++;
 

@@ -18,8 +18,8 @@ use App\Http\Controllers\Auth\LoginContr\LoginController;
 
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
-Route::post('login', [LoginController::class, 'login'])->name('loginProcess');
-Route::post('logout', [LoginController::class, 'logout'])->name('logoutProcess');
+Route::post('/login', [LoginController::class, 'login'])->name('loginProcess');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
 // Route::get('/sender', function () {
 //     // Logic untuk route ini (jika diperlukan)
