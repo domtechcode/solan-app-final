@@ -89,7 +89,7 @@ class NewSpkRabDashboardIndex extends Component
                 ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
                 ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->orderBy('instructions.shipping_date', 'asc')
+                ->orderBy('instructions.created_at', 'asc')
                 ->paginate($this->paginate);
 
         return view('livewire.accounting.component.new-spk-rab-dashboard-index', ['instructions' => $data])
