@@ -20,6 +20,13 @@ class TabDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
     
+    public $activeTab = 'tab1';
+
+    public function changeTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
+    
     public function render()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 1)
