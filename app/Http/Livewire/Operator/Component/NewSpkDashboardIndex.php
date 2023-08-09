@@ -48,13 +48,8 @@ class NewSpkDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
-
+    protected $listeners = ['indexRender' => '$refresh'];
+    
     public function mount()
     {
         $this->search = request()->query('search', $this->search);

@@ -45,7 +45,7 @@ class CompleteSpkRabDashboardIndex extends Component
 
     public $workStepHitungBahan;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function renderIndex()
     {

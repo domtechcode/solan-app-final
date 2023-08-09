@@ -15,9 +15,8 @@ class RejectDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateReject = 10;
+    public $searchReject = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -40,16 +39,11 @@ class RejectDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchReject = request()->query('search', $this->searchReject);
     }
 
     public function sumGroup($groupId)
@@ -62,13 +56,13 @@ class RejectDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 3)
+        $dataReject = WorkStep::where('work_step_list_id', 3)
                         ->where('state_task', 'Running')
                         ->whereIn('status_task', ['Reject', 'Reject Requirements'])
                         ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Deleted', 'Training Program'])
                         ->whereIn('status_id', [3, 22])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchReject . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -86,10 +80,10 @@ class RejectDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateReject);
 
 
-        return view('livewire.rab.component.reject-dashboard-index', ['instructions' => $data])
+        return view('livewire.rab.component.reject-dashboard-index', ['instructionsReject' => $dataReject ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -104,15 +98,12 @@ class RejectDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-reject');
     }
 
     public function modalInstructionDetailsGroupReject($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -120,9 +111,6 @@ class RejectDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 }

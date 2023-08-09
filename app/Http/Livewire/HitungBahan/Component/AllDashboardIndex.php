@@ -40,7 +40,7 @@ class AllDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function renderIndex()
     {

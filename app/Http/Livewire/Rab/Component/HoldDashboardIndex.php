@@ -14,9 +14,8 @@ class HoldDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateHold = 10;
+    public $searchHold = '';
 
     public $instructionSelectedId;
     public $selectedInstruction;
@@ -40,16 +39,11 @@ class HoldDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchHold = request()->query('search', $this->searchHold);
     }
 
     public function sumGroup($groupId)
@@ -62,10 +56,10 @@ class HoldDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 3)
+        $dataHold = WorkStep::where('work_step_list_id', 3)
                         ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc', 'Failed Waiting Qty QC'])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchHold . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -83,9 +77,9 @@ class HoldDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateHold);
 
-        return view('livewire.rab.component.hold-dashboard-index', ['instructions' => $data])
+        return view('livewire.rab.component.hold-dashboard-index', ['instructionsHold' => $dataHold ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -101,15 +95,12 @@ class HoldDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-hold');
     }
 
     public function modalInstructionDetailsGroupHold($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -117,9 +108,6 @@ class HoldDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-hold');
     }
 }

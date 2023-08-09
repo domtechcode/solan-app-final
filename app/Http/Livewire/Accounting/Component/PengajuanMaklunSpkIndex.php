@@ -50,7 +50,7 @@ class PengajuanMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function renderIndex()
     {

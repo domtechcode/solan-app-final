@@ -59,12 +59,7 @@ class CompleteCheckerDashboardIndex extends Component
     public $filearsiprevisi = [];
     public $filearsipacc = [];
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function addEmptyNote()
     {

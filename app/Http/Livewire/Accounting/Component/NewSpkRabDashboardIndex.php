@@ -44,7 +44,7 @@ class NewSpkRabDashboardIndex extends Component
     public $catatanRab;
     public $workStepHitungBahanNew;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function renderIndex()
     {
