@@ -51,7 +51,6 @@ class HoldDashboardIndex extends Component
 
     public function mount()
     {
-        $this->spkProduction = Instruction::where('spk_type', 'production')->get();
         $this->search = request()->query('search', $this->search);
     }
 
@@ -133,7 +132,7 @@ class HoldDashboardIndex extends Component
             'message' => 'SPK berhasil disimpan',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-hold');
+        $this->dispatchBrowserEvent('close-modal-hold-qc');
     }
 
     public function modalInstructionDetailsHold($instructionId)
@@ -146,8 +145,6 @@ class HoldDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-hold');
     }
 
     public function modalInstructionDetailsHoldQc($instructionId)
@@ -161,21 +158,18 @@ class HoldDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->spkProduction = Instruction::where('spk_type', 'production')->get();
         
-
-
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
             'target'    => '#waitingSpkHoldQc',
         ]);
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-hold-qc');
     }
 
     public function modalInstructionDetailsGroupHold($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -183,9 +177,6 @@ class HoldDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-hold');
     }
 }

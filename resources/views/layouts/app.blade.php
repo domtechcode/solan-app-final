@@ -161,6 +161,13 @@
 <script>
     Echo.channel('notif.' + {{ Auth::user()->id }})
             .listen('NotificationSent', function (data) {
+                console.log(data);
+            });
+</script>
+
+<script>
+    Echo.channel('refresh')
+            .listen('IndexRenderEvent', function (data) {
                 Livewire.emit('indexRender');
             });
 </script>

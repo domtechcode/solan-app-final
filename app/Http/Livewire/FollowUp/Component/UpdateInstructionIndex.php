@@ -103,7 +103,7 @@ class UpdateInstructionIndex extends Component
         $this->order_name = $this->instructions->order_name;
         $this->code_style = $this->instructions->code_style;
         $this->quantity = currency_idr($this->instructions->quantity);
-        $this->price = currency_idr($this->instructions->price);
+        $this->price = $this->instructions->price;
         $this->follow_up = $this->instructions->follow_up;
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;

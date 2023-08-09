@@ -204,10 +204,9 @@ class CompleteDashboardIndex extends Component
         ]);
 
         $this->notes = [];
-        $this->alasan_revisi = '';
-        // $this->reset();
+        $this->alasan_revisi = null;
 
-        $this->dispatchBrowserEvent('close-modal-complete');
+        $this->dispatchBrowserEvent('close-modal-revisi-sample');
     }
 
     public function modalInstructionDetailsComplete($instructionId)
@@ -219,12 +218,11 @@ class CompleteDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-complete');
     }
 
     public function modalInstructionDetailsRevisiSample($instructionId)
     {
-        $this->notes[] = '';
+        $this->notes = [];
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
@@ -233,15 +231,12 @@ class CompleteDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-revisi-sample');
     }
 
     public function modalInstructionDetailsGroupComplete($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -249,10 +244,7 @@ class CompleteDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-complete');
     }
 
     public function messageSent($arguments)
