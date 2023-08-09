@@ -123,7 +123,7 @@ class FormCheckerIndex extends Component
                 }
                 
                 $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
 
             }else{
                 $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -142,7 +142,7 @@ class FormCheckerIndex extends Component
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                 }
                 
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             }
         }
 
@@ -262,7 +262,7 @@ class FormCheckerIndex extends Component
             ]);
 
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
-            broadcast(new IndexRenderEvent('refresh'));
+            event(new IndexRenderEvent('refresh'));
         }else{
             // Cek apakah $currentStep ada dan step berikutnya ada
             if ($currentStep) {
@@ -318,7 +318,7 @@ class FormCheckerIndex extends Component
                     }
                     
                     $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
-                    broadcast(new IndexRenderEvent('refresh'));
+                    event(new IndexRenderEvent('refresh'));
 
                 }else{
                     $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -362,7 +362,7 @@ class FormCheckerIndex extends Component
                         $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                     }
                     
-                    broadcast(new IndexRenderEvent('refresh'));
+                    event(new IndexRenderEvent('refresh'));
                 }
             }
         }
@@ -419,7 +419,7 @@ class FormCheckerIndex extends Component
         ]);
 
         $this->messageSent(['conversation' => 'SPK di reject oleh '. $currentStep->user->name, 'instruction_id' => $this->instructionCurrentId, 'receiver' => $lastStep->user_id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -437,6 +437,6 @@ class FormCheckerIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

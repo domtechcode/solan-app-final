@@ -298,7 +298,7 @@ class CreateFormRabIndex extends Component
 
             if(isset($updateNextStep->user_id)){
                 $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             }
         
 
@@ -342,7 +342,7 @@ class CreateFormRabIndex extends Component
         }
             
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -407,7 +407,7 @@ class CreateFormRabIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -426,7 +426,7 @@ class CreateFormRabIndex extends Component
             'spk_status' => 'Hold RAB',
         ]);
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
         if($this->notes){
@@ -456,7 +456,7 @@ class CreateFormRabIndex extends Component
             'spk_status' => 'Hold QC',
         ]);
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
         if($this->notes){
@@ -487,6 +487,6 @@ class CreateFormRabIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

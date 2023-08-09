@@ -141,7 +141,7 @@ class FormPengirimanIndex extends Component
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Pengiriman Selesai Oleh '. $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
         }
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -208,6 +208,6 @@ class FormPengirimanIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

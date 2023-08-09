@@ -125,7 +125,7 @@ class FormFoilIndex extends Component
             ]);
 
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
-            broadcast(new IndexRenderEvent('refresh'));
+            event(new IndexRenderEvent('refresh'));
         }else{
             // Cek apakah $currentStep ada dan step berikutnya ada
             if ($currentStep) {
@@ -179,7 +179,7 @@ class FormFoilIndex extends Component
                     foreach($userDestination as $dataUser){
                         $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh '. $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
                     }
-                    broadcast(new IndexRenderEvent('refresh'));
+                    event(new IndexRenderEvent('refresh'));
 
                 }else{
                     $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -237,6 +237,6 @@ class FormFoilIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

@@ -417,7 +417,7 @@ class EditInstructionIndex extends Component
                 
                 //notif
                 $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             }
 
             $currentWorkStep->update([
@@ -526,7 +526,7 @@ class EditInstructionIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function uploadFiles($instructionId)

@@ -169,7 +169,7 @@ class NewSpkDashboardIndex extends Component
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -240,13 +240,13 @@ class NewSpkDashboardIndex extends Component
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             } else {
                 $userDestination = User::where('role', 'Penjadwalan')->get();
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             }
 
             if(isset($this->catatanHitungBahan)){
@@ -315,7 +315,7 @@ class NewSpkDashboardIndex extends Component
         $this->keteranganReject = '';
         $this->dispatchBrowserEvent('close-modal');
         $this->messageSent(['conversation' => 'SPK Reject dari Stock','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function modalInstructionStock($instructionId)
@@ -330,7 +330,7 @@ class NewSpkDashboardIndex extends Component
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang diProses Oleh Stock', 'instruction_id' => $instructionId]);
         }
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->catatan = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 4)->get();
 
@@ -383,6 +383,6 @@ class NewSpkDashboardIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

@@ -131,7 +131,7 @@ class NewSpkRabDashboardIndex extends Component
             'message' => 'Berhasil menyimpan data RAB',
         ]);
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }

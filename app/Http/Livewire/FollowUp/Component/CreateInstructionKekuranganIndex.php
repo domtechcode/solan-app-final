@@ -290,19 +290,19 @@ class CreateInstructionKekuranganIndex extends Component
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             } else if ($firstWorkStep->work_step_list_id == 5) {
                 $userDestination = User::where('role', 'Hitung Bahan')->get();
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             } else {
                 $userDestination = User::where('role', 'Penjadwalan')->get();
                 foreach($userDestination as $dataUser){
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                broadcast(new IndexRenderEvent('refresh'));
+                event(new IndexRenderEvent('refresh'));
             }
 
             session()->flash('success', 'Instruksi kerja berhasil disimpan.');
@@ -325,7 +325,7 @@ class CreateInstructionKekuranganIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function generateCode()

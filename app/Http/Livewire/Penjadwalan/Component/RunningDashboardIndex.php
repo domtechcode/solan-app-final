@@ -296,7 +296,7 @@ class RunningDashboardIndex extends Component
             'message' => 'Data jadwal berhasil disimpan',
         ]);
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->workSteps = [];
         $this->keteranganReschedule = '';
@@ -424,7 +424,7 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
     }
 
@@ -453,7 +453,7 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
     }
 
@@ -494,7 +494,7 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK Reject', 'instruction_id' => $this->selectedInstruction->id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-running');
     }
 
@@ -542,7 +542,7 @@ class RunningDashboardIndex extends Component
         $this->keteranganReject = '';
         $this->dispatchBrowserEvent('close-modal-running');
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function messageSent($arguments)
@@ -552,6 +552,6 @@ class RunningDashboardIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

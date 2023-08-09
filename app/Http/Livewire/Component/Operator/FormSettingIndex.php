@@ -1196,7 +1196,7 @@ class FormSettingIndex extends Component
             ]);
 
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
-            broadcast(new IndexRenderEvent('refresh'));
+            event(new IndexRenderEvent('refresh'));
 
         }else{
             // Cek apakah $currentStep ada dan step berikutnya ada
@@ -1289,7 +1289,7 @@ class FormSettingIndex extends Component
             
 
             $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
-            broadcast(new IndexRenderEvent('refresh'));
+            event(new IndexRenderEvent('refresh'));
         }
         
         $this->emit('flashMessage', [
@@ -1396,7 +1396,7 @@ class FormSettingIndex extends Component
         }
 
         $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -1414,6 +1414,6 @@ class FormSettingIndex extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
