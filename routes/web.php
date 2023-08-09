@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\FollowUp\Index\IndexGroup;
 use App\Http\Controllers\Auth\LoginContr\LoginController;
@@ -23,7 +24,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logoutProcess'
 
 // Route::get('/sender', function () {
 //     // Logic untuk route ini (jika diperlukan)
-//     broadcast(new IndexRenderEvent('refresh'));
+//     event(new NotificationSent(2, "asdasdasd", "asdasd", "1", 4));
 // });
 
 Route::group(['middleware' => ['auth']], function () {

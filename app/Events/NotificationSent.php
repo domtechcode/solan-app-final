@@ -39,7 +39,6 @@ class NotificationSent implements ShouldBroadcast
         $this->receiver = $receiver;
         $this->instruction = $instruction;
 
-        if($this->user){
             Notification::create([
                 'instruction_id' => $instruction,
                 'user_id' => $user,
@@ -47,7 +46,6 @@ class NotificationSent implements ShouldBroadcast
                 'conversation' => $conversation,
                 'receiver_id' => $receiver,
             ]);
-        }
         
     }
 
