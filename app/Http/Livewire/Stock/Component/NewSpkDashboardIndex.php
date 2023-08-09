@@ -22,9 +22,8 @@ class NewSpkDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateNewSpk = 10;
+    public $searchNewSpk = '';
 
     public $catatan;
     public $selectedInstruction;
@@ -53,41 +52,36 @@ class NewSpkDashboardIndex extends Component
     public $keteranganReject;
     public $catatanHitungBahan;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
     }
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 4)
+        $dataNewSpk = WorkStep::where('work_step_list_id', 4)
                         ->where('state_task', 'Running')
                         ->whereIn('status_task', ['Pending Approved', 'Process'])
                         ->where('spk_status', 'Running')
                         ->whereIn('status_id', [1, 2])
                         ->whereHas('instruction', function ($query) {
-                            $query->where('spk_number', 'like', '%' . $this->search . '%')
-                            ->orWhere('spk_type', 'like', '%' . $this->search . '%')
-                            ->orWhere('customer_name', 'like', '%' . $this->search . '%')
-                            ->orWhere('order_name', 'like', '%' . $this->search . '%')
-                            ->orWhere('customer_number', 'like', '%' . $this->search . '%')
-                            ->orWhere('code_style', 'like', '%' . $this->search . '%')
-                            ->orWhere('shipping_date', 'like', '%' . $this->search . '%');
+                            $query->where('spk_number', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->searchNewSpk . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->searchNewSpk . '%');
                         })
                         ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateNewSpk);
 
-        return view('livewire.stock.component.new-spk-dashboard-index', ['instructions' => $data])
+        return view('livewire.stock.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -179,7 +173,7 @@ class NewSpkDashboardIndex extends Component
 
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal');
+            $this->dispatchBrowserEvent('close-modal-new-spk');
         }else{
             $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
                 'stock' => currency_convert($this->stock),
@@ -267,7 +261,7 @@ class NewSpkDashboardIndex extends Component
 
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal');
+            $this->dispatchBrowserEvent('close-modal-new-spk');
         }
     }
 
@@ -312,28 +306,20 @@ class NewSpkDashboardIndex extends Component
             'message' => 'Berhasil reject instruksi kerja',
         ]);
 
-        $this->keteranganReject = '';
-        $this->dispatchBrowserEvent('close-modal');
+        $this->keteranganReject = null;
+        $this->dispatchBrowserEvent('close-modal-new-spk');
         $this->messageSent(['conversation' => 'SPK Reject dari Stock','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }
 
-    public function modalInstructionStock($instructionId)
+    public function modalInstructionStockNewSpk($instructionId)
     {
         $updateStatusStock = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 4)->update([
             'user_id' => Auth()->user()->id,
             'status_id' => 2,
             'status_task' => 'Process',
         ]);
-        
-        $userDestination = User::where('role', 'Penjadwalan')->get();
-        foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang diProses Oleh Stock', 'instruction_id' => $instructionId]);
-        }
-        event(new IndexRenderEvent('refresh'));
-
         $this->catatan = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 4)->get();
-
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
@@ -341,11 +327,9 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-stock');
     }
 
-    public function modalInstructionDetails($instructionId)
+    public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
@@ -354,15 +338,12 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal');
     }
 
-    public function modalInstructionDetailsGroup($groupId)
+    public function modalInstructionDetailsGroupNewSpk($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -370,10 +351,7 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 
     public function messageSent($arguments)

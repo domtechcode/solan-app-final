@@ -2,8 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                {{-- <label class="form-label">Customize Select</label> --}}
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateNewSpk">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -11,7 +10,7 @@
                 </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="search">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchNewSpk">
         </div>
     </div>
     <div class="row mt-3">
@@ -35,8 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
-                        @forelse ($instructions as $key => $dataInstruction)
+                        @forelse ($instructionsNewSpk as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -46,7 +44,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroup({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupNewSpk" wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -111,8 +109,8 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetails({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
-                                        <button class="btn btn-icon btn-sm btn-primary" wire:click="modalInstructionStock({{ $dataInstruction->instruction->id }})"><i class="fe fe-edit"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalNewSpk" wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#openModalNewSpkStock" wire:click="modalInstructionStockNewSpk({{ $dataInstruction->instruction->id }})"><i class="fe fe-edit"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -130,12 +128,12 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{ $instructionsNewSpk->links() }}
         </div>
     </div>
 
-    <!-- Modal Stock-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalStock" tabindex="-1" role="dialog">
+    <!-- Modal General-->
+    <div wire:ignore.self class="modal fade" id="openModalNewSpkStock" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -145,7 +143,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @if($catatan)
+                    @if(isset($catatan))
                         @foreach ($catatan as $datanote)
                         @if (isset($datanote))
                             <div class="row row-sm mb-5">
@@ -166,6 +164,7 @@
                         @endif
                         @endforeach
                     @endif
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -186,7 +185,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($selectedInstruction)
                                         <tr>
                                             <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
@@ -199,8 +197,6 @@
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
                                             <td>-</td>
                                         </tr>
-                                        @endif
-                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -226,7 +222,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($selectedInstruction)
                                         <tr>
                                             <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
@@ -238,8 +233,6 @@
                                             <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
                                         </tr>
-                                        @endif
-                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -295,34 +288,33 @@
                                 </div>
                             </div>
                         </div>
-                        
-
-                        
                     </div>
-
-                    .
 
                     {{-- file --}}
                     <div class="row">
                         <div class="col-xl-4">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    File Contoh <hr>
+                                    File Contoh
+                                    <hr>
                                     <div class="d-flex text-center">
                                         <ul>
-                                            @if ($selectedFileContoh)
-                                                @foreach ($selectedFileContoh as $file)
+                                            @if (isset($selectedFileContoh))
+                                                @forelse ($selectedFileContoh as $file)
                                                     <li class="mb-3">
-                                                        <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
+                                                        <img class="img-responsive"
+                                                            src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                            alt="File Contoh">
                                                         <div class="expanel expanel-default">
                                                             <div class="expanel-body">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                                <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                    download>{{ $file->file_name }}</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                @endforeach
-                                            @else
-                                                <p>No files found.</p>
+                                                @empty
+                                                    <p>No files found.</p>
+                                                @endforelse
                                             @endif
                                         </ul>
                                     </div>
@@ -332,18 +324,18 @@
                         <div class="col-xl-4">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    File Arsip <hr>
+                                    File Arsip
+                                    <hr>
                                     <ul class="list-group no-margin">
-                                        @if ($selectedFileArsip)
-                                            @foreach ($selectedFileArsip as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
+                                        @if (isset($selectedFileArsip))
+                                            @forelse ($selectedFileArsip as $file)
+                                                <li class="list-group-item d-flex ps-3">
+                                                    <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                        download>{{ $file->file_name }}</a>
+                                                </li>
+                                            @empty
                                                 <p>No files found.</p>
-                                            </li>
+                                            @endforelse
                                         @endif
                                     </ul>
                                 </div>
@@ -352,18 +344,18 @@
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
                                         <div class="expanel-body">
-                                            File Sample <hr>
+                                            File Sample
+                                            <hr>
                                             <ul class="list-group no-margin">
-                                                @if ($selectedFileSample)
-                                                    @foreach ($selectedFileSample as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
+                                                @if (isset($selectedFileSample))
+                                                    @forelse ($selectedFileSample as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                    @empty
                                                         <p>No files found.</p>
-                                                    </li>
+                                                    @endforelse
                                                 @endif
                                             </ul>
                                         </div>
@@ -376,18 +368,18 @@
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
                                         <div class="expanel-body">
-                                            File Layout <hr>
+                                            File Layout
+                                            <hr>
                                             <ul class="list-group no-margin">
-                                                @if ($selectedFileLayout)
-                                                    @foreach ($selectedFileLayout as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
+                                                @if (isset($selectedFileLayout))
+                                                    @forelse ($selectedFileLayout as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                    @empty
                                                         <p>No files found.</p>
-                                                    </li>
+                                                    @endforelse
                                                 @endif
                                             </ul>
                                         </div>
@@ -398,16 +390,16 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" wire:click="rejectSpk()">Reject Ke Follow Up</button>
                     <button type="button" class="btn btn-success" wire:click="save()">Submit</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -437,7 +429,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($selectedInstruction)
                                         <tr>
                                             <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
@@ -450,14 +441,12 @@
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
                                             <td>-</td>
                                         </tr>
-                                        @endif
-                                        
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -477,7 +466,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($selectedInstruction)
                                         <tr>
                                             <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
@@ -489,14 +477,12 @@
                                             <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
                                         </tr>
-                                        @endif
-                                        
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -513,17 +499,19 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if ($selectedWorkStep)
-                                            @foreach ($selectedWorkStep as $workstep)
+                                        @if (isset($selectedWorkStep))
+                                            @forelse ($selectedWorkStep as $workstep)
                                                 <tr>
                                                     <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
-                                                    <td>{{ $workstep->spk_parent ?? '-' }}</td>
+                                                    <td>{{ $workstep->target_time ?? '-' }}</td>
                                                     <td>{{ $workstep->user->name ?? '-' }}</td>
                                                     <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <p>No files found.</p>
+                                            @endforelse
                                         @endif
                                     </tbody>
                                 </table>
@@ -536,22 +524,26 @@
                         <div class="col-xl-4">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    File Contoh <hr>
+                                    File Contoh
+                                    <hr>
                                     <div class="d-flex text-center">
                                         <ul>
-                                            @if ($selectedFileContoh)
-                                                @foreach ($selectedFileContoh as $file)
+                                            @if (isset($selectedFileContoh))
+                                                @forelse ($selectedFileContoh as $file)
                                                     <li class="mb-3">
-                                                        <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
+                                                        <img class="img-responsive"
+                                                            src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                            alt="File Contoh">
                                                         <div class="expanel expanel-default">
                                                             <div class="expanel-body">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                                <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                    download>{{ $file->file_name }}</a>
                                                             </div>
                                                         </div>
                                                     </li>
-                                                @endforeach
-                                            @else
-                                                <p>No files found.</p>
+                                                @empty
+                                                    <p>No files found.</p>
+                                                @endforelse
                                             @endif
                                         </ul>
                                     </div>
@@ -561,18 +553,18 @@
                         <div class="col-xl-4">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    File Arsip <hr>
+                                    File Arsip
+                                    <hr>
                                     <ul class="list-group no-margin">
-                                        @if ($selectedFileArsip)
-                                            @foreach ($selectedFileArsip as $file)
-                                            <li class="list-group-item d-flex ps-3">
-                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                            </li>
-                                            @endforeach
-                                        @else
-                                            <li>
+                                        @if (isset($selectedFileArsip))
+                                            @forelse ($selectedFileArsip as $file)
+                                                <li class="list-group-item d-flex ps-3">
+                                                    <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                        download>{{ $file->file_name }}</a>
+                                                </li>
+                                            @empty
                                                 <p>No files found.</p>
-                                            </li>
+                                            @endforelse
                                         @endif
                                     </ul>
                                 </div>
@@ -581,18 +573,18 @@
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
                                         <div class="expanel-body">
-                                            File Sample <hr>
+                                            File Sample
+                                            <hr>
                                             <ul class="list-group no-margin">
-                                                @if ($selectedFileSample)
-                                                    @foreach ($selectedFileSample as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
+                                                @if (isset($selectedFileSample))
+                                                    @forelse ($selectedFileSample as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                    @empty
                                                         <p>No files found.</p>
-                                                    </li>
+                                                    @endforelse
                                                 @endif
                                             </ul>
                                         </div>
@@ -605,18 +597,18 @@
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
                                         <div class="expanel-body">
-                                            File Layout <hr>
+                                            File Layout
+                                            <hr>
                                             <ul class="list-group no-margin">
-                                                @if ($selectedFileLayout)
-                                                    @foreach ($selectedFileLayout as $file)
-                                                    <li class="list-group-item d-flex ps-3">
-                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                    </li>
-                                                    @endforeach
-                                                @else
-                                                    <li>
+                                                @if (isset($selectedFileLayout))
+                                                    @forelse ($selectedFileLayout as $file)
+                                                        <li class="list-group-item d-flex ps-3">
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a>
+                                                        </li>
+                                                    @empty
                                                         <p>No files found.</p>
-                                                    </li>
+                                                    @endforelse
                                                 @endif
                                             </ul>
                                         </div>
@@ -634,7 +626,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroup" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupNewSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -648,18 +640,22 @@
                         <div class="panel panel-default active">
                             <div class="panel-heading " role="tab" id="headingOne1">
                                 <h4 class="panel-title">
-                                    <a role="button" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                                            {{ $selectedGroupParent->spk_number ?? '-' }} <span class="tag tag-blue">Parent</span>
-                                        </a>
+                                    <a role="button" data-bs-toggle="collapse" data-bs-parent="#accordion"
+                                        href="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                        {{ $selectedGroupParent->spk_number ?? '-' }} <span
+                                            class="tag tag-blue">Parent</span>
+                                    </a>
                                 </h4>
                             </div>
-                            <div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne1">
+                            <div id="collapse1" class="panel-collapse collapse" role="tabpanel"
+                                aria-labelledby="headingOne1">
                                 <div class="panel-body">
                                     <!-- Row -->
                                     <div class="row mb-3">
                                         <div class="col-xl-12">
                                             <div class="table-responsive">
-                                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                <table
+                                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                     <thead>
                                                         <tr>
                                                             <th class="border-bottom-0">NO. SPK</th>
@@ -675,32 +671,37 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if($selectedInstructionParent)
                                                         <tr>
-                                                            <td>{{ $selectedInstructionParent->spk_number ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->customer_name ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->customer_number ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->order_name ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->code_style ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->order_date ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->shipping_date ?? '-' }}</td>
+                                                            <td>{{ $selectedInstructionParent->spk_number ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->customer_name ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->customer_number ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->order_name ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->code_style ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->order_date ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->shipping_date ?? '-' }}
+                                                            </td>
                                                             <td>{{ $selectedInstructionParent->quantity ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
                                                             <td>-</td>
                                                         </tr>
-                                                        @endif
-                                                        
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Row -->
                                     <div class="row mb-3">
                                         <div class="col-xl-12">
                                             <div class="table-responsive">
-                                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                <table
+                                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                     <thead>
                                                         <tr>
                                                             <th class="border-bottom-0">FOLLOW UP</th>
@@ -715,31 +716,34 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if($selectedInstructionParent)
                                                         <tr>
                                                             <td>{{ $selectedInstructionParent->follow_up ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->spk_type ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->taxes_type ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->spk_parent ?? '-' }}</td>
+                                                            <td>{{ $selectedInstructionParent->taxes_type ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->spk_parent ?? '-' }}
+                                                            </td>
                                                             <td>{{ $selectedInstructionParent->sub_spk ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->group_id ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->spk_layout_number ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->spk_sample_number ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->shipping_date_first ?? '-' }}</td>
+                                                            <td>{{ $selectedInstructionParent->spk_layout_number ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->spk_sample_number ?? '-' }}
+                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->shipping_date_first ?? '-' }}
+                                                            </td>
                                                         </tr>
-                                                        @endif
-                                                        
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Row -->
                                     <div class="row mb-3">
                                         <div class="col-xl-12">
                                             <div class="table-responsive">
-                                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                <table
+                                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                     <thead>
                                                         <tr>
                                                             <th>LANGKAH KERJA</th>
@@ -751,7 +755,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if ($selectedWorkStepParent)
+                                                        @if (isset($selectedWorkStepParent))
                                                             @foreach ($selectedWorkStepParent as $workstep)
                                                                 <tr>
                                                                     <td>{{ $workstep->workStepList->name ?? '-' }}</td>
@@ -759,7 +763,8 @@
                                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->spk_parent ?? '-' }}</td>
                                                                     <td>{{ $workstep->user->name ?? '-' }}</td>
-                                                                    <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
+                                                                    <td>{{ $workstep->machine->machine_identity ?? '-' }}
+                                                                    </td>
                                                                 </tr>
                                                             @endforeach
                                                         @endif
@@ -774,22 +779,26 @@
                                         <div class="col-xl-4">
                                             <div class="expanel expanel-default">
                                                 <div class="expanel-body">
-                                                    File Contoh <hr>
+                                                    File Contoh
+                                                    <hr>
                                                     <div class="d-flex text-center">
                                                         <ul>
-                                                            @if ($selectedFileContohParent)
-                                                                @foreach ($selectedFileContohParent as $file)
+                                                            @if (isset($selectedFileContohParent))
+                                                                @forelse ($selectedFileContohParent as $file)
                                                                     <li class="mb-3">
-                                                                        <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
+                                                                        <img class="img-responsive"
+                                                                            src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                            alt="File Contoh Parent">
                                                                         <div class="expanel expanel-default">
                                                                             <div class="expanel-body">
-                                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                                                <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                    download>{{ $file->file_name }}</a>
                                                                             </div>
                                                                         </div>
                                                                     </li>
-                                                                @endforeach
-                                                            @else
-                                                                <p>No files found.</p>
+                                                                @empty
+                                                                    <p>No files found.</p>
+                                                                @endforelse
                                                             @endif
                                                         </ul>
                                                     </div>
@@ -799,18 +808,18 @@
                                         <div class="col-xl-4">
                                             <div class="expanel expanel-default">
                                                 <div class="expanel-body">
-                                                    File Arsip <hr>
+                                                    File Arsip
+                                                    <hr>
                                                     <ul class="list-group no-margin">
-                                                        @if ($selectedFileArsipParent)
-                                                            @foreach ($selectedFileArsipParent as $file)
-                                                            <li class="list-group-item d-flex ps-3">
-                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                            </li>
-                                                            @endforeach
-                                                        @else
-                                                            <li>
+                                                        @if (isset($selectedFileArsipParent))
+                                                            @forelse ($selectedFileArsipParent as $file)
+                                                                <li class="list-group-item d-flex ps-3">
+                                                                    <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                        download>{{ $file->file_name }}</a>
+                                                                </li>
+                                                            @empty
                                                                 <p>No files found.</p>
-                                                            </li>
+                                                            @endforelse
                                                         @endif
                                                     </ul>
                                                 </div>
@@ -819,18 +828,18 @@
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
                                                         <div class="expanel-body">
-                                                            File Sample <hr>
+                                                            File Sample
+                                                            <hr>
                                                             <ul class="list-group no-margin">
-                                                                @if ($selectedFileSampleParent)
-                                                                    @foreach ($selectedFileSampleParent as $file)
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
-                                                                    @endforeach
-                                                                @else
-                                                                    <li>
+                                                                @if (isset($selectedFileSampleParent))
+                                                                    @forelse ($selectedFileSampleParent as $file)
+                                                                        <li class="list-group-item d-flex ps-3">
+                                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                download>{{ $file->file_name }}</a>
+                                                                        </li>
+                                                                    @empty
                                                                         <p>No files found.</p>
-                                                                    </li>
+                                                                    @endforelse
                                                                 @endif
                                                             </ul>
                                                         </div>
@@ -843,18 +852,18 @@
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
                                                         <div class="expanel-body">
-                                                            File Layout <hr>
+                                                            File Layout
+                                                            <hr>
                                                             <ul class="list-group no-margin">
-                                                                @if ($selectedFileLayoutParent)
-                                                                    @foreach ($selectedFileLayoutParent as $file)
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
-                                                                    @endforeach
-                                                                @else
-                                                                    <li>
+                                                                @if (isset($selectedFileLayoutParent))
+                                                                    @forelse ($selectedFileLayoutParent as $file)
+                                                                        <li class="list-group-item d-flex ps-3">
+                                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                download>{{ $file->file_name }}</a>
+                                                                        </li>
+                                                                    @empty
                                                                         <p>No files found.</p>
-                                                                    </li>
+                                                                    @endforelse
                                                                 @endif
                                                             </ul>
                                                         </div>
@@ -868,230 +877,246 @@
                         </div>
 
                         <?php $no = 2; ?>
-                        @if($selectedInstructionChild)
+                        @if ($selectedInstructionChild)
                             @foreach ($selectedInstructionChild as $index => $data)
-                            <?php $no++; ?>
-                            <div class="panel panel-default mt-2">
-                                <div class="panel-heading" role="tab" id="headingTwo2">
-                                    <h4 class="panel-title">
-                                        <a class="collapsed" role="button" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapse{{ $no }}" aria-expanded="false" aria-controls="collapse{{ $no }}">
-    
+                                <?php $no++; ?>
+                                <div class="panel panel-default mt-2">
+                                    <div class="panel-heading" role="tab" id="headingTwo2">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-bs-toggle="collapse"
+                                                data-bs-parent="#accordion" href="#collapse{{ $no }}"
+                                                aria-expanded="false" aria-controls="collapse{{ $no }}">
+
                                                 {{ $data->spk_number ?? '-' }} <span class="tag tag-red">Child</span>
                                             </a>
-                                    </h4>
-                                </div>
-                                <div id="collapse{{ $no }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo2">
-                                    <div class="panel-body">
-                                        <!-- Row -->
-                                        <div class="row mb-3">
-                                            <div class="col-xl-12">
-                                                <div class="table-responsive">
-                                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="border-bottom-0">NO. SPK</th>
-                                                                <th class="border-bottom-0">PEMESAN</th>
-                                                                <th class="border-bottom-0">NO. PO</th>
-                                                                <th class="border-bottom-0">ORDER</th>
-                                                                <th class="border-bottom-0">CODE STYLE</th>
-                                                                <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                <th class="border-bottom-0">TGL. DIKIRIM</th>
-                                                                <th class="border-bottom-0">QTY</th>
-                                                                <th class="border-bottom-0">STOCK</th>
-                                                                <th class="border-bottom-0">HARGA</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if($data)
-                                                            <tr>
-                                                                <td>{{ $data->spk_number ?? '-' }}</td>
-                                                                <td>{{ $data->customer_name ?? '-' }}</td>
-                                                                <td>{{ $data->customer_number ?? '-' }}</td>
-                                                                <td>{{ $data->order_name ?? '-' }}</td>
-                                                                <td>{{ $data->code_style ?? '-' }}</td>
-                                                                <td>{{ $data->order_date ?? '-' }}</td>
-                                                                <td>{{ $data->shipping_date ?? '-' }}</td>
-                                                                <td>{{ $data->quantity ?? '-' }}</td>
-                                                                <td>{{ $data->stock ?? '-' }}</td>
-                                                                <td>-</td>
-                                                            </tr>
-                                                            @endif
-                                                            
-                                                        </tbody>
-                                                    </table>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse{{ $no }}" class="panel-collapse collapse"
+                                        role="tabpanel" aria-labelledby="headingTwo2">
+                                        <div class="panel-body">
+                                            <!-- Row -->
+                                            <div class="row mb-3">
+                                                <div class="col-xl-12">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="border-bottom-0">NO. SPK</th>
+                                                                    <th class="border-bottom-0">PEMESAN</th>
+                                                                    <th class="border-bottom-0">NO. PO</th>
+                                                                    <th class="border-bottom-0">ORDER</th>
+                                                                    <th class="border-bottom-0">CODE STYLE</th>
+                                                                    <th class="border-bottom-0">TGL. PO MASUK</th>
+                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">QTY</th>
+                                                                    <th class="border-bottom-0">STOCK</th>
+                                                                    <th class="border-bottom-0">HARGA</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>{{ $data->spk_number ?? '-' }}</td>
+                                                                    <td>{{ $data->customer_name ?? '-' }}</td>
+                                                                    <td>{{ $data->customer_number ?? '-' }}</td>
+                                                                    <td>{{ $data->order_name ?? '-' }}</td>
+                                                                    <td>{{ $data->code_style ?? '-' }}</td>
+                                                                    <td>{{ $data->order_date ?? '-' }}</td>
+                                                                    <td>{{ $data->shipping_date ?? '-' }}</td>
+                                                                    <td>{{ $data->quantity ?? '-' }}</td>
+                                                                    <td>{{ $data->stock ?? '-' }}</td>
+                                                                    <td>-</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
-                                        <!-- Row -->
-                                        <div class="row mb-3">
-                                            <div class="col-xl-12">
-                                                <div class="table-responsive">
-                                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="border-bottom-0">FOLLOW UP</th>
-                                                                <th class="border-bottom-0">TYPE SPK</th>
-                                                                <th class="border-bottom-0">PAJAK</th>
-                                                                <th class="border-bottom-0">MASTER SPK</th>
-                                                                <th class="border-bottom-0">SUB SPK</th>
-                                                                <th class="border-bottom-0">GROUP</th>
-                                                                <th class="border-bottom-0">NO. SPK LAYOUT</th>
-                                                                <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                                                <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if($data)
-                                                            <tr>
-                                                                <td>{{ $data->follow_up ?? '-' }}</td>
-                                                                <td>{{ $data->spk_type ?? '-' }}</td>
-                                                                <td>{{ $data->taxes_type ?? '-' }}</td>
-                                                                <td>{{ $data->spk_parent ?? '-' }}</td>
-                                                                <td>{{ $data->sub_spk ?? '-' }}</td>
-                                                                <td>{{ $data->group_id ?? '-' }}</td>
-                                                                <td>{{ $data->spk_layout_number ?? '-' }}</td>
-                                                                <td>{{ $data->spk_sample_number ?? '-' }}</td>
-                                                                <td>{{ $data->shipping_date_first ?? '-' }}</td>
-                                                            </tr>
-                                                            @endif
-                                                            
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Row -->
-                                        <div class="row mb-3">
-                                            <div class="col-xl-12">
-                                                <div class="table-responsive">
-                                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>LANGKAH KERJA</th>
-                                                                <th>TARGET SELESAI</th>
-                                                                <th>DIJADWALKAN</th>
-                                                                <th>TARGET JAM</th>
-                                                                <th>OPERATOR/REKANAN</th>
-                                                                <th>MACHINE</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @if($data->workstep)
-                                                                @foreach ($data->workstep as $workstep)
-                                                                    <tr>
-                                                                        <td>{{ $workstep->workStepList->name ?? '-' }}</td>
-                                                                        <td>{{ $workstep->target_date ?? '-' }}</td>
-                                                                        <td>{{ $workstep->schedule_date ?? '-' }}</td>
-                                                                        <td>{{ $workstep->spk_parent ?? '-' }}</td>
-                                                                        <td>{{ $workstep->user->name ?? '-' }}</td>
-                                                                        <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            @endif
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        {{-- file --}}
-                                        <div class="row">
-                                            <div class="col-xl-4">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        File Contoh <hr>
-                                                        <div class="d-flex text-center">
-                                                            <ul>
-                                                                @if ($data->fileArsip)
-                                                                    @foreach ($data->fileArsip as $file)
-                                                                    @if($file->type_file == 'contoh')
-                                                                        <li class="mb-3">
-                                                                            <img class="img-responsive" src="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" alt="File Contoh">
-                                                                            <div class="expanel expanel-default">
-                                                                                <div class="expanel-body">
-                                                                                    <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                                </div>
-                                                                            </div>
-                                                                        </li>
-                                                                    @endif
-                                                                    @endforeach
-                                                                @else
-                                                                    <p>No files found.</p>
-                                                                @endif
-                                                            </ul>
-                                                        </div>
+                                            <!-- Row -->
+                                            <div class="row mb-3">
+                                                <div class="col-xl-12">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="border-bottom-0">FOLLOW UP</th>
+                                                                    <th class="border-bottom-0">TYPE SPK</th>
+                                                                    <th class="border-bottom-0">PAJAK</th>
+                                                                    <th class="border-bottom-0">MASTER SPK</th>
+                                                                    <th class="border-bottom-0">SUB SPK</th>
+                                                                    <th class="border-bottom-0">GROUP</th>
+                                                                    <th class="border-bottom-0">NO. SPK LAYOUT</th>
+                                                                    <th class="border-bottom-0">NO. SPK SAMPLE</th>
+                                                                    <th class="border-bottom-0">TGL AWAL PERMINTAAN
+                                                                        KIRIM</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>{{ $data->follow_up ?? '-' }}</td>
+                                                                    <td>{{ $data->spk_type ?? '-' }}</td>
+                                                                    <td>{{ $data->taxes_type ?? '-' }}</td>
+                                                                    <td>{{ $data->spk_parent ?? '-' }}</td>
+                                                                    <td>{{ $data->sub_spk ?? '-' }}</td>
+                                                                    <td>{{ $data->group_id ?? '-' }}</td>
+                                                                    <td>{{ $data->spk_layout_number ?? '-' }}</td>
+                                                                    <td>{{ $data->spk_sample_number ?? '-' }}</td>
+                                                                    <td>{{ $data->shipping_date_first ?? '-' }}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        File Arsip <hr>
-                                                        <ul class="list-group no-margin">
-                                                            @if ($data->fileArsip)
-                                                                @foreach ($data->fileArsip as $file)
-                                                                @if($file->type_file == 'arsip')
-                                                                    <li class="list-group-item d-flex ps-3">
-                                                                        <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                    </li>
+
+                                            <!-- Row -->
+                                            <div class="row mb-3">
+                                                <div class="col-xl-12">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>LANGKAH KERJA</th>
+                                                                    <th>TARGET SELESAI</th>
+                                                                    <th>DIJADWALKAN</th>
+                                                                    <th>TARGET JAM</th>
+                                                                    <th>OPERATOR/REKANAN</th>
+                                                                    <th>MACHINE</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if (isset($data->workstep))
+                                                                    @foreach ($data->workstep as $workstep)
+                                                                        <tr>
+                                                                            <td>{{ $workstep->workStepList->name ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->target_date ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->schedule_date ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->spk_parent ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->user->name ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->machine->machine_identity ?? '-' }}
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
                                                                 @endif
-                                                                @endforeach
-                                                            @else
-                                                                <li>
-                                                                    <p>No files found.</p>
-                                                                </li>
-                                                            @endif
-                                                        </ul>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="expanel expanel-default">
-                                                            <div class="expanel-body">
-                                                                File Sample <hr>
-                                                                <ul class="list-group no-margin">
-                                                                    @if ($data->fileArsip)
-                                                                        @foreach ($data->fileArsip as $file)
-                                                                        @if($file->type_file == 'sample')
-                                                                            <li class="list-group-item d-flex ps-3">
-                                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
-                                                                            </li>
-                                                                        @endif
-                                                                        @endforeach
-                                                                    @else
-                                                                        <li>
+                                            </div>
+
+                                            {{-- file --}}
+                                            <div class="row">
+                                                <div class="col-xl-4">
+                                                    <div class="expanel expanel-default">
+                                                        <div class="expanel-body">
+                                                            File Contoh
+                                                            <hr>
+                                                            <div class="d-flex text-center">
+                                                                <ul>
+                                                                    @if (isset($data->fileArsip))
+                                                                        @forelse ($data->fileArsip as $file)
+                                                                            @if ($file->type_file == 'contoh')
+                                                                                <li class="mb-3">
+                                                                                    <img class="img-responsive"
+                                                                                        src="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                        alt="File Contoh Parent">
+                                                                                    <div
+                                                                                        class="expanel expanel-default">
+                                                                                        <div class="expanel-body">
+                                                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                                download>{{ $file->file_name }}</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            @endif
+                                                                        @empty
                                                                             <p>No files found.</p>
-                                                                        </li>
+                                                                        @endforelse
                                                                     @endif
                                                                 </ul>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-xl-4">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="expanel expanel-default">
-                                                            <div class="expanel-body">
-                                                                File Layout <hr>
-                                                                <ul class="list-group no-margin">
-                                                                    @if ($data->fileArsip)
-                                                                        @foreach ($data->fileArsip as $file)
-                                                                        @if($file->type_file == 'layout')
+                                                <div class="col-xl-4">
+                                                    <div class="expanel expanel-default">
+                                                        <div class="expanel-body">
+                                                            File Arsip
+                                                            <hr>
+                                                            <ul class="list-group no-margin">
+                                                                @if (isset($data->fileArsip))
+                                                                    @forelse ($data->fileArsip as $file)
+                                                                        @if ($file->type_file == 'arsip')
                                                                             <li class="list-group-item d-flex ps-3">
-                                                                                <a href="{{ asset(Storage::url($file->file_path.'/'.$file->file_name)) }}" download>{{ $file->file_name }}</a>
+                                                                                <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                    download>{{ $file->file_name }}</a>
                                                                             </li>
                                                                         @endif
-                                                                        @endforeach
-                                                                    @else
-                                                                        <li>
-                                                                            <p>No files found.</p>
-                                                                        </li>
-                                                                    @endif
-                                                                </ul>
+                                                                    @empty
+                                                                        <p>No files found.</p>
+                                                                    @endforelse
+                                                                @endif
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="expanel expanel-default">
+                                                                <div class="expanel-body">
+                                                                    File Sample
+                                                                    <hr>
+                                                                    <ul class="list-group no-margin">
+                                                                        @if (isset($data->fileArsip))
+                                                                            @forelse ($data->fileArsip as $file)
+                                                                                @if ($file->type_file == 'sample')
+                                                                                    <li
+                                                                                        class="list-group-item d-flex ps-3">
+                                                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                            download>{{ $file->file_name }}</a>
+                                                                                    </li>
+                                                                                @endif
+                                                                            @empty
+                                                                                <p>No files found.</p>
+                                                                            @endforelse
+                                                                        @endif
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-4">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="expanel expanel-default">
+                                                                <div class="expanel-body">
+                                                                    File Layout
+                                                                    <hr>
+                                                                    <ul class="list-group no-margin">
+                                                                        @if (isset($data->fileArsip))
+                                                                            @forelse ($data->fileArsip as $file)
+                                                                                @if ($file->type_file == 'layout')
+                                                                                    <li
+                                                                                        class="list-group-item d-flex ps-3">
+                                                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                                            download>{{ $file->file_name }}</a>
+                                                                                    </li>
+                                                                                @endif
+                                                                            @empty
+                                                                                <p>No files found.</p>
+                                                                            @endforelse
+                                                                        @endif
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1100,12 +1125,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        
-                        <!-- PANEL-GROUP -->
+
+                                <!-- PANEL-GROUP -->
                             @endforeach
                         @endif
-                    </div>   
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1114,26 +1138,13 @@
         </div>
     </div>
 
+
 </div>
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal', event =>{
-            $('#detailInstructionModal').modal('hide');
-            $('#detailInstructionModalStock').modal('hide');
-            $('#detailInstructionModalGroup').modal('hide');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-stock', event =>{
-            $('#detailInstructionModalStock').modal('show');
-        });
-
-        window.addEventListener('show-detail-instruction-modal', event =>{
-            $('#detailInstructionModal').modal('show');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-group', event =>{
-            $('#detailInstructionModalGroup').modal('show');
+        window.addEventListener('close-modal-new-spk', event =>{
+            $('#openModalNewSpkStock').modal('hide');
         });
     </script>
 @endpush

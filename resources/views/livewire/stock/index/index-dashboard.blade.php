@@ -30,13 +30,7 @@
                             <div class=" tab-menu-heading">
                                 <div class="tabs-menu1">
                                     <!-- Tabs -->
-                                    <ul class="nav panel-tabs">
-                                        <li>
-                                            <button href="#tab1" class="active btn btn-dark mt-1 mb-1 me-3"
-                                                data-bs-toggle="tab">New SPK
-                                            </button>
-                                        </li>
-                                    </ul>
+                                    @livewire('stock.component.tab-dashboard-index')
                                 </div>
                             </div>
                         </div>
