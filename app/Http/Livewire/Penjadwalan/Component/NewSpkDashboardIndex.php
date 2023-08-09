@@ -23,9 +23,8 @@ class NewSpkDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateNewSpk = 10;
+    public $searchNewSpk = '';
 
     public $dataWorkSteps;
     public $dataUsers;
@@ -58,12 +57,7 @@ class NewSpkDashboardIndex extends Component
 
     public $pengajuanBarang;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-    
-    public function renderIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function addField($index)
     {
@@ -126,7 +120,7 @@ class NewSpkDashboardIndex extends Component
     public function mount()
     {
         
-        $this->search = request()->query('search', $this->search);
+        $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
     }
 
     public function sumGroup($groupId)
@@ -142,14 +136,14 @@ class NewSpkDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
-        $data = WorkStep::where('work_step_list_id', 2)
+        $dataNewSpk = WorkStep::where('work_step_list_id', 2)
                         ->where('state_task', 'Running')
                         ->whereIn('status_task', ['Pending Approved'])
                         ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                         ->whereIn('status_id', [1])
                         ->whereIn('job_id', [2])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchNewSpk . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -167,9 +161,9 @@ class NewSpkDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateNewSpk);
         
-        return view('livewire.penjadwalan.component.new-spk-dashboard-index', ['instructions' => $data])
+        return view('livewire.penjadwalan.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -198,7 +192,6 @@ class NewSpkDashboardIndex extends Component
             }
         }
 
-        // Insert new work steps starting from firstWorkStep->step + 1
         $stepToAdd = $firstWorkStep->step + 1;
         $newWorkSteps = [];
 
@@ -251,13 +244,19 @@ class NewSpkDashboardIndex extends Component
 
         }
 
+        $userDestination = User::where('role', 'Penjadwalan')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        }
+        event(new IndexRenderEvent('refresh'));
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
             'message' => 'Data jadwal berhasil disimpan',
         ]);
 
-        $this->workSteps = [];
+        $this->workSteps = null;
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
@@ -379,8 +378,6 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
         $this->notes = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
     }
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
@@ -399,8 +396,6 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
 
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }
 
     public function rejectSpk()
@@ -444,8 +439,11 @@ class NewSpkDashboardIndex extends Component
             'message' => 'Berhasil reject instruksi kerja',
         ]);
 
-        $this->keteranganReject = '';
+        $this->keteranganReject = null;
         $this->dispatchBrowserEvent('close-modal-new-spk');
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        }
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }

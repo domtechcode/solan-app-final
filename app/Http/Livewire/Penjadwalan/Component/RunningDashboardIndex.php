@@ -21,9 +21,8 @@ class RunningDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateRunning = 10;
+    public $searchRunning = '';
 
     public $dataWorkSteps;
     public $dataUsers;
@@ -58,12 +57,7 @@ class RunningDashboardIndex extends Component
     public $rejectKeterangan;
     public $keteranganReject;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function urgent($instructionSelectedIdUrgent)
     {
@@ -77,7 +71,7 @@ class RunningDashboardIndex extends Component
                     'message' => 'Urgent instruksi kerja berhasil disimpan',
                 ]);
         
-        $this->emit('indexRender');
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function normal($instructionSelectedIdNormal)
@@ -92,7 +86,7 @@ class RunningDashboardIndex extends Component
                     'message' => 'Normal instruksi kerja berhasil disimpan',
                 ]);
         
-        $this->emit('indexRender');
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function addField($index)
@@ -136,7 +130,7 @@ class RunningDashboardIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchRunning = request()->query('search', $this->searchRunning);
     }
 
     public function sumGroup($groupId)
@@ -152,12 +146,12 @@ class RunningDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
         
-        $data = WorkStep::where('work_step_list_id', 2)
+        $dataRunning = WorkStep::where('work_step_list_id', 2)
                         ->where('state_task', 'Running')
                         ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
                         ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchRunning . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -175,9 +169,9 @@ class RunningDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateRunning);
 
-        return view('livewire.penjadwalan.component.running-dashboard-index', ['instructions' => $data])
+        return view('livewire.penjadwalan.component.running-dashboard-index', ['instructionsRunning' => $dataRunning])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -348,24 +342,18 @@ class RunningDashboardIndex extends Component
             ]); 
         }
 
-        // dd($this->workSteps);
-
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
         $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-running');
     }
 
     public function modalInstructionDetailsGroupRunning($groupId)
     {
         $this->workSteps = [];
-        
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -373,10 +361,7 @@ class RunningDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-running');
     }
 
     public function startButton($workStepId)

@@ -19,11 +19,6 @@ class TabDashboardIndex extends Component
     public $dataCountAllSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
     
     public function render()
     {
