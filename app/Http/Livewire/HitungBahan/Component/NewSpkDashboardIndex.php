@@ -17,9 +17,8 @@ class NewSpkDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateNewSpk = 10;
+    public $searchNewSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -44,16 +43,11 @@ class NewSpkDashboardIndex extends Component
 
     public $keteranganReject;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
     }
 
     public function sumGroup($groupId)
@@ -66,7 +60,7 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 5)
+        $dataNewSpk = WorkStep::where('work_step_list_id', 5)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Revisi Qty'])
                 ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
@@ -79,7 +73,7 @@ class NewSpkDashboardIndex extends Component
                     });
                 })
                 ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
+                    $searchTerms = '%' . $this->searchNewSpk . '%';
                     $query->where(function ($subQuery) use ($searchTerms) {
                         $subQuery->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
@@ -97,9 +91,9 @@ class NewSpkDashboardIndex extends Component
                 ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginate);
+                ->paginate($this->paginateNewSpk);
 
-        return view('livewire.hitung-bahan.component.new-spk-dashboard-index', ['instructions' => $data])
+        return view('livewire.hitung-bahan.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);
@@ -114,15 +108,12 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
     }
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -130,10 +121,7 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }
 
     public function rejectSpk()

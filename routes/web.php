@@ -18,15 +18,15 @@ use App\Http\Controllers\Auth\LoginContr\LoginController;
 */
 
 
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login')->middleware('redirectIfAuthenticated');
+Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
-Route::get('/sender', function () {
-    // Logic untuk route ini (jika diperlukan)
-    event(new IndexRenderEvent("refresh"));
-    // event(new NotificationSent(2, "asdasdasd", "asdasd", "1", 4));
-});
+// Route::get('/sender', function () {
+//     // Logic untuk route ini (jika diperlukan)
+//     event(new IndexRenderEvent("refresh"));
+//     // event(new NotificationSent(2, "asdasdasd", "asdasd", "1", 4));
+// });
 
 Route::group(['middleware' => ['auth']], function () {
 
