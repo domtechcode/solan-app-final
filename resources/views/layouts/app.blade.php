@@ -167,7 +167,7 @@
 
 <script>
     Echo.channel('refresh')
-            .listen('IndexRenderEvent', function (data) {
+            .listen('IndexRenderEvent', function (e) {
                 Livewire.emit('indexRender');
             });
 </script>

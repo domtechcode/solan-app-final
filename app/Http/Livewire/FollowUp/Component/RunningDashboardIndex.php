@@ -14,9 +14,8 @@ class RunningDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateRunning = 10;
+    public $searchRunning = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -39,16 +38,11 @@ class RunningDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchRunning = request()->query('search', $this->searchRunning);
     }
 
     public function sumGroup($groupId)
@@ -61,13 +55,13 @@ class RunningDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataRunning = WorkStep::where('work_step_list_id', 1)
                         ->where('state_task', 'Running')
                         ->where('status_task', 'Process')
                         ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
                         ->whereIn('status_id', [1, 2, 23])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchRunning . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -85,9 +79,9 @@ class RunningDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateRunning);
 
-        return view('livewire.follow-up.component.running-dashboard-index', ['instructions' => $data])
+        return view('livewire.follow-up.component.running-dashboard-index', ['instructionsRunning' => $dataRunning])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

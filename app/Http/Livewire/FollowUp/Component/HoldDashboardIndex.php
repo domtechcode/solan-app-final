@@ -14,9 +14,8 @@ class HoldDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateHold = 10;
+    public $searchHold = '';
 
     public $instructionSelectedId;
     public $selectedInstruction;
@@ -42,16 +41,11 @@ class HoldDashboardIndex extends Component
     public $waitingSpkHoldQc;
     public $spkProduction;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchHold = request()->query('search', $this->searchHold);
     }
 
     public function sumGroup($groupId)
@@ -67,10 +61,10 @@ class HoldDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataHold = WorkStep::where('work_step_list_id', 1)
                         ->whereIn('spk_status', ['Hold', 'Hold Waiting Qty QC', 'Hold RAB', 'Hold Qc', 'Failed Waiting Qty QC'])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchHold . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -88,9 +82,9 @@ class HoldDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateHold);
 
-        return view('livewire.follow-up.component.hold-dashboard-index', [ 'instructions' => $data ])
+        return view('livewire.follow-up.component.hold-dashboard-index', [ 'instructionsHold' => $dataHold ])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

@@ -14,9 +14,8 @@ class TrainingProgramDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateTraining = 10;
+    public $searchTraining = '';
 
     public $instructionSelectedId;
     public $selectedInstruction;
@@ -40,24 +39,19 @@ class TrainingProgramDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchTraining = request()->query('search', $this->searchTraining);
     }
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataTraining = WorkStep::where('work_step_list_id', 1)
                         ->whereIn('spk_status', ['Training Program'])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchTraining . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -72,80 +66,11 @@ class TrainingProgramDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateTraining);
 
-        return view('livewire.component.training-program-dashboard-index', ['instructions' => $data])
+        return view('livewire.component.training-program-dashboard-index', ['instructionsTraining' => $dataTraining])
         ->extends('layouts.app')
         ->layoutData(['title' => 'Dashboard']);
-    }
-
-    public function deleteSpk($instructionDeleteId)
-    {
-        $deleteSpk = WorkStep::where('instruction_id', $instructionDeleteId)->update([
-            'spk_status' => 'Deleted'
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Delete Instruksi Kerja',
-            'message' => 'SPK berhasil didelete',
-        ]);
-
-        $this->emit('notifSent', [
-            'instruction_id' => '',
-            'user_id' => '',
-            'message' => '',
-            'conversation_id' => '',
-            'receiver_id' => '',
-        ]);
-
-        $this->dispatchBrowserEvent('close-modal');
-    }
-
-    public function holdSpk($instructionHoldId)
-    {
-        $holdSpk = WorkStep::where('instruction_id', $instructionHoldId)->update([
-            'spk_status' => 'Hold'
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Hold Instruksi Kerja',
-            'message' => 'SPK berhasil dihold',
-        ]);
-
-        $this->emit('notifSent', [
-            'instruction_id' => '',
-            'user_id' => '',
-            'message' => '',
-            'conversation_id' => '',
-            'receiver_id' => '',
-        ]);
-        
-        $this->dispatchBrowserEvent('close-modal');
-    }
-
-    public function cancelSpk($instructionCancelId)
-    {
-        $cancelSpk = WorkStep::where('instruction_id', $instructionCancelId)->update([
-            'spk_status' => 'Cancel'
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Cancel Instruksi Kerja',
-            'message' => 'SPK berhasil dicancel',
-        ]);
-
-        $this->emit('notifSent', [
-            'instruction_id' => '',
-            'user_id' => '',
-            'message' => '',
-            'conversation_id' => '',
-            'receiver_id' => '',
-        ]);
-
-        $this->dispatchBrowserEvent('close-modal');
     }
 
     public function modalInstructionDetailsTraining($instructionId)
@@ -158,15 +83,12 @@ class TrainingProgramDashboardIndex extends Component
         $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
         $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-training');
     }
 
     public function modalInstructionDetailsGroupTraining($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
@@ -174,9 +96,6 @@ class TrainingProgramDashboardIndex extends Component
         $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
         $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-training');
     }
 }

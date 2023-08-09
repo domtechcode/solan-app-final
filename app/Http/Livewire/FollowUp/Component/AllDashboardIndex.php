@@ -14,9 +14,8 @@ class AllDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateAll = 10;
+    public $searchAll = '';
 
     public $instructionSelectedId;
     public $selectedInstruction;
@@ -40,16 +39,11 @@ class AllDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchAll = request()->query('search', $this->searchAll);
     }
 
     public function sumGroup($groupId)
@@ -62,10 +56,10 @@ class AllDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataAll = WorkStep::where('work_step_list_id', 1)
                         ->whereNotIn('spk_status', ['Training Program'])
                         ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->search . '%';
+                            $searchTerms = '%' . $this->searchAll . '%';
                             $query->where(function ($subQuery) use ($searchTerms) {
                                 $subQuery->orWhere('spk_number', 'like', $searchTerms)
                                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -80,9 +74,9 @@ class AllDashboardIndex extends Component
                         ->select('work_steps.*')
                         ->with(['status', 'job', 'workStepList', 'instruction'])
                         ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginate);
+                        ->paginate($this->paginateAll);
 
-        return view('livewire.follow-up.component.all-dashboard-index', ['instructions' => $data])
+        return view('livewire.follow-up.component.all-dashboard-index', ['instructionsAll' => $dataAll])
         ->extends('layouts.app')
         ->layoutData(['title' => 'Dashboard']);
     }

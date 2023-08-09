@@ -14,9 +14,8 @@ class CancelDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateCancel = 10;
+    public $searchCancel = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -39,16 +38,11 @@ class CancelDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchCancel = request()->query('search', $this->searchCancel);
     }
 
     public function sumGroup($groupId)
@@ -61,10 +55,10 @@ class CancelDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataCancel = WorkStep::where('work_step_list_id', 1)
                 ->where('spk_status', 'Cancel')
                 ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
+                    $searchTerms = '%' . $this->searchCancel . '%';
                     $query->where(function ($subQuery) use ($searchTerms) {
                         $subQuery->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
@@ -79,9 +73,9 @@ class CancelDashboardIndex extends Component
                 ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginate);
+                ->paginate($this->paginateCancel);
 
-        return view('livewire.follow-up.component.cancel-dashboard-index', ['instructions' => $data])
+        return view('livewire.follow-up.component.cancel-dashboard-index', ['instructionsCancel' => $dataCancel])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

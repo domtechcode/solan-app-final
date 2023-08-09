@@ -19,9 +19,8 @@ class CompleteDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
  
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateComplete = 10;
+    public $searchComplete  = '';
     public $notes = [];
 
     public $selectedInstruction;
@@ -47,12 +46,7 @@ class CompleteDashboardIndex extends Component
     public $alasan_revisi;
     public $workSteps;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->reset();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function addEmptyNote()
     {
@@ -67,7 +61,7 @@ class CompleteDashboardIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchComplete  = request()->query('search', $this->searchComplete);
     }
 
     public function sumGroup($groupId)
@@ -80,10 +74,10 @@ class CompleteDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataComplete = WorkStep::where('work_step_list_id', 1)
                 ->whereIn('spk_status', ['Selesai', 'Acc'])
                 ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
+                    $searchTerms = '%' . $this->searchComplete . '%';
                     $query->where(function ($subQuery) use ($searchTerms) {
                         $subQuery->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
@@ -98,9 +92,9 @@ class CompleteDashboardIndex extends Component
                 ->select('work_steps.*')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginate);
+                ->paginate($this->paginateComplete);
 
-        return view('livewire.follow-up.component.complete-dashboard-index', ['instructions' => $data])
+        return view('livewire.follow-up.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
         ->extends('layouts.app')
         ->section('content')
         ->layoutData(['title' => 'Dashboard']);

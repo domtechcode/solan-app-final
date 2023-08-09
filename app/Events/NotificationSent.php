@@ -56,7 +56,7 @@ class NotificationSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('notif.'.$this->receiver);
+        return new Channel('notif.'. $this->receiver);
     }
 
     /**

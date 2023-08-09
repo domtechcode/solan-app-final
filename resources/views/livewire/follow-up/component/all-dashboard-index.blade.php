@@ -2,7 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -10,7 +10,7 @@
                 </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="search">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchAll">
         </div>
     </div>
     <div class="row mt-3">
@@ -34,8 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
-                        @forelse ($instructions as $key => $dataInstruction)
+                        @forelse ($instructionsAll as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -138,7 +137,7 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{ $instructionsAll->links() }}
         </div>
     </div>
 
