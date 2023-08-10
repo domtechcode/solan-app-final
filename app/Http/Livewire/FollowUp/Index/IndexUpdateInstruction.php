@@ -15,12 +15,11 @@ class IndexUpdateInstruction extends Component
 
     public function render()
     {
-
         return view('livewire.follow-up.index.index-update-instruction', [
-            'title' => 'Form Update Instruksi Kerja'
+            'title' => 'Form Update Instruksi Kerja',
         ])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Update Instruksi Kerja']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Update Instruksi Kerja']);
     }
 }

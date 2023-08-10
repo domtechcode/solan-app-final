@@ -18,9 +18,9 @@ class CompleteDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginateComplete = 10;
-    public $searchComplete  = '';
+    public $searchComplete = '';
     public $notes = [];
 
     public $selectedInstruction;
@@ -61,7 +61,7 @@ class CompleteDashboardIndex extends Component
 
     public function mount()
     {
-        $this->searchComplete  = request()->query('search', $this->searchComplete);
+        $this->searchComplete = request()->query('search', $this->searchComplete);
     }
 
     public function sumGroup($groupId)
@@ -75,29 +75,30 @@ class CompleteDashboardIndex extends Component
     public function render()
     {
         $dataComplete = WorkStep::where('work_step_list_id', 1)
-                ->whereIn('spk_status', ['Selesai', 'Acc'])
-                ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->searchComplete . '%';
-                    $query->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms);
-                    });
-                })
-                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                ->select('work_steps.*')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginateComplete);
+            ->whereIn('spk_status', ['Selesai', 'Acc'])
+            ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->searchComplete . '%';
+                $query->where(function ($subQuery) use ($searchTerms) {
+                    $subQuery
+                        ->orWhere('spk_number', 'like', $searchTerms)
+                        ->orWhere('spk_type', 'like', $searchTerms)
+                        ->orWhere('customer_name', 'like', $searchTerms)
+                        ->orWhere('order_name', 'like', $searchTerms)
+                        ->orWhere('customer_number', 'like', $searchTerms)
+                        ->orWhere('code_style', 'like', $searchTerms)
+                        ->orWhere('shipping_date', 'like', $searchTerms);
+                });
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.shipping_date', 'asc')
+            ->paginate($this->paginateComplete);
 
         return view('livewire.follow-up.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function revisiSample()
@@ -108,8 +109,7 @@ class CompleteDashboardIndex extends Component
 
         $updateAlasanRevisi = Instruction::find($this->selectedInstruction->id);
 
-        if($this->alasan_revisi){
-
+        if ($this->alasan_revisi) {
             // Ambil alasan pause yang sudah ada dari database
             $existingCatatanAlasanRevisi = json_decode($updateAlasanRevisi->alasan_revisi, true);
 
@@ -127,7 +127,7 @@ class CompleteDashboardIndex extends Component
             'count' => $updateAlasanRevisi->count + 1,
         ]);
 
-        if(!empty($this->notes)){
+        if (!empty($this->notes)) {
             $this->validate([
                 'notes.*.tujuan' => 'required',
                 'notes.*.catatan' => 'required',
@@ -152,8 +152,12 @@ class CompleteDashboardIndex extends Component
             'schedule_date' => null,
         ]);
 
-        $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 0)->first();
-        $workStepNext = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 1)->first();
+        $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)
+            ->where('step', 0)
+            ->first();
+        $workStepNext = WorkStep::where('instruction_id', $updateAlasanRevisi->id)
+            ->where('step', 1)
+            ->first();
 
         $workStepCurrent->update([
             'state_task' => 'Running',
@@ -176,17 +180,17 @@ class CompleteDashboardIndex extends Component
         //notif
         if ($workStepNext->work_step_list_id == 4) {
             $userDestination = User::where('role', 'Stock')->get();
-            foreach($userDestination as $dataUser){
+            foreach ($userDestination as $dataUser) {
                 $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
             }
-        } else if ($workStepNext->work_step_list_id == 5) {
+        } elseif ($workStepNext->work_step_list_id == 5) {
             $userDestination = User::where('role', 'Hitung Bahan')->get();
-            foreach($userDestination as $dataUser){
+            foreach ($userDestination as $dataUser) {
                 $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
             }
         } else {
             $userDestination = User::where('role', 'Penjadwalan')->get();
-            foreach($userDestination as $dataUser){
+            foreach ($userDestination as $dataUser) {
                 $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Sample', 'instruction_id' => $updateAlasanRevisi->id]);
             }
         }
@@ -206,44 +210,89 @@ class CompleteDashboardIndex extends Component
     public function modalInstructionDetailsComplete($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
     }
 
     public function modalInstructionDetailsRevisiSample($instructionId)
     {
         $this->notes = [];
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
     }
 
     public function modalInstructionDetailsGroupComplete($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

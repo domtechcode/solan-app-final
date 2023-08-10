@@ -121,13 +121,11 @@ class HitungBahanDataViewGeneralIndex extends Component
             ];
         }
 
-        $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)->get();
-        foreach($layoutSettingData as $dataLayoutSetting){
+        $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)->with('ukuranBahanCetakSetting')->get();
+        foreach($layoutSettingData as $key => $dataLayoutSetting){
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => $dataLayoutSetting['panjang_barang_jadi'],
                 'lebar_barang_jadi' => $dataLayoutSetting['lebar_barang_jadi'],
-                'panjang_bahan_cetak' => $dataLayoutSetting['panjang_bahan_cetak'],
-                'lebar_bahan_cetak' => $dataLayoutSetting['lebar_bahan_cetak'],
                 'dataURL' => $dataLayoutSetting['dataURL'],
                 'dataJSON' => $dataLayoutSetting['dataJSON'],
                 'state' => $dataLayoutSetting['state'],
@@ -142,6 +140,17 @@ class HitungBahanDataViewGeneralIndex extends Component
                 'jarak_tambahan_vertical' => $dataLayoutSetting['jarak_tambahan_vertical'],
                 'jarak_tambahan_horizontal' => $dataLayoutSetting['jarak_tambahan_horizontal'],
             ];
+
+            if (isset($dataLayoutSetting['ukuranBahanCetakSetting'])) {
+                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $dataUkuranBahanCetakSetting) {
+                    $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][] = [
+                        'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                        'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                    ];
+                }
+            } else {
+                $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'] = [];
+            }
         }
 
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
@@ -466,8 +475,8 @@ class HitungBahanDataViewGeneralIndex extends Component
             $this->keterangans[] = $keterangan;
         }
         
-        $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)->get();
-        foreach($layoutBahanData as $dataLayoutBahan){
+        $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)->with('ukuranBahanCetakBahan')->get();
+        foreach($layoutBahanData as $key => $dataLayoutBahan){
             $this->layoutBahans[] = [
                 'dataURL' => $dataLayoutBahan['dataURL'],
                 'dataJSON' => $dataLayoutBahan['dataJSON'],
@@ -494,6 +503,17 @@ class HitungBahanDataViewGeneralIndex extends Component
                 'include_belakang' => $dataLayoutBahan['include_belakang'],
                 'fileLayoutCustom' => '',
             ];
+
+            if (isset($dataLayoutBahan['ukuranBahanCetakBahan'])) {
+                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $dataUkuranBahanCetakBahan) {
+                    $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][] = [
+                        'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                        'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
+                    ];
+                }
+            } else {
+                $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'] = [];
+            }
         }
 
         $this->fileCheckerData = Files::where('instruction_id', $instructionId)->where('type_file', 'Approved Checker')->get();
@@ -503,8 +523,12 @@ class HitungBahanDataViewGeneralIndex extends Component
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => '',
                 'lebar_barang_jadi' => '',
-                'panjang_bahan_cetak' => '',
-                'lebar_bahan_cetak' => '',
+                'ukuran_bahan_cetak_setting' => [
+                    [
+                        'panjang_bahan_cetak' => '',
+                        'lebar_bahan_cetak' => '',
+                    ],
+                ],
                 'dataURL' => '',
                 'dataJSON' => '',
                 'state' => '',
@@ -555,8 +579,12 @@ class HitungBahanDataViewGeneralIndex extends Component
                 'state' => '',
                 'panjang_plano' => '',
                 'lebar_plano' => '',
-                'panjang_bahan_cetak' => '',
-                'lebar_bahan_cetak' => '',
+                'ukuran_bahan_cetak_bahan' => [
+                    [
+                        'panjang_bahan_cetak' => '',
+                        'lebar_bahan_cetak' => '',
+                    ],
+                ],
                 'jenis_bahan' => '',
                 'gramasi' => '',
                 'one_plano' => '',

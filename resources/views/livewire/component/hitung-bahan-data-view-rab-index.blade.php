@@ -282,35 +282,42 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label">Ukuran Bahan Cetak (P x L)
-                                                            (cm)</label>
-                                                        <div class="row">
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutSettings.{{ $indexSetting }}.panjang_bahan_cetak"
-                                                                    disabled>
-                                                                @error('layoutSettings.' . $indexSetting .
-                                                                    '.panjang_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="col-sm-1">
-                                                                <label class="form-label text-center">X</label>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutSettings.{{ $indexSetting }}.lebar_bahan_cetak"
-                                                                    disabled>
-                                                                @error('layoutSettings.' . $indexSetting .
-                                                                    '.lebar_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
+                                                    <label class="form-label">Ukuran Bahan Cetak (P x L)
+                                                        (cm)</label>
+                                                    @foreach ($setting['ukuran_bahan_cetak_setting'] as $ukuranBahanCetakIndex => $dataUkuranBahanCetakSetting)
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm">
+                                                                    <input type="text" autocomplete="off"
+                                                                        class="form-control" placeholder="Panjang"
+                                                                        wire:model="layoutSettings.{{ $indexSetting }}.ukuran_bahan_cetak_setting.{{ $ukuranBahanCetakIndex }}.panjang_bahan_cetak" readonly>
+                                                                    @error('layoutSettings.' . $indexSetting .
+                                                                        '.ukuran_bahan_cetak_setting.' .
+                                                                        $ukuranBahanCetakIndex . '.panjang_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-sm-1">
+                                                                    <label class="form-label text-center">X</label>
+                                                                </div>
+                                                                <div class="col-sm">
+                                                                    <div class="input-group">
+                                                                        <input type="text" autocomplete="off"
+                                                                            class="form-control" placeholder="Lebar"
+                                                                            wire:model="layoutSettings.{{ $indexSetting }}.ukuran_bahan_cetak_setting.{{ $ukuranBahanCetakIndex }}.lebar_bahan_cetak" readonly>
+                                                                    </div>
+                                                                    @error('layoutSettings.' . $indexSetting .
+                                                                        '.ukuran_bahan_cetak_setting.' .
+                                                                        $ukuranBahanCetakIndex . '.lebar_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
@@ -1708,35 +1715,42 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label">Ukuran Bahan Cetak (P x L)
-                                                            (cm)</label>
-                                                        <div class="row">
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutBahans.{{ $indexBahan }}.panjang_bahan_cetak"
-                                                                    disabled>
-                                                                @error('layoutBahans.' . $indexBahan .
-                                                                    '.panjang_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="col-sm-1">
-                                                                <label class="form-label text-center">X</label>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutBahans.{{ $indexBahan }}.lebar_bahan_cetak"
-                                                                    disabled>
-                                                                @error('layoutBahans.' . $indexBahan .
-                                                                    '.lebar_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
+                                                    <label class="form-label">Ukuran Bahan Cetak (P x L)
+                                                        (cm)</label>
+                                                    @foreach ($bahan['ukuran_bahan_cetak_bahan'] as $ukuranBahanCetakIndex => $dataUkuranBahanCetakBahan)
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm">
+                                                                    <input type="text" autocomplete="off"
+                                                                        class="form-control" placeholder="Panjang"
+                                                                        wire:model="layoutBahans.{{ $indexBahan }}.ukuran_bahan_cetak_bahan.{{ $ukuranBahanCetakIndex }}.panjang_bahan_cetak" readonly>
+                                                                    @error('layoutBahans.' . $indexBahan .
+                                                                        '.ukuran_bahan_cetak_bahan.' .
+                                                                        $ukuranBahanCetakIndex . '.panjang_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-sm-1">
+                                                                    <label class="form-label text-center">X</label>
+                                                                </div>
+                                                                <div class="col-sm">
+                                                                    <div class="input-group">
+                                                                        <input type="text" autocomplete="off"
+                                                                            class="form-control" placeholder="Lebar"
+                                                                            wire:model="layoutBahans.{{ $indexBahan }}.ukuran_bahan_cetak_bahan.{{ $ukuranBahanCetakIndex }}.lebar_bahan_cetak" readonly>
+                                                                    </div>
+                                                                    @error('layoutBahans.' . $indexBahan .
+                                                                        '.ukuran_bahan_cetak_bahan.' .
+                                                                        $ukuranBahanCetakIndex . '.lebar_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    @endforeach
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">

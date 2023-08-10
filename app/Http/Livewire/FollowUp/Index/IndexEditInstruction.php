@@ -15,12 +15,11 @@ class IndexEditInstruction extends Component
 
     public function render()
     {
-
         return view('livewire.follow-up.index.index-edit-instruction', [
-            'title' => 'Form Edit Instruksi Kerja'
+            'title' => 'Form Edit Instruksi Kerja',
         ])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
     }
 }

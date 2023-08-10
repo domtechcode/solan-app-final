@@ -19,7 +19,7 @@ class PengajuanMaklunSpkIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginate = 10;
     public $search = '';
 
@@ -61,19 +61,18 @@ class PengajuanMaklunSpkIndex extends Component
     {
         $this->search = request()->query('search', $this->search);
     }
-    
+
     public function render()
     {
         $dataPengajuanMaklunSpk = FormPengajuanMaklun::where('pekerjaan', 'Accounting')
-                ->with(['instruction'])
-                ->orderBy('tgl_keluar', 'asc')
-                ->paginate($this->paginate);
+            ->with(['instruction'])
+            ->orderBy('tgl_keluar', 'asc')
+            ->paginate($this->paginate);
 
         return view('livewire.accounting.component.pengajuan-maklun-spk-index', ['pengajuanMaklunSpk' => $dataPengajuanMaklunSpk])
-
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function ajukanRabMaklun($PengajuanMaklunSelectedRABId)
@@ -102,10 +101,10 @@ class PengajuanMaklunSpkIndex extends Component
         ]);
 
         $userDestination = User::where('role', 'RAB')->get();
-        foreach($userDestination as $dataUser){
+        foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateRAB->instruction_id]);
         }
-        
+
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -136,10 +135,10 @@ class PengajuanMaklunSpkIndex extends Component
         ]);
 
         $userDestination = User::where('role', 'Purchase')->get();
-        foreach($userDestination as $dataUser){
+        foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateApprove->instruction_id]);
         }
-        
+
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -170,10 +169,10 @@ class PengajuanMaklunSpkIndex extends Component
         ]);
 
         $userDestination = User::where('role', 'Purchase')->get();
-        foreach($userDestination as $dataUser){
+        foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateReject->instruction_id]);
         }
-        
+
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -188,7 +187,7 @@ class PengajuanMaklunSpkIndex extends Component
         $hargaSatuanMaklunSelected = currency_convert($this->harga_satuan_maklun);
         $qtyPurchaseMaklunSelected = currency_convert($this->qty_purchase_maklun);
 
-        $this->total_harga_maklun =  $hargaSatuanMaklunSelected * $qtyPurchaseMaklunSelected;
+        $this->total_harga_maklun = $hargaSatuanMaklunSelected * $qtyPurchaseMaklunSelected;
         $this->total_harga_maklun = currency_idr($this->total_harga_maklun);
     }
 
@@ -196,8 +195,10 @@ class PengajuanMaklunSpkIndex extends Component
     {
         $this->selectedInstruction = Instruction::find($instructionId);
 
-        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
-        if(isset($dataworkStepHitungBahanNew)){
+        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
+        if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
 
@@ -212,25 +213,44 @@ class PengajuanMaklunSpkIndex extends Component
 
     public function modalInstructionDetailsGroupPengajuanMaklunSpk($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
 
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-maklun-spk');
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

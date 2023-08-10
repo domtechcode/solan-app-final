@@ -45,7 +45,7 @@ class CreateInstructionKekuranganIndex extends Component
     {
         $this->workSteps[] = ['name' => $name, 'id' => $id];
     }
-    
+
     public function removeField($index)
     {
         unset($this->workSteps[$index]);
@@ -67,45 +67,48 @@ class CreateInstructionKekuranganIndex extends Component
     {
         $this->select2();
     }
-    
+
     public function render()
     {
-        $this->dataInstructions = Instruction::where('spk_type', 'production')->where('request_kekurangan', NULL)->get();
+        $this->dataInstructions = Instruction::where('spk_type', 'production')
+            ->where('request_kekurangan', null)
+            ->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
 
-        if($this->spkSelected && empty($this->workSteps)){
+        if ($this->spkSelected && empty($this->workSteps)) {
             $dataWorkStep = WorkStep::where('instruction_id', $this->spkSelected)
-            ->whereNotIn('work_step_list_id', [1, 2, 3])
-            ->with('workStepList')
-            ->get();
+                ->whereNotIn('work_step_list_id', [1, 2, 3])
+                ->with('workStepList')
+                ->get();
 
             foreach ($dataWorkStep as $workStep) {
                 $this->workSteps[] = [
-                    "name" => $workStep->workStepList->name,
-                    "id" => $workStep->work_step_list_id,
-                    "user_id" => $workStep->user_id
+                    'name' => $workStep->workStepList->name,
+                    'id' => $workStep->work_step_list_id,
+                    'user_id' => $workStep->user_id,
                 ];
             }
         }
-        
-        return view('livewire.follow-up.component.create-instruction-kekurangan-index')->extends('layouts.app')->layoutData(['title' => 'Form Instruksi Kerja Kekurangan']);
+
+        return view('livewire.follow-up.component.create-instruction-kekurangan-index')
+            ->extends('layouts.app')
+            ->layoutData(['title' => 'Form Instruksi Kerja Kekurangan']);
     }
 
     public function select2()
     {
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
-        
+
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
-            'target'    => '#spkSelected'
+            'target' => '#spkSelected',
         ]);
-        
     }
 
     public function save()
-    {        
+    {
         if (empty($this->workSteps)) {
             $this->emit('flashMessage', [
                 'type' => 'error',
@@ -124,203 +127,206 @@ class CreateInstructionKekuranganIndex extends Component
             'filecontoh' => 'required',
         ]);
 
-
         // Copy the Instruction
-        $instruction = Instruction::where('id', $this->spkSelected)->first()->replicate();
+        $instruction = Instruction::where('id', $this->spkSelected)
+            ->first()
+            ->replicate();
 
         $instruction->request_kekurangan = $instruction->spk_number;
         $instruction->spk_number = $this->spk_number;
-	    $instruction->quantity = currency_convert($this->quantity);
+        $instruction->quantity = currency_convert($this->quantity);
+        $instruction->stock = null;
         if ($this->requestKekurangan == 'Pemesan') {
             $instruction->spk_state = 'Kekurangan Request Pemesan';
-        } else if ($this->requestKekurangan == 'QC') {
+        } elseif ($this->requestKekurangan == 'QC') {
             $instruction->spk_state = 'Kekurangan QC';
-        } else if ($this->requestKekurangan == 'Kekurangan Bahan') {
+        } elseif ($this->requestKekurangan == 'Kekurangan Bahan') {
             $instruction->spk_state = 'Kekurangan Bahan';
         }
         $instruction->save();
 
         if (isset($this->filecontoh)) {
-            $folder = "public/".$instruction->spk_number."/follow-up";
+            $folder = 'public/' . $instruction->spk_number . '/follow-up';
 
             $nocontoh = 1;
             foreach ($this->filecontoh as $file) {
-                $fileName = $instruction->spk_number . '-file-contoh-'.$nocontoh . '.' . $file->getClientOriginalExtension();
+                $fileName = $instruction->spk_number . '-file-contoh-' . $nocontoh . '.' . $file->getClientOriginalExtension();
                 Storage::putFileAs($folder, $file, $fileName);
-                $nocontoh ++;
+                $nocontoh++;
 
                 Files::create([
                     'instruction_id' => $instruction->id,
-                    "user_id" => Auth()->user()->id,
-                    "type_file" => "contoh",
-                    "file_name" => $fileName,
-                    "file_path" => $folder,
+                    'user_id' => Auth()->user()->id,
+                    'type_file' => 'contoh',
+                    'file_name' => $fileName,
+                    'file_path' => $folder,
                 ]);
             }
-        }  
-         
+        }
+
         // Menambahkan elemen sebelum array indeks 0
         array_unshift($this->workSteps, [
-            "name" => "Follow Up",
-            "id" => "1",
-            "user_id" => Auth()->user()->id
+            'name' => 'Follow Up',
+            'id' => '1',
+            'user_id' => Auth()->user()->id,
         ]);
-        
-        $indexHitungBahan = array_search("Hitung Bahan", array_column($this->workSteps, "name"));
-        $indexRAB = array_search("RAB", array_column($this->workSteps, "name"));
-        $indexCariStock = array_search("Cari/Ambil Stock", array_column($this->workSteps, "name"));
-        
+
+        $indexHitungBahan = array_search('Hitung Bahan', array_column($this->workSteps, 'name'));
+        $indexRAB = array_search('RAB', array_column($this->workSteps, 'name'));
+        $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
+
         if ($indexHitungBahan !== false) {
             // Elemen "Hitung Bahan" ditemukan
             array_splice($this->workSteps, $indexHitungBahan + 1, 0, [
                 [
-                    "name" => "RAB",
-                    "id" => "3",
-                    "user_id" => null
-                ]
+                    'name' => 'RAB',
+                    'id' => '3',
+                    'user_id' => null,
+                ],
             ]);
-            $indexRAB = array_search("RAB", array_column($this->workSteps, "name"));
+            $indexRAB = array_search('RAB', array_column($this->workSteps, 'name'));
             if ($indexRAB !== false) {
                 // Elemen "RAB" ditemukan setelah "Hitung Bahan"
                 array_splice($this->workSteps, $indexRAB + 1, 0, [
                     [
-                        "name" => "Penjadwalan",
-                        "id" => "2",
-                        "user_id" => "4"
-                    ]
+                        'name' => 'Penjadwalan',
+                        'id' => '2',
+                        'user_id' => '4',
+                    ],
                 ]);
             }
         } elseif ($indexRAB !== false) {
             // Elemen "Hitung Bahan" tidak ditemukan, tetapi elemen "RAB" ditemukan
             array_splice($this->workSteps, $indexRAB + 1, 0, [
                 [
-                    "name" => "Penjadwalan",
-                    "id" => "2",
-                    "user_id" => "4"
-                ]
+                    'name' => 'Penjadwalan',
+                    'id' => '2',
+                    'user_id' => '4',
+                ],
             ]);
         } else {
             // Tidak ada elemen "Hitung Bahan" atau "RAB"
-            $indexFollowUp = array_search("Follow Up", array_column($this->workSteps, "name"));
-            $indexCariStock = array_search("Cari/Ambil Stock", array_column($this->workSteps, "name"));
-            
+            $indexFollowUp = array_search('Follow Up', array_column($this->workSteps, 'name'));
+            $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
+
             if ($indexFollowUp !== false && $indexCariStock !== false && $indexCariStock > $indexFollowUp) {
                 // Elemen "Cari/Ambil Stock" ditemukan setelah "Follow Up"
                 array_splice($this->workSteps, $indexCariStock + 1, 0, [
                     [
-                        "name" => "Penjadwalan",
-                        "id" => "2",
-                        "user_id" => "4"
-                    ]
+                        'name' => 'Penjadwalan',
+                        'id' => '2',
+                        'user_id' => '4',
+                    ],
                 ]);
             } else {
                 // Tidak ada elemen "Cari/Ambil Stock" atau "Cari/Ambil Stock" sebelum "Follow Up"
                 if ($indexFollowUp !== false) {
                     array_splice($this->workSteps, $indexFollowUp + 1, 0, [
                         [
-                            "name" => "Penjadwalan",
-                            "id" => "2",
-                            "user_id" => "4"
-                        ]
+                            'name' => 'Penjadwalan',
+                            'id' => '2',
+                            'user_id' => '4',
+                        ],
                     ]);
                 }
             }
         }
 
         $no = 0;
-            foreach ($this->workSteps as $step) {
-                $inserWorkStep = WorkStep::create([
-                    'instruction_id' => $instruction->id,
-                    'work_step_list_id' => $step['id'],
-                    'state_task' => 'Not Running',
-                    'status_task' => 'Waiting',
-                    'step' => $no,
-                    'user_id' => $step['user_id'],
-                    'task_priority' => 'Normal',
-                    'spk_status' => 'Running',
-                ]);
-                $no++;
-            }
+        foreach ($this->workSteps as $step) {
+            $inserWorkStep = WorkStep::create([
+                'instruction_id' => $instruction->id,
+                'work_step_list_id' => $step['id'],
+                'state_task' => 'Not Running',
+                'status_task' => 'Waiting',
+                'step' => $no,
+                'user_id' => $step['user_id'],
+                'task_priority' => 'Normal',
+                'spk_status' => 'Running',
+            ]);
+            $no++;
+        }
 
-            $updateFollowUp = WorkStep::where('instruction_id', $instruction->id)->where('step', 0)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Process',
-                    'target_date' => Carbon::now(),
-                    'schedule_date' => Carbon::now(),
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'selesai' => Carbon::now()->toDateTimeString()
-                ]);
-            
-            $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)->first();
-
-            $updateNextStep = WorkStep::where('instruction_id', $instruction->id)->where('step', 1)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'schedule_date' => Carbon::now(),
-                    'target_date' => Carbon::now(),
-                ]);
-
-            $updateStatus = WorkStep::where('instruction_id', $instruction->id)
-                ->update([
-                    'status_id' => 1,
-                    'job_id' => $firstWorkStep->work_step_list_id,
-                ]);
-            
-            
-            if($this->notes){
-                foreach ($this->notes as $input) {
-                    $catatan = Catatan::create([
-                        'tujuan' => $input['tujuan'],
-                        'catatan' => $input['catatan'],
-                        'kategori' => 'catatan',
-                        'instruction_id' => $instruction->id,
-                        'user_id' => Auth()->user()->id,
-                    ]);
-                }
-            }
-            
-            $this->workSteps = [];
-
-            // notif
-            if ($firstWorkStep->work_step_list_id == 4) {
-                $userDestination = User::where('role', 'Stock')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
-                }
-                event(new IndexRenderEvent('refresh'));
-            } else if ($firstWorkStep->work_step_list_id == 5) {
-                $userDestination = User::where('role', 'Hitung Bahan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
-                }
-                event(new IndexRenderEvent('refresh'));
-            } else {
-                $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
-                }
-                event(new IndexRenderEvent('refresh'));
-            }
-
-            session()->flash('success', 'Instruksi kerja berhasil disimpan.');
-            $this->emit('flashMessage', [
-                'type' => 'success',
-                'title' => 'Create Instruksi Kerja',
-                'message' => 'Berhasil membuat instruksi kerja',
+        $updateFollowUp = WorkStep::where('instruction_id', $instruction->id)
+            ->where('step', 0)
+            ->update([
+                'state_task' => 'Running',
+                'status_task' => 'Process',
+                'target_date' => Carbon::now(),
+                'schedule_date' => Carbon::now(),
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+                'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
-            $this->reset();     
+        $firstWorkStep = WorkStep::where('instruction_id', $instruction->id)
+            ->where('step', 1)
+            ->first();
 
-            return redirect()->route('followUp.createInstructionKekurangan');
-        
+        $updateNextStep = WorkStep::where('instruction_id', $instruction->id)
+            ->where('step', 1)
+            ->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+                'schedule_date' => Carbon::now(),
+                'target_date' => Carbon::now(),
+            ]);
+
+        $updateStatus = WorkStep::where('instruction_id', $instruction->id)->update([
+            'status_id' => 1,
+            'job_id' => $firstWorkStep->work_step_list_id,
+        ]);
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $instruction->id,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
+        $this->workSteps = [];
+
+        // notif
+        if ($firstWorkStep->work_step_list_id == 4) {
+            $userDestination = User::where('role', 'Stock')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+            }
+            event(new IndexRenderEvent('refresh'));
+        } elseif ($firstWorkStep->work_step_list_id == 5) {
+            $userDestination = User::where('role', 'Hitung Bahan')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+            }
+            event(new IndexRenderEvent('refresh'));
+        } else {
+            $userDestination = User::where('role', 'Penjadwalan')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+            }
+            event(new IndexRenderEvent('refresh'));
+        }
+
+        session()->flash('success', 'Instruksi kerja berhasil disimpan.');
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Create Instruksi Kerja',
+            'message' => 'Berhasil membuat instruksi kerja',
+        ]);
+
+        $this->reset();
+
+        return redirect()->route('followUp.createInstructionKekurangan');
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
@@ -329,7 +335,7 @@ class CreateInstructionKekuranganIndex extends Component
     }
 
     public function generateCode()
-    {   
+    {
         $this->validate([
             'requestKekurangan' => 'required',
             'spkSelected' => 'required',
@@ -342,21 +348,19 @@ class CreateInstructionKekuranganIndex extends Component
                 ->where('request_kekurangan', $selectedInstruction->spk_number)
                 ->count();
             $this->spk_number = $selectedInstruction->spk_number . '.K' . ($spkKekuranganCount + 1);
-        } else if ($this->requestKekurangan == 'QC') {
+        } elseif ($this->requestKekurangan == 'QC') {
             $spkKekuranganCount = Instruction::where('spk_state', 'Kekurangan QC')
                 ->where('request_kekurangan', $selectedInstruction->spk_number)
                 ->count();
             $this->spk_number = $selectedInstruction->spk_number . '.GC' . ($spkKekuranganCount + 1);
-        } else if ($this->requestKekurangan == 'Kekurangan Bahan') {
+        } elseif ($this->requestKekurangan == 'Kekurangan Bahan') {
             $spkKekuranganCount = Instruction::where('spk_state', 'Kekurangan Bahan')
                 ->where('request_kekurangan', $selectedInstruction->spk_number)
                 ->count();
             $this->spk_number = $selectedInstruction->spk_number . '.KB' . ($spkKekuranganCount + 1);
         }
-        
 
         // Perbarui nilai input text
         $this->dispatchBrowserEvent('generated', ['code' => $this->spk_number]);
     }
-
 }

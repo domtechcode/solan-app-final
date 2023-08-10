@@ -62,66 +62,76 @@ class NewSpkDashboardIndex extends Component
     public function render()
     {
         $dataNewSpk = WorkStep::where('work_step_list_id', 4)
-                        ->where('state_task', 'Running')
-                        ->whereIn('status_task', ['Pending Approved', 'Process'])
-                        ->where('spk_status', 'Running')
-                        ->whereIn('status_id', [1, 2])
-                        ->whereHas('instruction', function ($query) {
-                            $query->where('spk_number', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('spk_type', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('customer_name', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('order_name', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('customer_number', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('code_style', 'like', '%' . $this->searchNewSpk . '%')
-                            ->orWhere('shipping_date', 'like', '%' . $this->searchNewSpk . '%');
-                        })
-                        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                        ->select('work_steps.*')
-                        ->with(['status', 'job', 'workStepList', 'instruction'])
-                        ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginateNewSpk);
+            ->where('state_task', 'Running')
+            ->whereIn('status_task', ['Pending Approved', 'Process'])
+            ->where('spk_status', 'Running')
+            ->whereIn('status_id', [1, 2])
+            ->whereHas('instruction', function ($query) {
+                $query
+                    ->where('spk_number', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('spk_type', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('customer_name', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('order_name', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('customer_number', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('code_style', 'like', '%' . $this->searchNewSpk . '%')
+                    ->orWhere('shipping_date', 'like', '%' . $this->searchNewSpk . '%');
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.shipping_date', 'asc')
+            ->paginate($this->paginateNewSpk);
 
         return view('livewire.stock.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function save()
     {
-        $this->validate([
-            'stock' => 'required|numeric',
-        ], [
-            'stock.required' => 'Setidaknya stock harus diisi.',
-        ]);
+        $this->validate(
+            [
+                'stock' => 'required|numeric',
+            ],
+            [
+                'stock.required' => 'Setidaknya stock harus diisi.',
+            ],
+        );
 
         // dd($this->stock);
-        if($this->selectedInstruction->quantity < currency_convert($this->stock)){
+        if ($this->selectedInstruction->quantity < currency_convert($this->stock)) {
             $this->emit('flashMessage', [
                 'type' => 'error',
                 'title' => 'Error Stock',
                 'message' => 'Stock tidak boleh lebih dari quantity',
             ]);
-        }else if($this->selectedInstruction->quantity == currency_convert($this->stock)){
-            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])->update([
-                'state_task' => 'Complete',
-                'status_task' => 'Complete',
-                'selesai' => Carbon::now(),
-            ]);
+        } elseif ($this->selectedInstruction->quantity == currency_convert($this->stock)) {
+            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])
+                ->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now(),
+                ]);
 
-            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->update([
-                'state_task' => 'Running',
-                'status_task' => 'Pending Approved',
-                'dikerjakan' => Carbon::now()->toDateTimeString(),
-                'schedule_date' => Carbon::now(),
-            ]);
+            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->where('work_step_list_id', 2)
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'schedule_date' => Carbon::now(),
+                ]);
 
-            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereIn('work_step_list_id', [35, 36])->update([
-                'state_task' => 'Running',
-                'status_task' => 'Pending Start',
-                'dikerjakan' => Carbon::now()->toDateTimeString(),
-                'schedule_date' => Carbon::now(),
-            ]);
+            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->whereIn('work_step_list_id', [35, 36])
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Start',
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'schedule_date' => Carbon::now(),
+                ]);
 
             $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
                 'status_id' => 1,
@@ -132,38 +142,39 @@ class NewSpkDashboardIndex extends Component
                 'stock' => currency_convert($this->stock),
             ]);
 
-            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 4)->update([
-                'state_task' => 'Complete',
-                'status_task' => 'Complete',
-                'selesai' => Carbon::now()->toDateTimeString(),
-                'target_time' => 1,
-            ]);
+            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->where('work_step_list_id', 4)
+                ->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                    'target_time' => 1,
+                ]);
 
-            if($this->fileRincian){
-                $folder = "public/".$this->selectedInstruction->spk_number."/stock";
+            if ($this->fileRincian) {
+                $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
 
                 $norincianstock = 1;
                 foreach ($this->fileRincian as $file) {
-                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-'.$norincianstock . '.' . $file->getClientOriginalExtension();
+                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
                     Storage::putFileAs($folder, $file, $fileName);
-                    $norincianstock ++;
+                    $norincianstock++;
 
                     Files::create([
                         'instruction_id' => $this->selectedInstruction->id,
-                        "user_id" => Auth()->user()->id,
-                        "type_file" => "rincian-stock",
-                        "file_name" => $fileName,
-                        "file_path" => $folder,
+                        'user_id' => Auth()->user()->id,
+                        'type_file' => 'rincian-stock',
+                        'file_name' => $fileName,
+                        'file_path' => $folder,
                     ]);
                 }
             }
 
-
             $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
-                }
-                event(new IndexRenderEvent('refresh'));
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
+            }
+            event(new IndexRenderEvent('refresh'));
 
             $this->emit('flashMessage', [
                 'type' => 'success',
@@ -174,15 +185,15 @@ class NewSpkDashboardIndex extends Component
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
             $this->dispatchBrowserEvent('close-modal-new-spk');
-        }else{
+        } else {
             $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
                 'stock' => currency_convert($this->stock),
             ]);
-            
+
             $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
                 ->where('work_step_list_id', 4)
                 ->first();
-            
+
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -190,11 +201,11 @@ class NewSpkDashboardIndex extends Component
                     'selesai' => Carbon::now()->toDateTimeString(),
                     'target_time' => 1,
                 ]);
-            
+
                 $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
                     ->where('step', $updateTask->step + 1)
                     ->first();
-            
+
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
@@ -209,41 +220,40 @@ class NewSpkDashboardIndex extends Component
                 }
             }
 
-
-            if($this->fileRincian){
-                $folder = "public/".$this->selectedInstruction->spk_number."/stock";
+            if ($this->fileRincian) {
+                $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
 
                 $norincianstock = 1;
                 foreach ($this->fileRincian as $file) {
-                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-'.$norincianstock . '.' . $file->getClientOriginalExtension();
+                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
                     Storage::putFileAs($folder, $file, $fileName);
-                    $norincianstock ++;
+                    $norincianstock++;
 
                     Files::create([
                         'instruction_id' => $this->selectedInstruction->id,
-                        "user_id" => Auth()->user()->id,
-                        "type_file" => "rincian-stock",
-                        "file_name" => $fileName,
-                        "file_path" => $folder,
+                        'user_id' => Auth()->user()->id,
+                        'type_file' => 'rincian-stock',
+                        'file_name' => $fileName,
+                        'file_path' => $folder,
                     ]);
                 }
             }
 
             if ($updateNextStep->work_step_list_id == 5) {
                 $userDestination = User::where('role', 'Hitung Bahan')->get();
-                foreach($userDestination as $dataUser){
+                foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
                 }
                 event(new IndexRenderEvent('refresh'));
             } else {
                 $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
+                foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
                 }
                 event(new IndexRenderEvent('refresh'));
             }
 
-            if(isset($this->catatanHitungBahan)){
+            if (isset($this->catatanHitungBahan)) {
                 $catatan = Catatan::create([
                     'tujuan' => 5,
                     'catatan' => $this->catatanHitungBahan,
@@ -271,9 +281,13 @@ class NewSpkDashboardIndex extends Component
             'keteranganReject' => 'required',
         ]);
 
-        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 4)->first();
-        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 1)->first();
-        
+        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 4)
+            ->first();
+        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 1)
+            ->first();
+
         $workStepDestination->update([
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
@@ -281,7 +295,7 @@ class NewSpkDashboardIndex extends Component
             'reject_from_job' => $workStepCurrent->job_id,
             'count_reject' => $workStepDestination->count_reject + 1,
         ]);
-        
+
         $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
             'status_id' => 3,
             'job_id' => $workStepDestination->work_step_list_id,
@@ -308,55 +322,103 @@ class NewSpkDashboardIndex extends Component
 
         $this->keteranganReject = null;
         $this->dispatchBrowserEvent('close-modal-new-spk');
-        $this->messageSent(['conversation' => 'SPK Reject dari Stock','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
+        $this->messageSent(['conversation' => 'SPK Reject dari Stock', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }
 
     public function modalInstructionStockNewSpk($instructionId)
     {
-        $updateStatusStock = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 4)->update([
-            'user_id' => Auth()->user()->id,
-            'status_id' => 2,
-            'status_task' => 'Process',
-        ]);
-        $this->catatan = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 4)->get();
+        $updateStatusStock = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 4)
+            ->update([
+                'user_id' => Auth()->user()->id,
+                'status_id' => 2,
+                'status_task' => 'Process',
+            ]);
+        $this->catatan = Catatan::where('instruction_id', $instructionId)
+            ->where('kategori', 'catatan')
+            ->where('tujuan', 4)
+            ->get();
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
     }
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
     }
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

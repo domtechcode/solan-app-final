@@ -71,7 +71,7 @@ class DetailDataViewGeneralIndex extends Component
     public $totalScreen;
     public $totalLembarCetakScreen;
     public $totalWasteScreen;
-    
+
     public function mount($instructionId, $workStepId)
     {
         $this->currentInstructionId = $instructionId;
@@ -82,61 +82,105 @@ class DetailDataViewGeneralIndex extends Component
             ->whereNotNull('group_priority')
             ->first();
 
-        if (!$cekGroup){
-            $this->instructionData = Instruction::where('id', $instructionId)->with('fileArsip')->get();
-        }else{
+        if (!$cekGroup) {
+            $this->instructionData = Instruction::where('id', $instructionId)
+                ->with('fileArsip')
+                ->get();
+        } else {
             $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
-            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->with('fileArsip')->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))
+                ->with('fileArsip')
+                ->get();
         }
 
-        $this->contohData = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
+        $this->contohData = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
 
-        $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 7)->first();
-        $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 23)->first();
-        $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 24)->first();
-        $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 12)->first();
-        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
-
-       
+        $this->stateWorkStepPlate = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 7)
+            ->first();
+        $this->stateWorkStepSablon = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 23)
+            ->first();
+        $this->stateWorkStepPond = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 24)
+            ->first();
+        $this->stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 12)
+            ->first();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
     }
 
     public function render()
     {
-        return view('livewire.component.detail-data-view-general-index')->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Edit Hitung Bahan']);
+        return view('livewire.component.detail-data-view-general-index')
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
-    
 
     public function modalInstructionDetailsDetail($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-detail');
     }
 
     public function modalInstructionDetailsGroupDetail($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
 
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-detail');
     }
-    
 }

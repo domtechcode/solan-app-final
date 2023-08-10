@@ -24,17 +24,16 @@ class CustomerIndex extends Component
     {
         $this->search = request()->query('search', $this->search);
     }
-    
+
     public function render()
     {
         $searchTerms = '%' . $this->search . '%';
 
         $data = Customer::where('name', 'like', $searchTerms)
-                ->orWhere('taxes', 'like', $searchTerms)
-                ->paginate($this->paginate);    
+            ->orWhere('taxes', 'like', $searchTerms)
+            ->paginate($this->paginate);
 
-        return view('livewire.accounting.component.customer-index', ['customers' => $data ])
-        ->extends('layouts.app');
+        return view('livewire.accounting.component.customer-index', ['customers' => $data])->extends('layouts.app');
     }
 
     public function update()
@@ -55,7 +54,7 @@ class CustomerIndex extends Component
             'title' => 'Customer',
             'message' => 'Berhasil menyimpan data Customer',
         ]);
-        
+
         $this->reset();
         $this->reset();
         $this->dispatchBrowserEvent('close-detail-customer-edit');
@@ -70,5 +69,4 @@ class CustomerIndex extends Component
 
         $this->dispatchBrowserEvent('show-detail-customer-edit');
     }
-
 }

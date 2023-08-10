@@ -20,7 +20,7 @@ class RunningDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginateRunning = 10;
     public $searchRunning = '';
 
@@ -67,11 +67,11 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->emit('flashMessage', [
-                    'type' => 'success',
-                    'title' => 'Urgent Instruksi Kerja',
-                    'message' => 'Urgent instruksi kerja berhasil disimpan',
-                ]);
-        
+            'type' => 'success',
+            'title' => 'Urgent Instruksi Kerja',
+            'message' => 'Urgent instruksi kerja berhasil disimpan',
+        ]);
+
         event(new IndexRenderEvent('refresh'));
     }
 
@@ -82,45 +82,47 @@ class RunningDashboardIndex extends Component
         ]);
 
         $this->emit('flashMessage', [
-                    'type' => 'success',
-                    'title' => 'Normal Instruksi Kerja',
-                    'message' => 'Normal instruksi kerja berhasil disimpan',
-                ]);
-        
+            'type' => 'success',
+            'title' => 'Normal Instruksi Kerja',
+            'message' => 'Normal instruksi kerja berhasil disimpan',
+        ]);
+
         event(new IndexRenderEvent('refresh'));
     }
 
     public function addField($index)
     {
-        array_splice($this->workSteps, $index + 1, 0, [[
-            'id' => NULL,
-            'work_step_list_id' => NULL,
-            'target_date' => NULL,
-            'schedule_date' => NULL,
-            'target_time' => NULL,
-            'user_id' => NULL,
-            'machine_id' => NULL,
-            'state_task' => 'Not Running',
-            'status_task' => 'Pending Start',
-        ]]);
-
-        // Load Event
-        $this->dispatchBrowserEvent('pharaonic.select2.load', [
-            'component' => $this->id,
-            'target'    => '#work_step_list_id-'.$index,
+        array_splice($this->workSteps, $index + 1, 0, [
+            [
+                'id' => null,
+                'work_step_list_id' => null,
+                'target_date' => null,
+                'schedule_date' => null,
+                'target_time' => null,
+                'user_id' => null,
+                'machine_id' => null,
+                'state_task' => 'Not Running',
+                'status_task' => 'Pending Start',
+            ],
         ]);
 
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
-            'target'    => '#user_id-'.$index,
-        ]); 
+            'target' => '#work_step_list_id-' . $index,
+        ]);
 
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
-            'target'    => '#machine_id-'.$index,
-        ]); 
+            'target' => '#user_id-' . $index,
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#machine_id-' . $index,
+        ]);
     }
 
     public function removeField($index)
@@ -146,57 +148,64 @@ class RunningDashboardIndex extends Component
     {
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
-        
+
         $dataRunning = WorkStep::where('work_step_list_id', 2)
-                        ->where('state_task', 'Running')
-                        ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
-                        ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
-                        ->whereHas('instruction', function ($query) {
-                            $searchTerms = '%' . $this->searchRunning . '%';
-                            $query->where(function ($subQuery) use ($searchTerms) {
-                                $subQuery->orWhere('spk_number', 'like', $searchTerms)
-                                    ->orWhere('spk_type', 'like', $searchTerms)
-                                    ->orWhere('customer_name', 'like', $searchTerms)
-                                    ->orWhere('order_name', 'like', $searchTerms)
-                                    ->orWhere('customer_number', 'like', $searchTerms)
-                                    ->orWhere('code_style', 'like', $searchTerms)
-                                    ->orWhere('shipping_date', 'like', $searchTerms);
-                            })->where(function ($subQuery) {
-                                $subQuery->where('group_priority', '!=', 'child')
-                                    ->orWhereNull('group_priority');
-                            });
-                        })
-                        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                        ->select('work_steps.*')
-                        ->with(['status', 'job', 'workStepList', 'instruction'])
-                        ->orderBy('instructions.shipping_date', 'asc')
-                        ->paginate($this->paginateRunning);
+            ->where('state_task', 'Running')
+            ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->searchRunning . '%';
+                $query
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    })
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                    });
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.shipping_date', 'asc')
+            ->paginate($this->paginateRunning);
 
         return view('livewire.penjadwalan.component.running-dashboard-index', ['instructionsRunning' => $dataRunning])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function reschedule()
     {
-        $this->validate([
-            'workSteps.*.work_step_list_id' => 'required',
-            'workSteps.*.schedule_date' => 'required',
-            'workSteps.*.target_date' => 'required',
-            'workSteps.*.target_time' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            'workSteps.*.user_id' => 'required',
-            'keteranganReschedule' => 'required',
-        ], [
-            'workSteps.*.target_time.required' => 'Setidaknya Target Jam harus diisi.',
-            'workSteps.*.target_time.numeric' => 'Target Jam harus berupa angka/tidak boleh ada tanda koma(,).',
-            'keteranganReschedule.required' => 'Setidaknya Keterangan Reschedule harus diisi.',
-        ]);
+        $this->validate(
+            [
+                'workSteps.*.work_step_list_id' => 'required',
+                'workSteps.*.schedule_date' => 'required',
+                'workSteps.*.target_date' => 'required',
+                'workSteps.*.target_time' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'workSteps.*.user_id' => 'required',
+                'keteranganReschedule' => 'required',
+            ],
+            [
+                'workSteps.*.target_time.required' => 'Setidaknya Target Jam harus diisi.',
+                'workSteps.*.target_time.numeric' => 'Target Jam harus berupa angka/tidak boleh ada tanda koma(,).',
+                'keteranganReschedule.required' => 'Setidaknya Keterangan Reschedule harus diisi.',
+            ],
+        );
 
         $lastDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->get();
-        $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
+        $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 2)
+            ->first();
 
-        if($this->keteranganReschedule){
+        if ($this->keteranganReschedule) {
             $dataCatatanReschedule = $firstWorkStep;
 
             // Ambil alasan pause yang sudah ada dari database
@@ -215,11 +224,11 @@ class RunningDashboardIndex extends Component
         $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
 
         $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                        ->where('step', '>', $firstWorkStep->step)
-                        ->get();
-        
-        if($deleteWorkSteps){
-            foreach($deleteWorkSteps as $dataDeleted){
+            ->where('step', '>', $firstWorkStep->step)
+            ->get();
+
+        if ($deleteWorkSteps) {
+            foreach ($deleteWorkSteps as $dataDeleted) {
                 WorkStep::where('id', $dataDeleted->id)->delete();
             }
         }
@@ -252,26 +261,31 @@ class RunningDashboardIndex extends Component
             ];
         }
 
-        if(isset($newWorkSteps)){
+        if (isset($newWorkSteps)) {
             $inserWorkStep = WorkStep::insert($newWorkSteps);
         }
 
-        
-        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])->get();
-        foreach($lastDataWorkStep as $lastData){
-            $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', $lastData->work_step_list_id)->where('status_task', $lastData->status_task)->where('state_task', $lastData->state_task)->update([
-                'timer' => $lastData['timer'],
-                'alasan_pause' => $lastData['alasan_pause'],
-                'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
-                'reject_from_id' => $lastData['reject_from_id'],
-                'reject_from_status' => $lastData['reject_from_status'],
-                'reject_from_job' => $lastData['reject_from_job'],
-                'count_reject' => $lastData['count_reject'],
-                'count_revisi' => $lastData['count_revisi'],
-                'task_priority' => $lastData['task_priority'],
-                'dikerjakan' => $lastData['dikerjakan'],
-                'selesai' => $lastData['selesai'],
-            ]);
+        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
+            ->get();
+        foreach ($lastDataWorkStep as $lastData) {
+            $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->where('work_step_list_id', $lastData->work_step_list_id)
+                ->where('status_task', $lastData->status_task)
+                ->where('state_task', $lastData->state_task)
+                ->update([
+                    'timer' => $lastData['timer'],
+                    'alasan_pause' => $lastData['alasan_pause'],
+                    'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
+                    'reject_from_id' => $lastData['reject_from_id'],
+                    'reject_from_status' => $lastData['reject_from_status'],
+                    'reject_from_job' => $lastData['reject_from_job'],
+                    'count_reject' => $lastData['count_reject'],
+                    'count_revisi' => $lastData['count_revisi'],
+                    'task_priority' => $lastData['task_priority'],
+                    'dikerjakan' => $lastData['dikerjakan'],
+                    'selesai' => $lastData['selesai'],
+                ]);
         }
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
@@ -283,7 +297,6 @@ class RunningDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
-        
         $this->dispatchBrowserEvent('close-modal-running');
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -300,20 +313,34 @@ class RunningDashboardIndex extends Component
     public function modalInstructionDetailsRunning($instructionId)
     {
         $this->workSteps = [];
-        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1,2,3])->get();
+        $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
-        $this->stateRejectPenjadwalan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 2)->where('status_task', 'Reject Requirements')->first();
-        $this->note = Catatan::where('instruction_id', $instructionId)->where('kategori', 'catatan')->where('tujuan', 2)->get();
-        $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 2)->get();
+        $this->stateRejectPenjadwalan = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 2)
+            ->where('status_task', 'Reject Requirements')
+            ->first();
+        $this->note = Catatan::where('instruction_id', $instructionId)
+            ->where('kategori', 'catatan')
+            ->where('tujuan', 2)
+            ->get();
+        $this->notereject = Catatan::where('instruction_id', $instructionId)
+            ->where('kategori', 'reject')
+            ->where('tujuan', 2)
+            ->get();
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->with('workStepList', 'user', 'machine')->get();
-        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
-        if(isset($dataworkStepHitungBahan)){
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->whereNotIn('work_step_list_id', [1, 2, 3])
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
+        if (isset($dataworkStepHitungBahan)) {
             $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
         }
 
-        foreach($this->selectedWorkStep as $key => $dataSelected){
+        foreach ($this->selectedWorkStep as $key => $dataSelected) {
             $workSteps = [
                 'id' => $dataSelected['id'],
                 'work_step_list_id' => $dataSelected['work_step_list_id'],
@@ -331,42 +358,71 @@ class RunningDashboardIndex extends Component
             // Load Event
             $this->dispatchBrowserEvent('pharaonic.select2.load', [
                 'component' => $this->id,
-                'target'    => '#work_step_list_id-'.$key,
+                'target' => '#work_step_list_id-' . $key,
             ]);
 
             // Load Event
             $this->dispatchBrowserEvent('pharaonic.select2.load', [
                 'component' => $this->id,
-                'target'    => '#user_id-'.$key,
-            ]); 
+                'target' => '#user_id-' . $key,
+            ]);
 
             // Load Event
             $this->dispatchBrowserEvent('pharaonic.select2.load', [
                 'component' => $this->id,
-                'target'    => '#machine_id-'.$key,
-            ]); 
+                'target' => '#machine_id-' . $key,
+            ]);
         }
 
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
     }
 
     public function modalInstructionDetailsGroupRunning($groupId)
     {
         $this->workSteps = [];
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
     }
 
     public function startButton($workStepId)
@@ -388,17 +444,25 @@ class RunningDashboardIndex extends Component
         }
 
         $dataInstruction = Instruction::find($updateStart->instruction_id);
-        if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
-            $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'child')
+                ->get();
 
-            foreach($datachild as $key => $item){
-                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->first();
-                if(isset($updateChildWorkStep)){
-                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])->where('work_step_list_id', $updateStart->work_step_list_id)->where('user_id', $updateStart->user_id)->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
-                    ]);
-    
+            foreach ($datachild as $key => $item) {
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                    ->where('work_step_list_id', $updateStart->work_step_list_id)
+                    ->where('user_id', $updateStart->user_id)
+                    ->first();
+                if (isset($updateChildWorkStep)) {
+                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                        ->where('work_step_list_id', $updateStart->work_step_list_id)
+                        ->where('user_id', $updateStart->user_id)
+                        ->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+
                     $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
                         'status_id' => 1,
                         'job_id' => $updateStart->work_step_list_id,
@@ -449,10 +513,12 @@ class RunningDashboardIndex extends Component
 
     public function rejectButton($workStepId)
     {
-        $currentWorkStepPenjadwalan = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
+        $currentWorkStepPenjadwalan = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 2)
+            ->first();
         $updateReject = WorkStep::find($workStepId);
 
-        if ($updateReject){
+        if ($updateReject) {
             $updateReject->update([
                 'reject_from_id' => $currentWorkStepPenjadwalan->reject_from_id,
                 'reject_from_status' => $currentWorkStepPenjadwalan->reject_from_status,
@@ -474,7 +540,6 @@ class RunningDashboardIndex extends Component
                 'state_task' => 'Running',
                 'status_task' => 'Process',
             ]);
-            
         }
 
         $this->emit('flashMessage', [
@@ -494,9 +559,13 @@ class RunningDashboardIndex extends Component
             'keteranganReject' => 'required',
         ]);
 
-        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 2)->first();
-        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 1)->first();
-       
+        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 2)
+            ->first();
+        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 1)
+            ->first();
+
         $workStepDestination->update([
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
@@ -504,7 +573,7 @@ class RunningDashboardIndex extends Component
             'reject_from_job' => 2,
             'count_reject' => $workStepDestination->count_reject + 1,
         ]);
-        
+
         $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
             'status_id' => 3,
             'job_id' => $workStepDestination->work_step_list_id,
@@ -531,13 +600,13 @@ class RunningDashboardIndex extends Component
 
         $this->keteranganReject = '';
         $this->dispatchBrowserEvent('close-modal-running');
-        $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan','receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
+        $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

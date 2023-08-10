@@ -15,12 +15,11 @@ class IndexReorderInstruction extends Component
 
     public function render()
     {
-
         return view('livewire.follow-up.index.index-reorder-instruction', [
-            'title' => 'Form Edit Instruksi Kerja'
+            'title' => 'Form Edit Instruksi Kerja',
         ])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
     }
 }

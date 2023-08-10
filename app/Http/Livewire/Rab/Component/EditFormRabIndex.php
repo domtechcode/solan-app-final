@@ -51,13 +51,13 @@ class EditFormRabIndex extends Component
     public function mount($instructionId)
     {
         $this->currentInstructionId = $instructionId;
-        
+
         $cekGroup = Instruction::where('id', $instructionId)
             ->whereNotNull('group_id')
             ->whereNotNull('group_priority')
             ->first();
 
-        if (!$cekGroup){
+        if (!$cekGroup) {
             $this->instructionData = Instruction::where('id', $instructionId)->get();
             foreach ($this->instructionData as $instruction) {
                 $this->instructionItems[] = [
@@ -65,7 +65,7 @@ class EditFormRabIndex extends Component
                     'price' => currency_idr($instruction->price),
                 ];
             }
-        }else{
+        } else {
             $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
             $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
             foreach ($this->instructionData as $instruction) {
@@ -76,7 +76,9 @@ class EditFormRabIndex extends Component
             }
         }
 
-        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
 
         $formRab = FormRab::where('instruction_id', $instructionId)->get();
 
@@ -84,32 +86,31 @@ class EditFormRabIndex extends Component
         $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
-        if(isset($formRab)){
-            foreach($formRab as $dataRab){
-                if($dataRab['jenis_pengeluaran'] == 'Bahan Baku'){
+        if (isset($formRab)) {
+            foreach ($formRab as $dataRab) {
+                if ($dataRab['jenis_pengeluaran'] == 'Bahan Baku') {
                     $rab = [
                         'jenisPengeluaran' => $dataRab['jenis_pengeluaran'],
                         'rab' => currency_idr($newTotalHargaBahan),
                     ];
-                }else{
+                } else {
                     $rab = [
                         'jenisPengeluaran' => $dataRab['jenis_pengeluaran'],
                         'rab' => currency_idr($dataRab['rab']),
                     ];
                 }
-                
+
                 $this->rabItems[] = $rab;
             }
-            
         }
-
     }
 
     public function render()
     {
-        return view('livewire.rab.component.edit-form-rab-index')->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Edit RAB']);
+        return view('livewire.rab.component.edit-form-rab-index')
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Edit RAB']);
     }
 
     public function save()
@@ -119,28 +120,30 @@ class EditFormRabIndex extends Component
             'rabItems.*.rab' => 'required',
             'instructionItems.*.price' => 'required',
         ]);
-        
-        foreach($this->instructionItems as $dataInstructionItem){
+
+        foreach ($this->instructionItems as $dataInstructionItem) {
             $updatePrice = Instruction::where('spk_number', $dataInstructionItem['spk_number'])->update([
-                    'price' => $dataInstructionItem['price'], 
+                'price' => $dataInstructionItem['price'],
             ]);
         }
 
         $currentInstructionData = Instruction::find($this->currentInstructionId);
-        $dataRabCount = FormRab::where('instruction_id', $currentInstructionData->id)->whereNotNull('updated_count')->count();
+        $dataRabCount = FormRab::where('instruction_id', $currentInstructionData->id)
+            ->whereNotNull('updated_count')
+            ->count();
 
-        foreach($this->rabItems as $datarabItem){
+        foreach ($this->rabItems as $datarabItem) {
             $createRab = FormRab::create([
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                    'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'], 
-                    'rab' => $datarabItem['rab'], 
-                    'count' => $currentInstructionData['count'], 
-                    'updated_count' => $dataRabCount + 1, 
+                'instruction_id' => $this->currentInstructionId,
+                'user_id' => Auth()->user()->id,
+                'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'],
+                'rab' => $datarabItem['rab'],
+                'count' => $currentInstructionData['count'],
+                'updated_count' => $dataRabCount + 1,
             ]);
         }
 
-        if($this->notes){
+        if ($this->notes) {
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
                     'tujuan' => $input['tujuan'],
@@ -153,19 +156,19 @@ class EditFormRabIndex extends Component
         }
 
         $updateTask = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('work_step_list_id', 3)
-                ->first();
+            ->where('work_step_list_id', 3)
+            ->first();
 
-        if($updateTask->status_id == 22){
+        if ($updateTask->status_id == 22) {
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                     'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
-            
+
                 $updateNextStep = WorkStep::find($updateTask->reject_from_id);
-                
+
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
@@ -179,29 +182,28 @@ class EditFormRabIndex extends Component
                 }
 
                 $updateTask->update([
-                    'reject_from_id' => NULL,
-                    'reject_from_status' => NULL,
-                    'reject_from_job' => NULL,
+                    'reject_from_id' => null,
+                    'reject_from_status' => null,
+                    'reject_from_job' => null,
                 ]);
             }
 
-            if(isset($updateNextStep->user_id)){
+            if (isset($updateNextStep->user_id)) {
                 $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
                 event(new IndexRenderEvent('refresh'));
             }
-            
-        }else{
+        } else {
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                     'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
-            
+
                 $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
                     ->where('step', $updateTask->step + 1)
                     ->first();
-            
+
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
@@ -216,18 +218,15 @@ class EditFormRabIndex extends Component
                 }
             }
 
-        $this->messageSent(['conversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
-        
+            $this->messageSent(['conversation' => 'SPK selesai di approve RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
 
-        $userDestination = User::where('role', 'Accounting')->get();
-                foreach($userDestination as $dataUser){
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK RAB', 'instruction_id' => $this->currentInstructionId]);
-                }
+            $userDestination = User::where('role', 'Accounting')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK RAB', 'instruction_id' => $this->currentInstructionId]);
+            }
 
-        event(new IndexRenderEvent('refresh'));
-
+            event(new IndexRenderEvent('refresh'));
         }
-            
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -238,7 +237,6 @@ class EditFormRabIndex extends Component
         session()->flash('success', 'Instruksi kerja berhasil disimpan.');
 
         return redirect()->route('rab.dashboard');
-        
     }
 
     public function backBtn()
@@ -256,8 +254,10 @@ class EditFormRabIndex extends Component
             'keteranganReject' => 'required',
         ]);
 
-        $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 3)->first();
-        if($currentWorkStep){
+        $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+            ->where('work_step_list_id', 3)
+            ->first();
+        if ($currentWorkStep) {
             $currentWorkStep->update([
                 'state_task' => 'Running',
                 'status_task' => 'Pending Perbaikan',
@@ -265,11 +265,13 @@ class EditFormRabIndex extends Component
             ]);
         }
 
-        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', 5)->first();
+        $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
 
         $updateReject->update([
             'state_task' => 'Running',
-            'status_task' => 'Reject Requirements', 
+            'status_task' => 'Reject Requirements',
             'count_reject' => $updateReject->count_reject + 1,
             'status_id' => 22,
             'job_id' => 5,
@@ -282,13 +284,13 @@ class EditFormRabIndex extends Component
             'status_id' => 22,
             'job_id' => 5,
         ]);
-        
+
         $createKeteranganReject = Catatan::create([
-                    'tujuan' => 5,
-                    'catatan' => $this->keteranganReject,
-                    'kategori' => 'reject',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
+            'tujuan' => 5,
+            'catatan' => $this->keteranganReject,
+            'kategori' => 'reject',
+            'instruction_id' => $this->currentInstructionId,
+            'user_id' => Auth()->user()->id,
         ]);
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK reject oleh RAB', 'instruction_id' => $this->currentInstructionId]);
@@ -299,8 +301,6 @@ class EditFormRabIndex extends Component
             'title' => 'Reject Instruksi Kerja',
             'message' => 'Berhasil reject instruksi kerja',
         ]);
-
-        
 
         return redirect()->route('rab.dashboard');
     }
@@ -314,7 +314,7 @@ class EditFormRabIndex extends Component
         event(new IndexRenderEvent('refresh'));
         $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
-        if($this->notes){
+        if ($this->notes) {
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
                     'tujuan' => $input['tujuan'],
@@ -344,7 +344,7 @@ class EditFormRabIndex extends Component
         event(new IndexRenderEvent('refresh'));
         $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
 
-        if($this->notes){
+        if ($this->notes) {
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
                     'tujuan' => $input['tujuan'],
@@ -367,7 +367,7 @@ class EditFormRabIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

@@ -23,7 +23,7 @@ class CompleteCheckerDashboardIndex extends Component
     use WithFileUploads;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginate = 10;
     public $search = '';
     public $data;
@@ -87,40 +87,42 @@ class CompleteCheckerDashboardIndex extends Component
 
     public function render()
     {
-
         $data = WorkStep::where('user_id', Auth()->user()->id)
-                ->where('state_task', 'Complete')
-                ->whereIn('status_task', ['Complete'])
-                ->whereIn('spk_status', ['Running', 'Selesai'])
-                ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
-                    $query->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+            ->where('state_task', 'Complete')
+            ->whereIn('status_task', ['Complete'])
+            ->whereIn('spk_status', ['Running', 'Selesai'])
+            ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->search . '%';
+                $query
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms);
-                    })->where(function ($subQuery) {
+                    })
+                    ->where(function ($subQuery) {
                         // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
-                        $subQuery->where(function ($nestedSubQuery) {
-                            $nestedSubQuery->whereIn('work_step_list_id', [35, 36])
-                                ->orWhereNull('group_priority');
-                        })->orWhere('group_priority', 'parent');
+                        $subQuery
+                            ->where(function ($nestedSubQuery) {
+                                $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                            })
+                            ->orWhere('group_priority', 'parent');
                     });
-                })
-                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                ->select('work_steps.*')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginate);
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.shipping_date', 'asc')
+            ->paginate($this->paginate);
 
-        
-        return view('livewire.operator.component.complete-checker-dashboard-index', [ 'instructions' => $data ])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+        return view('livewire.operator.component.complete-checker-dashboard-index', ['instructions' => $data])
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function revisiLayout()
@@ -132,8 +134,7 @@ class CompleteCheckerDashboardIndex extends Component
 
         $updateAlasanRevisi = Instruction::find($this->selectedInstruction->id);
 
-        if($this->alasan_revisi){
-
+        if ($this->alasan_revisi) {
             // Ambil alasan pause yang sudah ada dari database
             $existingCatatanAlasanRevisi = json_decode($updateAlasanRevisi->alasan_revisi, true);
 
@@ -145,7 +146,6 @@ class CompleteCheckerDashboardIndex extends Component
             $updateAlasanRevisi->update([
                 'alasan_revisi' => json_encode($existingCatatanAlasanRevisi),
             ]);
-
 
             $catatanRevisi = Catatan::create([
                 'tujuan' => 6,
@@ -160,26 +160,28 @@ class CompleteCheckerDashboardIndex extends Component
             'count' => $updateAlasanRevisi->count + 1,
         ]);
 
-        if(!empty($this->filearsiprevisi)){
-            $folder = "public/".$updateAlasanRevisi->spk_number."/checker";
+        if (!empty($this->filearsiprevisi)) {
+            $folder = 'public/' . $updateAlasanRevisi->spk_number . '/checker';
 
-            $norevisi = Files::where('instruction_id', $updateAlasanRevisi->id)->where('type_file', 'arsip')->count();
+            $norevisi = Files::where('instruction_id', $updateAlasanRevisi->id)
+                ->where('type_file', 'arsip')
+                ->count();
             foreach ($this->filearsiprevisi as $file) {
-                $fileName = $updateAlasanRevisi->id . '-file-arsip-revisi-customer-'.$norevisi . '.' . $file->getClientOriginalExtension();
+                $fileName = $updateAlasanRevisi->id . '-file-arsip-revisi-customer-' . $norevisi . '.' . $file->getClientOriginalExtension();
                 Storage::putFileAs($folder, $file, $fileName);
-                $norevisi ++;
+                $norevisi++;
 
                 Files::create([
                     'instruction_id' => $updateAlasanRevisi->id,
-                    "user_id" => Auth()->user()->id,
-                    "type_file" => "arsip",
-                    "file_name" => $fileName,
-                    "file_path" => $folder,
+                    'user_id' => Auth()->user()->id,
+                    'type_file' => 'arsip',
+                    'file_name' => $fileName,
+                    'file_path' => $folder,
                 ]);
             }
         }
 
-        if($this->notes){
+        if ($this->notes) {
             $this->validate([
                 'notes.*.tujuan' => 'required',
                 'notes.*.catatan' => 'required',
@@ -204,8 +206,12 @@ class CompleteCheckerDashboardIndex extends Component
             'schedule_date' => null,
         ]);
 
-        $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 0)->first();
-        $workStepNext = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('step', 1)->first();
+        $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)
+            ->where('step', 0)
+            ->first();
+        $workStepNext = WorkStep::where('instruction_id', $updateAlasanRevisi->id)
+            ->where('step', 1)
+            ->first();
 
         $workStepCurrent->update([
             'state_task' => 'Running',
@@ -226,9 +232,9 @@ class CompleteCheckerDashboardIndex extends Component
         ]);
 
         $userDestination = User::where('role', 'Penjadwalan')->get();
-            foreach($userDestination as $dataUser){
-                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Layout', 'instruction_id' => $updateAlasanRevisi->id]);
-            }
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Revisi Layout', 'instruction_id' => $updateAlasanRevisi->id]);
+        }
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -262,21 +268,23 @@ class CompleteCheckerDashboardIndex extends Component
 
         $updateAcc = Instruction::find($this->selectedInstruction->id);
 
-        if(!empty($this->filearsipacc)){
-            $folder = "public/".$updateAcc->spk_number."/checker";
+        if (!empty($this->filearsipacc)) {
+            $folder = 'public/' . $updateAcc->spk_number . '/checker';
 
-            $noarispacc = Files::where('instruction_id', $updateAcc->id)->where('type_file', 'arsip')->count();
+            $noarispacc = Files::where('instruction_id', $updateAcc->id)
+                ->where('type_file', 'arsip')
+                ->count();
             foreach ($this->filearsipacc as $file) {
-                $fileName = $updateAcc->id . '-file-arsip-acc-customer-'.$noarispacc . '.' . $file->getClientOriginalExtension();
+                $fileName = $updateAcc->id . '-file-arsip-acc-customer-' . $noarispacc . '.' . $file->getClientOriginalExtension();
                 Storage::putFileAs($folder, $file, $fileName);
-                $noarispacc ++;
+                $noarispacc++;
 
                 Files::create([
                     'instruction_id' => $updateAcc->id,
-                    "user_id" => Auth()->user()->id,
-                    "type_file" => "arsip",
-                    "file_name" => $fileName,
-                    "file_path" => $folder,
+                    'user_id' => Auth()->user()->id,
+                    'type_file' => 'arsip',
+                    'file_name' => $fileName,
+                    'file_path' => $folder,
                 ]);
             }
         }
@@ -288,13 +296,27 @@ class CompleteCheckerDashboardIndex extends Component
     {
         $this->notes = [];
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
-        $this->workSteps = WorkStep::where('instruction_id', $instructionId)->with('workStepList')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-revisi-layout');
     }
@@ -302,37 +324,68 @@ class CompleteCheckerDashboardIndex extends Component
     public function modalInstructionDetailsCompleteChecker($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-complete-checker');
     }
 
     public function modalInstructionDetailsGroupCompleteChecker($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
 
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-complete-checker');
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

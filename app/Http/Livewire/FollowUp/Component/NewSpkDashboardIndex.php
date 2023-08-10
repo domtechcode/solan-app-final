@@ -13,7 +13,7 @@ class NewSpkDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginateNewSpk = 10;
     public $searchNewSpk = '';
 
@@ -52,64 +52,96 @@ class NewSpkDashboardIndex extends Component
         $totalQuantity = $totalQuantityGroup - $totalStockGroup;
         return $totalQuantity;
     }
-    
+
     public function render()
     {
         $dataNewSpk = WorkStep::where('work_step_list_id', 1)
-                ->where('state_task', 'Running')
-                ->where('status_task', 'Process')
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
-                ->whereIn('status_id', [1, 2])
-                ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->searchNewSpk . '%';
-                    $query->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+            ->where('state_task', 'Running')
+            ->where('status_task', 'Process')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereIn('status_id', [1, 2])
+            ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->searchNewSpk . '%';
+                $query
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms);
-                    })->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')
-                            ->orWhereNull('group_priority');
+                    })
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
-                })
-                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                ->select('work_steps.*')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->orderBy('instructions.shipping_date', 'asc')
-                ->paginate($this->paginateNewSpk);
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.shipping_date', 'asc')
+            ->paginate($this->paginateNewSpk);
 
         return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
-
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
     }
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
     }
 }

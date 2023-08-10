@@ -15,7 +15,7 @@ class NewSpkRabDashboardIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
- 
+
     public $paginate = 10;
     public $search = '';
     public $data;
@@ -63,40 +63,41 @@ class NewSpkRabDashboardIndex extends Component
         $totalQuantity = $totalQuantityGroup - $totalStockGroup;
         return $totalQuantity;
     }
-    
+
     public function render()
     {
         $data = WorkStep::where('work_step_list_id', 3)
-                ->where('state_task', 'Complete')
-                ->where('status_task', 'Complete')
-                ->where('user_id', '!=', null)
-                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
-                ->whereHas('instruction', function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
-                    $query->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery->orWhere('spk_number', 'like', $searchTerms)
+            ->where('state_task', 'Complete')
+            ->where('status_task', 'Complete')
+            ->where('user_id', '!=', null)
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->search . '%';
+                $query
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms);
-                    })->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')
-                            ->orWhereNull('group_priority');
+                    })
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
-                })
-                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-                ->select('work_steps.*')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->orderBy('instructions.created_at', 'asc')
-                ->paginate($this->paginate);
+            })
+            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+            ->select('work_steps.*')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->orderBy('instructions.created_at', 'asc')
+            ->paginate($this->paginate);
 
         return view('livewire.accounting.component.new-spk-rab-dashboard-index', ['instructions' => $data])
-
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 
     public function save()
@@ -108,8 +109,8 @@ class NewSpkRabDashboardIndex extends Component
             'dataRab.*.real' => 'required',
         ]);
 
-        if(isset($this->dataRab)){
-            foreach($this->dataRab as $key => $data){
+        if (isset($this->dataRab)) {
+            foreach ($this->dataRab as $key => $data) {
                 $updateRab = FormRab::find($data['id']);
                 $updateRab->update([
                     'jenis_pengeluaran' => $data['jenis_pengeluaran'],
@@ -119,9 +120,11 @@ class NewSpkRabDashboardIndex extends Component
             }
         }
 
-        $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)->where('work_step_list_id', 3)->update([
-            'state_task' => 'Complete Accounting',
-        ]);
+        $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('work_step_list_id', 3)
+            ->update([
+                'state_task' => 'Complete Accounting',
+            ]);
 
         $this->dataRab = [];
 
@@ -140,23 +143,38 @@ class NewSpkRabDashboardIndex extends Component
     {
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)->where('type_file', 'layout')->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)->where('type_file', 'sample')->get();
+        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
+            ->where('type_file', 'sample')
+            ->get();
 
-        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
-        if(isset($dataworkStepHitungBahanNew)){
+        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
+        if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
 
+        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+            ->where('real', null)
+            ->get();
 
-        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->where('real', null)->get();
-        
-        if(isset($dataInstructionRab)){
-            foreach($dataInstructionRab as $item){
+        if (isset($dataInstructionRab)) {
+            foreach ($dataInstructionRab as $item) {
                 $datarab = [
                     'id' => $item['id'],
                     'jenis_pengeluaran' => $item['jenis_pengeluaran'],
@@ -166,7 +184,7 @@ class NewSpkRabDashboardIndex extends Component
 
                 $this->dataRab[] = $datarab;
             }
-        }else{
+        } else {
             $this->dataRab[] = [
                 'id' => '',
                 'jenis_pengeluaran' => '',
@@ -180,18 +198,37 @@ class NewSpkRabDashboardIndex extends Component
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
     {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)->where('group_priority', 'parent')->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->get();
+        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'parent')
+            ->first();
+        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->get();
 
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)->with('workStepList', 'user', 'machine')->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'contoh')->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'arsip')->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'accounting')->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'layout')->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)->where('type_file', 'sample')->get();
+        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
+            ->with('workStepList', 'user', 'machine')
+            ->get();
+        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'contoh')
+            ->get();
+        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'arsip')
+            ->get();
+        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'accounting')
+            ->get();
+        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'layout')
+            ->get();
+        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
+            ->where('type_file', 'sample')
+            ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)->where('group_priority', 'child')->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')->get();
+        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
+            ->where('group_priority', 'child')
+            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->get();
 
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }

@@ -18,28 +18,26 @@ class TabDashboardIndex extends Component
     public $dataCountHoldSpk;
     public $dataCountCancelSpk;
     public $dataCountCompleteSpk;
-    public $dataCountAllSpk;    
+    public $dataCountAllSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
-    
+
     public $activeTab = 'tab1';
 
     public function changeTab($tab)
     {
         $this->activeTab = $tab;
     }
-    
+
     public function render()
     {
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', '!=', 16)->count();
 
-        $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'Purchase')->count();        
+        $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'Purchase')->count();
 
         return view('livewire.purchase.component.tab-dashboard-index')
-
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Dashboard']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Dashboard']);
     }
 }
-

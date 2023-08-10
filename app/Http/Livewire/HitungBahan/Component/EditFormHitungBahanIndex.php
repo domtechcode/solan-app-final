@@ -63,13 +63,45 @@ class EditFormHitungBahanIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public function addUkuranBahanCetakSetting($indexSetting)
+    {
+        $this->layoutSettings[$indexSetting]['ukuran_bahan_cetak_setting'][] = [
+                'panjang_bahan_cetak' => '',
+                'lebar_bahan_cetak' => '',            
+        ];
+    }
+
+    public function removeUkuranBahanCetakSetting($indexSetting, $ukuranBahanCetakIndex)
+    {
+        unset($this->layoutSettings[$indexSetting]['ukuran_bahan_cetak_setting'][$ukuranBahanCetakIndex]);
+        $this->layoutSettings[$indexSetting]['ukuran_bahan_cetak_setting'] = array_values($this->layoutSettings[$indexSetting]['ukuran_bahan_cetak_setting']);
+    }
+
+    public function addUkuranBahanCetakBahan($indexBahan)
+    {
+        $this->layoutBahans[$indexBahan]['ukuran_bahan_cetak_bahan'][] = [
+                'panjang_bahan_cetak' => '',
+                'lebar_bahan_cetak' => '',            
+        ];
+    }
+
+    public function removeUkuranBahanCetakBahan($indexBahan, $ukuranBahanCetakIndex)
+    {
+        unset($this->layoutBahans[$indexBahan]['ukuran_bahan_cetak_bahan'][$ukuranBahanCetakIndex]);
+        $this->layoutBahans[$indexBahan]['ukuran_bahan_cetak_bahan'] = array_values($this->layoutBahans[$indexBahan]['ukuran_bahan_cetak_bahan']);
+    }
+
     public function addFormSetting()
     {
         $this->layoutSettings[] = [
             'panjang_barang_jadi' => '',
             'lebar_barang_jadi' => '',
-            'panjang_bahan_cetak' => '',
-            'lebar_bahan_cetak' => '',
+            'ukuran_bahan_cetak_setting' => [
+                [
+                    'panjang_bahan_cetak' => '',
+                    'lebar_bahan_cetak' => '',
+                ],
+            ],
             'dataURL' => '',
             'dataJSON' => '',
             'state' => '',
@@ -100,8 +132,12 @@ class EditFormHitungBahanIndex extends Component
             'state' => '',
             'panjang_plano' => '',
             'lebar_plano' => '',
-            'panjang_bahan_cetak' => '',
-            'lebar_bahan_cetak' => '',
+            'ukuran_bahan_cetak_bahan' => [
+                [
+                    'panjang_bahan_cetak' => '',
+                    'lebar_bahan_cetak' => '',
+                ],
+            ],
             'jenis_bahan' => '',
             'gramasi' => '',
             'one_plano' => '',
@@ -117,8 +153,6 @@ class EditFormHitungBahanIndex extends Component
             'lebar_sisa_bahan' => '',
             'fileLayoutCustom' => '',
             'include_belakang' => '',
-            'layout_custom_file_name' => '',
-            'layout_custom_path' => '',
         ];
     }
 
@@ -260,8 +294,6 @@ class EditFormHitungBahanIndex extends Component
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => $dataLayoutSetting['panjang_barang_jadi'],
                 'lebar_barang_jadi' => $dataLayoutSetting['lebar_barang_jadi'],
-                'panjang_bahan_cetak' => $dataLayoutSetting['panjang_bahan_cetak'],
-                'lebar_bahan_cetak' => $dataLayoutSetting['lebar_bahan_cetak'],
                 'dataURL' => $dataLayoutSetting['dataURL'],
                 'dataJSON' => $dataLayoutSetting['dataJSON'],
                 'state' => $dataLayoutSetting['state'],
@@ -276,6 +308,17 @@ class EditFormHitungBahanIndex extends Component
                 'jarak_tambahan_vertical' => $dataLayoutSetting['jarak_tambahan_vertical'],
                 'jarak_tambahan_horizontal' => $dataLayoutSetting['jarak_tambahan_horizontal'],
             ];
+
+            if (isset($dataLayoutSetting['ukuranBahanCetakSetting'])) {
+                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $dataUkuranBahanCetakSetting) {
+                    $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][] = [
+                        'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                        'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                    ];
+                }
+            } else {
+                $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'] = [];
+            }
         }
        
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
@@ -484,8 +527,6 @@ class EditFormHitungBahanIndex extends Component
                 'state' => $dataLayoutBahan['state'],
                 'panjang_plano' => $dataLayoutBahan['panjang_plano'],
                 'lebar_plano' => $dataLayoutBahan['lebar_plano'],
-                'panjang_bahan_cetak' => $dataLayoutBahan['panjang_bahan_cetak'],
-                'lebar_bahan_cetak' => $dataLayoutBahan['lebar_bahan_cetak'],
                 'jenis_bahan' => $dataLayoutBahan['jenis_bahan'],
                 'gramasi' => $dataLayoutBahan['gramasi'],
                 'one_plano' => $dataLayoutBahan['one_plano'],
@@ -504,6 +545,17 @@ class EditFormHitungBahanIndex extends Component
                 'include_belakang' => $dataLayoutBahan['include_belakang'],
                 'fileLayoutCustom' => '',
             ];
+
+            if (isset($dataLayoutBahan['ukuranBahanCetakBahan'])) {
+                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $dataUkuranBahanCetakBahan) {
+                    $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][] = [
+                        'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                        'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
+                    ];
+                }
+            } else {
+                $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'] = [];
+            }
         }
         
          // Cek apakah array layoutSettings dan keterangans kosong
@@ -511,8 +563,12 @@ class EditFormHitungBahanIndex extends Component
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => '',
                 'lebar_barang_jadi' => '',
-                'panjang_bahan_cetak' => '',
-                'lebar_bahan_cetak' => '',
+                'ukuran_bahan_cetak_setting' => [
+                    [
+                        'panjang_bahan_cetak' => '',
+                        'lebar_bahan_cetak' => '',
+                    ],
+                ],
                 'dataURL' => '',
                 'dataJSON' => '',
                 'state' => '',
@@ -562,8 +618,12 @@ class EditFormHitungBahanIndex extends Component
                 'state' => '',
                 'panjang_plano' => '',
                 'lebar_plano' => '',
-                'panjang_bahan_cetak' => '',
-                'lebar_bahan_cetak' => '',
+                'ukuran_bahan_cetak_bahan' => [
+                    [
+                        'panjang_bahan_cetak' => '',
+                        'lebar_bahan_cetak' => '',
+                    ],
+                ],
                 'jenis_bahan' => '',
                 'gramasi' => '',
                 'one_plano' => '',
@@ -599,8 +659,8 @@ class EditFormHitungBahanIndex extends Component
             'layoutSettings' => 'required|array|min:1',
             'layoutSettings.*.panjang_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutSettings.*.lebar_barang_jadi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            'layoutSettings.*.panjang_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            'layoutSettings.*.lebar_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.panjang_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.lebar_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutSettings.*.dataURL' => 'required',
             'layoutSettings.*.dataJSON' => 'required',
             'layoutSettings.*.state' => 'required',
@@ -616,13 +676,11 @@ class EditFormHitungBahanIndex extends Component
             'layoutSettings.*.jarak_tambahan_horizontal' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
        
             'layoutBahans' => 'required|array|min:1',
-            // 'layoutBahans.*.dataURL' => 'required',
-            // 'layoutBahans.*.dataJSON' => 'required',
             'layoutBahans.*.state' => 'required',
             'layoutBahans.*.panjang_plano' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.lebar_plano' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            'layoutBahans.*.panjang_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-            'layoutBahans.*.lebar_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutBahans.*.ukuran_bahan_cetak_bahan.*.panjang_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+            'layoutBahans.*.ukuran_bahan_cetak_bahan.*.lebar_bahan_cetak' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.jenis_bahan' => 'required',
             'layoutBahans.*.gramasi' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
             'layoutBahans.*.one_plano' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
@@ -644,8 +702,8 @@ class EditFormHitungBahanIndex extends Component
             'layoutSettings.*.state.required' => 'View layout harus diisi.',
             'layoutSettings.*.panjang_barang_jadi.required' => 'Panjang barang jadi harus diisi.',
             'layoutSettings.*.lebar_barang_jadi.required' => 'Lebar barang jadi harus diisi.',
-            'layoutSettings.*.panjang_bahan_cetak.required' => 'Panjang bahan cetak harus diisi.',
-            'layoutSettings.*.lebar_bahan_cetak.required' => 'Lebar bahan cetak harus diisi.',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.panjang_bahan_cetak.required' => 'Panjang bahan cetak harus diisi.',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.lebar_bahan_cetak.required' => 'Lebar bahan cetak harus diisi.',
             'layoutSettings.*.panjang_naik.required' => 'Panjang Naik harus diisi.',
             'layoutSettings.*.lebar_naik.required' => 'Lebar Naik harus diisi.',
             'layoutSettings.*.jarak_panjang.required' => 'Jarak Panjang harus diisi.',
@@ -659,8 +717,8 @@ class EditFormHitungBahanIndex extends Component
 
             'layoutSettings.*.panjang_barang_jadi.numeric' => 'Panjang barang jadi harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutSettings.*.lebar_barang_jadi.numeric' => 'Lebar barang jadi harus berupa angka/tidak boleh ada tanda koma(,).',
-            'layoutSettings.*.panjang_bahan_cetak.numeric' => 'Panjang bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
-            'layoutSettings.*.lebar_bahan_cetak.numeric' => 'Lebar bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.panjang_bahan_cetak.numeric' => 'Panjang bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
+            'layoutSettings.*.ukuran_bahan_cetak_setting.*.lebar_bahan_cetak.numeric' => 'Lebar bahan cetak harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutSettings.*.panjang_naik.numeric' => 'Panjang Naik harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutSettings.*.lebar_naik.numeric' => 'Lebar Naik harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutSettings.*.jarak_panjang.numeric' => 'Jarak Panjang harus berupa angka/tidak boleh ada tanda koma(,).',
@@ -674,13 +732,11 @@ class EditFormHitungBahanIndex extends Component
     
             'layoutBahans.required' => 'Setidaknya satu layout setting harus diisi.',
             'layoutBahans.min' => 'Setidaknya satu layout setting harus diisi.',
-            // 'layoutBahans.*.dataURL.required' => 'Gambar harus dibuat terlebih dahulu.',
-            // 'layoutBahans.*.dataJSON.required' => 'Gambar harus dibuat terlebih dahulu.',
             'layoutBahans.*.state.required' => 'View layout harus diisi.',
             'layoutBahans.*.panjang_plano.required' => 'Panjang Plano harus diisi.',
             'layoutBahans.*.lebar_plano.required' => 'Lebar Plano harus diisi.',
-            'layoutBahans.*.panjang_bahan_cetak.required' => 'Panjang bahan cetak harus diisi.',
-            'layoutBahans.*.lebar_bahan_cetak.required' => 'Lebar bahan cetak harus diisi.',
+            'layoutBahans.*.ukuran_bahan_cetak_bahan.*.panjang_bahan_cetak.required' => 'Panjang bahan cetak harus diisi.',
+            'layoutBahans.*.ukuran_bahan_cetak_bahan.*.lebar_bahan_cetak.required' => 'Lebar bahan cetak harus diisi.',
             'layoutBahans.*.jenis_bahan.required' => 'Jenis bahan harus diisi.',
             'layoutBahans.*.gramasi.required' => 'Gramasi bahan harus diisi.',
             'layoutBahans.*.one_plano.required' => '1 Plano harus diisi.',
@@ -703,7 +759,6 @@ class EditFormHitungBahanIndex extends Component
             'layoutBahans.*.one_plano.numeric' => '1 Plano harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutBahans.*.jumlah_lembar_cetak.numeric' => 'Jumlah Lembar Cetak harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutBahans.*.jumlah_incit.numeric' => 'Jumlah Incit harus berupa angka/tidak boleh ada tanda koma(,).',
-            // 'layoutBahans.*.harga_bahan.numeric' => 'Harga Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutBahans.*.jumlah_bahan.numeric' => 'Harga Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutBahans.*.panjang_sisa_bahan.numeric' => 'Panjang Sisa Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
             'layoutBahans.*.lebar_sisa_bahan.numeric' => 'Lebar Sisa Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
@@ -870,6 +925,14 @@ class EditFormHitungBahanIndex extends Component
                         'dataURL' => $layoutSettingData['dataURL'],
                         'dataJSON' => $layoutSettingData['dataJSON'],
                     ]);
+
+                    foreach ($layoutSettingData['ukuran_bahan_cetak_setting'] as $dataUkuranBahanCetakSetting) {
+                        $layoutSetting->ukuranBahanCetakSetting()->create([
+                            'layout_setting_id' => $layoutSetting->id,
+                            'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                            'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                        ]);
+                    }
                 }
             }
     
@@ -960,6 +1023,14 @@ class EditFormHitungBahanIndex extends Component
                             "layout_custom_path" => $folder,
                         ]);
                     }
+
+                    foreach ($layoutBahanData['ukuran_bahan_cetak_bahan'] as $dataUkuranBahanCetakBahan) {
+                        $layoutBahan->ukuranBahanCetakBahan()->create([
+                            'layout_bahan_id' => $layoutBahan->id,
+                            'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                            'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
+                        ]);
+                    }
     
                 }
             }
@@ -992,6 +1063,14 @@ class EditFormHitungBahanIndex extends Component
                         'dataURL' => $layoutSettingData['dataURL'],
                         'dataJSON' => $layoutSettingData['dataJSON'],
                     ]);
+
+                    foreach ($layoutSettingData['ukuran_bahan_cetak_setting'] as $dataUkuranBahanCetakSetting) {
+                        $layoutSetting->ukuranBahanCetakSetting()->create([
+                            'layout_setting_id' => $layoutSetting->id,
+                            'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                            'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                        ]);
+                    }
                 }
             }
     
@@ -1128,6 +1207,14 @@ class EditFormHitungBahanIndex extends Component
                             'layout_custom_path' => $folder,
                             'dataURL' => null,
                             'dataJSON' => null,
+                        ]);
+                    }
+
+                    foreach ($layoutBahanData['ukuran_bahan_cetak_bahan'] as $dataUkuranBahanCetakBahan) {
+                        $layoutBahan->ukuranBahanCetakBahan()->create([
+                            'layout_bahan_id' => $layoutBahan->id,
+                            'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                            'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
                         ]);
                     }
     

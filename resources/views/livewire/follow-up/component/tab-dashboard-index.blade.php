@@ -9,47 +9,63 @@
                         <!-- Tabs -->
                         <ul class="nav panel-tabs">
                             <li>
-                                <button href="#tab1" class="{{ $activeTab === 'tab1' ? 'active' : '' }} btn btn-dark mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab1')" wire:key="tab1">New SPK - {{ $dataCountNewSpk }}
+                                <button href="#tab1"
+                                    class="{{ $activeTab === 'tab1' ? 'active' : '' }} btn btn-dark mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab1')" wire:key="tab1">New SPK -
+                                    {{ $dataCountNewSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab2" class="{{ $activeTab === 'tab2' ? 'active' : '' }} btn btn-primary mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Reject - {{ $dataCountRejectSpk }}
+                                <button href="#tab2"
+                                    class="{{ $activeTab === 'tab2' ? 'active' : '' }} btn btn-primary mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Reject -
+                                    {{ $dataCountRejectSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab3" class="{{ $activeTab === 'tab3' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Running - {{ $dataCountRunningSpk }}
+                                <button href="#tab3"
+                                    class="{{ $activeTab === 'tab3' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Running -
+                                    {{ $dataCountRunningSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab4" class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-danger mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Hold - {{ $dataCountHoldSpk }}
+                                <button href="#tab4"
+                                    class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-danger mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Hold -
+                                    {{ $dataCountHoldSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab5" class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-warning mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Cancel - {{ $dataCountCancelSpk }}
+                                <button href="#tab5"
+                                    class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-warning mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Cancel -
+                                    {{ $dataCountCancelSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab6" class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Complete - {{ $dataCountCompleteSpk }}
+                                <button href="#tab6"
+                                    class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Complete -
+                                    {{ $dataCountCompleteSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab7" class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">All - {{ $dataCountAllSpk }}
+                                <button href="#tab7"
+                                    class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">All -
+                                    {{ $dataCountAllSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab8" class="{{ $activeTab === 'tab8' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab8')" wire:key="tab8">Last Data Training Program
+                                <button href="#tab8"
+                                    class="{{ $activeTab === 'tab8' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab8')" wire:key="tab8">Last Data
+                                    Training Program
                                 </button>
                             </li>
-                            </ul>
-                        
+                        </ul>
+
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@
                 <!-- PAGE-HEADER END -->
 
                 @livewire('follow-up.component.edit-instruction-index', ['instructionId' => $instructions])
-                
+
             </div>
             <!-- CONTAINER CLOSED -->
         </div>

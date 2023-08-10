@@ -14,7 +14,9 @@ class IndexEditFormHitungBahan extends Component
     public function mount($instructionId)
     {
         $this->instructionSelectedId = $instructionId;
-        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)->where('work_step_list_id', 5)->first();
+        $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)
+            ->where('work_step_list_id', 5)
+            ->first();
         $updateUserWorkStep->update([
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
@@ -22,26 +24,24 @@ class IndexEditFormHitungBahan extends Component
             // 'status_task' => 'Process',
         ]);
 
-        if($updateUserWorkStep->status_id == 26){
-            
-        }elseif($updateUserWorkStep->status_id == 22){
-
-        }else{
+        if ($updateUserWorkStep->status_id == 26) {
+        } elseif ($updateUserWorkStep->status_id == 22) {
+        } else {
             $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
                 'status_id' => 2,
             ]);
         }
-        
+
         broadcast(new IndexRenderEvent('refresh'));
     }
-    
+
     public function render()
     {
         return view('livewire.hitung-bahan.index.index-edit-form-hitung-bahan', [
-            'title' => 'Form Edit Hitung Bahan'
+            'title' => 'Form Edit Hitung Bahan',
         ])
-        ->extends('layouts.app')
-        ->section('content')
-        ->layoutData(['title' => 'Form Edit Hitung Bahan']);
+            ->extends('layouts.app')
+            ->section('content')
+            ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
 }

@@ -303,34 +303,50 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label">Ukuran Bahan Cetak (P x L)
-                                                            (cm)</label>
-                                                        <div class="row">
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutSettings.{{ $indexSetting }}.panjang_bahan_cetak">
-                                                                @error('layoutSettings.' . $indexSetting .
-                                                                    '.panjang_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="col-sm-1">
-                                                                <label class="form-label text-center">X</label>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutSettings.{{ $indexSetting }}.lebar_bahan_cetak">
-                                                                @error('layoutSettings.' . $indexSetting .
-                                                                    '.lebar_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
+                                                    <label class="form-label">Ukuran Bahan Cetak (P x L)
+                                                        (cm)</label>
+                                                    @foreach ($setting['ukuran_bahan_cetak_setting'] as $ukuranBahanCetakIndex => $dataUkuranBahanCetakSetting)
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm">
+                                                                    <input type="text" autocomplete="off"
+                                                                        class="form-control" placeholder="Panjang"
+                                                                        wire:model="layoutSettings.{{ $indexSetting }}.ukuran_bahan_cetak_setting.{{ $ukuranBahanCetakIndex }}.panjang_bahan_cetak">
+                                                                    @error('layoutSettings.' . $indexSetting .
+                                                                        '.ukuran_bahan_cetak_setting.' .
+                                                                        $ukuranBahanCetakIndex . '.panjang_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-sm-1">
+                                                                    <label class="form-label text-center">X</label>
+                                                                </div>
+                                                                <div class="col-sm">
+                                                                    <div class="input-group">
+                                                                        <input type="text" autocomplete="off"
+                                                                            class="form-control" placeholder="Lebar"
+                                                                            wire:model="layoutSettings.{{ $indexSetting }}.ukuran_bahan_cetak_setting.{{ $ukuranBahanCetakIndex }}.lebar_bahan_cetak">
+                                                                        <button class="btn btn-primary" type="button"
+                                                                            wire:click="removeUkuranBahanCetakSetting({{ $indexSetting }}, {{ $ukuranBahanCetakIndex }})"><i
+                                                                                class="fe fe-x"></i></button>
+                                                                    </div>
+                                                                    @error('layoutSettings.' . $indexSetting .
+                                                                        '.ukuran_bahan_cetak_setting.' .
+                                                                        $ukuranBahanCetakIndex . '.lebar_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    @endforeach
+                                                    <button class="btn btn-sm btn-success" type="button"
+                                                        wire:click="addUkuranBahanCetakSetting({{ $indexSetting }})">Add
+                                                        Ukuran Bahan Cetak</button>
                                                 </div>
+
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Panjang Naik</label>
@@ -937,8 +953,8 @@
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                                $totalLembarCetakPlate = 0;
-                                                                $totalWastePlate = 0;
+                                                            $totalLembarCetakPlate = 0;
+                                                            $totalWastePlate = 0;
                                                             ?>
                                                             @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
                                                                 <tr>
@@ -1018,16 +1034,16 @@
                                                                     </td>
                                                                 </tr>
                                                                 <?php
-                                                                    $jumlahLembarCetak = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'];
-                                                                    $waste = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] ?? 0;
-
-                                                                    if (is_numeric($jumlahLembarCetak)) {
-                                                                        $totalLembarCetakPlate += $jumlahLembarCetak;
-                                                                    }
-
-                                                                    if (is_numeric($waste)) {
-                                                                        $totalWastePlate += $waste;
-                                                                    }
+                                                                $jumlahLembarCetak = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'];
+                                                                $waste = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] ?? 0;
+                                                                
+                                                                if (is_numeric($jumlahLembarCetak)) {
+                                                                    $totalLembarCetakPlate += $jumlahLembarCetak;
+                                                                }
+                                                                
+                                                                if (is_numeric($waste)) {
+                                                                    $totalWastePlate += $waste;
+                                                                }
                                                                 ?>
                                                             @endforeach
                                                             <tr>
@@ -1075,8 +1091,8 @@
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                                $totalLembarCetakScreen = 0;
-                                                                $totalWasteScreen = 0;
+                                                            $totalLembarCetakScreen = 0;
+                                                            $totalWasteScreen = 0;
                                                             ?>
                                                             @foreach ($keterangan['rincianScreen'] ?? [] as $rincianIndexScreen => $rincian)
                                                                 <tr>
@@ -1156,16 +1172,16 @@
                                                                     </td>
                                                                 </tr>
                                                                 <?php
-                                                                    $jumlahLembarCetakScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['jumlah_lembar_cetak'];
-                                                                    $wasteScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['waste'] ?? 0;
-
-                                                                    if (is_numeric($jumlahLembarCetakScreen)) {
-                                                                        $totalLembarCetakScreen += $jumlahLembarCetakScreen;
-                                                                    }
-
-                                                                    if (is_numeric($wasteScreen)) {
-                                                                        $totalWasteScreen += $wasteScreen;
-                                                                    }
+                                                                $jumlahLembarCetakScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['jumlah_lembar_cetak'];
+                                                                $wasteScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['waste'] ?? 0;
+                                                                
+                                                                if (is_numeric($jumlahLembarCetakScreen)) {
+                                                                    $totalLembarCetakScreen += $jumlahLembarCetakScreen;
+                                                                }
+                                                                
+                                                                if (is_numeric($wasteScreen)) {
+                                                                    $totalWasteScreen += $wasteScreen;
+                                                                }
                                                                 ?>
                                                             @endforeach
                                                             <tr>
@@ -1183,7 +1199,7 @@
                                 </div>
                             @endif
 
-                            @if(isset($stateWorkStepCetakLabel))
+                            @if (isset($stateWorkStepCetakLabel))
                                 <div class="col-lg-12 mb-3">
                                     <div class="form-row">
                                         <div class="col-lg-12">
@@ -1191,7 +1207,8 @@
                                                 <div class="example">
                                                     <h3 class="card-title">Rincian Label</h3>
                                                     <div class="table-responsive">
-                                                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                        <table
+                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                             <thead>
                                                                 <tr>
                                                                     <th>Alat & Bahan</th>
@@ -1205,272 +1222,333 @@
                                                                 <tr>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
-                                                                                placeholder="Cylinder" value="Cylinder"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.0.alat_bahan" readonly>
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
+                                                                                placeholder="Cylinder"
+                                                                                value="Cylinder"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.0.alat_bahan"
+                                                                                readonly>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.alat_bahan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jenis/Ukuran"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.0.jenis_ukuran">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.jenis_ukuran')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jumlah"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.0.jumlah">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.jumlah')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.0.ketersediaan"
-                                                                                        class="custom-switch-input" value="Ada">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Ada">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Ada</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Ada</span>
                                                                                 </label>
                                                                             </div>
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.0.ketersediaan"
-                                                                                        class="custom-switch-input" value="Tidak">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Tidak">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Tidak</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Tidak</span>
                                                                                 </label>
                                                                             </div>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.ketersediaan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2" wire:model="keterangans.{{ $keteranganIndex }}.label.0.catatan_label"></textarea>
+                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.0.catatan_label"></textarea>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Pita" value="Pita"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.1.alat_bahan" readonly>
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.1.alat_bahan"
+                                                                                readonly>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.1.alat_bahan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jenis/Ukuran"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.1.jenis_ukuran">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.1.jenis_ukuran')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jumlah"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.1.jumlah">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.1.jumlah')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.1.ketersediaan"
-                                                                                        class="custom-switch-input" value="Ada">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Ada">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Ada</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Ada</span>
                                                                                 </label>
                                                                             </div>
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.1.ketersediaan"
-                                                                                        class="custom-switch-input" value="Tidak">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Tidak">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Tidak</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Tidak</span>
                                                                                 </label>
                                                                             </div>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.1.ketersediaan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2" wire:model="keterangans.{{ $keteranganIndex }}.label.1.catatan_label"></textarea>
+                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.1.catatan_label"></textarea>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Tinta" value="Tinta"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.2.alat_bahan" readonly>
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.2.alat_bahan"
+                                                                                readonly>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.2.alat_bahan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jenis/Ukuran"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.2.jenis_ukuran">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.2.jenis_ukuran')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jumlah"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.2.jumlah">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.2.jumlah')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.2.ketersediaan"
-                                                                                        class="custom-switch-input" value="Ada">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Ada">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Ada</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Ada</span>
                                                                                 </label>
                                                                             </div>
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.2.ketersediaan"
-                                                                                        class="custom-switch-input" value="Tidak">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Tidak">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Tidak</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Tidak</span>
                                                                                 </label>
                                                                             </div>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.2.ketersediaan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2" wire:model="keterangans.{{ $keteranganIndex }}.label.2.catatan_label"></textarea>
+                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.2.catatan_label"></textarea>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Plate" value="Plate"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.3.alat_bahan" readonly>
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.3.alat_bahan"
+                                                                                readonly>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.3.alat_bahan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jenis/Ukuran"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.3.jenis_ukuran">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.3.jenis_ukuran')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off" class="form-control"
+                                                                            <input type="text" autocomplete="off"
+                                                                                class="form-control"
                                                                                 placeholder="Jumlah"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.3.jumlah">
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.3.jumlah')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.3.ketersediaan"
-                                                                                        class="custom-switch-input" value="Ada">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Ada">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Ada</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Ada</span>
                                                                                 </label>
                                                                             </div>
                                                                             <div class="col-auto">
-                                                                                <label class="custom-switch form-switch me-5">
+                                                                                <label
+                                                                                    class="custom-switch form-switch me-5">
                                                                                     <input type="radio"
                                                                                         wire:model="keterangans.{{ $keteranganIndex }}.label.3.ketersediaan"
-                                                                                        class="custom-switch-input" value="Tidak">
+                                                                                        class="custom-switch-input"
+                                                                                        value="Tidak">
                                                                                     <span
                                                                                         class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                                                                    <span class="custom-switch-description">Tidak</span>
+                                                                                    <span
+                                                                                        class="custom-switch-description">Tidak</span>
                                                                                 </label>
                                                                             </div>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.3.ketersediaan')
-                                                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                                                                <p class="mt-2 text-sm text-danger">
+                                                                                    {{ $message }}</p>
                                                                             @enderror
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2" wire:model="keterangans.{{ $keteranganIndex }}.label.3.catatan_label"></textarea>
+                                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="2"
+                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.3.catatan_label"></textarea>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -1642,39 +1720,54 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label">Ukuran Bahan Cetak (P x L)
-                                                            (cm)</label>
-                                                        <div class="row">
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Panjang"
-                                                                    wire:model="layoutBahans.{{ $indexBahan }}.panjang_bahan_cetak">
-                                                                @error('layoutBahans.' . $indexBahan .
-                                                                    '.panjang_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-                                                            <div class="col-sm-1">
-                                                                <label class="form-label text-center">X</label>
-                                                            </div>
-                                                            <div class="col-sm">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Lebar"
-                                                                    wire:model="layoutBahans.{{ $indexBahan }}.lebar_bahan_cetak">
-                                                                @error('layoutBahans.' . $indexBahan .
-                                                                    '.lebar_bahan_cetak')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
+                                                    <label class="form-label">Ukuran Bahan Cetak (P x L)
+                                                        (cm)</label>
+                                                    @foreach ($bahan['ukuran_bahan_cetak_bahan'] as $ukuranBahanCetakIndex => $dataUkuranBahanCetakBahan)
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-sm">
+                                                                    <input type="text" autocomplete="off"
+                                                                        class="form-control" placeholder="Panjang"
+                                                                        wire:model="layoutBahans.{{ $indexBahan }}.ukuran_bahan_cetak_bahan.{{ $ukuranBahanCetakIndex }}.panjang_bahan_cetak">
+                                                                    @error('layoutBahans.' . $indexBahan .
+                                                                        '.ukuran_bahan_cetak_bahan.' .
+                                                                        $ukuranBahanCetakIndex . '.panjang_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+                                                                <div class="col-sm-1">
+                                                                    <label class="form-label text-center">X</label>
+                                                                </div>
+                                                                <div class="col-sm">
+                                                                    <div class="input-group">
+                                                                        <input type="text" autocomplete="off"
+                                                                            class="form-control" placeholder="Lebar"
+                                                                            wire:model="layoutBahans.{{ $indexBahan }}.ukuran_bahan_cetak_bahan.{{ $ukuranBahanCetakIndex }}.lebar_bahan_cetak">
+                                                                        <button class="btn btn-primary" type="button"
+                                                                            wire:click="removeUkuranBahanCetakBahan({{ $indexBahan }}, {{ $ukuranBahanCetakIndex }})"><i
+                                                                                class="fe fe-x"></i></button>
+                                                                    </div>
+                                                                    @error('layoutBahans.' . $indexBahan .
+                                                                        '.ukuran_bahan_cetak_bahan.' .
+                                                                        $ukuranBahanCetakIndex . '.lebar_bahan_cetak')
+                                                                        <span
+                                                                            class="text-danger">{{ $message }}</span>
+                                                                    @enderror
+                                                                </div>
+
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    @endforeach
+                                                    <button class="btn btn-sm btn-success" type="button"
+                                                        wire:click="addUkuranBahanCetakBahan({{ $indexBahan }})">Add
+                                                        Ukuran Bahan Cetak</button>
                                                 </div>
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jenis Bahan</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Jenis Bahan"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Jenis Bahan"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.jenis_bahan">
                                                         @error('layoutBahans.' . $indexBahan . '.jenis_bahan')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1684,8 +1777,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Gramasi (gr)</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Gramasi"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Gramasi"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.gramasi">
                                                         @error('layoutBahans.' . $indexBahan . '.gramasi')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1695,8 +1788,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">1 Plano</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="1 Plano"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="1 Plano"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.one_plano">
                                                         @error('layoutBahans.' . $indexBahan . '.one_plano')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1709,8 +1802,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Sumber Bahan</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Sumber Bahan"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Sumber Bahan"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.sumber_bahan">
                                                         @error('layoutBahans.' . $indexBahan . '.sumber_bahan')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1720,8 +1813,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Merk Bahan</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Merk Bahan"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Merk Bahan"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.merk_bahan">
                                                         @error('layoutBahans.' . $indexBahan . '.merk_bahan')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1731,8 +1824,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Supplier</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Supplier"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Supplier"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.supplier">
                                                         @error('layoutBahans.' . $indexBahan . '.supplier')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1742,8 +1835,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jumlah Lembar Cetak</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Jumlah Lembar Cetak"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Jumlah Lembar Cetak"
                                                             wire:model.defer="layoutBahans.{{ $indexBahan }}.jumlah_lembar_cetak"
                                                             wire:change="calculateTotalLembarCetak({{ $indexBahan }})">
                                                         @error('layoutBahans.' . $indexBahan . '.jumlah_lembar_cetak')
@@ -1754,8 +1847,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jumlah Incit</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Jumlah Incit"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Jumlah Incit"
                                                             wire:model.defer="layoutBahans.{{ $indexBahan }}.jumlah_incit"
                                                             wire:change="calculateTotalLembarCetak({{ $indexBahan }})">
                                                         @error('layoutBahans.' . $indexBahan . '.jumlah_incit')
@@ -1766,8 +1859,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Total Lembar Cetak</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Total Lembar Cetak"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Total Lembar Cetak"
                                                             wire:model.defer="layoutBahans.{{ $indexBahan }}.total_lembar_cetak">
                                                         @error('layoutBahans.' . $indexBahan . '.total_lembar_cetak')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1777,8 +1870,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Harga Bahan</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Harga Bahan"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Harga Bahan"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.harga_bahan"
                                                             type-currency="IDR">
                                                         @error('layoutBahans.' . $indexBahan . '.harga_bahan')
@@ -1789,8 +1882,8 @@
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jumlah Bahan</label>
-                                                        <input type="text" autocomplete="off" class="form-control"
-                                                            placeholder="Jumlah Bahan"
+                                                        <input type="text" autocomplete="off"
+                                                            class="form-control" placeholder="Jumlah Bahan"
                                                             wire:model="layoutBahans.{{ $indexBahan }}.jumlah_bahan">
                                                         @error('layoutBahans.' . $indexBahan . '.jumlah_bahan')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -1877,7 +1970,8 @@
                                                 <div class="input-group control-group" style="padding-top: 5px;">
                                                     <select class="form-control form-select"
                                                         data-bs-placeholder="Pilih Tujuan Catatan"
-                                                        wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                        wire:model.defer="notes.{{ $index }}.tujuan"
+                                                        required>
                                                         <option label="Pilih Tujuan Catatan"></option>
                                                         @foreach ($workSteps as $key)
                                                             <option value="{{ $key['work_step_list_id'] }}">
@@ -1924,7 +2018,8 @@
                     <div class="row mb-3">
                         <div class="col-xl-12">
                             <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                <table
+                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
                                             <th class="border-bottom-0">NO. SPK</th>
@@ -2863,7 +2958,7 @@
                 lockUniScaling: true,
             });
 
-            
+
             currentCanvas.add(text);
         }
 

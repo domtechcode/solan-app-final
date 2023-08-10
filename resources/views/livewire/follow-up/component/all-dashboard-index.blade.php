@@ -2,12 +2,12 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
         </div>
         <div class="col d-flex justify-content-end">
             <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchAll">
@@ -39,12 +39,15 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
-                                    @if($dataInstruction->instruction->spk_number_fsc)
-                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                    @if ($dataInstruction->instruction->spk_number_fsc)
+                                        <span
+                                            class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
 
-                                    @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupAll" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                    @if ($dataInstruction->instruction->group_id)
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#openModalGroupAll"
+                                            wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -57,69 +60,81 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if($dataInstruction->instruction->group_id)
-                                <td>
-                                    {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
-                                </td>
+                                @if ($dataInstruction->instruction->group_id)
+                                    <td>
+                                        {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
+                                    </td>
                                 @else
-                                    <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}</td>
+                                    <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
+                                    </td>
                                 @endif
-                                @if(in_array($dataInstruction->status_id, [1, 8]))
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                @if (in_array($dataInstruction->status_id, [1, 8]))
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26]))
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->spk_status != 'Running')
-                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                    @endif
-                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->spk_status != 'Running')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @endif
                                 <td>
-                                    <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalAll" wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                    <div class="btn-list">
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                            data-bs-target="#openModalAll"
+                                            wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
+                                                class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -134,7 +149,7 @@
                 </table>
 
             </div>
-            
+
         </div>
         <div class="col d-flex justify-content-end mt-3">
             {{ $instructionsAll->links() }}
@@ -380,11 +395,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-icon btn-primary" wire:click="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i> Delete</button>
+                    <button class="btn btn-icon btn-primary" wire:click="deleteSpk({{ $instructionSelectedId }})"><i
+                            class="fe fe-trash"></i> Delete</button>
                     <button class="btn btn-danger" wire:click="holdSpk({{ $instructionSelectedId }})">Hold</button>
-                    <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i class="fe fe-warning"></i> Cancel</button>
-                    @if(isset($instructionSelectedId))
-                        <a class="btn btn-info" href="{{ route('followUp.reorderInstruction', ['instructionId' =>  $instructionSelectedId]) }}">Reorder</a>
+                    <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i
+                            class="fe fe-warning"></i> Cancel</button>
+                    @if (isset($instructionSelectedId))
+                        <a class="btn btn-info"
+                            href="{{ route('followUp.reorderInstruction', ['instructionId' => $instructionSelectedId]) }}">Reorder</a>
                     @endif
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -947,13 +965,13 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-delete-all', event =>{
+        window.addEventListener('close-modal-delete-all', event => {
             $('#openModalAll').modal('hide');
         });
-        window.addEventListener('close-modal-hold-all', event =>{
+        window.addEventListener('close-modal-hold-all', event => {
             $('#openModalAll').modal('hide');
         });
-        window.addEventListener('close-modal-cancel-all', event =>{
+        window.addEventListener('close-modal-cancel-all', event => {
             $('#openModalAll').modal('hide');
         });
     </script>

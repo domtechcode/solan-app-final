@@ -28,8 +28,10 @@ class AddCustomerIndex extends Component
     public $taxes;
 
     public function render()
-    {       
-        return view('livewire.accounting.component.add-customer-index')->extends('layouts.app')->layoutData(['title' => 'Form Instruksi Kerja']);
+    {
+        return view('livewire.accounting.component.add-customer-index')
+            ->extends('layouts.app')
+            ->layoutData(['title' => 'Form Instruksi Kerja']);
     }
 
     public function save()
@@ -53,5 +55,4 @@ class AddCustomerIndex extends Component
         $this->reset();
         $this->render();
     }
-
 }
