@@ -1012,8 +1012,9 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'contoh')
             ->count();
         foreach ($this->filecontoh as $file) {
+            $uniqueId = uniqid();
             $nocontoh++;
-            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([
@@ -1029,8 +1030,9 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'arsip')
             ->count();
         foreach ($this->filearsip as $file) {
+            $uniqueId = uniqid();
             $noarsip++;
-            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([
@@ -1046,8 +1048,9 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'accounting')
             ->count();
         foreach ($this->fileaccounting as $file) {
+            $uniqueId = uniqid();
             $noarsipaccounting++;
-            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([

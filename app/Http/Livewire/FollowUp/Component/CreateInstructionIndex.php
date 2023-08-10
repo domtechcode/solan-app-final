@@ -498,10 +498,10 @@ class CreateInstructionIndex extends Component
     public function uploadFiles($instructionId)
     {
         $folder = 'public/' . $this->spk_number . '/follow-up';
-
         $nocontoh = 1;
         foreach ($this->filecontoh as $file) {
-            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '.' . $file->getClientOriginalExtension();
+            $uniqueId = uniqid();
+            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
             $nocontoh++;
 
@@ -516,7 +516,8 @@ class CreateInstructionIndex extends Component
 
         $noarsip = 1;
         foreach ($this->filearsip as $file) {
-            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '.' . $file->getClientOriginalExtension();
+            $uniqueId = uniqid();
+            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
             $noarsip++;
 
@@ -531,7 +532,8 @@ class CreateInstructionIndex extends Component
 
         $noarsipaccounting = 1;
         foreach ($this->fileaccounting as $file) {
-            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '.' . $file->getClientOriginalExtension();
+            $uniqueId = uniqid();
+            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
             Storage::putFileAs($folder, $file, $fileName);
             $noarsipaccounting++;
 

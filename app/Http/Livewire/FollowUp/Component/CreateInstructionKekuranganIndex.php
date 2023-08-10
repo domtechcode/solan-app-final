@@ -150,7 +150,8 @@ class CreateInstructionKekuranganIndex extends Component
 
             $nocontoh = 1;
             foreach ($this->filecontoh as $file) {
-                $fileName = $instruction->spk_number . '-file-contoh-' . $nocontoh . '.' . $file->getClientOriginalExtension();
+                $uniqueId = uniqid();
+                $fileName = $instruction->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
                 Storage::putFileAs($folder, $file, $fileName);
                 $nocontoh++;
 
