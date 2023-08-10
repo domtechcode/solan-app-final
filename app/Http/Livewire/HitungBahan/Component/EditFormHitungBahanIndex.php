@@ -310,7 +310,7 @@ class EditFormHitungBahanIndex extends Component
             ];
 
             if (isset($dataLayoutSetting['ukuranBahanCetakSetting'])) {
-                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $dataUkuranBahanCetakSetting) {
+                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $key => $dataUkuranBahanCetakSetting) {
                     $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][] = [
                         'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
                         'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
@@ -547,7 +547,7 @@ class EditFormHitungBahanIndex extends Component
             ];
 
             if (isset($dataLayoutBahan['ukuranBahanCetakBahan'])) {
-                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $dataUkuranBahanCetakBahan) {
+                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $key => $dataUkuranBahanCetakBahan) {
                     $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][] = [
                         'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
                         'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
