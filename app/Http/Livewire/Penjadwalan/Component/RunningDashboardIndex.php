@@ -51,6 +51,7 @@ class RunningDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public $workStepHitungBahan;
     public $stateRejectPenjadwalan;
     public $note;
     public $notereject;
@@ -307,7 +308,11 @@ class RunningDashboardIndex extends Component
         $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 2)->get();
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)->whereNotIn('work_step_list_id', [1,2,3])->with('workStepList', 'user', 'machine')->get();
-        
+        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)->where('work_step_list_id', 5)->first();
+        if(isset($dataworkStepHitungBahan)){
+            $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
+        }
+
         foreach($this->selectedWorkStep as $key => $dataSelected){
             $workSteps = [
                 'id' => $dataSelected['id'],
