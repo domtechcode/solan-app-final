@@ -252,10 +252,6 @@ class NewSpkDashboardIndex extends Component
             }
         }
 
-        $userDestination = User::where('role', 'Penjadwalan')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        }
         event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
@@ -491,12 +487,9 @@ class NewSpkDashboardIndex extends Component
         ]);
 
         $this->keteranganReject = null;
-        $this->dispatchBrowserEvent('close-modal-new-spk');
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        }
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
     public function messageSent($arguments)

@@ -1035,7 +1035,6 @@ class EditFormHitungBahanIndex extends Component
                 }
             }
         }else{
-            
             if (isset($this->layoutSettings)) {
                 LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {

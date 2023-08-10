@@ -1229,39 +1229,76 @@ class CreateFormHitungBahanIndex extends Component
             ->where('work_step_list_id', 5)
             ->first();
 
-        if ($updateTask) {
-            $updateTask->update([
-                'state_task' => 'Complete',
-                'status_task' => 'Complete',
-                'selesai' => Carbon::now()->toDateTimeString(),
-                'target_date' => Carbon::now(),
-                'target_time' => 1,
-            ]);
-
-            $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('step', $updateTask->step + 1)
-                ->first();
-
-            if ($updateNextStep) {
-                $updateNextStep->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
+        if ($updateTask == 'Revisi Qty') {
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
                     'target_date' => Carbon::now(),
+                    'target_time' => 1,
                 ]);
 
-                $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                    'status_id' => 1,
-                    'job_id' => $updateNextStep->work_step_list_id,
-                ]);
-            }
-        }
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
 
-        if ($updateNextStep->work_step_list_id == 3) {
-            $userDestination = User::where('role', 'RAB')->get();
-            foreach ($userDestination as $dataUser) {
-                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId]);
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Revisi Qty',
+                        'target_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
             }
-            event(new IndexRenderEvent('refresh'));
+
+            if ($updateNextStep->work_step_list_id == 3) {
+                $userDestination = User::where('role', 'RAB')->get();
+                foreach ($userDestination as $dataUser) {
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId]);
+                }
+                event(new IndexRenderEvent('refresh'));
+            }
+        } else {
+            if ($updateTask) {
+                $updateTask->update([
+                    'state_task' => 'Complete',
+                    'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                    'target_date' => Carbon::now(),
+                    'target_time' => 1,
+                ]);
+
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', $updateTask->step + 1)
+                    ->first();
+
+                if ($updateNextStep) {
+                    $updateNextStep->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'target_date' => Carbon::now(),
+                    ]);
+
+                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 1,
+                        'job_id' => $updateNextStep->work_step_list_id,
+                    ]);
+                }
+            }
+
+            if ($updateNextStep->work_step_list_id == 3) {
+                $userDestination = User::where('role', 'RAB')->get();
+                foreach ($userDestination as $dataUser) {
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId]);
+                }
+                event(new IndexRenderEvent('refresh'));
+            }
         }
 
         $this->emit('flashMessage', [
