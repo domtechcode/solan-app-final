@@ -438,7 +438,6 @@ class HitungBahanDataViewGeneralIndex extends Component
                 }
             }
 
-
             foreach($dataKeterangan['rincianScreen'] as $dataRincianScreen){
                 $keterangan['rincianScreen'][] = [
                     "state" => $dataRincianScreen['state'],
@@ -483,8 +482,6 @@ class HitungBahanDataViewGeneralIndex extends Component
                 'state' => $dataLayoutBahan['state'],
                 'panjang_plano' => $dataLayoutBahan['panjang_plano'],
                 'lebar_plano' => $dataLayoutBahan['lebar_plano'],
-                'panjang_bahan_cetak' => $dataLayoutBahan['panjang_bahan_cetak'],
-                'lebar_bahan_cetak' => $dataLayoutBahan['lebar_bahan_cetak'],
                 'jenis_bahan' => $dataLayoutBahan['jenis_bahan'],
                 'gramasi' => $dataLayoutBahan['gramasi'],
                 'one_plano' => $dataLayoutBahan['one_plano'],

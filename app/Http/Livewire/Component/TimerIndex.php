@@ -61,6 +61,11 @@ class TimerIndex extends Component
         ]);        
     }
 
+    public function saveSplitTimer($formattedTime)
+    {
+        
+    }
+
 
     public function render()
     {
