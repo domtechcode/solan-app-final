@@ -22,17 +22,6 @@ class IndexEditFormRab extends Component
             'user_id' => Auth()->user()->id,
             'dikerjakan' => Carbon::now()->toDateTimeString(),
         ]);
-
-        if($updateUserWorkStep->status_id == 26){
-            
-        }elseif($updateUserWorkStep->status_id == 22){
-
-        }else{
-            $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
-                'status_id' => 2,
-            ]);
-        }
-
         
         $this->notereject = Catatan::where('instruction_id', $instructionId)->where('kategori', 'reject')->where('tujuan', 5)->with('user')->get();
         

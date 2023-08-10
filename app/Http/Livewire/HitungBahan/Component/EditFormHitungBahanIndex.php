@@ -908,8 +908,6 @@ class EditFormHitungBahanIndex extends Component
                         'state' => $layoutSettingData['state'],
                         'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
                         'lebar_barang_jadi' => $layoutSettingData['lebar_barang_jadi'],
-                        'panjang_bahan_cetak' => $layoutSettingData['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $layoutSettingData['lebar_bahan_cetak'],
                         'panjang_naik' => $layoutSettingData['panjang_naik'],
                         'lebar_naik' => $layoutSettingData['lebar_naik'],
                         'lebar_naik' => $layoutSettingData['lebar_naik'],
@@ -991,8 +989,6 @@ class EditFormHitungBahanIndex extends Component
                         'include_belakang' => $layoutBahanData['include_belakang'],
                         'panjang_plano' => $layoutBahanData['panjang_plano'],
                         'lebar_plano' => $layoutBahanData['lebar_plano'],
-                        'panjang_bahan_cetak' => $layoutBahanData['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $layoutBahanData['lebar_bahan_cetak'],
                         'jenis_bahan' => $layoutBahanData['jenis_bahan'],
                         'gramasi' => $layoutBahanData['gramasi'],
                         'one_plano' => $layoutBahanData['one_plano'],
@@ -1045,8 +1041,6 @@ class EditFormHitungBahanIndex extends Component
                         'state' => $layoutSettingData['state'],
                         'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
                         'lebar_barang_jadi' => $layoutSettingData['lebar_barang_jadi'],
-                        'panjang_bahan_cetak' => $layoutSettingData['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $layoutSettingData['lebar_bahan_cetak'],
                         'panjang_naik' => $layoutSettingData['panjang_naik'],
                         'lebar_naik' => $layoutSettingData['lebar_naik'],
                         'lebar_naik' => $layoutSettingData['lebar_naik'],
@@ -1174,8 +1168,6 @@ class EditFormHitungBahanIndex extends Component
                         'include_belakang' => $layoutBahanData['include_belakang'],
                         'panjang_plano' => $layoutBahanData['panjang_plano'],
                         'lebar_plano' => $layoutBahanData['lebar_plano'],
-                        'panjang_bahan_cetak' => $layoutBahanData['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $layoutBahanData['lebar_bahan_cetak'],
                         'jenis_bahan' => $layoutBahanData['jenis_bahan'],
                         'gramasi' => $layoutBahanData['gramasi'],
                         'one_plano' => $layoutBahanData['one_plano'],
@@ -1250,7 +1242,7 @@ class EditFormHitungBahanIndex extends Component
                 ->first();
 
 
-        if($updateTask->status_id == 22 || $updateTask->status_id == 2){
+        if($updateTask->status_task == 'Reject Requirements'){
             if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen || $newTotalHargaBahan > $currentTotalHargaBahan){
                 if ($updateTask) {
                     $updateTask->update([
@@ -1320,7 +1312,7 @@ class EditFormHitungBahanIndex extends Component
                 $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
                 event(new IndexRenderEvent('refresh'));
             }
-        }else if($updateTask->status_id == 26){
+        }else if($updateTask->status_task == 'Revisi Qty'){
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -1368,11 +1360,11 @@ class EditFormHitungBahanIndex extends Component
                 if ($updateNextStep) {
                     $updateNextStep->update([
                         'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
+                        'status_task' => 'Reject',
                     ]);
 
                     $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                        'status_id' => 1,
+                        'status_id' => 3,
                         'job_id' => $updateNextStep->work_step_list_id,
                     ]);
                 }

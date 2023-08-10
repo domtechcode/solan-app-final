@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Component;
 
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Events\IndexRenderEvent;
+use App\Events\NotificationSent;
 
 class TimerIndex extends Component
 {
@@ -21,8 +23,8 @@ class TimerIndex extends Component
         $this->currentInstructionId = $instructionId;
         $this->currentWorkStepId = $workStepId;
         $workStepData = WorkStep::find($workStepId);
-        $this->timerDataWorkStep = $workStepData->timer ?? '00:00:00';   
-        $this->alasanPauseData = $workStepData->alasan_pause;   
+        $this->timerDataWorkStep = $workStepData->timer ?? '00:00:00';
+        $this->alasanPauseData = $workStepData->alasan_pause;
     }
 
     public function saveDataTimer($formattedTime)
@@ -58,17 +60,50 @@ class TimerIndex extends Component
             'type' => 'success',
             'title' => 'Timer Pause',
             'message' => 'Pause Timer Berhasil',
-        ]);        
+        ]);
     }
 
-    public function saveSplitTimer($formattedTime)
+    public function splitTime()
     {
-        
-    }
+        $workStepData = WorkStep::find($this->currentWorkStepId);
+        $workStepData->update([
+            'flag' => 'Split',
+        ]);
 
+        $workStepSplit = WorkStep::where('instruction_id', $this->currentInstructionId)
+            ->where('step', $workStepData->step + 1)
+            ->first();
+
+        $workStepSplit->update([
+            'state_task' => 'Running',
+            'status_task' => 'Pending Approved',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Split SPK',
+            'message' => 'Split SPK Berhasil',
+        ]);
+
+        if(isset($workStepSplit->user_id)){
+            $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId, 'receiver' => $workStepSplit->user_id]);
+            event(new IndexRenderEvent('refresh'));
+        }
+
+    }
 
     public function render()
     {
         return view('livewire.component.timer-index');
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

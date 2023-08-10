@@ -79,14 +79,18 @@ class EditFormRabIndex extends Component
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList')
             ->get();
+        $dataWorkSteps = WorkStep::where('instruction_id', $instructionId)->get();
 
-        $formRab = FormRab::where('instruction_id', $instructionId)->get();
+        $priceBahanBaku = LayoutBahan::where('instruction_id', $instructionId)->get();
+        $totalPrice = 0;
+
+        $formRab = FormRab::where('instruction_id', $instructionId)->first();
 
         $newHargaBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('harga_bahan');
         $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
-        if (isset($formRab)) {
+        if ($formRab) {
             foreach ($formRab as $dataRab) {
                 if ($dataRab['jenis_pengeluaran'] == 'Bahan Baku') {
                     $rab = [
@@ -102,6 +106,144 @@ class EditFormRabIndex extends Component
 
                 $this->rabItems[] = $rab;
             }
+        } else {
+            foreach ($priceBahanBaku as $layoutBahan) {
+                $totalPrice += $layoutBahan->jumlah_bahan * $layoutBahan->harga_bahan;
+            }
+
+            $this->rabItems[] = [
+                'jenisPengeluaran' => 'Bahan Baku',
+                'rab' => currency_idr($totalPrice),
+            ];
+
+            $plateTotal = KeteranganPlate::where('instruction_id', $instructionId)->get();
+            $totalPlate = 0;
+
+            foreach ($plateTotal as $keteranganPlate) {
+                $totalPlate += $keteranganPlate->jumlah_plate;
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 7) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Plate',
+                        'rab' => $totalPlate,
+                    ];
+                }
+            }
+
+            $this->rabItems[] = [
+                'jenisPengeluaran' => 'Film',
+                'rab' => '',
+            ];
+
+            $shouldAddUVWB = false;
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 16 || $workStep->work_step_list_id == 17 || $workStep->work_step_list_id == 18 || $workStep->work_step_list_id == 23 || $workStep->work_step_list_id == 30) {
+                    $shouldAddUVWB = true;
+                }
+            }
+
+            if ($shouldAddUVWB) {
+                $this->rabItems[] = [
+                    'jenisPengeluaran' => 'UV/WB/Laminating',
+                    'rab' => '',
+                ];
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 31) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Spot UV',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 24) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Pisau Pon',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 32) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Blok Lem',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 33) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Lem Lainnya',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            $shouldAddMatress = false;
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 25 || $workStep->work_step_list_id == 26 || $workStep->work_step_list_id == 28) {
+                    $shouldAddMatress = true;
+                }
+            }
+
+            if ($shouldAddMatress) {
+                $this->rabItems[] = [
+                    'jenisPengeluaran' => 'Matress Foil/Emboss',
+                    'rab' => '',
+                ];
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 34) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Mata Itik + Pasang',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 14) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Tali + Pasang',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            $this->rabItems[] = [
+                'jenisPengeluaran' => 'Jasa Maklun',
+                'rab' => '',
+            ];
+
+            foreach ($dataWorkSteps as $workStep) {
+                if ($workStep->work_step_list_id == 12) {
+                    $this->rabItems[] = [
+                        'jenisPengeluaran' => 'Biaya Packing',
+                        'rab' => '',
+                    ];
+                }
+            }
+
+            $this->rabItems[] = [
+                'jenisPengeluaran' => 'Biaya Pengiriman',
+                'rab' => '',
+            ];
+
+            $this->rabItems[] = [
+                'jenisPengeluaran' => 'Biaya Lainnya',
+                'rab' => '',
+            ];
         }
     }
 
@@ -159,7 +301,7 @@ class EditFormRabIndex extends Component
             ->where('work_step_list_id', 3)
             ->first();
 
-        if ($updateTask->status_id == 22) {
+        if ($updateTask->status_task == 'Reject Requirements') {
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -241,9 +383,23 @@ class EditFormRabIndex extends Component
 
     public function backBtn()
     {
-        $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-            'status_id' => 22,
-        ]);
+        $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+            ->where('work_step_list_id', 3)
+            ->first();
+
+        if ($currentWorkStep->status_task == 'Reject') {
+            $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => 3,
+            ]);
+        } elseif ($currentWorkStep->status_task == 'Revisi Qty') {
+            $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => 26,
+            ]);
+        } else {
+            $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => 22,
+            ]);
+        }
 
         return redirect()->route('rab.dashboard');
     }

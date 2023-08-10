@@ -65,6 +65,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {{-- {{ dd($rabItems); }} --}}
                                         @foreach ($rabItems as $index => $rabItem)
                                             <tr>
                                                 <td>

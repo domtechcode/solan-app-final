@@ -26,7 +26,7 @@
                                         <button class="btn btn-success" id="finish"
                                             onclick="finishTimer()">Finish</button>
                                         <button class="btn btn-danger" id="split"
-                                            onclick="splitTime()">Split</button>
+                                            wire:click="splitTime" wire:key="splitTime">Split</button>
                                     </div>
                                 </div>
                             </div>
@@ -168,10 +168,10 @@
         }
 
         function addSplitToList(splitTime) {
-            const splitsList = document.getElementById("splits");
-            const splitItem = document.createElement("li");
-            splitItem.textContent = splitTime;
-            splitsList.appendChild(splitItem);
+            // const splitsList = document.getElementById("splits");
+            // const splitItem = document.createElement("li");
+            // splitItem.textContent = splitTime;
+            // splitsList.appendChild(splitItem);
         }
 
         function saveTimer() {

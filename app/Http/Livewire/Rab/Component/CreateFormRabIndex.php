@@ -371,6 +371,7 @@ class CreateFormRabIndex extends Component
         $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
             ->where('work_step_list_id', 3)
             ->first();
+
         if ($currentWorkStep) {
             $currentWorkStep->update([
                 'state_task' => 'Running',
@@ -386,8 +387,6 @@ class CreateFormRabIndex extends Component
         $updateReject->update([
             'state_task' => 'Running',
             'status_task' => 'Reject',
-            'status_id' => 3,
-            'job_id' => 5,
             'reject_from_id' => $currentWorkStep->id,
             'reject_from_status' => $currentWorkStep->status_id,
             'reject_from_job' => $currentWorkStep->work_step_list_id,
