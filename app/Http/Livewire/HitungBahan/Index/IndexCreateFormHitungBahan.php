@@ -18,12 +18,22 @@ class IndexCreateFormHitungBahan extends Component
         $updateUserWorkStep = WorkStep::where('instruction_id', $this->instructionSelectedId)
             ->where('work_step_list_id', 5)
             ->first();
-        $updateUserWorkStep->update([
-            'user_id' => Auth()->user()->id,
-            'dikerjakan' => Carbon::now()->toDateTimeString(),
-            'state_task' => 'Running',
-            'status_task' => 'Process',
-        ]);
+
+        if($updateUserWorkStep->status_task == 'Pending Approved'){
+            $updateUserWorkStep->update([
+                'user_id' => Auth()->user()->id,
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+                'state_task' => 'Running',
+                'status_task' => 'Process',
+            ]);    
+        }else{
+            $updateUserWorkStep->update([
+                'user_id' => Auth()->user()->id,
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+                'state_task' => 'Running',
+                'status_task' => 'Revisi Qty',
+            ]);    
+        }
 
         if ($updateUserWorkStep->status_id == 1) {
             $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([

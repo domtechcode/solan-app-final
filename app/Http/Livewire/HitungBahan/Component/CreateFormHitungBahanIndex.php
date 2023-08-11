@@ -1230,7 +1230,7 @@ class CreateFormHitungBahanIndex extends Component
             ->where('work_step_list_id', 5)
             ->first();
 
-        if ($updateTask == 'Revisi Qty') {
+        if ($updateTask->status_task == 'Revisi Qty') {
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -1252,7 +1252,7 @@ class CreateFormHitungBahanIndex extends Component
                     ]);
 
                     $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                        'status_id' => 1,
+                        'status_id' => 26,
                         'job_id' => $updateNextStep->work_step_list_id,
                     ]);
                 }
