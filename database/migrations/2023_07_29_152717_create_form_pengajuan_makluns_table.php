@@ -22,6 +22,7 @@ class CreateFormPengajuanMaklunsTable extends Migration
             $table->string('tgl_keluar')->nullable();
             $table->string('qty_keluar')->nullable();
             $table->string('satuan_keluar')->nullable();
+            $table->longtext('catatan')->nullable();
             $table->string('status')->nullable();
             $table->string('pekerjaan')->nullable();
             $table->string('harga_satuan_maklun')->nullable();

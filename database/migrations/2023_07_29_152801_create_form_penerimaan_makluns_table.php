@@ -22,6 +22,7 @@ class CreateFormPenerimaanMaklunsTable extends Migration
             $table->string('tgl_kembali')->nullable();
             $table->string('qty_kembali')->nullable();
             $table->string('satuan_kembali')->nullable();
+            $table->longtext('catatan')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

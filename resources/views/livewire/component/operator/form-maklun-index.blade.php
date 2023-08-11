@@ -48,6 +48,7 @@
                                         <th class="border-bottom-0">Tgl Keluar</th>
                                         <th class="border-bottom-0">QTY Keluar</th>
                                         <th class="border-bottom-0">Satuan</th>
+                                        <th class="border-bottom-0">Catatan</th>
                                         <th class="border-bottom-0">Status</th>
                                         <th class="border-bottom-0">Action</th>
                                     </tr>
@@ -106,6 +107,15 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <textarea class="form-control" placeholder="Catatan" rows="1"
+                                                        wire:model="maklunPengajuan.{{ $index }}.catatan" required></textarea>
+                                                    </div>
+                                                    @error('maklunPengajuan.'.$index.'.catatan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                </div>
+                                            </td>
+                                            <td>
                                                 {{ $data['status'] }}
                                             </td>
                                             <td>
@@ -115,7 +125,7 @@
                                         </tr>
                                     @endforeach
                                     <tr>
-                                        <td colspan="7">
+                                        <td colspan="9">
                                             <div class="text-center">
                                                 <button type="button" class="btn btn-success mb-0" wire:click="addMaklunPengajuan">Tambah Maklun</button>
                                             </div>
@@ -154,6 +164,7 @@
                                         <th class="border-bottom-0">Tgl Kembali</th>
                                         <th class="border-bottom-0">QTY Kembali</th>
                                         <th class="border-bottom-0">Satuan</th>
+                                        <th class="border-bottom-0">Catatan</th>
                                         <th class="border-bottom-0">Action</th>
                                     </tr>
                                 </thead>
@@ -211,13 +222,22 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <textarea class="form-control" placeholder="Catatan" rows="1"
+                                                        wire:model="maklunPenerimaan.{{ $index }}.catatan" required></textarea>
+                                                    </div>
+                                                    @error('maklunPenerimaan.'.$index.'.catatan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                </div>
+                                            </td>
+                                            <td>
                                                 <button type="button" class="btn btn-danger"
                                                 wire:click="removeMaklunPengajuanPenerimaan({{ $index }})"><i class="fe fe-x"></i></button>
                                             </td>
                                         </tr>
                                     @endforeach
                                     <tr>
-                                        <td colspan="7">
+                                        <td colspan="8">
                                             <div class="text-center">
                                                 <button type="button" class="btn btn-success mb-0" wire:click="addMaklunPenerimaan">Tambah Maklun</button>
                                             </div>

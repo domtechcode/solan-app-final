@@ -173,6 +173,7 @@ class FormMaklunIndex extends Component
             'maklunPengajuan.*.tgl_keluar' => 'required',
             'maklunPengajuan.*.qty_keluar' => 'required',
             'maklunPengajuan.*.satuan_keluar' => 'required',
+            'maklunPengajuan.*.catatan' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -189,6 +190,7 @@ class FormMaklunIndex extends Component
                     'satuan_keluar' => $dataMaklunPengajuan['satuan_keluar'],
                     'status' => $dataMaklunPengajuan['status'],
                     'pekerjaan' => $dataMaklunPengajuan['pekerjaan'],
+                    'catatan' => $dataMaklunPengajuan['catatan'],
                 ]);
             }
         }
@@ -463,6 +465,7 @@ class FormMaklunIndex extends Component
             'maklunPenerimaan.*.tgl_kembali' => 'required',
             'maklunPenerimaan.*.qty_kembali' => 'required',
             'maklunPenerimaan.*.satuan_kembali' => 'required',
+            'maklunPenerimaan.*.catatan' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -478,6 +481,7 @@ class FormMaklunIndex extends Component
                     'qty_kembali' => $dataMaklunPenerimaan['qty_kembali'],
                     'satuan_kembali' => $dataMaklunPenerimaan['satuan_kembali'],
                     'status' => $dataMaklunPenerimaan['status'],
+                    'catatan' => $dataMaklunPenerimaan['catatan'],
                 ]);
             }
         }

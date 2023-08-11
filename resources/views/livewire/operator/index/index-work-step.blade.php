@@ -81,7 +81,7 @@
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="tab1">
                                             @if(Auth()->user()->jobdesk == 'Maklun')
-                                                @livewire('component.hitung-bahan-data-view-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @livewire('component.operator.form-maklun-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
                                                 @if($workStepData->work_step_list_id == 36)
