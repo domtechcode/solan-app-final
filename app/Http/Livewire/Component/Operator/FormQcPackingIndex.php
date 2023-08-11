@@ -34,7 +34,6 @@ class FormQcPackingIndex extends Component
     public $dataAnggota;
     public $anggota = [];
 
-
     public function addAnggota()
     {
         $this->anggota[] = ['nama' => '', 'hasil' => ''];
@@ -55,21 +54,21 @@ class FormQcPackingIndex extends Component
         $this->dataWorkSteps = WorkStep::find($workStepId);
         $this->dataAnggota = User::where('jobdesk', 'Team Qc Packing')->get();
         $dataQcPacking = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataQcPacking)){
+        if (isset($dataQcPacking)) {
             $this->hasil_akhir = $dataQcPacking['hasil_akhir'];
             $this->jumlah_barang_gagal = $dataQcPacking['jumlah_barang_gagal'];
             $this->jumlah_stock = $dataQcPacking['jumlah_stock'];
             $this->lokasi_stock = $dataQcPacking['lokasi_stock'];
-        }else{
+        } else {
             $this->hasil_akhir = '';
             $this->jumlah_barang_gagal = '';
             $this->jumlah_stock = '';
             $this->lokasi_stock = '';
         }
-        
+
         $dataAnggotaCurrent = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->get();
-        if(isset($dataAnggotaCurrent)){
-            foreach($dataAnggotaCurrent as $item){
+        if (isset($dataAnggotaCurrent)) {
+            foreach ($dataAnggotaCurrent as $item) {
                 $anggota = [
                     'nama' => $item['nama_anggota'],
                     'hasil' => $item['hasil_per_anggota'],
@@ -79,13 +78,12 @@ class FormQcPackingIndex extends Component
             }
         }
 
-        if(empty($this->anggota)){
+        if (empty($this->anggota)) {
             $this->anggota[] = [
                 'nama' => '',
                 'hasil' => '',
             ];
         }
-    
     }
 
     public function render()
@@ -103,10 +101,10 @@ class FormQcPackingIndex extends Component
             'anggota.*.nama' => 'required',
             'anggota.*.hasil' => 'required',
         ]);
-        
+
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -124,15 +122,15 @@ class FormQcPackingIndex extends Component
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        
-        if(isset($this->anggota)){
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
+        if (isset($this->anggota)) {
             $deleteFormQcPacking = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->delete();
-            foreach($this->anggota as $dataAnggota){
+            foreach ($this->anggota as $dataAnggota) {
                 $createFormQcPacking = FormQcPacking::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'hasil_akhir' => $this->hasil_akhir,
@@ -145,14 +143,14 @@ class FormQcPackingIndex extends Component
             }
         }
 
-        if($currentStep->status_task == 'Reject Requirements'){
+        if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
                 'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
-             $findSourceReject = WorkStep::find($currentStep->reject_from_id);
+            $findSourceReject = WorkStep::find($currentStep->reject_from_id);
 
             $findSourceReject->update([
                 'state_task' => 'Running',
@@ -168,12 +166,12 @@ class FormQcPackingIndex extends Component
                 'reject_from_id' => null,
                 'reject_from_status' => null,
                 'reject_from_job' => null,
-                'selesai' => Carbon::now()->toDateTimeString()
+                'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
             event(new IndexRenderEvent('refresh'));
-        }else{
+        } else {
             // Cek apakah $currentStep ada dan step berikutnya ada
             if ($currentStep) {
                 $currentStep->update([
@@ -185,22 +183,22 @@ class FormQcPackingIndex extends Component
                 // Cek apakah step berikutnya ada sebelum melanjutkan
                 if ($nextStep) {
                     $nextStep->update([
-                        'state_task' => 'Not Running',
-                        'status_task' => 'Pending Start',
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
                     ]);
 
                     $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'job_id' => $currentStep->work_step_list_id,
-                        'status_id' => 7,
+                        'job_id' => $nextStep->work_step_list_id,
+                        'status_id' => 1,
                     ]);
 
                     $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach($userDestination as $dataUser){
-                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh '. $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                    foreach ($userDestination as $dataUser) {
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
                     }
+                    $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
                     event(new IndexRenderEvent('refresh'));
-
-                }else{
+                } else {
                     $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                         'spk_status' => 'Selesai',
                         'state_task' => 'Complete',
@@ -215,19 +213,17 @@ class FormQcPackingIndex extends Component
             }
 
             $searchWaitingSpkQc = Instruction::where('waiting_spk_qc', $instructionData->spk_number)->first();
+            $jumlahStock = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->first();
 
-            if(isset($searchWaitingSpkQc)){
+            if ($searchWaitingSpkQc) {
+                $newSpkStatus = $jumlahStock->jumlah_stock >= $searchWaitingSpkQc->quantity ? 'Qty QC Tersedia' : 'Failed Waiting Qty QC';
+
                 $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
-                    'spk_status' => 'Qty QC Tersedia',
-                ]);
-            }else{
-                $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
-                    'spk_status' => 'Failed Waiting Qty QC',
+                    'spk_status' => $newSpkStatus,
                 ]);
             }
-
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -239,7 +235,7 @@ class FormQcPackingIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
