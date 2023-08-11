@@ -34,23 +34,25 @@ class FormCheckerIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'layout')->get();
-        if(isset($dataFileLayout)){
-            foreach($dataFileLayout as $dataFile){
+        $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)
+            ->where('type_file', 'layout')
+            ->get();
+        if (isset($dataFileLayout)) {
+            foreach ($dataFileLayout as $dataFile) {
                 $fileLayout = [
                     'id' => $dataFile['id'],
                     'file_name' => $dataFile['file_name'],
                     'file_path' => $dataFile['file_path'],
                     'type_file' => $dataFile['type_file'],
                 ];
-    
+
                 $this->fileLayoutData[] = $fileLayout;
             }
         }
-        
+
         $dataFileFilm = FileSetting::where('instruction_id', $this->instructionCurrentId)->get();
-        if(isset($dataFileFilm)){
-            foreach($dataFileFilm as $dataFile){
+        if (isset($dataFileFilm)) {
+            foreach ($dataFileFilm as $dataFile) {
                 $fileFilm = [
                     'id' => $dataFile['id'],
                     'file_name' => $dataFile['file_name'],
@@ -59,12 +61,15 @@ class FormCheckerIndex extends Component
                     'jumlah_film' => $dataFile['jumlah_film'],
                     'ukuran_film' => $dataFile['ukuran_film'],
                 ];
-    
+
                 $this->fileFilmData[] = $fileFilm;
             }
         }
 
-        $this->historyRevisi = Catatan::where('instruction_id', $this->instructionCurrentId)->where('tujuan', 6)->where('kategori', 'revisi')->get();
+        $this->historyRevisi = Catatan::where('instruction_id', $this->instructionCurrentId)
+            ->where('tujuan', 6)
+            ->where('kategori', 'revisi')
+            ->get();
     }
 
     public function render()
@@ -76,7 +81,7 @@ class FormCheckerIndex extends Component
     {
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -118,14 +123,13 @@ class FormCheckerIndex extends Component
                 ]);
 
                 $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
+                foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                 }
-                
+
                 $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
                 event(new IndexRenderEvent('refresh'));
-
-            }else{
+            } else {
                 $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                     'spk_status' => 'Selesai',
                     'state_task' => 'Complete',
@@ -138,15 +142,13 @@ class FormCheckerIndex extends Component
                 ]);
 
                 $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach($userDestination as $dataUser){
+                foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                 }
-                
+
                 event(new IndexRenderEvent('refresh'));
             }
         }
-
-        
 
         $this->emit('flashMessage', [
             'type' => 'success',
@@ -161,7 +163,7 @@ class FormCheckerIndex extends Component
     {
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -179,28 +181,32 @@ class FormCheckerIndex extends Component
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
+            ->where('step', $currentStep->step + 1)
+            ->first();
         $lastStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step - 1)
-                ->first();
-        
-        if($lastStep->status_task == 'Waiting Repair Revisi'){
-            if(isset($this->fileChecker)){
-                $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
-                $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
-                foreach ($this->fileChecker as $file) {
-                    $folder = "public/".$instructionData->spk_number."/checker";
-                    
-                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
-                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
-                $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $extension;
+            ->where('step', $currentStep->step - 1)
+            ->first();
 
-                    
+        if ($lastStep->status_task == 'Waiting Repair Revisi') {
+            if (isset($this->fileChecker)) {
+                $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)
+                    ->where('type_file', 'Approved Checker')
+                    ->delete();
+                $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)
+                    ->where('type_file', 'Approved Checker')
+                    ->count();
+
+                foreach ($this->fileChecker as $file) {
+                    $folder = 'public/' . $instructionData->spk_number . '/checker';
+
+                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                    $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                    $fileName = $instructionData->spk_number . '-file-approved-checker-' . $noApprovedChecker . '.' . $extension;
+
                     Storage::putFileAs($folder, $file, $fileName);
-                    $noApprovedChecker ++;
-        
-                    $fileApprovedChecker= Files::create([
+                    $noApprovedChecker++;
+
+                    $fileApprovedChecker = Files::create([
                         'instruction_id' => $this->instructionCurrentId,
                         'user_id' => Auth()->user()->id,
                         'type_file' => 'Approved Checker',
@@ -209,27 +215,31 @@ class FormCheckerIndex extends Component
                     ]);
                 }
             }
-        }else if($currentStep->status_task == 'Reject Requirements'){
+        } elseif ($currentStep->status_task == 'Reject Requirements') {
             //reject requirement
-        }else{
+        } else {
             //$this->validate([
-               // 'fileChecker' => 'required',
+            // 'fileChecker' => 'required',
             //]);
-            if(isset($this->fileChecker)){
-                $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->delete();
-                $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
+            if (isset($this->fileChecker)) {
+                $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)
+                    ->where('type_file', 'Approved Checker')
+                    ->delete();
+                $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)
+                    ->where('type_file', 'Approved Checker')
+                    ->count();
                 foreach ($this->fileChecker as $file) {
-                    $folder = "public/".$instructionData->spk_number."/checker";
-                    
-                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
-                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
-                $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $extension;
+                    $folder = 'public/' . $instructionData->spk_number . '/checker';
+                    $uniqueId = uniqid();
 
-                    
+                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                    $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                    $fileName = $uniqueId . '-' . $instructionData->spk_number . '-file-approved-checker-' . $noApprovedChecker . '.' . $extension;
+
                     Storage::putFileAs($folder, $file, $fileName);
-                    $noApprovedChecker ++;
-        
-                    $fileApprovedChecker= Files::create([
+                    $noApprovedChecker++;
+
+                    $fileApprovedChecker = Files::create([
                         'instruction_id' => $this->instructionCurrentId,
                         'user_id' => Auth()->user()->id,
                         'type_file' => 'Approved Checker',
@@ -240,7 +250,7 @@ class FormCheckerIndex extends Component
             }
         }
 
-        if($currentStep->status_task == 'Reject Requirements'){
+        if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
@@ -262,12 +272,12 @@ class FormCheckerIndex extends Component
                 'reject_from_id' => null,
                 'reject_from_status' => null,
                 'reject_from_job' => null,
-                'selesai' => Carbon::now()->toDateTimeString()
+                'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
             event(new IndexRenderEvent('refresh'));
-        }else{
+        } else {
             // Cek apakah $currentStep ada dan step berikutnya ada
             if ($currentStep) {
                 $currentStep->update([
@@ -289,25 +299,32 @@ class FormCheckerIndex extends Component
 
                     //group
                     $dataInstruction = Instruction::find($this->instructionCurrentId);
-                    if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
-                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+                    if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                            ->where('group_priority', 'child')
+                            ->get();
 
-                        foreach($datachild as $key => $item){
-                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('work_step_list_id', $currentStep->work_step_list_id)->where('user_id', $currentStep->user_id)->first();
+                        foreach ($datachild as $key => $item) {
+                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                ->where('user_id', $currentStep->user_id)
+                                ->first();
 
-                            if(isset($updateChildWorkStep)){
+                            if (isset($updateChildWorkStep)) {
                                 $updateChildWorkStep->update([
                                     'state_task' => 'Complete',
                                     'status_task' => 'Complete',
                                 ]);
-    
-                                $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('step', $updateChildWorkStep->step + 1)->first();
-    
+
+                                $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                    ->where('step', $updateChildWorkStep->step + 1)
+                                    ->first();
+
                                 $updateChildNextWorkStep->update([
                                     'state_task' => 'Running',
                                     'status_task' => 'Pending Approved',
                                 ]);
-    
+
                                 $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
                                     'job_id' => $updateChildNextWorkStep->work_step_list_id,
                                     'status_id' => 1,
@@ -317,19 +334,18 @@ class FormCheckerIndex extends Component
                     }
 
                     $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach($userDestination as $dataUser){
+                    foreach ($userDestination as $dataUser) {
                         $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                     }
-                    
+
                     $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
                     event(new IndexRenderEvent('refresh'));
-
-                }else{
+                } else {
                     $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                         'spk_status' => 'Selesai',
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
-                        'selesai' => Carbon::now()->toDateTimeString()
+                        'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
                     $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -339,19 +355,24 @@ class FormCheckerIndex extends Component
 
                     //group
                     $dataInstruction = Instruction::find($this->instructionCurrentId);
-                    if(isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)){
-                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)->where('group_priority', 'child')->get();
+                    if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                            ->where('group_priority', 'child')
+                            ->get();
 
-                        foreach($datachild as $key => $item){
-                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])->where('work_step_list_id', $currentStep->work_step_list_id)->where('user_id', $currentStep->user_id)->first();
+                        foreach ($datachild as $key => $item) {
+                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                ->where('user_id', $currentStep->user_id)
+                                ->first();
 
-                            if(isset($updateChildWorkStep)){
+                            if (isset($updateChildWorkStep)) {
                                 $updateChildWorkStep->update([
                                     'state_task' => 'Complete',
                                     'status_task' => 'Complete',
-                                    'selesai' => Carbon::now()->toDateTimeString()
+                                    'selesai' => Carbon::now()->toDateTimeString(),
                                 ]);
-    
+
                                 $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
                                     'spk_status' => 'Selesai',
                                     'state_task' => 'Complete',
@@ -364,15 +385,15 @@ class FormCheckerIndex extends Component
                     }
 
                     $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach($userDestination as $dataUser){
+                    foreach ($userDestination as $dataUser) {
                         $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
                     }
-                    
+
                     event(new IndexRenderEvent('refresh'));
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Setting Instruksi Kerja',
@@ -424,7 +445,7 @@ class FormCheckerIndex extends Component
             'kategori' => 'revisi',
         ]);
 
-        $this->messageSent(['conversation' => 'SPK di reject oleh '. $currentStep->user->name, 'instruction_id' => $this->instructionCurrentId, 'receiver' => $lastStep->user_id]);
+        $this->messageSent(['conversation' => 'SPK di reject oleh ' . $currentStep->user->name, 'instruction_id' => $this->instructionCurrentId, 'receiver' => $lastStep->user_id]);
         event(new IndexRenderEvent('refresh'));
 
         $this->emit('flashMessage', [
@@ -438,7 +459,7 @@ class FormCheckerIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
