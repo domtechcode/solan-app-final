@@ -499,9 +499,13 @@ class CreateInstructionIndex extends Component
     {
         $folder = 'public/' . $this->spk_number . '/follow-up';
         $nocontoh = 1;
+        
         foreach ($this->filecontoh as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
-            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
             $nocontoh++;
 
@@ -516,8 +520,11 @@ class CreateInstructionIndex extends Component
 
         $noarsip = 1;
         foreach ($this->filearsip as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
-            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
             $noarsip++;
 
@@ -532,8 +539,11 @@ class CreateInstructionIndex extends Component
 
         $noarsipaccounting = 1;
         foreach ($this->fileaccounting as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
-            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
             $noarsipaccounting++;
 

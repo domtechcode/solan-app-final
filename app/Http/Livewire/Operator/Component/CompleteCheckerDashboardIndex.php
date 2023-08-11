@@ -167,7 +167,10 @@ class CompleteCheckerDashboardIndex extends Component
                 ->where('type_file', 'arsip')
                 ->count();
             foreach ($this->filearsiprevisi as $file) {
-                $fileName = $updateAlasanRevisi->id . '-file-arsip-revisi-customer-' . $norevisi . '.' . $file->getClientOriginalExtension();
+                $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $updateAlasanRevisi->id . '-file-arsip-revisi-customer-' . $norevisi . '.' . $extension;
+
                 Storage::putFileAs($folder, $file, $fileName);
                 $norevisi++;
 
@@ -275,7 +278,9 @@ class CompleteCheckerDashboardIndex extends Component
                 ->where('type_file', 'arsip')
                 ->count();
             foreach ($this->filearsipacc as $file) {
-                $fileName = $updateAcc->id . '-file-arsip-acc-customer-' . $noarispacc . '.' . $file->getClientOriginalExtension();
+                $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $updateAcc->id . '-file-arsip-acc-customer-' . $noarispacc . '.' . $extension;
                 Storage::putFileAs($folder, $file, $fileName);
                 $noarispacc++;
 

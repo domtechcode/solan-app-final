@@ -191,8 +191,12 @@ class FormCheckerIndex extends Component
                 $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
                 foreach ($this->fileChecker as $file) {
                     $folder = "public/".$instructionData->spk_number."/checker";
-        
-                    $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $file->getClientOriginalExtension();
+                    
+                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $extension;
+
+                    
                     Storage::putFileAs($folder, $file, $fileName);
                     $noApprovedChecker ++;
         
@@ -216,8 +220,12 @@ class FormCheckerIndex extends Component
                 $noApprovedChecker = Files::where('instruction_id', $this->instructionCurrentId)->where('type_file', 'Approved Checker')->count();
                 foreach ($this->fileChecker as $file) {
                     $folder = "public/".$instructionData->spk_number."/checker";
-        
-                    $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $file->getClientOriginalExtension();
+                    
+                    $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $instructionData->spk_number . '-file-approved-checker-'.$noApprovedChecker . '.' . $extension;
+
+                    
                     Storage::putFileAs($folder, $file, $fileName);
                     $noApprovedChecker ++;
         

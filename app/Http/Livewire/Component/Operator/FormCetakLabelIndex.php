@@ -34,9 +34,9 @@ class FormCetakLabelIndex extends Component
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $dataCetakLabel = FormCetakLabel::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataCetakLabel)){
+        if (isset($dataCetakLabel)) {
             $this->hasil_akhir = $dataCetakLabel['hasil_akhir'];
-        }else{
+        } else {
             $this->hasil_akhir = '';
         }
     }
@@ -54,7 +54,7 @@ class FormCetakLabelIndex extends Component
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -72,12 +72,12 @@ class FormCetakLabelIndex extends Component
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
         $deleteFormCetakLabel = FormCetakLabel::where('instruction_id', $this->instructionCurrentId)->delete();
         $createFormCetakLabel = FormCetakLabel::create([
             'instruction_id' => $this->instructionCurrentId,
@@ -301,7 +301,7 @@ class FormCetakLabelIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -313,7 +313,7 @@ class FormCetakLabelIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
