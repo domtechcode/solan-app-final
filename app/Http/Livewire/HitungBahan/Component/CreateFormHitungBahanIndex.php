@@ -297,6 +297,7 @@ class CreateFormHitungBahanIndex extends Component
         $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)
             ->with('ukuranBahanCetakSetting')
             ->get();
+
         foreach ($layoutSettingData as $key => $dataLayoutSetting) {
             $this->layoutSettings[] = [
                 'panjang_barang_jadi' => $dataLayoutSetting['panjang_barang_jadi'],
@@ -317,8 +318,8 @@ class CreateFormHitungBahanIndex extends Component
             ];
 
             if (isset($dataLayoutSetting['ukuranBahanCetakSetting'])) {
-                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $key => $dataUkuranBahanCetakSetting) {
-                    $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][] = [
+                foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $index => $dataUkuranBahanCetakSetting) {
+                    $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][$index] = [
                         'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
                         'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
                     ];
@@ -556,8 +557,8 @@ class CreateFormHitungBahanIndex extends Component
             ];
 
             if (isset($dataLayoutBahan['ukuranBahanCetakBahan'])) {
-                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $key => $dataUkuranBahanCetakBahan) {
-                    $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][] = [
+                foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $index => $dataUkuranBahanCetakBahan) {
+                    $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][$index] = [
                         'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
                         'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
                     ];
