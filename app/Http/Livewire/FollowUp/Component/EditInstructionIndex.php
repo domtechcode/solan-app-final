@@ -445,6 +445,7 @@ class EditInstructionIndex extends Component
                 $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                     'status_id' => $currentWorkStep->reject_from_status,
                     'job_id' => $currentWorkStep->reject_from_job,
+                    'spk_status' => 'Running',
                 ]);
 
                 //notif
