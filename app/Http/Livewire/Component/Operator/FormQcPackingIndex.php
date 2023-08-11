@@ -149,6 +149,7 @@ class FormQcPackingIndex extends Component
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
+                'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
              $findSourceReject = WorkStep::find($currentStep->reject_from_id);
@@ -178,6 +179,7 @@ class FormQcPackingIndex extends Component
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
+                    'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
 
                 // Cek apakah step berikutnya ada sebelum melanjutkan

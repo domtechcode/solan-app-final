@@ -1327,6 +1327,7 @@ class FormSettingIndex extends Component
                     $currentStep->update([
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
                     // Cek apakah step berikutnya ada sebelum melanjutkan
@@ -1513,6 +1514,7 @@ class FormSettingIndex extends Component
             $currentStep->update([
                 'state_task' => 'Complete',
                 'status_task' => 'Complete',
+                'selesai' => Carbon::now()->toDateTimeString(),
             ]);
 
             // Cek apakah step berikutnya ada sebelum melanjutkan

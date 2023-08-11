@@ -138,6 +138,7 @@ class FormCetakLabelIndex extends Component
                                     $updateChildWorkStep->update([
                                         'state_task' => 'Complete',
                                         'status_task' => 'Complete',
+                                        'selesai' => Carbon::now()->toDateTimeString(),
                                     ]);
                                 }
                             }
@@ -153,6 +154,7 @@ class FormCetakLabelIndex extends Component
                             'spk_status' => 'Selesai',
                             'state_task' => 'Complete',
                             'status_task' => 'Complete',
+                            'selesai' => Carbon::now()->toDateTimeString(),
                         ]);
 
                         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -196,6 +198,7 @@ class FormCetakLabelIndex extends Component
                     $currentStep->update([
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
                     // Cek apakah step berikutnya ada sebelum melanjutkan
@@ -227,6 +230,7 @@ class FormCetakLabelIndex extends Component
                                     $updateChildWorkStep->update([
                                         'state_task' => 'Complete',
                                         'status_task' => 'Complete',
+                                        'selesai' => Carbon::now()->toDateTimeString(),
                                     ]);
 
                                     $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
@@ -256,6 +260,7 @@ class FormCetakLabelIndex extends Component
                             'spk_status' => 'Selesai',
                             'state_task' => 'Complete',
                             'status_task' => 'Complete',
+                            'selesai' => Carbon::now()->toDateTimeString(),
                         ]);
 
                         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([

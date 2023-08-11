@@ -321,6 +321,7 @@ class FormCheckerIndex extends Component
                         'spk_status' => 'Selesai',
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString()
                     ]);
 
                     $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
@@ -340,6 +341,7 @@ class FormCheckerIndex extends Component
                                 $updateChildWorkStep->update([
                                     'state_task' => 'Complete',
                                     'status_task' => 'Complete',
+                                    'selesai' => Carbon::now()->toDateTimeString()
                                 ]);
     
                                 $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
