@@ -250,7 +250,8 @@
                                         <tr>
                                             <th>LANGKAH KERJA</th>
                                             <th>TARGET SELESAI</th>
-                                            <th>DIJADWALKAN</th>
+                                            <th>SUBMIT</th>
+                                            <th>STATUS</th>
                                             <th>TARGET JAM</th>
                                             <th>OPERATOR/REKANAN</th>
                                             <th>MACHINE</th>
@@ -262,7 +263,8 @@
                                                 <tr>
                                                     <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
-                                                    <td>{{ $workstep->schedule_date ?? '-' }}</td>
+                                                    <td>{{ $workstep->selesai ?? '-' }}</td>
+                                                    <td>{{ $workstep->status_task ?? '-' }}</td>
                                                     <td>{{ $workstep->target_time ?? '-' }}</td>
                                                     <td>{{ $workstep->user->name ?? '-' }}</td>
                                                     <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
@@ -394,6 +396,7 @@
                         </div>
                     </div>
                 </div>
+                @if(Auth()->user()->role == 'Follow Up')
                 <div class="modal-footer">
                     <button class="btn btn-icon btn-primary" wire:click="deleteSpk({{ $instructionSelectedId }})"><i
                             class="fe fe-trash"></i> Delete</button>
@@ -404,6 +407,7 @@
                         <a class="btn btn-info"
                             href="{{ route('followUp.reorderInstruction', ['instructionId' => $instructionSelectedId]) }}">Reorder</a>
                     @endif
+                @endif
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -411,7 +415,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="openModalGroupCancel" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupAll" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -785,7 +789,8 @@
                                                                 <tr>
                                                                     <th>LANGKAH KERJA</th>
                                                                     <th>TARGET SELESAI</th>
-                                                                    <th>DIJADWALKAN</th>
+                                                                    <th>OPERATOR SUBMIT</th>
+                                                                    <th>STATUS</th>
                                                                     <th>TARGET JAM</th>
                                                                     <th>OPERATOR/REKANAN</th>
                                                                     <th>MACHINE</th>
@@ -799,7 +804,9 @@
                                                                             </td>
                                                                             <td>{{ $workstep->target_date ?? '-' }}
                                                                             </td>
-                                                                            <td>{{ $workstep->schedule_date ?? '-' }}
+                                                                            <td>{{ $workstep->selesai ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->status_task ?? '-' }}
                                                                             </td>
                                                                             <td>{{ $workstep->spk_parent ?? '-' }}
                                                                             </td>

@@ -246,7 +246,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -256,24 +255,28 @@
                                         <tr>
                                             <th>LANGKAH KERJA</th>
                                             <th>TARGET SELESAI</th>
-                                            <th>DIJADWALKAN</th>
+                                            <th>SUBMIT</th>
+                                            <th>STATUS</th>
                                             <th>TARGET JAM</th>
                                             <th>OPERATOR/REKANAN</th>
                                             <th>MACHINE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if ($selectedWorkStep)
-                                            @foreach ($selectedWorkStep as $workstep)
+                                        @if (isset($selectedWorkStep))
+                                            @forelse ($selectedWorkStep as $workstep)
                                                 <tr>
                                                     <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
-                                                    <td>{{ $workstep->schedule_date ?? '-' }}</td>
-                                                    <td>{{ $workstep->spk_parent ?? '-' }}</td>
+                                                    <td>{{ $workstep->selesai ?? '-' }}</td>
+                                                    <td>{{ $workstep->status_task ?? '-' }}</td>
+                                                    <td>{{ $workstep->target_time ?? '-' }}</td>
                                                     <td>{{ $workstep->user->name ?? '-' }}</td>
                                                     <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
                                                 </tr>
-                                            @endforeach
+                                            @empty
+                                                <p>No files found.</p>
+                                            @endforelse
                                         @endif
                                     </tbody>
                                 </table>
@@ -807,36 +810,33 @@
                                             <div class="row mb-3">
                                                 <div class="col-xl-12">
                                                     <div class="table-responsive">
-                                                        <table
-                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                             <thead>
                                                                 <tr>
                                                                     <th>LANGKAH KERJA</th>
                                                                     <th>TARGET SELESAI</th>
-                                                                    <th>DIJADWALKAN</th>
+                                                                    <th>SUBMIT</th>
+                                                                    <th>STATUS</th>
                                                                     <th>TARGET JAM</th>
                                                                     <th>OPERATOR/REKANAN</th>
                                                                     <th>MACHINE</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @if ($data->workstep)
-                                                                    @foreach ($data->workstep as $workstep)
+                                                                @if (isset($selectedWorkStep))
+                                                                    @forelse ($selectedWorkStep as $workstep)
                                                                         <tr>
-                                                                            <td>{{ $workstep->workStepList->name ?? '-' }}
-                                                                            </td>
-                                                                            <td>{{ $workstep->target_date ?? '-' }}
-                                                                            </td>
-                                                                            <td>{{ $workstep->schedule_date ?? '-' }}
-                                                                            </td>
-                                                                            <td>{{ $workstep->spk_parent ?? '-' }}
-                                                                            </td>
-                                                                            <td>{{ $workstep->user->name ?? '-' }}
-                                                                            </td>
-                                                                            <td>{{ $workstep->machine->machine_identity ?? '-' }}
-                                                                            </td>
+                                                                            <td>{{ $workstep->workStepList->name ?? '-' }}</td>
+                                                                            <td>{{ $workstep->target_date ?? '-' }}</td>
+                                                                            <td>{{ $workstep->selesai ?? '-' }}</td>
+                                                                            <td>{{ $workstep->status_task ?? '-' }}</td>
+                                                                            <td>{{ $workstep->target_time ?? '-' }}</td>
+                                                                            <td>{{ $workstep->user->name ?? '-' }}</td>
+                                                                            <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
                                                                         </tr>
-                                                                    @endforeach
+                                                                    @empty
+                                                                        <p>No files found.</p>
+                                                                    @endforelse
                                                                 @endif
                                                             </tbody>
                                                         </table>
