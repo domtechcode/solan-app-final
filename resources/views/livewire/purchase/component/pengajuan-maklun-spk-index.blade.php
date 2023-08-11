@@ -218,6 +218,7 @@
                                             <th class="border-bottom-0">TGL KELUAR</th>
                                             <th class="border-bottom-0">QTY KELUAR</th>
                                             <th class="border-bottom-0">SATUAN KELUAR</th>
+                                            <th class="border-bottom-0">CATATAN</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -228,6 +229,7 @@
                                             <td>{{ $dataMaklun->tgl_keluar }}</td>
                                             <td>{{ $dataMaklun->qty_keluar }}</td>
                                             <td>{{ $dataMaklun->satuan_keluar }}</td>
+                                            <td>{{ $dataMaklun->catatan }}</td>
                                         </tr>
                                         @endif
                                     </tbody>
