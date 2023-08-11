@@ -10,7 +10,7 @@
                         <h3 class="card-title">Form Setting</h3>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-sm-12 col-md-12 mb-3">
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
@@ -52,6 +52,51 @@
                                 <label class="form-label">Catatan Proses Pengerjaan</label>
                                 <div class="input-group control-group" style="padding-top: 5px;">
                                     <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanProsesPengerjaan"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="expanel expanel-default">
+                                    <div class="expanel-body">
+                                        <div class="form-group">
+                                            <label class="form-label mb-3">Catatan</label>
+                                            <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
+                                                    class="fe fe-plus"></i>Tambah Catatan</button>
+                                        </div>
+                                        
+                                        @forelse ($notes as $index => $note)
+                                        <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                            <div class="expanel expanel-default">
+                                                <div class="expanel-body">
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <select class="form-control form-select"
+                                                            data-bs-placeholder="Pilih Tujuan Catatan"
+                                                            wire:model.defer="notes.{{ $index }}.tujuan"
+                                                            required>
+                                                            <option label="Pilih Tujuan Catatan"></option>
+                                                            @foreach ($workSteps as $key)
+                                                                <option value="{{ $key['work_step_list_id'] }}">
+                                                                    {{ $key['workStepList']['name'] }}</option>
+                                                            @endforeach
+    
+                                                        </select>
+                                                        <button class="btn btn-danger" type="button"
+                                                            wire:click="removeNote({{ $index }})"><i
+                                                                class="fe fe-x"></i></button>
+                                                    </div>
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                            wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @empty
+                                            
+                                        @endforelse 
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -475,393 +520,514 @@
             </div>
             <!-- ROW-2 END -->
         @endforeach
-        
+
         <form wire:submit.prevent="saveSampleAndProduction" enctype="multipart/form-data">
+            <!-- ROW-2-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-status bg-primary br-te-7 br-ts-7"></div>
+                        <div class="card-header">
+                            <h3 class="card-title">Form Setting</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-12 col-md-12 mb-3">
+                                    <table
+                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">Form Untuk Upload File Film</th>
+                                                <th class="border-bottom-0">Keperluan</th>
+                                                <th class="border-bottom-0">Ukuran Film</th>
+                                                <th class="border-bottom-0">Jumlah Film</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($dataFileSetting as $file)
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
+                                                            download>{{ $file['file_name'] }}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{ $file['keperluan'] }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $file['ukuran_film'] }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $file['jumlah_film'] }}
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                No Data !!
+                                            @endforelse
 
+                                            @forelse ($fileLayoutData as $file)
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
+                                                            download>{{ $file['file_name'] }}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{ $file['type_file'] }}
+                                                    </td>
+                                                    <td>
+                                                        -
+                                                    </td>
+                                                    <td>
+                                                        -
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                No Data !!
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-12 col-md-12 mb-3">
+                                    <table
+                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">Form Untuk Upload File Film</th>
+                                                <th class="border-bottom-0">Keperluan</th>
+                                                <th class="border-bottom-0">Ukuran Film</th>
+                                                <th class="border-bottom-0">Jumlah Film</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (isset($stateWorkStepPond))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="filePisauPond" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('filePisauPond')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataPisauPond.keperluan" disabled>
+                                                            @error('dataPisauPond.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataPisauPond.ukuran_film">
+                                                            @error('dataPisauPond.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataPisauPond.jumlah_film">
+                                                            @error('dataPisauPond.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkStepFoil))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileFoil" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileFoil')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataFoil.keperluan" disabled>
+                                                            @error('dataFoil.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataFoil.ukuran_film">
+                                                            @error('dataFoil.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataFoil.jumlah_film">
+                                                            @error('dataFoil.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkStepSablon))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileSablon" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileSablon')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataSablon.keperluan" disabled>
+                                                            @error('dataSablon.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataSablon.ukuran_film">
+                                                            @error('dataSablon.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataSablon.jumlah_film">
+                                                            @error('dataSablon.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkStepEmbossDeboss))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileEmbossDeboss" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileEmbossDeboss')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataEmbossDeboss.keperluan" disabled>
+                                                            @error('fileEmbossDeboss.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataEmbossDeboss.ukuran_film">
+                                                            @error('fileEmbossDeboss.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataEmbossDeboss.jumlah_film">
+                                                            @error('fileEmbossDeboss.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkStepSpotUV))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileSpotUV" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileSpotUV')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataSpotUV.keperluan" disabled>
+                                                            @error('dataSpotUV.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataSpotUV.ukuran_film">
+                                                            @error('dataSpotUV.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataSpotUV.jumlah_film">
+                                                            @error('dataSpotUV.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkUV))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileUV" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileUV')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataUV.keperluan" disabled>
+                                                            @error('dataUV.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataUV.ukuran_film">
+                                                            @error('dataUV.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataUV.jumlah_film">
+                                                            @error('dataUV.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                            @if (isset($stateWorkCetakLabel))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <x-forms.filepond wire:model="fileCetakLabel" multiple
+                                                                allowImagePreview imagePreviewMaxHeight="200"
+                                                                allowFileTypeValidation allowFileSizeValidation
+                                                                maxFileSize="1024mb" />
+
+                                                            @error('fileCetakLabel')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Keperluan"
+                                                                wire:model="dataCetakLabel.keperluan" disabled>
+                                                            @error('dataCetakLabel.keperluan')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Ukuran Film"
+                                                                wire:model="dataCetakLabel.ukuran_film">
+                                                            @error('dataCetakLabel.ukuran_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" autocomplete="off"
+                                                                class="form-control" placeholder="Jumlah Film"
+                                                                wire:model="dataCetakLabel.jumlah_film">
+                                                            @error('dataCetakLabel.jumlah_film')
+                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                                </p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-sm-12 col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">File Layout</label>
+                                        <x-forms.filepond wire:model="fileLayout" multiple allowImagePreview
+                                            imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
+                                            maxFileSize="1024mb" />
+
+                                        @error('fileLayout')
+                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-12">
+                                    <label class="form-label">Catatan Proses Pengerjaan</label>
+                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanProsesPengerjaan"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-12 col-md-12">
+                                    <div class="expanel expanel-default">
+                                        <div class="expanel-body">
+                                            <div class="form-group">
+                                                <label class="form-label mb-3">Catatan</label>
+                                                <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
+                                                        class="fe fe-plus"></i>Tambah Catatan</button>
+                                            </div>
+                                            
+                                            @forelse ($notes as $index => $note)
+                                            <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                                <div class="expanel expanel-default">
+                                                    <div class="expanel-body">
+                                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                                            <select class="form-control form-select"
+                                                                data-bs-placeholder="Pilih Tujuan Catatan"
+                                                                wire:model.defer="notes.{{ $index }}.tujuan"
+                                                                required>
+                                                                <option label="Pilih Tujuan Catatan"></option>
+                                                                @foreach ($workSteps as $key)
+                                                                    <option value="{{ $key['work_step_list_id'] }}">
+                                                                        {{ $key['workStepList']['name'] }}</option>
+                                                                @endforeach
         
-        <!-- ROW-2-->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-status bg-primary br-te-7 br-ts-7"></div>
-                    <div class="card-header">
-                        <h3 class="card-title">Form Setting</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-12 col-md-12 mb-3">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">Form Untuk Upload File Film</th>
-                                            <th class="border-bottom-0">Keperluan</th>
-                                            <th class="border-bottom-0">Ukuran Film</th>
-                                            <th class="border-bottom-0">Jumlah Film</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($dataFileSetting as $file)
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
-                                                        download>{{ $file['file_name'] }}</a>
-                                                </td>
-                                                <td>
-                                                    {{ $file['keperluan'] }}
-                                                </td>
-                                                <td>
-                                                    {{ $file['ukuran_film'] }}
-                                                </td>
-                                                <td>
-                                                    {{ $file['jumlah_film'] }}
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            No Data !!
-                                        @endforelse
-
-                                        @forelse ($fileLayoutData as $file)
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
-                                                        download>{{ $file['file_name'] }}</a>
-                                                </td>
-                                                <td>
-                                                    {{ $file['type_file'] }}
-                                                </td>
-                                                <td>
-                                                    -
-                                                </td>
-                                                <td>
-                                                    -
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            No Data !!
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-sm-12 col-md-12 mb-3">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">Form Untuk Upload File Film</th>
-                                            <th class="border-bottom-0">Keperluan</th>
-                                            <th class="border-bottom-0">Ukuran Film</th>
-                                            <th class="border-bottom-0">Jumlah Film</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (isset($stateWorkStepPond))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="filePisauPond" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('filePisauPond')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
+                                                            </select>
+                                                            <button class="btn btn-danger" type="button"
+                                                                wire:click="removeNote({{ $index }})"><i
+                                                                    class="fe fe-x"></i></button>
+                                                        </div>
+                                                        <div class="input-group control-group" style="padding-top: 5px;">
+                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                                wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataPisauPond.keperluan" disabled>
-                                                    @error('dataPisauPond.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
+                                            </div>
+                                            @empty
                                                 
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataPisauPond.ukuran_film">
-                                                    @error('dataPisauPond.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataPisauPond.jumlah_film">
-                                                    @error('dataPisauPond.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkStepFoil))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileFoil" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileFoil')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataFoil.keperluan" disabled>
-                                                    @error('dataFoil.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataFoil.ukuran_film">
-                                                    @error('dataFoil.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataFoil.jumlah_film">
-                                                    @error('dataFoil.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkStepSablon))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileSablon" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileSablon')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataSablon.keperluan" disabled>
-                                                    @error('dataSablon.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataSablon.ukuran_film">
-                                                    @error('dataSablon.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataSablon.jumlah_film">
-                                                    @error('dataSablon.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkStepEmbossDeboss))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileEmbossDeboss" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileEmbossDeboss')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataEmbossDeboss.keperluan" disabled>
-                                                    @error('fileEmbossDeboss.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataEmbossDeboss.ukuran_film">
-                                                    @error('fileEmbossDeboss.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataEmbossDeboss.jumlah_film">
-                                                    @error('fileEmbossDeboss.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkStepSpotUV))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileSpotUV" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileSpotUV')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataSpotUV.keperluan" disabled>
-                                                    @error('dataSpotUV.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataSpotUV.ukuran_film">
-                                                    @error('dataSpotUV.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataSpotUV.jumlah_film">
-                                                    @error('dataSpotUV.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkUV))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileUV" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileUV')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataUV.keperluan" disabled>
-                                                    @error('dataUV.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataUV.ukuran_film">
-                                                    @error('dataUV.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataUV.jumlah_film">
-                                                    @error('dataUV.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                        @if (isset($stateWorkCetakLabel))
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <x-forms.filepond wire:model="fileCetakLabel" multiple allowImagePreview
-                                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                                        maxFileSize="1024mb" />
-                
-                                                    @error('fileCetakLabel')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Keperluan" wire:model="dataCetakLabel.keperluan" disabled>
-                                                    @error('dataCetakLabel.keperluan')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Ukuran Film" wire:model="dataCetakLabel.ukuran_film">
-                                                    @error('dataCetakLabel.ukuran_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Jumlah Film" wire:model="dataCetakLabel.jumlah_film">
-                                                    @error('dataCetakLabel.jumlah_film')
-                                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
+                                            @endforelse 
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label class="form-label">File Layout</label>
-                                    <x-forms.filepond wire:model="fileLayout" multiple allowImagePreview
-                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                        maxFileSize="1024mb" />
 
-                                    @error('fileLayout')
-                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <label class="form-label">Catatan Proses Pengerjaan</label>
-                                <div class="input-group control-group" style="padding-top: 5px;">
-                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanProsesPengerjaan"></textarea>
-                                </div>
-                            </div>
+                            <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
+                                wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button>
                         </div>
-                        {{-- <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
-                            wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button> --}}
-                        <button type="submit" class="btn btn-success mt-4 mb-0 submitBtn"
-                            >Submit</button>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- ROW-2 END -->
-    </form>
+            <!-- ROW-2 END -->
+        </form>
 
     @endif
 </div>

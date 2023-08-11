@@ -28,12 +28,30 @@ class FormCetakLabelIndex extends Component
     public $hasil_akhir;
     public $catatanProsesPengerjaan;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $dataCetakLabel = FormCetakLabel::where('instruction_id', $this->instructionCurrentId)->first();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
         if (isset($dataCetakLabel)) {
             $this->hasil_akhir = $dataCetakLabel['hasil_akhir'];
         } else {
@@ -68,6 +86,18 @@ class FormCetakLabelIndex extends Component
             $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
                 'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
             ]);
+        }
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
         }
 
         $currentStep = WorkStep::find($this->workStepCurrentId);

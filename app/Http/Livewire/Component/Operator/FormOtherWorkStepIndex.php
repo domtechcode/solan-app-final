@@ -33,6 +33,20 @@ class FormOtherWorkStepIndex extends Component
     public $anggota = [];
     public $catatanProsesPengerjaan;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function addAnggota()
     {
         $this->anggota[] = ['nama' => '', 'hasil' => ''];
@@ -52,50 +66,59 @@ class FormOtherWorkStepIndex extends Component
         $dataWorkStep = WorkStep::find($workStepId);
         $this->dataAnggota = User::where('jobdesk', 'Team Finishing')->get();
 
-        if(Auth()->user()->jobdesk == 'Finishing'){
-            $dataOtherFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
-            if(isset($dataOtherFinishing)){
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
+        if (Auth()->user()->jobdesk == 'Finishing') {
+            $dataOtherFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+                ->first();
+            if (isset($dataOtherFinishing)) {
                 $this->jenis_pekerjaan = $dataOtherFinishing['jenis_pekerjaan'];
                 $this->hasil_akhir = $dataOtherFinishing['hasil_akhir'];
                 $this->satuan = $dataOtherFinishing['satuan'];
-            }else{
+            } else {
                 $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
                 $this->hasil_akhir = '';
                 $this->satuan = '';
             }
 
-            $dataAnggotaCurrent = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->get();
-            if(isset($dataAnggotaCurrent)){
-                foreach($dataAnggotaCurrent as $item){
+            $dataAnggotaCurrent = FormFinishing::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+                ->get();
+            if (isset($dataAnggotaCurrent)) {
+                foreach ($dataAnggotaCurrent as $item) {
                     $anggota = [
                         'nama' => $item['nama_anggota'],
                         'hasil' => $item['hasil_per_anggota'],
                     ];
-    
+
                     $this->anggota[] = $anggota;
                 }
             }
-    
-            if(empty($this->anggota)){
+
+            if (empty($this->anggota)) {
                 $this->anggota[] = [
                     'nama' => '',
                     'hasil' => '',
                 ];
             }
-        }else{
-            $dataOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
+        } else {
+            $dataOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+                ->first();
 
-            if(isset($dataOtherWorkStep)){
+            if (isset($dataOtherWorkStep)) {
                 $this->jenis_pekerjaan = $dataOtherWorkStep['jenis_pekerjaan'];
                 $this->hasil_akhir = $dataOtherWorkStep['hasil_akhir'];
                 $this->satuan = $dataOtherWorkStep['satuan'];
-            }else{
+            } else {
                 $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
                 $this->hasil_akhir = '';
                 $this->satuan = '';
             }
         }
-        
     }
 
     public function render()
@@ -105,7 +128,7 @@ class FormOtherWorkStepIndex extends Component
 
     public function save()
     {
-        if(Auth()->user()->jobdesk == 'Finishing'){
+        if (Auth()->user()->jobdesk == 'Finishing') {
             $this->validate([
                 'anggota.*.nama' => 'required',
                 'anggota.*.hasil' => 'required',
@@ -113,7 +136,7 @@ class FormOtherWorkStepIndex extends Component
                 'hasil_akhir' => 'required',
                 'satuan' => 'required',
             ]);
-        }else{
+        } else {
             $this->validate([
                 'jenis_pekerjaan' => 'required',
                 'hasil_akhir' => 'required',
@@ -123,7 +146,7 @@ class FormOtherWorkStepIndex extends Component
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -139,17 +162,31 @@ class FormOtherWorkStepIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        if(Auth()->user()->jobdesk == 'Finishing'){
-            if(isset($this->anggota)){
-                $deleteFormFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
-                foreach($this->anggota as $dataAnggota){
+            ->where('step', $currentStep->step + 1)
+            ->first();
+        if (Auth()->user()->jobdesk == 'Finishing') {
+            if (isset($this->anggota)) {
+                $deleteFormFinishing = FormFinishing::where('instruction_id', $this->instructionCurrentId)
+                    ->where('jenis_pekerjaan', $currentStep->workStepList->name)
+                    ->delete();
+                foreach ($this->anggota as $dataAnggota) {
                     $createFormFinishing = FormFinishing::create([
                         'instruction_id' => $this->instructionCurrentId,
                         'hasil_akhir' => $this->hasil_akhir,
@@ -160,8 +197,10 @@ class FormOtherWorkStepIndex extends Component
                     ]);
                 }
             }
-        }else{
-            $deleteFormOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
+        } else {
+            $deleteFormOtherWorkStep = FormOtherWorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $currentStep->workStepList->name)
+                ->delete();
             $createFormOtherWorkStep = FormOtherWorkStep::create([
                 'instruction_id' => $this->instructionCurrentId,
                 'jenis_pekerjaan' => $this->jenis_pekerjaan,
@@ -169,7 +208,7 @@ class FormOtherWorkStepIndex extends Component
                 'satuan' => $this->satuan,
             ]);
         }
-        
+
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
                 'state_task' => 'Complete',
@@ -387,7 +426,7 @@ class FormOtherWorkStepIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -399,7 +438,7 @@ class FormOtherWorkStepIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

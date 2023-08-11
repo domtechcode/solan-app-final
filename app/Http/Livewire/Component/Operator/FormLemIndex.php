@@ -30,19 +30,39 @@ class FormLemIndex extends Component
     public $lem_terpakai;
     public $catatanProsesPengerjaan;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $dataWorkStep = WorkStep::find($workStepId);
-        $dataLem = FormLem::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
+        $dataLem = FormLem::where('instruction_id', $this->instructionCurrentId)
+            ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+            ->first();
 
-        if(isset($dataLem)){
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
+        if (isset($dataLem)) {
             $this->jenis_pekerjaan = $dataLem['jenis_pekerjaan'];
             $this->hasil_akhir = $dataLem['hasil_akhir'];
             $this->lem_terpakai = $dataLem['lem_terpakai'];
-        }else{
+        } else {
             $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
             $this->hasil_akhir = '';
             $this->lem_terpakai = '';
@@ -64,7 +84,7 @@ class FormLemIndex extends Component
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -80,14 +100,26 @@ class FormLemIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
         $deleteFormLem = FormLem::where('instruction_id', $this->instructionCurrentId)->delete();
         $createFormLem = FormLem::create([
             'instruction_id' => $this->instructionCurrentId,
@@ -313,7 +345,7 @@ class FormLemIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -325,7 +357,7 @@ class FormLemIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

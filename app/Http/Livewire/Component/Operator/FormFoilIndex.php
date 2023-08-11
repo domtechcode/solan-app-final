@@ -31,18 +31,37 @@ class FormFoilIndex extends Component
     public $status_matress;
     public $catatanProsesPengerjaan;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->first();
-        if(isset($dataFoil)){
+
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
+        if (isset($dataFoil)) {
             $this->hasil_akhir = $dataFoil['hasil_akhir'];
             $this->nama_matress = $dataFoil['nama_matress'];
             $this->lokasi_matress = $dataFoil['lokasi_matress'];
             $this->status_matress = $dataFoil['status_matress'];
-        }else{
+        } else {
             $this->hasil_akhir = '';
             $this->nama_matress = '';
             $this->lokasi_matress = '';
@@ -66,7 +85,7 @@ class FormFoilIndex extends Component
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -82,14 +101,26 @@ class FormFoilIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
         $deleteFormFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
         $createFormFoil = FormFoil::create([
             'instruction_id' => $this->instructionCurrentId,
@@ -316,7 +347,7 @@ class FormFoilIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -328,7 +359,7 @@ class FormFoilIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

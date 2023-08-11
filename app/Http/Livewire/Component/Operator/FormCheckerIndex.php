@@ -29,6 +29,20 @@ class FormCheckerIndex extends Component
     public $catatanRevisi;
     public $historyRevisi;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
@@ -37,6 +51,11 @@ class FormCheckerIndex extends Component
         $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)
             ->where('type_file', 'layout')
             ->get();
+
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
         if (isset($dataFileLayout)) {
             foreach ($dataFileLayout as $dataFile) {
                 $fileLayout = [
@@ -95,6 +114,18 @@ class FormCheckerIndex extends Component
             $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
                 'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
             ]);
+        }
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
         }
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
@@ -177,6 +208,18 @@ class FormCheckerIndex extends Component
             $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
                 'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
             ]);
+        }
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
         }
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
@@ -447,6 +490,18 @@ class FormCheckerIndex extends Component
 
         $this->messageSent(['conversation' => 'SPK di reject oleh ' . $currentStep->user->name, 'instruction_id' => $this->instructionCurrentId, 'receiver' => $lastStep->user_id]);
         event(new IndexRenderEvent('refresh'));
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
 
         $this->emit('flashMessage', [
             'type' => 'success',

@@ -27,6 +27,20 @@ class FormPotongIndex extends Component
     public $stateWorkStep;
     public $hasil_akhir;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
@@ -36,12 +50,16 @@ class FormPotongIndex extends Component
 
         $this->stateWorkStep = $dataWorkStep->work_step_list_id;
 
-        if($dataWorkStep->work_step_list_id == 9){
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
+        if ($dataWorkStep->work_step_list_id == 9) {
             $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
 
-            if(isset($currentPotongJadi)){
+            if (isset($currentPotongJadi)) {
                 $this->hasil_akhir = $currentPotongJadi->hasil_akhir;
-            }else{
+            } else {
                 $this->hasil_akhir = '';
             }
         }
@@ -56,7 +74,7 @@ class FormPotongIndex extends Component
     {
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -72,30 +90,41 @@ class FormPotongIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
+            ->where('step', $currentStep->step + 1)
+            ->first();
 
         $dataWorkStep = WorkStep::find($this->workStepCurrentId);
-         if($dataWorkStep->work_step_list_id == 9){
+        if ($dataWorkStep->work_step_list_id == 9) {
             $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
-            if(isset($currentPotongJadi)){
+            if (isset($currentPotongJadi)) {
                 $currentPotongJadi->update([
                     'hasil_akhir' => $this->hasil_akhir,
                 ]);
-            }else{
+            } else {
                 $createPotongJadi = FormPotongJadi::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'hasil_akhir' => $this->hasil_akhir,
                 ]);
             }
-            
         }
-        
+
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
                 'state_task' => 'Complete',
@@ -313,7 +342,7 @@ class FormPotongIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -325,7 +354,7 @@ class FormPotongIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

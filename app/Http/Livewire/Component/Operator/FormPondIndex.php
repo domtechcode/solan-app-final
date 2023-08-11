@@ -35,6 +35,20 @@ class FormPondIndex extends Component
     public $status_matress;
     public $catatanProsesPengerjaan;
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
@@ -43,9 +57,15 @@ class FormPondIndex extends Component
         $dataWorkStep = WorkStep::find($workStepId);
         $this->dataWorkSteps = WorkStep::find($workStepId);
 
-        $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)->first();
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
 
-        if(isset($dataPond)){
+        $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)
+            ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+            ->first();
+
+        if (isset($dataPond)) {
             $this->jenis_pekerjaan = $dataPond['jenis_pekerjaan'];
             $this->hasil_akhir = $dataPond['hasil_akhir'];
             $this->nama_pisau = $dataPond['nama_pisau'];
@@ -54,7 +74,7 @@ class FormPondIndex extends Component
             $this->nama_matress = $dataPond['nama_matress'];
             $this->lokasi_matress = $dataPond['lokasi_matress'];
             $this->status_matress = $dataPond['status_matress'];
-        }else{
+        } else {
             $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
             $this->hasil_akhir = '';
             $this->nama_pisau = '';
@@ -73,7 +93,7 @@ class FormPondIndex extends Component
 
     public function save()
     {
-        if($this->dataWorkSteps->work_step_list_id == 24){
+        if ($this->dataWorkSteps->work_step_list_id == 24) {
             $this->validate([
                 'hasil_akhir' => 'required',
                 'nama_pisau' => 'required',
@@ -83,7 +103,7 @@ class FormPondIndex extends Component
                 'lokasi_matress' => 'required',
                 'status_matress' => 'required',
             ]);
-        }else{
+        } else {
             $this->validate([
                 'hasil_akhir' => 'required',
                 'nama_matress' => 'required',
@@ -91,11 +111,10 @@ class FormPondIndex extends Component
                 'status_matress' => 'required',
             ]);
         }
-        
 
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -111,15 +130,29 @@ class FormPondIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('work_step_list_id', 2)
-                ->first();
+            ->where('work_step_list_id', 2)
+            ->first();
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-                ->where('step', $currentStep->step + 1)
-                ->first();
-        
-        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)->where('jenis_pekerjaan', $currentStep->workStepList->name)->delete();
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
+        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)
+            ->where('jenis_pekerjaan', $currentStep->workStepList->name)
+            ->delete();
         $createFormPond = FormPond::create([
             'instruction_id' => $this->instructionCurrentId,
             'jenis_pekerjaan' => $this->jenis_pekerjaan,
@@ -349,7 +382,7 @@ class FormPondIndex extends Component
                 }
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Plate Instruksi Kerja',
@@ -361,7 +394,7 @@ class FormPondIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Component\Operator;
 
 use Carbon\Carbon;
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Keterangan;
@@ -55,6 +56,20 @@ class FormSettingIndex extends Component
     public $fileCetakLabel = [];
     public $dataCetakLabel = [];
 
+    public $notes = [];
+    public $workSteps;
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
     public function addWarnaField($keteranganIndex, $rincianIndexPlate)
     {
         $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][] = [
@@ -75,9 +90,15 @@ class FormSettingIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $this->workStepCurrentId = $workStepId;
+
+        $this->workSteps = WorkStep::where('instruction_id', $instructionId)
+            ->with('workStepList')
+            ->get();
+
         $dataFileLayout = Files::where('instruction_id', $this->instructionCurrentId)
             ->where('type_file', 'layout')
             ->get();
+
         foreach ($dataFileLayout as $dataFile) {
             $fileLayout = [
                 'id' => $dataFile['id'],
@@ -1281,6 +1302,18 @@ class FormSettingIndex extends Component
             ]);
         }
 
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
                 'state_task' => 'Complete',
@@ -1490,6 +1523,18 @@ class FormSettingIndex extends Component
             $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
                 'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
             ]);
+        }
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
         }
 
         // Cek apakah $currentStep ada dan step berikutnya ada
