@@ -609,10 +609,11 @@ class CreateInstructionIndex extends Component
         } elseif ($this->spk_type == 'stock') {
             if (isset($this->spk_parent)) {
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
-                    ->where('spk_type', $this->spk_type)
+                    ->where('spk_type', 'production')
                     ->where('taxes_type', $datacustomerlist->taxes)
                     ->latest('spk_number')
                     ->first();
+
                 $nomor_parent = Str::between($this->spk_parent, '-', '-');
             } else {
                 $nomor_spk = Instruction::where('spk_type', 'production')
@@ -622,7 +623,9 @@ class CreateInstructionIndex extends Component
             }
 
             if (isset($nomor_spk_parent)) {
-                $code_alphabet = substr($nomor_spk_parent['spk_number'], -1);
+                $split_parts = explode('-', $nomor_spk_parent['spk_number']);
+                $second_part = $split_parts[2];
+                $code_alphabet = substr($second_part, 0, 1);
             } else {
                 $code_alphabet = 'A';
             }
@@ -638,7 +641,6 @@ class CreateInstructionIndex extends Component
             }
         }
 
-        // Perbarui nilai input text
         $this->dispatchBrowserEvent('generated', ['code' => $this->spk_number]);
     }
 
