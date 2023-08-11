@@ -264,7 +264,7 @@
                                             class="text-red">*</span></label>
                                     <div class="input-group">
                                         <input type="date" wire:model.defer="shipping_date" id="shipping_date"
-                                            class="form-control @error('shipping_date') is-invalid @enderror" readonly>
+                                            class="form-control @error('shipping_date') is-invalid @enderror">
                                     </div>
                                     @error('shipping_date')
                                         <div><span class="text-danger">{{ $message }}</span></div>
