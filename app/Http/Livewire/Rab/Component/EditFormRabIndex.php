@@ -91,6 +91,7 @@ class EditFormRabIndex extends Component
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
         if ($formRab) {
+            $formRab = FormRab::where('instruction_id', $instructionId)->get();
             foreach ($formRab as $dataRab) {
                 if ($dataRab['jenis_pengeluaran'] == 'Bahan Baku') {
                     $rab = [
