@@ -127,6 +127,9 @@
                                                 @elseif($workStepData->work_step_list_id == 36)
                                                     <!-- Pengiriman -->
                                                     @livewire('component.operator.form-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @elseif($workStepData->work_step_list_id == 45)
+                                                    <!-- Pengiriman -->
+                                                    @livewire('component.operator.form-lipat-pinggir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @else
                                                     <!-- WorkStep Lain -->
                                                     @livewire('component.operator.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])

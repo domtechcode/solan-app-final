@@ -32,6 +32,7 @@ use App\Models\FormPotongJadi;
 use App\Models\KeteranganFoil;
 use App\Models\KeteranganLabel;
 use App\Models\KeteranganPlate;
+use App\Models\FormLipatPinggir;
 use App\Models\KeteranganScreen;
 use App\Models\FormOtherWorkStep;
 use App\Models\PengajuanBarangSpk;
@@ -217,6 +218,11 @@ class Instruction extends Model
     public function formSortir()
     {
         return $this->hasMany(FormSortir::class);
+    }
+
+    public function formLipatPinggir()
+    {
+        return $this->hasMany(FormLipatPinggir::class);
     }
 
     public function pengajuanBarangSpk()

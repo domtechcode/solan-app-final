@@ -59,6 +59,7 @@ class WorkStepListTableSeeder extends Seeder
             ["id"=>"42","name"=>"Laminating Metalize"],
             ["id"=>"43","name"=>"Laminating Lubang"],
             ["id"=>"44","name"=>"Pengeringan"],
+            ["id"=>"45","name"=>"Lipat Pinggir"],
         ];
 
         foreach ($data as $worksteplist) {
