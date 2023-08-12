@@ -274,6 +274,7 @@ class RunningDashboardIndex extends Component
                 ->where('status_task', $lastData->status_task)
                 ->where('state_task', $lastData->state_task)
                 ->update([
+                    'flag' => $lastData['flag'],
                     'timer' => $lastData['timer'],
                     'alasan_pause' => $lastData['alasan_pause'],
                     'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
@@ -285,6 +286,8 @@ class RunningDashboardIndex extends Component
                     'task_priority' => $lastData['task_priority'],
                     'dikerjakan' => $lastData['dikerjakan'],
                     'selesai' => $lastData['selesai'],
+                    'keterangan_reject' => $lastData['keterangan_reject'],
+                    'keterangan_reschedule' => $lastData['keterangan_reschedule'],
                 ]);
         }
 
