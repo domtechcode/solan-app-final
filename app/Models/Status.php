@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\WorkStep;
 use App\Models\PengajuanBarangSpk;
+use App\Models\PengajuanBarangPersonal;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -22,5 +23,10 @@ class Status extends Model
     public function pengajuanBarangSpk()
     {
         return $this->hasMany(PengajuanBarangSpk::class);
+    }
+
+    public function pengajuanBarangPersonal()
+    {
+        return $this->hasMany(PengajuanBarangPersonal::class);
     }
 }

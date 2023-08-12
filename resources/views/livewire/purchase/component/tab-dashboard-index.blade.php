@@ -15,7 +15,7 @@
                             </li>
                             <li>
                                 <button href="#tab2" class="{{ $activeTab === 'tab2' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Pengajuan Barang Operator -
+                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Pengajuan Barang Operator - {{ $dataCountPengajuanBarangPersonal }}
                                 </button>
                             </li>
                             <li>
@@ -77,7 +77,7 @@
                                         <h3 class="card-title">Pengajuan Barang Operator</h3>
                                     </div>
                                     <div class="card-body">
-
+                                        @livewire('purchase.component.pengajuan-barang-personal-index')
                                     </div>
                                 </div>
                             </div>

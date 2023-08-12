@@ -156,6 +156,32 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="sub-category">
+                    <h3>Pengajuan Barang</h3>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Pengajuan Barang</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Pengajuan Barang Personal</a></li>
+                                            <li><a href="{{ route('followUp.pengajuanBarangPersonal') }}" class="slide-item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}">Pengajuan Barang Personal</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
                 @endif
 
                 @if( auth()->user()->role == 'Stock' )

@@ -9,10 +9,12 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
     public $dataCountPengajuanBarangSpk;
+    public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanMaklun;
     public $dataCountRunningSpk;
     public $dataCountHoldSpk;
@@ -32,6 +34,7 @@ class TabDashboardIndex extends Component
     public function render()
     {
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', '!=', 16)->count();
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', '!=', 16)->count();
 
         $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'Purchase')->count();
 
