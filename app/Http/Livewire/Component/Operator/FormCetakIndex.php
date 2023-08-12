@@ -32,6 +32,7 @@ class FormCetakIndex extends Component
     public $a;
     public $b;
     public $dataWarna = [];
+    public $dataHasilAkhir = [];
 
     public $notes = [];
     public $workSteps;
@@ -58,6 +59,45 @@ class FormCetakIndex extends Component
                 $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
             })
             ->first();
+
+        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
+            })
+            ->with('formCetak')
+            ->get();
+
+        if (isset($dataRincianPlateHasilAkhir)) {
+            $this->dataHasilAkhir = [];
+
+            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
+                if (isset($dataHasilAkhirPlate->formCetak) && count($dataHasilAkhirPlate->formCetak) > 0) {
+                    foreach ($dataHasilAkhirPlate['formCetak'] as $item) {
+                        $rincianPlateDataHasilAkhir = [
+                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                            'state' => $dataHasilAkhirPlate->state,
+                            'plate' => $dataHasilAkhirPlate->plate,
+                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                            'waste' => $dataHasilAkhirPlate->waste,
+                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
+                        ];
+
+                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                    }
+                } else {
+                    $rincianPlateDataHasilAkhir = [
+                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                        'state' => $dataHasilAkhirPlate->state,
+                        'plate' => $dataHasilAkhirPlate->plate,
+                        'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                        'waste' => $dataHasilAkhirPlate->waste,
+                        'hasil_akhir_lembar_cetak_plate' => '',
+                    ];
+
+                    $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                }
+            }
+        }
 
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList')
@@ -109,6 +149,23 @@ class FormCetakIndex extends Component
 
                 $this->dataWarna['rincianPlate'][] = $rincianPlateData;
             }
+        } else {
+            $this->dataWarna['rincianPlate'][] = [
+                'id' => '',
+                'plate' => '',
+                'name' => '',
+                'warnaCetak' => [
+                    [
+                        'id' => '',
+                        'warna' => '',
+                        'keterangan' => '',
+                        'de' => '',
+                        'l' => '',
+                        'a' => '',
+                        'b' => '',
+                    ],
+                ],
+            ];
         }
 
         $dataFormCetak = FormCetak::where('instruction_id', $instructionId)->first();
@@ -126,6 +183,7 @@ class FormCetakIndex extends Component
     {
         $this->validate([
             'hasil_akhir_lembar_cetak' => 'required',
+            'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -158,12 +216,24 @@ class FormCetakIndex extends Component
             }
         }
 
-        if (isset($this->hasil_akhir_lembar_cetak)) {
+        // if (isset($this->hasil_akhir_lembar_cetak)) {
+        //     $deleteCetak = FormCetak::where('instruction_id', $this->instructionCurrentId)->delete();
+        //     $createCetak = FormCetak::create([
+        //         'instruction_id' => $this->instructionCurrentId,
+        //         'hasil_akhir_lembar_cetak' => $this->hasil_akhir_lembar_cetak,
+        //     ]);
+        // }
+
+        if (isset($this->dataHasilAkhir)) {
             $deleteCetak = FormCetak::where('instruction_id', $this->instructionCurrentId)->delete();
-            $createCetak = FormCetak::create([
-                'instruction_id' => $this->instructionCurrentId,
-                'hasil_akhir_lembar_cetak' => $this->hasil_akhir_lembar_cetak,
-            ]);
+            foreach ($this->dataHasilAkhir as $item) {
+                $createCetak = FormCetak::create([
+                    'instruction_id' => $this->instructionCurrentId,
+                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
+                    'hasil_akhir_lembar_cetak' => $this->hasil_akhir_lembar_cetak,
+                ]);
+            }
         }
 
         if (isset($this->dataWarna['rincianPlate'])) {
