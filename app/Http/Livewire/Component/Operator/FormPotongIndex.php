@@ -11,6 +11,7 @@ use App\Models\WorkStep;
 use App\Models\FormPlate;
 use App\Models\FileSetting;
 use App\Models\Instruction;
+use App\Models\RincianPlate;
 use Livewire\WithFileUploads;
 use App\Models\FormPotongJadi;
 use App\Events\IndexRenderEvent;
@@ -26,7 +27,7 @@ class FormPotongIndex extends Component
     public $catatanProsesPengerjaan;
     public $stateWorkStep;
     public $hasil_akhir;
-
+    public $dataHasilAkhir = [];
     public $notes = [];
     public $workSteps;
 
@@ -61,6 +62,45 @@ class FormPotongIndex extends Component
                 $this->hasil_akhir = $currentPotongJadi->hasil_akhir;
             } else {
                 $this->hasil_akhir = '';
+            }
+
+            $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
+                ->where(function ($query) {
+                    $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
+                })
+                ->with('formPotongJadi')
+                ->get();
+
+            if (isset($dataRincianPlateHasilAkhir)) {
+                $this->dataHasilAkhir = [];
+
+                foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
+                    if (isset($dataHasilAkhirPlate->formPotongJadi) && count($dataHasilAkhirPlate->formPotongJadi) > 0) {
+                        foreach ($dataHasilAkhirPlate['formPotongJadi'] as $item) {
+                            $rincianPlateDataHasilAkhir = [
+                                'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                                'state' => $dataHasilAkhirPlate->state,
+                                'plate' => $dataHasilAkhirPlate->plate,
+                                'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                                'waste' => $dataHasilAkhirPlate->waste,
+                                'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
+                            ];
+
+                            $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                        }
+                    } else {
+                        $rincianPlateDataHasilAkhir = [
+                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                            'state' => $dataHasilAkhirPlate->state,
+                            'plate' => $dataHasilAkhirPlate->plate,
+                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                            'waste' => $dataHasilAkhirPlate->waste,
+                            'hasil_akhir_lembar_cetak_plate' => '',
+                        ];
+
+                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                    }
+                }
             }
         }
     }
@@ -112,16 +152,21 @@ class FormPotongIndex extends Component
 
         $dataWorkStep = WorkStep::find($this->workStepCurrentId);
         if ($dataWorkStep->work_step_list_id == 9) {
-            $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
-            if (isset($currentPotongJadi)) {
-                $currentPotongJadi->update([
-                    'hasil_akhir' => $this->hasil_akhir,
-                ]);
-            } else {
-                $createPotongJadi = FormPotongJadi::create([
-                    'instruction_id' => $this->instructionCurrentId,
-                    'hasil_akhir' => $this->hasil_akhir,
-                ]);
+            $this->validate([
+                'hasil_akhir' => 'required',
+                'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
+            ]);
+
+            if (isset($this->dataHasilAkhir)) {
+                $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->delete();
+                foreach ($this->dataHasilAkhir as $item) {
+                    $createPotongJadi = FormPotongJadi::create([
+                        'instruction_id' => $this->instructionCurrentId,
+                        'hasil_akhir' => $this->hasil_akhir,
+                        'rincian_plate_id' => $item['rincian_plate_id'],
+                        'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
+                    ]);
+                }
             }
         }
 

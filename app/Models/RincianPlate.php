@@ -8,6 +8,7 @@ use App\Models\FormCetak;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\Instruction;
+use App\Models\FormPotongJadi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -46,5 +47,10 @@ class RincianPlate extends Model
     public function formPond()
     {
         return $this->hasMany(FormPond::class);
+    }
+
+    public function formPotongJadi()
+    {
+        return $this->hasMany(FormPotongJadi::class);
     }
 }
