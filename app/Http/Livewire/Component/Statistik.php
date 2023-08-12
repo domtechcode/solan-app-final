@@ -42,7 +42,6 @@ class Statistik extends Component
     {
         return [
             "echo:notif.{$this->userId},NotificationSent" => 'refreshIndex',
-            "echo:notif.{$this->userId},NotificationSent" => '$refresh',
         ];
     }
 

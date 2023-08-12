@@ -106,6 +106,9 @@
                                                 @elseif($workStepData->work_step_list_id == 10)
                                                     <!-- Cetak -->
                                                     @livewire('component.operator.form-cetak-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @elseif($workStepData->work_step_list_id == 11)
+                                                    <!-- Cetak -->
+                                                    @livewire('component.operator.form-sortir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @elseif($workStepData->work_step_list_id == 23)
                                                     <!-- Sablon -->
                                                     @livewire('component.operator.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])

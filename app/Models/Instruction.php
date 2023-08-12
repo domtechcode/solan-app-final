@@ -14,6 +14,7 @@ use App\Models\FormPlate;
 use App\Models\FormMaklun;
 use App\Models\FormSablon;
 use App\Models\FormSample;
+use App\Models\FormSortir;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
 use App\Models\FileRincian;
@@ -211,6 +212,11 @@ class Instruction extends Model
     public function formPotongJadi()
     {
         return $this->hasMany(FormPotongJadi::class);
+    }
+
+    public function formSortir()
+    {
+        return $this->hasMany(FormSortir::class);
     }
 
     public function pengajuanBarangSpk()
