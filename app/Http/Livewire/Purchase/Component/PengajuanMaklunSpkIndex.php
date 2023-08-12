@@ -52,11 +52,6 @@ class PengajuanMaklunSpkIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function renderIndex()
-    {
-        $this->reset();
-    }
-
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
