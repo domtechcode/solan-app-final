@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -11,7 +11,6 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
-use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
 
 class PengajuanBarangPersonalIndex extends Component
@@ -53,6 +52,11 @@ class PengajuanBarangPersonalIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function renderIndex()
+    {
+        $this->reset();
+    }
+
     public function mount()
     {
         $this->search = request()->query('search', $this->search);
@@ -60,80 +64,15 @@ class PengajuanBarangPersonalIndex extends Component
 
     public function render()
     {
-        $dataPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', '!=', 16)
+        $dataPengajuanBarangPersonal = PengajuanBarangPersonal::where('state', 'Accounting')
             ->with(['status', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
             ->paginate($this->paginate);
 
-        return view('livewire.purchase.component.pengajuan-barang-personal-index', ['pengajuanBarangPersonal' => $dataPengajuanBarangPersonal])
+        return view('livewire.accounting.component.pengajuan-barang-personal-index', ['pengajuanBarangPersonal' => $dataPengajuanBarangPersonal])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
-    }
-
-    public function stockBarang($PengajuanBarangSelectedId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
-
-        $updateStock = PengajuanBarangPersonal::find($PengajuanBarangSelectedId);
-        $updateStock->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 12,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
-        $this->reset();
-    }
-
-    public function ajukanAccountingBarang($PengajuanBarangSelectedAccountingId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
-
-        $updateAccounting = PengajuanBarangPersonal::find($PengajuanBarangSelectedAccountingId);
-        $updateAccounting->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 10,
-            'state' => 'Accounting',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $userDestination = User::where('role', 'Accounting')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
-        }
-
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
     public function ajukanRabBarang($PengajuanBarangSelectedRabId)
@@ -153,7 +92,8 @@ class PengajuanBarangPersonalIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 11,
             'state' => 'RAB',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -167,12 +107,12 @@ class PengajuanBarangPersonalIndex extends Component
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
 
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
-    public function beliBarang($PengajuanBarangSelectedBeliId)
+    public function approveBarang($PengajuanBarangSelectedApproveId)
     {
         $this->validate([
             'harga_satuan' => 'required',
@@ -181,29 +121,35 @@ class PengajuanBarangPersonalIndex extends Component
             'stock' => 'required',
         ]);
 
-        $updateBeli = PengajuanBarangPersonal::find($PengajuanBarangSelectedBeliId);
-        $updateBeli->update([
+        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
+        $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
-            'status_id' => 15,
+            'status_id' => 13,
             'state' => 'Purchase',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
 
-        $this->reset();
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+        }
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
+
     }
 
-    public function completeBarang($PengajuanBarangSelectedCompleteId)
+    public function rejectBarang($PengajuanBarangSelectedRejectId)
     {
         $this->validate([
             'harga_satuan' => 'required',
@@ -212,26 +158,32 @@ class PengajuanBarangPersonalIndex extends Component
             'stock' => 'required',
         ]);
 
-        $updateComplete = PengajuanBarangPersonal::find($PengajuanBarangSelectedCompleteId);
-        $updateComplete->update([
+        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
-            'status_id' => 16,
+            'status_id' => 18,
             'state' => 'Purchase',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
 
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+        }
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
     public function cekTotalHarga()
@@ -250,9 +202,10 @@ class PengajuanBarangPersonalIndex extends Component
         $this->total_harga = currency_idr($this->total_harga);
     }
 
-    public function modalPengajuanBarangSpk($PengajuanBarangId)
+    public function modalPengajuanBarangPersonal($PengajuanBarangId)
     {
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
+
         $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
         $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
         $this->stock = currency_idr($this->dataBarang->stock);

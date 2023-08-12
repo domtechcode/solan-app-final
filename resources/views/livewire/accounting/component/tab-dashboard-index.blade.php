@@ -25,18 +25,23 @@
                             </li>
                             <li>
                                 <button href="#tab4" class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Pengajuan Maklun SPK - {{ $dataCountPengajuanMaklun }}
+                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Pengajuan Barang Personal - {{ $dataCountPengajuanBarangPersonal }}
                                 </button>
                             </li>
                             <li>
                                 <button href="#tab5" class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">All
+                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Pengajuan Maklun SPK - {{ $dataCountPengajuanMaklun }}
+                                </button>
+                            </li>
+                            <li>
+                                <button href="#tab6" class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">All
                                 </button>
                             </li>
                             
                             <li>
-                                <button href="#tab6" class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Last Data Training Program
+                                <button href="#tab7" class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">Last Data Training Program
                                 </button>
                             </li>
                         </ul>
@@ -106,6 +111,23 @@
                                 <div class="card">
                                     <div class="card-status bg-info br-te-7 br-ts-7"></div>
                                     <div class="card-header">
+                                        <h3 class="card-title">Pengajuan Barang Personal</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        @livewire('accounting.component.pengajuan-barang-personal-index')
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                    </div>
+                    <div class="tab-pane {{ $activeTab === 'tab5' ? 'active' : '' }}" id="tab5">
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                    <div class="card-header">
                                         <h3 class="card-title">Pengajuan Maklun SPK</h3>
                                     </div>
                                     <div class="card-body">
@@ -117,7 +139,7 @@
                         <!-- ROW-2 END -->
                     </div>
 
-                    <div class="tab-pane {{ $activeTab === 'tab5' ? 'active' : '' }}" id="tab5">
+                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">
@@ -134,7 +156,7 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
+                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">
