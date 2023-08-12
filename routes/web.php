@@ -44,6 +44,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Stock\Index\IndexDashboard')->name('stock.dashboard');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\FollowUp\Index\IndexPengajuanBarangPersonal')->name('followUp.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'hitungbahan', 'middleware' => ['role:Hitung Bahan']], function () {
@@ -51,33 +53,45 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/create-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexCreateFormHitungBahan')->name('hitungBahan.createFormHitungBahan');
         Route::get('/edit-form-hitung-bahan/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexEditFormHitungBahan')->name('hitungBahan.editFormHitungBahan');
         Route::get('/group', 'App\Http\Livewire\HitungBahan\Index\IndexGroup')->name('hitungBahan.group');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\HitungBahan\Index\IndexPengajuanBarangPersonal')->name('hitungBahan.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Rab\Index\IndexDashboard')->name('rab.dashboard');
         Route::get('/create-form-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
         Route::get('/edit-form-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexEditFormRab')->name('rab.editFormRab');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Rab\Index\IndexPengajuanBarangPersonal')->name('rab.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'jadwal', 'middleware' => ['role:Penjadwalan']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Penjadwalan\Index\IndexDashboard')->name('jadwal.dashboard');
         Route::get('/group', 'App\Http\Livewire\Penjadwalan\Index\IndexGroup')->name('jadwal.group');
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Penjadwalan\Index\IndexWorkStep')->name('jadwal.indexWorkStep');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Penjadwalan\Index\IndexPengajuanBarangPersonal')->name('jadwal.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'operator', 'middleware' => ['role:Operator']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Operator\Index\IndexDashboard')->name('operator.dashboard');
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Operator\Index\IndexWorkStep')->name('indexWorkStep');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Operator\Index\IndexPengajuanBarangPersonal')->name('operator.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['role:Accounting']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Accounting\Index\IndexDashboard')->name('accounting.dashboard');
         Route::get('/data-customer', 'App\Http\Livewire\Accounting\Index\IndexCustomer')->name('accounting.dataCustomer');
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Accounting\Index\IndexWorkStep')->name('accounting.indexWorkStep');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Accounting\Index\IndexPengajuanBarangPersonal')->name('accounting.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'purchase', 'middleware' => ['role:Purchase']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Purchase\Index\IndexDashboard')->name('purchase.dashboard');
+
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Purchase\Index\IndexPengajuanBarangPersonal')->name('purchase.pengajuanBarangPersonal');
     });
     
 });
