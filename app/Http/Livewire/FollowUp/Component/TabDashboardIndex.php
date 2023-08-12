@@ -32,7 +32,7 @@ class TabDashboardIndex extends Component
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 1)
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereIn('status_id', [1, 2])
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -44,7 +44,7 @@ class TabDashboardIndex extends Component
         $this->dataCountRejectSpk = WorkStep::where('work_step_list_id', 1)
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereIn('status_id', [3, 22])
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -56,7 +56,7 @@ class TabDashboardIndex extends Component
         $this->dataCountRunningSpk = WorkStep::where('work_step_list_id', 1)
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereIn('status_id', [1, 2, 23])
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');

@@ -58,7 +58,7 @@ class RejectDashboardIndex extends Component
         $dataReject = WorkStep::where('work_step_list_id', 1)
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Reject', 'Reject Requirements'])
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereIn('status_id', [3, 22])
             ->whereHas('instruction', function ($query) {
                 $searchTerms = '%' . $this->searchReject . '%';

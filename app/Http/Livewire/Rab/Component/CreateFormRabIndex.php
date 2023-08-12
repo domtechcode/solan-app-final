@@ -448,6 +448,36 @@ class CreateFormRabIndex extends Component
         return redirect()->route('rab.dashboard');
     }
 
+    public function closePoBtn()
+    {
+        $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            'spk_status' => 'Close PO',
+        ]);
+
+        event(new IndexRenderEvent('refresh'));
+        $this->messageSent(['conversation' => 'SPK Hold oleh RAB', 'instruction_id' => $this->currentInstructionId, 'receiver' => 2]);
+
+        if ($this->notes) {
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Hold Instruksi Kerja',
+            'message' => 'Berhasil Hold instruksi kerja',
+        ]);
+
+        return redirect()->route('rab.dashboard');
+    }
+
     public function holdQC()
     {
         $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
