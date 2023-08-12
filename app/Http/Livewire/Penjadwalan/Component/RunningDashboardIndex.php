@@ -482,6 +482,140 @@ class RunningDashboardIndex extends Component
         $this->dispatchBrowserEvent('close-modal-running');
     }
 
+    public function startDuetButton($workStepId)
+    {
+        $updateStart = WorkStep::find($workStepId);
+        $updateNext = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->where('step', $updateStart->step + 1)
+            ->first();
+
+        if ($updateStart) {
+            // Update the record
+            $updateStart->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+                'flag' => 'Duet',
+            ]);
+
+            // Update the record
+            $updateNext->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+            ]);
+
+            // Use the fetched work_step_list_id in the second update
+            $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                'status_id' => 1,
+                'job_id' => $updateStart->work_step_list_id,
+            ]);
+        }
+
+        $dataInstruction = Instruction::find($updateStart->instruction_id);
+        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'child')
+                ->get();
+
+            foreach ($datachild as $key => $item) {
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                    ->where('work_step_list_id', $updateStart->work_step_list_id)
+                    ->where('user_id', $updateStart->user_id)
+                    ->first();
+                if (isset($updateChildWorkStep)) {
+                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                        ->where('work_step_list_id', $updateStart->work_step_list_id)
+                        ->where('user_id', $updateStart->user_id)
+                        ->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                            'flag' => 'Duet',
+                        ]);
+
+                    $updateNextChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                        ->where('work_step_list_id', $updateStart->work_step_list_id)
+                        ->where('user_id', $updateStart->user_id)
+                        ->where('step', $$updateChildWorkStep->step + 1)
+                        ->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+
+                    $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
+                        'status_id' => 1,
+                        'job_id' => $updateStart->work_step_list_id,
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-running');
+    }
+
+    public function pauseButton($workStepId)
+    {
+        $updateStart = WorkStep::find($workStepId);
+
+        if ($updateStart) {
+            // Update the record
+            $updateStart->update([
+                'state_task' => 'Not Running',
+                'status_task' => 'Pause',
+            ]);
+
+            // Use the fetched work_step_list_id in the second update
+            $updateStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                'status_id' => 27,
+                'job_id' => $updateStart->work_step_list_id,
+            ]);
+        }
+
+        $dataInstruction = Instruction::find($updateStart->instruction_id);
+        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'child')
+                ->get();
+
+            foreach ($datachild as $key => $item) {
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                    ->where('work_step_list_id', $updateStart->work_step_list_id)
+                    ->where('user_id', $updateStart->user_id)
+                    ->first();
+                if (isset($updateChildWorkStep)) {
+                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                        ->where('work_step_list_id', $updateStart->work_step_list_id)
+                        ->where('user_id', $updateStart->user_id)
+                        ->update([
+                            'state_task' => 'Not Running',
+                            'status_task' => 'Pause',
+                        ]);
+
+                    $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
+                        'status_id' => 27,
+                        'job_id' => $updateStart->work_step_list_id,
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-running');
+    }
+
     public function startButtonReject($workStepId)
     {
         $updateStart = WorkStep::find($workStepId);

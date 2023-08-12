@@ -110,7 +110,7 @@
                                     @endif
                                     <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
                                 </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26]))
+                                @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
                                 <td>
                                     @if($dataInstruction->task_priority != 'Normal')
                                         <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
@@ -412,12 +412,15 @@
                                                             @if($dataWork['status_task'] === 'Pending Start')
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-left-up"></i></button> --}}
                                                                 <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
+                                                                <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startDuetButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i> Start Duet</button>
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-slash"></i></button> --}}
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-warning" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-right-down"></i></button> --}}
 
                                                             
-                                                            @else
-                                                            -
+                                                            @elseif($dataWork['status_task'] === 'Pending Approved' || $dataWork['status_task'] === 'Process')
+                                                                <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="pauseButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-pause"></i></button>
+                                                            @elseif($dataWork['status_task'] === 'Pause')
+                                                                <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
                                                             @endif
                                                         @else
                                                             <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="rejectButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-arrow-left"></i> Reject</button>

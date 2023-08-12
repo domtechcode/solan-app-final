@@ -41,6 +41,7 @@ class StatusesTableSeeder extends Seeder
             ["id"=>"24","desc_status"=>"Waiting Qc"],
             ["id"=>"25","desc_status"=>"Hold RAB"],
             ["id"=>"26","desc_status"=>"Revisi QTY"],
+            ["id"=>"27","desc_status"=>"Pause"],
         ];
         foreach ($data as $status) {
             Status::create($status);
