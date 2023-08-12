@@ -442,19 +442,24 @@ class FormSettingIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
+        
+
         if ($nextStep->status_task == 'Waiting Revisi') {
-            $this->validate(
-                [
-                    'keterangans.*.rincianPlate.*.name' => 'required',
-                    'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
-                    'fileLayout' => 'required',
-                ],
-                [
-                    'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
-                    'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
-                    'fileLayout.required' => 'File Layout Harus diisi.',
-                ],
-            );
+            if(isset($this->stateWorkStepPlate)){
+                $this->validate(
+                    [
+                        'keterangans.*.rincianPlate.*.name' => 'required',
+                        'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+                        'fileLayout' => 'required',
+                    ],
+                    [
+                        'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
+                        'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+                        'fileLayout.required' => 'File Layout Harus diisi.',
+                    ],
+                );
+            }
+            
 
             if (isset($this->stateWorkStepFoil)) {
                 foreach ($this->keterangans as $index => $keterangan) {
@@ -835,18 +840,20 @@ class FormSettingIndex extends Component
         } elseif ($currentStep->status_task == 'Reject Requirements') {
             //reject requirement
         } else {
-            $this->validate(
-                [
-                    'keterangans.*.rincianPlate.*.name' => 'required',
-                    'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
-                    'fileLayout' => 'required',
-                ],
-                [
-                    'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
-                    'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
-                    'fileLayout.required' => 'File Layout Harus diisi.',
-                ],
-            );
+            if(isset($this->stateWorkStepPlate)){
+                $this->validate(
+                    [
+                        'keterangans.*.rincianPlate.*.name' => 'required',
+                        'keterangans.*.rincianPlate.*.rincianWarna.*.warna' => 'required',
+                        'fileLayout' => 'required',
+                    ],
+                    [
+                        'keterangans.*.rincianPlate.*.name.required' => 'Nama Plate Harus diisi.',
+                        'keterangans.*.rincianPlate.*.rincianWarna.*.warna.required' => 'Warna Harus diisi.',
+                        'fileLayout.required' => 'File Layout Harus diisi.',
+                    ],
+                );
+            }
 
             if (isset($this->stateWorkStepFoil)) {
                 foreach ($this->keterangans as $index => $keterangan) {
