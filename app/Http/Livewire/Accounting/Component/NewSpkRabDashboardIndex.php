@@ -85,7 +85,7 @@ class NewSpkRabDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        $subQuery->where('spk_type', 'production')->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
@@ -143,6 +143,26 @@ class NewSpkRabDashboardIndex extends Component
     {
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
+
+        if($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null){
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
+            
+            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+            ->get();
+        }else{
+            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)->where('group_priority', 'parent')->first();
+            
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
+            ->where('work_step_list_id', 5)
+            ->first();
+
+            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+            ->get();
+        }
+        
+
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList', 'user', 'machine')
             ->get();
@@ -162,16 +182,9 @@ class NewSpkRabDashboardIndex extends Component
             ->where('type_file', 'sample')
             ->get();
 
-        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 5)
-            ->first();
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
-
-        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-            ->where('real', null)
-            ->get();
 
         if (isset($dataInstructionRab)) {
             foreach ($dataInstructionRab as $item) {

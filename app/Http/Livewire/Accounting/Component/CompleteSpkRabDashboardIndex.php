@@ -105,6 +105,25 @@ class CompleteSpkRabDashboardIndex extends Component
     {
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
+
+        if($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null){
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
+            ->where('work_step_list_id', 5)
+            ->first();
+            
+            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+            ->get();
+        }else{
+            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)->where('group_priority', 'parent')->first();
+            
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
+            ->where('work_step_list_id', 5)
+            ->first();
+
+            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+            ->get();
+        }
+
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList', 'user', 'machine')
             ->get();
@@ -127,11 +146,10 @@ class CompleteSpkRabDashboardIndex extends Component
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
+
         if (isset($dataworkStepHitungBahan)) {
             $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
         }
-
-        $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
 
         if (isset($dataInstructionRab)) {
             foreach ($dataInstructionRab as $item) {

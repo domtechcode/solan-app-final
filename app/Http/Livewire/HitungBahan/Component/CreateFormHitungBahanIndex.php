@@ -780,7 +780,7 @@ class CreateFormHitungBahanIndex extends Component
                 'notes.*.tujuan' => 'required',
                 'notes.*.catatan' => 'required',
             ]);
-            
+
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
                     'tujuan' => $input['tujuan'],
@@ -790,7 +790,7 @@ class CreateFormHitungBahanIndex extends Component
                     'user_id' => Auth()->user()->id,
                 ]);
             }
-        }        
+        }
 
         if (isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)) {
             foreach ($this->keterangans as $index => $keterangan) {
