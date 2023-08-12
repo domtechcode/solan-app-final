@@ -775,6 +775,23 @@ class CreateFormHitungBahanIndex extends Component
             ],
         );
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+            
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }        
+
         if (isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)) {
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
@@ -1211,18 +1228,6 @@ class CreateFormHitungBahanIndex extends Component
                         ]);
                     }
                 }
-            }
-        }
-
-        if ($this->notes) {
-            foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                ]);
             }
         }
 

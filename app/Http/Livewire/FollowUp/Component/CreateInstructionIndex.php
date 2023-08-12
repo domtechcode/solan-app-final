@@ -420,7 +420,7 @@ class CreateInstructionIndex extends Component
                 $this->uploadFiles($instruction->id);
             }
 
-            if ($this->notes) {
+            if (isset($this->notes)) {
                 $this->validate([
                     'notes.*.tujuan' => 'required',
                     'notes.*.catatan' => 'required',

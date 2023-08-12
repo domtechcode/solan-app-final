@@ -436,7 +436,7 @@
                                         <div class="input-group control-group" style="padding-top: 5px;">
                                             <select class="form-control form-select"
                                                 data-bs-placeholder="Pilih Tujuan Catatan"
-                                                wire:model="notes.{{ $index }}.tujuan" required>
+                                                wire:model="notes.{{ $index }}.tujuan">
                                                 <option label="Pilih Tujuan Catatan"></option>
                                                 @foreach ($workSteps as $key)
                                                     @if ($key['name'] == 'Hitung Bahan')
@@ -451,11 +451,16 @@
                                                 wire:click="removeNote({{ $index }})"><i
                                                     class="fe fe-x"></i></button>
                                         </div>
+                                        @error('notes.'. $index .'.tujuan') 
+                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                        @enderror
                                         <div class="input-group control-group" style="padding-top: 5px;">
                                             <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                wire:model="notes.{{ $index }}.catatan" required></textarea>
+                                                wire:model="notes.{{ $index }}.catatan"></textarea>
                                         </div>
-
+                                        @error('notes.'. $index .'.catatan') 
+                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

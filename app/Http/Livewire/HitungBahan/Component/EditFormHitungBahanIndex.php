@@ -764,6 +764,23 @@ class EditFormHitungBahanIndex extends Component
             'layoutBahans.*.lebar_sisa_bahan.numeric' => 'Lebar Sisa Bahan harus berupa angka/tidak boleh ada tanda koma(,).',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+            
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->currentInstructionId,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }     
+
         if(isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)){
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
@@ -1213,19 +1230,6 @@ class EditFormHitungBahanIndex extends Component
             }
         }
         
-        if(isset($this->notes)){
-            Catatan::where('instruction_id', $this->currentInstructionId)->delete();
-            foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                ]);
-            }
-        }
-
         $newPlateTotal = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->where('state_plate', 'baru')->sum('jumlah_plate');
         $newScreenTotal = KeteranganScreen::where('instruction_id', $this->currentInstructionId)->where('state_screen', 'baru')->sum('jumlah_screen');
         $newStatePlate = KeteranganPlate::where('instruction_id', $this->currentInstructionId)->pluck('state_plate')->toArray();
