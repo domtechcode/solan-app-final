@@ -17,7 +17,10 @@ class CreateFormFoilsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('instruction_id');
             $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
+            $table->unsignedBigInteger('rincian_plate_id');
+            $table->foreign('rincian_plate_id')->references('id')->on('rincian_plates')->onDelete('cascade');
             $table->string('hasil_akhir')->nullable();
+            $table->string('hasil_akhir_lembar_cetak_plate')->nullable();
             $table->string('nama_matress')->nullable();
             $table->string('lokasi_matress')->nullable();
             $table->string('status_matress')->nullable();

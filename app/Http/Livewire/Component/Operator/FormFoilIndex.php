@@ -31,6 +31,8 @@ class FormFoilIndex extends Component
     public $status_matress;
     public $catatanProsesPengerjaan;
 
+    public $dataHasilAkhir = [];
+
     public $notes = [];
     public $workSteps;
 
@@ -67,6 +69,45 @@ class FormFoilIndex extends Component
             $this->lokasi_matress = '';
             $this->status_matress = '';
         }
+
+        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
+            })
+            ->with('formFoil')
+            ->get();
+
+        if (isset($dataRincianPlateHasilAkhir)) {
+            $this->dataHasilAkhir = [];
+
+            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
+                if (isset($dataHasilAkhirPlate->formFoil) && count($dataHasilAkhirPlate->formFoil) > 0) {
+                    foreach ($dataHasilAkhirPlate['formFoil'] as $item) {
+                        $rincianPlateDataHasilAkhir = [
+                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                            'state' => $dataHasilAkhirPlate->state,
+                            'plate' => $dataHasilAkhirPlate->plate,
+                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                            'waste' => $dataHasilAkhirPlate->waste,
+                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
+                        ];
+
+                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                    }
+                } else {
+                    $rincianPlateDataHasilAkhir = [
+                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                        'state' => $dataHasilAkhirPlate->state,
+                        'plate' => $dataHasilAkhirPlate->plate,
+                        'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                        'waste' => $dataHasilAkhirPlate->waste,
+                        'hasil_akhir_lembar_cetak_plate' => '',
+                    ];
+
+                    $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                }
+            }
+        }
     }
 
     public function render()
@@ -81,6 +122,7 @@ class FormFoilIndex extends Component
             'nama_matress' => 'required',
             'lokasi_matress' => 'required',
             'status_matress' => 'required',
+            'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
         ]);
 
         $instructionData = Instruction::find($this->instructionCurrentId);
@@ -122,13 +164,29 @@ class FormFoilIndex extends Component
             ->first();
 
         $deleteFormFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
-        $createFormFoil = FormFoil::create([
-            'instruction_id' => $this->instructionCurrentId,
-            'hasil_akhir' => $this->hasil_akhir,
-            'nama_matress' => $this->nama_matress,
-            'lokasi_matress' => $this->lokasi_matress,
-            'status_matress' => $this->status_matress,
-        ]);
+
+        // $createFormFoil = FormFoil::create([
+        //     'instruction_id' => $this->instructionCurrentId,
+        //     'hasil_akhir' => $this->hasil_akhir,
+        //     'nama_matress' => $this->nama_matress,
+        //     'lokasi_matress' => $this->lokasi_matress,
+        //     'status_matress' => $this->status_matress,
+        // ]);
+
+        if (isset($this->dataHasilAkhir)) {
+            $deleteCetak = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
+            foreach ($this->dataHasilAkhir as $item) {
+                $createCetak = FormFoil::create([
+                    'instruction_id' => $this->instructionCurrentId,
+                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
+                    'hasil_akhir' => $this->hasil_akhir,
+                    'nama_matress' => $this->nama_matress,
+                    'lokasi_matress' => $this->lokasi_matress,
+                    'status_matress' => $this->status_matress,
+                ]);
+            }
+        }
 
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([

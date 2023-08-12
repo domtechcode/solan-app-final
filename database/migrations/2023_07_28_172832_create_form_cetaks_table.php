@@ -20,6 +20,7 @@ class CreateFormCetaksTable extends Migration
             $table->unsignedBigInteger('rincian_plate_id');
             $table->foreign('rincian_plate_id')->references('id')->on('rincian_plates')->onDelete('cascade');
             $table->string('hasil_akhir_lembar_cetak')->nullable();
+            $table->string('hasil_akhir_lembar_cetak_plate')->nullable();
             $table->timestamps();
         });
     }

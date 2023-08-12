@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\FormFoil;
 use App\Models\FormCetak;
 use App\Models\Keterangan;
 use App\Models\WarnaPlate;
@@ -34,5 +35,10 @@ class RincianPlate extends Model
     public function formCetak()
     {
         return $this->hasMany(FormCetak::class);
+    }
+
+    public function formFoil()
+    {
+        return $this->hasMany(FormFoil::class);
     }
 }

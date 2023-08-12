@@ -36,6 +36,8 @@ class Statistik extends Component
     public $spkCompleteStock;
     public $userId;
 
+    // protected $listeners = ['notifSent' => 'refreshIndex'];
+
     public function getListeners()
     {
         return [

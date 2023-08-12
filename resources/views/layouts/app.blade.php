@@ -104,6 +104,7 @@
     <script src="{{ asset('assets/js/custom-swicher.js') }}"></script>
     
     <script src="{{ asset('js/app.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 
     <!-- Switcher js -->
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
