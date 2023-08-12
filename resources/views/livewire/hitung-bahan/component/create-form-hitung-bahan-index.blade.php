@@ -1970,7 +1970,7 @@
                                                 <div class="input-group control-group" style="padding-top: 5px;">
                                                     <select class="form-control form-select"
                                                         data-bs-placeholder="Pilih Tujuan Catatan"
-                                                        wire:model.defer="notes.{{ $index }}.tujuan"
+                                                        wire:model="notes.{{ $index }}.tujuan"
                                                         required>
                                                         <option label="Pilih Tujuan Catatan"></option>
                                                         @foreach ($workSteps as $key)
@@ -1985,7 +1985,7 @@
                                                 </div>
                                                 <div class="input-group control-group" style="padding-top: 5px;">
                                                     <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                        wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                        wire:model="notes.{{ $index }}.catatan" required></textarea>
                                                 </div>
                                             </div>
                                         </div>

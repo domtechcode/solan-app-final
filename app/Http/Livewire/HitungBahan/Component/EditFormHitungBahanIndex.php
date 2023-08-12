@@ -1213,7 +1213,7 @@ class EditFormHitungBahanIndex extends Component
             }
         }
         
-        if($this->notes){
+        if(isset($this->notes)){
             Catatan::where('instruction_id', $this->currentInstructionId)->delete();
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
