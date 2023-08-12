@@ -34,6 +34,7 @@ class FormPondIndex extends Component
     public $lokasi_matress;
     public $status_matress;
     public $catatanProsesPengerjaan;
+    public $dataHasilAkhir = [];
 
     public $notes = [];
     public $workSteps;
@@ -84,6 +85,45 @@ class FormPondIndex extends Component
             $this->lokasi_matress = '';
             $this->status_matress = '';
         }
+
+        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
+            ->where(function ($query) {
+                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
+            })
+            ->with('formPond')
+            ->get();
+
+        if (isset($dataRincianPlateHasilAkhir)) {
+            $this->dataHasilAkhir = [];
+
+            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
+                if (isset($dataHasilAkhirPlate->formPond) && count($dataHasilAkhirPlate->formPond) > 0) {
+                    foreach ($dataHasilAkhirPlate['formPond'] as $item) {
+                        $rincianPlateDataHasilAkhir = [
+                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                            'state' => $dataHasilAkhirPlate->state,
+                            'plate' => $dataHasilAkhirPlate->plate,
+                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                            'waste' => $dataHasilAkhirPlate->waste,
+                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
+                        ];
+
+                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                    }
+                } else {
+                    $rincianPlateDataHasilAkhir = [
+                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                        'state' => $dataHasilAkhirPlate->state,
+                        'plate' => $dataHasilAkhirPlate->plate,
+                        'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                        'waste' => $dataHasilAkhirPlate->waste,
+                        'hasil_akhir_lembar_cetak_plate' => '',
+                    ];
+
+                    $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                }
+            }
+        }
     }
 
     public function render()
@@ -102,6 +142,7 @@ class FormPondIndex extends Component
                 'nama_matress' => 'required',
                 'lokasi_matress' => 'required',
                 'status_matress' => 'required',
+                'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
             ]);
         } else {
             $this->validate([
@@ -109,6 +150,7 @@ class FormPondIndex extends Component
                 'nama_matress' => 'required',
                 'lokasi_matress' => 'required',
                 'status_matress' => 'required',
+                'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
             ]);
         }
 
@@ -153,17 +195,36 @@ class FormPondIndex extends Component
         $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)
             ->where('jenis_pekerjaan', $currentStep->workStepList->name)
             ->delete();
-        $createFormPond = FormPond::create([
-            'instruction_id' => $this->instructionCurrentId,
-            'jenis_pekerjaan' => $this->jenis_pekerjaan,
-            'hasil_akhir' => $this->hasil_akhir,
-            'nama_pisau' => $this->nama_pisau,
-            'lokasi_pisau' => $this->lokasi_pisau,
-            'status_pisau' => $this->status_pisau,
-            'nama_matress' => $this->nama_matress,
-            'lokasi_matress' => $this->lokasi_matress,
-            'status_matress' => $this->status_matress,
-        ]);
+        // $createFormPond = FormPond::create([
+        //     'instruction_id' => $this->instructionCurrentId,
+        //     'jenis_pekerjaan' => $this->jenis_pekerjaan,
+        //     'hasil_akhir' => $this->hasil_akhir,
+        //     'nama_pisau' => $this->nama_pisau,
+        //     'lokasi_pisau' => $this->lokasi_pisau,
+        //     'status_pisau' => $this->status_pisau,
+        //     'nama_matress' => $this->nama_matress,
+        //     'lokasi_matress' => $this->lokasi_matress,
+        //     'status_matress' => $this->status_matress,
+        // ]);
+
+        if (isset($this->dataHasilAkhir)) {
+            $deleteCetak = FormPond::where('instruction_id', $this->instructionCurrentId)->delete();
+            foreach ($this->dataHasilAkhir as $item) {
+                $createCetak = FormPond::create([
+                    'instruction_id' => $this->instructionCurrentId,
+                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
+                    'jenis_pekerjaan' => $this->jenis_pekerjaan,
+                    'hasil_akhir' => $this->hasil_akhir,
+                    'nama_pisau' => $this->nama_pisau,
+                    'lokasi_pisau' => $this->lokasi_pisau,
+                    'status_pisau' => $this->status_pisau,
+                    'nama_matress' => $this->nama_matress,
+                    'lokasi_matress' => $this->lokasi_matress,
+                    'status_matress' => $this->status_matress,
+                ]);
+            }
+        }
 
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
