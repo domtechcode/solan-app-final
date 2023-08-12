@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Stock\Index\IndexDashboard')->name('stock.dashboard');
 
-        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\FollowUp\Index\IndexPengajuanBarangPersonal')->name('followUp.pengajuanBarangPersonal');
+        Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Stock\Index\IndexPengajuanBarangPersonal')->name('stock.pengajuanBarangPersonal');
     });
 
     Route::group(['prefix' => 'hitungbahan', 'middleware' => ['role:Hitung Bahan']], function () {
