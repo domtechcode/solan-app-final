@@ -42,53 +42,49 @@ class Statistik extends Component
     {
         return [
             "echo:notif.{$this->userId},NotificationSent" => 'refreshIndex',
+            "echo:notif.{$this->userId},NotificationSent" => '$refresh',
         ];
     }
 
     public function refreshIndex($data)
     {
-            $instruction_id = $data['instruction_id'];
-            $user_id = $data['user_id'];
-            $message = $data['message'];
-            $conversation_id = $data['conversation_id'];
-            $receiver_id = $data['receiver_id'];
-            if($instruction_id){
-                $instructionData = Instruction::find($instruction_id);
-        
-                $this->emit('flashMessage', [
-                            'type' => $message,
-                            'title' => $conversation_id,
-                            'message' => 'SPK '.$instructionData->spk_number,
-                    ]);
-            }else{
-                $this->emit('flashMessage', [
-                        'type' => 'info',
-                        'title' => 'Data Baru',
-                        'message' => 'Data Baru SPK',
-                ]);
-            }
+        $instruction_id = $data['instruction_id'];
+        $user_id = $data['user_id'];
+        $message = $data['message'];
+        $conversation_id = $data['conversation_id'];
+        $receiver_id = $data['receiver_id'];
+        if ($instruction_id != null) {
+            $instructionData = Instruction::find($instruction_id);
 
-            // $this->render();
+            $this->emit('flashMessage', [
+                'type' => $message,
+                'title' => $conversation_id,
+                'message' => 'SPK ' . $instructionData->spk_number,
+            ]);
+        } else {
+            $this->emit('flashMessage', [
+                'type' => 'info',
+                'title' => $conversation_id,
+                'message' => $conversation_id,
+            ]);
+        }
     }
-   
+
     public function render()
     {
         $this->userId = Auth()->user()->id;
         $this->totalOrder = Instruction::count();
         $this->prosesOrder = Instruction::whereHas('workstep', function ($query) {
-                            $query->where('spk_state', '!=', 'Training Program')
-                                  ->where('status_id', 2);
-                        })->count();
+            $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
+        })->count();
 
         $this->pendingOrder = Instruction::whereHas('workstep', function ($query) {
-                            $query->where('spk_state', '!=', 'Training Program')
-                            ->where('status_id', 1);
-                        })->count();
+            $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
+        })->count();
 
         $this->completeOrder = Instruction::whereHas('workstep', function ($query) {
-                                    $query->where('work_step_list_id', 1)
-                                    ->where('spk_status', 'Selesai');
-                                })->count();
+            $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+        })->count();
 
         $this->spkLayout = Instruction::where('type_order', 'layout')->count();
         $this->spkSample = Instruction::where('type_order', 'sample')->count();
@@ -96,63 +92,75 @@ class Statistik extends Component
         $this->spkStock = Instruction::where('type_order', 'stock')->count();
 
         $this->spkProsesLayout = Instruction::where('type_order', 'layout')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
+            })
+            ->count();
 
         $this->spkProsesSample = Instruction::where('type_order', 'sample')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
+            })
+            ->count();
 
         $this->spkProsesProduction = Instruction::where('type_order', 'production')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
+            })
+            ->count();
 
         $this->spkProsesStock = Instruction::where('type_order', 'stock')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
+            })
+            ->count();
 
         $this->spkPendingLayout = Instruction::where('type_order', 'layout')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
+            })
+            ->count();
 
         $this->spkPendingSample = Instruction::where('type_order', 'sample')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
+            })
+            ->count();
 
         $this->spkPendingProduction = Instruction::where('type_order', 'production')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
+            })
+            ->count();
 
         $this->spkPendingStock = Instruction::where('type_order', 'stock')
-                                ->whereHas('workstep', function ($query) {
-                                    $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
-                                })->count();
+            ->whereHas('workstep', function ($query) {
+                $query->where('spk_state', '!=', 'Training Program')->where('status_id', 1);
+            })
+            ->count();
 
-        $this->spkCompleteLayout = Instruction::where('type_order', 'layout')->whereHas('workstep', function ($query) {
-                                        $query->where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Selesai');
-                                    })->count();
+        $this->spkCompleteLayout = Instruction::where('type_order', 'layout')
+            ->whereHas('workstep', function ($query) {
+                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+            })
+            ->count();
 
-        $this->spkCompleteSample = Instruction::where('type_order', 'sample')->whereHas('workstep', function ($query) {
-                                        $query->where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Selesai');
-                                    })->count();
+        $this->spkCompleteSample = Instruction::where('type_order', 'sample')
+            ->whereHas('workstep', function ($query) {
+                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+            })
+            ->count();
 
-        $this->spkCompleteProduction = Instruction::where('type_order', 'production')->whereHas('workstep', function ($query) {
-                                        $query->where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Selesai');
-                                    })->count();
-        $this->spkCompleteStock = Instruction::where('type_order', 'stock')->whereHas('workstep', function ($query) {
-                                        $query->where('work_step_list_id', 1)
-                                        ->where('spk_status', 'Selesai');
-                                    })->count();
+        $this->spkCompleteProduction = Instruction::where('type_order', 'production')
+            ->whereHas('workstep', function ($query) {
+                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+            })
+            ->count();
+        $this->spkCompleteStock = Instruction::where('type_order', 'stock')
+            ->whereHas('workstep', function ($query) {
+                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+            })
+            ->count();
 
         return view('livewire.component.statistik');
     }

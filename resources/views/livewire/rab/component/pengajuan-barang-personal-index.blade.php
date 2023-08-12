@@ -182,7 +182,7 @@
                                 <label class="form-label">Total Harga Barang</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="total_harga" id="total_harga" class="form-control" autocomplete="off" placeholder="Total Harga Barang" readonly>
-                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHarga()">Cek Total</button>
+                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHarga()" disabled>Cek Total</button>
                                 </div>
                                 @error('total_harga') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
@@ -191,16 +191,9 @@
                 </div>
                 <div class="modal-footer">
                     @if(isset($dataBarang))
-                        @if($dataBarang->status_id == 10)
-                        <button class="btn btn-info" wire:key="ajukanRabBarang" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                        <button class="btn btn-success" wire:key="approveBarang" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
-                        <button class="btn btn-primary" wire:key="rejectBarang" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
-                        @else
-                        <button class="btn btn-success" wire:key="approveBarang" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
-                        <button class="btn btn-primary" wire:key="rejectBarang" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
-                        @endif
+                    <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})">Approve</button>
+                    <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})">Reject</button>
                     @endif
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -237,6 +230,5 @@
             $('#modalPengajuanBarangPersonal').modal('show');
             addCurrencyListener();
         });
-
     </script>
 @endpush

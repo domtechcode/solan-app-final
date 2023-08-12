@@ -64,9 +64,9 @@ class PengajuanBarangPersonalIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Personal', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Personal', 'instruction_id' => null]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
     }
 

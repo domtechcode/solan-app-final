@@ -96,7 +96,7 @@ class PengajuanBarangPersonalIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-
+        event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
     }
@@ -131,9 +131,10 @@ class PengajuanBarangPersonalIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
-
-        $this->reset();
+        event(new IndexRenderEvent('refresh'));
+        
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
     public function ajukanRabBarang($PengajuanBarangSelectedRabId)
@@ -166,10 +167,11 @@ class PengajuanBarangPersonalIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
-
+        event(new IndexRenderEvent('refresh'));
+        
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
     public function beliBarang($PengajuanBarangSelectedBeliId)
@@ -198,9 +200,9 @@ class PengajuanBarangPersonalIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
     public function completeBarang($PengajuanBarangSelectedCompleteId)
@@ -229,9 +231,9 @@ class PengajuanBarangPersonalIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
 
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
     }
 
     public function cekTotalHarga()
