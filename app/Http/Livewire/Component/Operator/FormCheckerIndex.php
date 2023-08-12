@@ -261,9 +261,6 @@ class FormCheckerIndex extends Component
         } elseif ($currentStep->status_task == 'Reject Requirements') {
             //reject requirement
         } else {
-            //$this->validate([
-            // 'fileChecker' => 'required',
-            //]);
             if (isset($this->fileChecker)) {
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)
                     ->where('type_file', 'Approved Checker')
@@ -321,118 +318,192 @@ class FormCheckerIndex extends Component
             $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
             event(new IndexRenderEvent('refresh'));
         } else {
-            // Cek apakah $currentStep ada dan step berikutnya ada
-            if ($currentStep) {
-                $currentStep->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                ]);
-
-                // Cek apakah step berikutnya ada sebelum melanjutkan
-                if ($nextStep) {
-                    $nextStep->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
+            if ($currentStep->flag == 'Split' || $currentStep->flag == 'Duet') {
+                if ($currentStep) {
+                    $currentStep->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
                     ]);
 
-                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'job_id' => $nextStep->work_step_list_id,
-                        'status_id' => 1,
-                    ]);
+                    // Cek apakah step berikutnya ada sebelum melanjutkan
+                    if ($nextStep) {
+                        //group
+                        $dataInstruction = Instruction::find($this->instructionCurrentId);
+                        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                                ->where('group_priority', 'child')
+                                ->get();
 
-                    //group
-                    $dataInstruction = Instruction::find($this->instructionCurrentId);
-                    if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
-                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)
-                            ->where('group_priority', 'child')
-                            ->get();
-
-                        foreach ($datachild as $key => $item) {
-                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
-                                ->where('work_step_list_id', $currentStep->work_step_list_id)
-                                ->where('user_id', $currentStep->user_id)
-                                ->first();
-
-                            if (isset($updateChildWorkStep)) {
-                                $updateChildWorkStep->update([
-                                    'state_task' => 'Complete',
-                                    'status_task' => 'Complete',
-                                ]);
-
-                                $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
-                                    ->where('step', $updateChildWorkStep->step + 1)
+                            foreach ($datachild as $key => $item) {
+                                $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                    ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                    ->where('user_id', $currentStep->user_id)
                                     ->first();
 
-                                $updateChildNextWorkStep->update([
-                                    'state_task' => 'Running',
-                                    'status_task' => 'Pending Approved',
-                                ]);
+                                if (isset($updateChildWorkStep)) {
+                                    $updateChildWorkStep->update([
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                        'selesai' => Carbon::now()->toDateTimeString(),
+                                    ]);
+                                }
+                            }
+                        }
 
-                                $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
-                                    'job_id' => $updateChildNextWorkStep->work_step_list_id,
-                                    'status_id' => 1,
-                                ]);
+                        $userDestination = User::where('role', 'Penjadwalan')->get();
+                        foreach ($userDestination as $dataUser) {
+                            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                        }
+                        event(new IndexRenderEvent('refresh'));
+                    } else {
+                        $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'spk_status' => 'Selesai',
+                            'state_task' => 'Complete',
+                            'status_task' => 'Complete',
+                            'selesai' => Carbon::now()->toDateTimeString(),
+                        ]);
+
+                        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'job_id' => $currentStep->work_step_list_id,
+                            'status_id' => 7,
+                        ]);
+
+                        //group
+                        $dataInstruction = Instruction::find($this->instructionCurrentId);
+                        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                                ->where('group_priority', 'child')
+                                ->get();
+
+                            foreach ($datachild as $key => $item) {
+                                $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                    ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                    ->where('user_id', $currentStep->user_id)
+                                    ->first();
+
+                                if (isset($updateChildWorkStep)) {
+                                    $updateChildWorkStep->update([
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                    ]);
+
+                                    $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
+                                        'spk_status' => 'Selesai',
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                        'job_id' => $currentStep->work_step_list_id,
+                                        'status_id' => 7,
+                                    ]);
+                                }
                             }
                         }
                     }
-
-                    $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach ($userDestination as $dataUser) {
-                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
-                    }
-
-                    $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId]);
-                    event(new IndexRenderEvent('refresh'));
-                } else {
-                    $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'spk_status' => 'Selesai',
+                }
+            } else {
+                if ($currentStep) {
+                    $currentStep->update([
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
                         'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
-                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'job_id' => $currentStep->work_step_list_id,
-                        'status_id' => 7,
-                    ]);
+                    // Cek apakah step berikutnya ada sebelum melanjutkan
+                    if ($nextStep) {
+                        $nextStep->update([
+                            'state_task' => 'Not Running',
+                            'status_task' => 'Pending Start',
+                        ]);
 
-                    //group
-                    $dataInstruction = Instruction::find($this->instructionCurrentId);
-                    if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
-                        $datachild = Instruction::where('group_id', $dataInstruction->group_id)
-                            ->where('group_priority', 'child')
-                            ->get();
+                        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'job_id' => $currentStep->work_step_list_id,
+                            'status_id' => 7,
+                        ]);
 
-                        foreach ($datachild as $key => $item) {
-                            $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
-                                ->where('work_step_list_id', $currentStep->work_step_list_id)
-                                ->where('user_id', $currentStep->user_id)
-                                ->first();
+                        //group
+                        $dataInstruction = Instruction::find($this->instructionCurrentId);
+                        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                                ->where('group_priority', 'child')
+                                ->get();
 
-                            if (isset($updateChildWorkStep)) {
-                                $updateChildWorkStep->update([
-                                    'state_task' => 'Complete',
-                                    'status_task' => 'Complete',
-                                    'selesai' => Carbon::now()->toDateTimeString(),
-                                ]);
+                            foreach ($datachild as $key => $item) {
+                                $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                    ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                    ->where('user_id', $currentStep->user_id)
+                                    ->first();
 
-                                $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
-                                    'spk_status' => 'Selesai',
-                                    'state_task' => 'Complete',
-                                    'status_task' => 'Complete',
-                                    'job_id' => $currentStep->work_step_list_id,
-                                    'status_id' => 7,
-                                ]);
+                                if (isset($updateChildWorkStep)) {
+                                    $updateChildWorkStep->update([
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                        'selesai' => Carbon::now()->toDateTimeString(),
+                                    ]);
+
+                                    $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                        ->where('step', $updateChildWorkStep->step + 1)
+                                        ->first();
+
+                                    $updateChildNextWorkStep->update([
+                                        'state_task' => 'Not Running',
+                                        'status_task' => 'Pending Start',
+                                    ]);
+
+                                    $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
+                                        'job_id' => $updateChildNextWorkStep->work_step_list_id,
+                                        'status_id' => 7,
+                                    ]);
+                                }
+                            }
+                        }
+
+                        $userDestination = User::where('role', 'Penjadwalan')->get();
+                        foreach ($userDestination as $dataUser) {
+                            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                        }
+                        event(new IndexRenderEvent('refresh'));
+                    } else {
+                        $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'spk_status' => 'Selesai',
+                            'state_task' => 'Complete',
+                            'status_task' => 'Complete',
+                            'selesai' => Carbon::now()->toDateTimeString(),
+                        ]);
+
+                        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'job_id' => $currentStep->work_step_list_id,
+                            'status_id' => 7,
+                        ]);
+
+                        //group
+                        $dataInstruction = Instruction::find($this->instructionCurrentId);
+                        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+                            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                                ->where('group_priority', 'child')
+                                ->get();
+
+                            foreach ($datachild as $key => $item) {
+                                $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
+                                    ->where('work_step_list_id', $currentStep->work_step_list_id)
+                                    ->where('user_id', $currentStep->user_id)
+                                    ->first();
+
+                                if (isset($updateChildWorkStep)) {
+                                    $updateChildWorkStep->update([
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                    ]);
+
+                                    $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
+                                        'spk_status' => 'Selesai',
+                                        'state_task' => 'Complete',
+                                        'status_task' => 'Complete',
+                                        'job_id' => $currentStep->work_step_list_id,
+                                        'status_id' => 7,
+                                    ]);
+                                }
                             }
                         }
                     }
-
-                    $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach ($userDestination as $dataUser) {
-                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh Checker', 'instruction_id' => $this->instructionCurrentId]);
-                    }
-
-                    event(new IndexRenderEvent('refresh'));
                 }
             }
         }
