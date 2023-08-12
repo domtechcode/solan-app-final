@@ -35,7 +35,7 @@ class IndexWorkStep extends Component
         foreach($userDestination as $dataUser){
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' .$workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
         }
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function messageSent($arguments)
@@ -45,7 +45,7 @@ class IndexWorkStep extends Component
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function render()

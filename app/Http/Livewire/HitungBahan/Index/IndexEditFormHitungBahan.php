@@ -41,7 +41,7 @@ class IndexEditFormHitungBahan extends Component
             ]);
         }
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function render()

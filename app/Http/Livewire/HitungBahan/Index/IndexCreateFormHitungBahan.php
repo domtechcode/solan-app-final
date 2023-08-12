@@ -41,7 +41,7 @@ class IndexCreateFormHitungBahan extends Component
             ]);
         }
 
-        broadcast(new IndexRenderEvent('refresh'));
+        event(new IndexRenderEvent('refresh'));
     }
 
     public function render()
@@ -61,6 +61,6 @@ class IndexCreateFormHitungBahan extends Component
         $receiverUser = $arguments['receiverUser'];
         $instruction_id = $arguments['instruction_id'];
 
-        broadcast(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
