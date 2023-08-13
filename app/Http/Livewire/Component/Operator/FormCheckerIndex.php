@@ -210,13 +210,18 @@ class FormCheckerIndex extends Component
             ]);
         }
 
-        if ($this->notes) {
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
             foreach ($this->notes as $input) {
                 $catatan = Catatan::create([
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
-                    'instruction_id' => $this->instructionCurrentId,
+                    'instruction_id' => $this->currentInstructionId,
                     'user_id' => Auth()->user()->id,
                 ]);
             }
@@ -241,10 +246,11 @@ class FormCheckerIndex extends Component
 
                 foreach ($this->fileChecker as $file) {
                     $folder = 'public/' . $instructionData->spk_number . '/checker';
+                    $uniqueId = uniqid();
 
                     $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                     $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
-                    $fileName = $instructionData->spk_number . '-file-approved-checker-' . $noApprovedChecker . '.' . $extension;
+                    $fileName = $uniqueId . '-' . $instructionData->spk_number . '-file-approved-checker-' . $noApprovedChecker . '.' . $extension;
 
                     Storage::putFileAs($folder, $file, $fileName);
                     $noApprovedChecker++;
@@ -258,8 +264,6 @@ class FormCheckerIndex extends Component
                     ]);
                 }
             }
-        } elseif ($currentStep->status_task == 'Reject Requirements') {
-            //reject requirement
         } else {
             if (isset($this->fileChecker)) {
                 $deleteFileChecker = Files::where('instruction_id', $this->instructionCurrentId)

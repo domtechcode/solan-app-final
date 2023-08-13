@@ -37,18 +37,19 @@
                                     <div class="form-group">
                                         <label class="form-label mb-3">Catatan</label>
                                         <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
-                                                class="fe fe-plus"></i>Tambah Catatan</button>
+                                                class="fe fe-plus"></i>Tambah
+                                            Catatan</button>
                                     </div>
 
-                                    @forelse ($notes as $index => $note)
+                                    @foreach ($notes as $index => $note)
                                         <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
                                             <div class="expanel expanel-default">
                                                 <div class="expanel-body">
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                    <div class="input-group control-group"
+                                                        style="padding-top: 5px;">
                                                         <select class="form-control form-select"
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan"
-                                                            required>
+                                                            wire:model="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             @foreach ($workSteps as $key)
                                                                 <option value="{{ $key['work_step_list_id'] }}">
@@ -60,16 +61,25 @@
                                                             wire:click="removeNote({{ $index }})"><i
                                                                 class="fe fe-x"></i></button>
                                                     </div>
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                    @error('notes.' . $index . '.tujuan')
+                                                        <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                        </p>
+                                                    @enderror
+
+                                                    <div class="input-group control-group"
+                                                        style="padding-top: 5px;">
                                                         <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                            wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                            wire:model="notes.{{ $index }}.catatan" required></textarea>
                                                     </div>
+                                                    @error('notes.' . $index . '.catatan')
+                                                        <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                        </p>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
-                                    @empty
+                                    @endforeach
 
-                                    @endforelse
                                 </div>
                             </div>
                         </div>

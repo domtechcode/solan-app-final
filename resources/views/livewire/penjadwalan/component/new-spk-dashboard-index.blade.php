@@ -273,9 +273,11 @@
 
                     <div class="row mb-3">
                         <div class="col d-flex justify-content-center">
-                            @if(isset($workStepHitungBahan))
-                                <div class="btn-list">  
-                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                            @if (isset($workStepHitungBahan))
+                                <div class="btn-list">
+                                    <a target="blank" class="btn btn-icon btn-sm btn-dark"
+                                        href="{{ route('jadwal.indexWorkStep', ['instructionId' => $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i
+                                            class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
                                 </div>
                             @endif
                         </div>
@@ -285,8 +287,7 @@
                     <div class="row mb-3">
                         <div class="col-xl-12">
                             <div class="table-responsive">
-                                <table
-                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
                                             <th>LANGKAH KERJA</th>
@@ -315,8 +316,7 @@
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Langkah Kerja"
                                                                             wire:model.defer="workSteps.{{ $key }}.work_step_list_id"
-                                                                            id="work_step_list_id-{{ $key }}"
-                                                                            required>
+                                                                            id="work_step_list_id-{{ $key }}">
                                                                             <option label="Select Langkah Kerja">
                                                                             </option>
                                                                             @forelse ($dataWorkSteps as $dataWorkStep)
@@ -325,12 +325,15 @@
                                                                                     {{ $dataWorkStep->name }}
                                                                                 </option>
                                                                             @empty
-                                                                                <option
-                                                                                    label="Select Langkah Kerja">
+                                                                                <option label="Select Langkah Kerja">
                                                                                 </option>
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
+                                                                    @error('workSteps.' . $key . '.work_step_list_id')
+                                                                        <p class="mt-2 text-sm text-danger">
+                                                                            {{ $message }}</p>
+                                                                    @enderror
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -340,11 +343,10 @@
                                                             <input type="date"
                                                                 wire:model="workSteps.{{ $key }}.target_date"
                                                                 id="workSteps.{{ $key }}.target_date"
-                                                                class="form-control" required>
-                                                            @error('workSteps.{{ $key }}.target_date')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                                class="form-control">
+                                                            @error('workSteps.' . $key . '.target_date')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -353,11 +355,10 @@
                                                             <input type="date"
                                                                 wire:model="workSteps.{{ $key }}.schedule_date"
                                                                 id="workSteps.{{ $key }}.schedule_date"
-                                                                class="form-control" required>
-                                                            @error('workSteps.{{ $key }}.schedule_date')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                                class="form-control">
+                                                            @error('workSteps.' . $key . '.schedule_date')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -368,10 +369,9 @@
                                                                 id="workSteps.{{ $key }}.target_time"
                                                                 placeholder="Target Jam" class="form-control"
                                                                 required>
-                                                            @error('workSteps.{{ $key }}.target_time')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                            @error('workSteps.' . $key . '.target_time')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -387,12 +387,10 @@
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select User"
                                                                             wire:model.defer="workSteps.{{ $key }}.user_id"
-                                                                            id="user_id-{{ $key }}"
-                                                                            required>
+                                                                            id="user_id-{{ $key }}">
                                                                             <option label="Select User"></option>
                                                                             @forelse ($dataUsers as $dataUser)
-                                                                                <option
-                                                                                    value="{{ $dataUser->id }}">
+                                                                                <option value="{{ $dataUser->id }}">
                                                                                     {{ $dataUser->name }}</option>
                                                                             @empty
                                                                                 <option label="Select User">
@@ -400,6 +398,10 @@
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
+                                                                    @error('workSteps.' . $key . '.user_id')
+                                                                        <p class="mt-2 text-sm text-danger">
+                                                                            {{ $message }}</p>
+                                                                    @enderror
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -410,8 +412,8 @@
                                                                 <div wire:ignore>
                                                                     <div class="form-group">
                                                                         <select style="width: 100%;"
-                                                                            class="form-control machine_id"
-                                                                            data-clear data-pharaonic="select2"
+                                                                            class="form-control machine_id" data-clear
+                                                                            data-pharaonic="select2"
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Machine"
@@ -430,6 +432,10 @@
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
+                                                                    @error('workSteps.' . $key . '.machine_id')
+                                                                        <p class="mt-2 text-sm text-danger">
+                                                                            {{ $message }}</p>
+                                                                    @enderror
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -467,8 +473,7 @@
                     <div class="row mb-3">
                         <div class="col-xl-12">
                             <div class="table-responsive">
-                                <table
-                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
                                             <th>LANGKAH KERJA</th>
@@ -489,10 +494,9 @@
                                                             <input type="text"
                                                                 wire:model.defer="pengajuanBarang.{{ $key }}.work_step_list"
                                                                 class="form-control" readonly>
-                                                            @error('pengajuanBarang.{{ $key }}.work_step_list')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                            @error('pengajuanBarang.' . $key . '.work_step_list')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -500,12 +504,10 @@
                                                         <div class="form-group">
                                                             <input type="text"
                                                                 wire:model="pengajuanBarang.{{ $key }}.nama_barang"
-                                                                placeholder="Nama Barang" class="form-control"
-                                                                required>
-                                                            @error('pengajuanBarang.{{ $key }}.nama_barang')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                                placeholder="Nama Barang" class="form-control">
+                                                            @error('pengajuanBarang.' . $key . '.nama_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -514,12 +516,10 @@
                                                             <input type="date" autocomplete="off"
                                                                 wire:model="pengajuanBarang.{{ $key }}.tgl_target_datang"
                                                                 id="pengajuanBarang.{{ $key }}.tgl_target_datang"
-                                                                placeholder="Target Tersedia" class="form-control"
-                                                                required>
-                                                            @error('pengajuanBarang.{{ $key }}.tgl_target_datang')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                                placeholder="Target Tersedia" class="form-control">
+                                                            @error('pengajuanBarang.' . $key . '.tgl_target_datang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -527,11 +527,10 @@
                                                         <div class="form-group">
                                                             <input type="text"
                                                                 wire:model="pengajuanBarang.{{ $key }}.qty_barang"
-                                                                class="form-control" placeholder="QTY" required>
-                                                            @error('pengajuanBarang.{{ $key }}.qty_barang')
-                                                                <div><span
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                </div>
+                                                                class="form-control" placeholder="QTY">
+                                                            @error('pengajuanBarang.' . $key . '.qty_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
                                                             @enderror
                                                         </div>
                                                     </td>
@@ -540,9 +539,9 @@
                                                             <textarea class="form-control" placeholder="Keterangan" rows="1"
                                                                 wire:model="pengajuanBarang.{{ $key }}.keterangan"></textarea>
                                                         </div>
-                                                        @error('pengajuanBarang.{{ $key }}.keterangan')
-                                                            <div><span class="text-danger">{{ $message }}</span>
-                                                            </div>
+                                                        @error('pengajuanBarang.' . $key . '.keterangan')
+                                                            <p class="mt-2 text-sm text-danger">
+                                                                {{ $message }}</p>
                                                         @enderror
                                                     </td>
                                                     <td>
@@ -689,8 +688,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="rejectSpk">Reject <i
-                        class="fe fe-arrow-right"></i> Follow Up</button>
+                    <button class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i>
+                        Follow Up</button>
                     <button class="btn btn-success" wire:click="save">Submit</button>
                 </div>
             </div>

@@ -1970,7 +1970,7 @@
                                                 <div class="input-group control-group" style="padding-top: 5px;">
                                                     <select class="form-control form-select"
                                                         data-bs-placeholder="Pilih Tujuan Catatan"
-                                                        wire:model="notes.{{ $index }}.tujuan" required>
+                                                        wire:model="notes.{{ $index }}.tujuan">
                                                         <option label="Pilih Tujuan Catatan"></option>
                                                         @foreach ($workSteps as $key)
                                                             <option value="{{ $key['work_step_list_id'] }}">
