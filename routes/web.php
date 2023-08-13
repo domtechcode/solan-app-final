@@ -58,6 +58,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/detail-database-hitung-bahan/{instructionId}/{workStepId}', 'App\Http\Livewire\HitungBahan\Index\IndexDetailDatabaseHitungBahan')->name('hitungBahan.detailDatabaseHitungBahan');
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\HitungBahan\Index\IndexPengajuanBarangPersonal')->name('hitungBahan.pengajuanBarangPersonal');
+        Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\HitungBahan\Index\IndexPengajuanBarangSpk')->name('hitungBahan.pengajuanBarangSpk');
     });
 
     Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
@@ -74,6 +75,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Penjadwalan\Index\IndexWorkStep')->name('jadwal.indexWorkStep');
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Penjadwalan\Index\IndexPengajuanBarangPersonal')->name('jadwal.pengajuanBarangPersonal');
+        Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\Penjadwalan\Index\IndexPengajuanBarangSpk')->name('jadwal.pengajuanBarangSpk');
     });
 
     Route::group(['prefix' => 'operator', 'middleware' => ['role:Operator']], function () {
@@ -81,6 +83,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Operator\Index\IndexWorkStep')->name('indexWorkStep');
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Operator\Index\IndexPengajuanBarangPersonal')->name('operator.pengajuanBarangPersonal');
+        Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\Operator\Index\IndexPengajuanBarangSpk')->name('operator.pengajuanBarangSpk');
     });
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['role:Accounting']], function () {

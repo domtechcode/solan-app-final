@@ -26,7 +26,7 @@ class GroupIndex extends Component
         $this->inputsNewGroup[] = [
             'type' => $type,
             'spk_number' => $spk_number,
-            'id' => $id
+            'id' => $id,
         ];
     }
 
@@ -40,7 +40,7 @@ class GroupIndex extends Component
     {
         $this->inputsCurrentGroup[] = [
             'spk_number' => $spk_number,
-            'id' => $id
+            'id' => $id,
         ];
     }
 
@@ -54,11 +54,11 @@ class GroupIndex extends Component
     {
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
-        
+
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
-            'target'    => '#groupCurrentIdSelected'
+            'target' => '#groupCurrentIdSelected',
         ]);
     }
 
@@ -66,10 +66,10 @@ class GroupIndex extends Component
     {
         $this->search = request()->query('search', $this->search);
         $sortedUniqueGroupIds = Instruction::whereNotNull('group_id')
-                                ->select('group_id')
-                                ->distinct()
-                                ->orderBy('group_id', 'asc')
-                                ->pluck('group_id');
+            ->select('group_id')
+            ->distinct()
+            ->orderBy('group_id', 'asc')
+            ->pluck('group_id');
 
         $incrementedGroupIds = [];
 
@@ -81,31 +81,29 @@ class GroupIndex extends Component
 
         $this->select2();
     }
-    
+
     public function render()
     {
         $data = Instruction::where(function ($query) {
-                    $query->whereNull('group_id')
-                        ->whereNull('group_priority');
-                })
-                ->where(function ($query) {
-                    $searchTerms = '%' . $this->search . '%';
-                    $query->where('spk_number', 'like', $searchTerms)
-                        ->orWhere('spk_type', 'like', $searchTerms)
-                        ->orWhere('customer_name', 'like', $searchTerms)
-                        ->orWhere('order_name', 'like', $searchTerms)
-                        ->orWhere('customer_number', 'like', $searchTerms)
-                        ->orWhere('code_style', 'like', $searchTerms)
-                        ->orWhere('shipping_date', 'like', $searchTerms);
-                })
-                ->orderBy('shipping_date', 'asc')
-                ->with(['workStep', 'workStep.status', 'workStep.job'])
-                ->paginate($this->paginate);    
+            $query->whereNull('group_id')->whereNull('group_priority');
+        })
+            ->where(function ($query) {
+                $searchTerms = '%' . $this->search . '%';
+                $query
+                    ->where('spk_number', 'like', $searchTerms)
+                    ->orWhere('spk_type', 'like', $searchTerms)
+                    ->orWhere('customer_name', 'like', $searchTerms)
+                    ->orWhere('order_name', 'like', $searchTerms)
+                    ->orWhere('customer_number', 'like', $searchTerms)
+                    ->orWhere('code_style', 'like', $searchTerms)
+                    ->orWhere('shipping_date', 'like', $searchTerms);
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['workStep', 'workStep.status', 'workStep.job'])
+            ->paginate($this->paginate);
 
-        return view('livewire.component.group-index', ['instructions' => $data ])
-        ->extends('layouts.app');
+        return view('livewire.component.group-index', ['instructions' => $data])->extends('layouts.app');
     }
-
 
     public function newGroup()
     {
@@ -114,9 +112,11 @@ class GroupIndex extends Component
                 'required', // The "type" field must be present
                 function ($attribute, $value) {
                     // Count the number of "parent" types in the inputsNewGroup array
-                    $parentCount = count(array_filter($this->inputsNewGroup, function ($item) {
-                        return $item['type'] === 'parent';
-                    }));
+                    $parentCount = count(
+                        array_filter($this->inputsNewGroup, function ($item) {
+                            return $item['type'] === 'parent';
+                        }),
+                    );
 
                     if ($value === 'parent' && $parentCount > 1) {
                         $this->emit('flashMessage', [
@@ -134,9 +134,9 @@ class GroupIndex extends Component
         ]);
 
         $sortedGroupIds = Instruction::whereNotNull('group_id')
-                        ->pluck('group_id')
-                        ->sort()
-                        ->values();
+            ->pluck('group_id')
+            ->sort()
+            ->values();
 
         $lastGroupId = $sortedGroupIds->last();
 
@@ -147,11 +147,11 @@ class GroupIndex extends Component
                 'group_id' => $this->groupNewId,
                 'group_priority' => $dataNewGroup['type'],
             ]);
-    
+
             if ($dataNewGroup['type'] === 'parent') {
                 $parentWorkStep = WorkStep::where('instruction_id', $dataNewGroup['id'])->get();
             }
-    
+
             if ($dataNewGroup['type'] === 'child') {
                 $deleteChildWorkSteps = WorkStep::where('instruction_id', $dataNewGroup['id'])->delete();
                 if (isset($parentWorkStep) && !empty($parentWorkStep)) {
@@ -172,7 +172,8 @@ class GroupIndex extends Component
             'message' => 'Group baru berhasil ditambahkan',
         ]);
 
-        return redirect()->back();
+        $previous = URL::previous();
+        return redirect($previous);
     }
 
     public function currentGroup()
@@ -188,21 +189,22 @@ class GroupIndex extends Component
             ],
         ]);
 
-        if(empty($this->inputsCurrentGroup)){
+        if (empty($this->inputsCurrentGroup)) {
             $this->emit('flashMessage', [
                 'type' => 'error',
                 'title' => 'Error Add Group',
                 'message' => 'Silahkan pilih spk untuk dimasukkan ke group',
             ]);
-        }else{
-
-            foreach($this->inputsCurrentGroup as $key => $dataCurrentGroup){
+        } else {
+            foreach ($this->inputsCurrentGroup as $key => $dataCurrentGroup) {
                 Instruction::where('id', $dataCurrentGroup['id'])->update([
                     'group_id' => $this->groupCurrentIdSelected,
                     'group_priority' => 'child',
                 ]);
 
-                $parentInstruction = Instruction::where('group_id', $this->groupCurrentIdSelected)->where('group_priority', 'parent')->first();
+                $parentInstruction = Instruction::where('group_id', $this->groupCurrentIdSelected)
+                    ->where('group_priority', 'parent')
+                    ->first();
                 $parentWorkStep = WorkStep::where('instruction_id', $parentInstruction->id)->get();
                 $deleteChildWorkSteps = WorkStep::where('instruction_id', $dataCurrentGroup['id'])->delete();
 
@@ -225,6 +227,6 @@ class GroupIndex extends Component
             $this->render();
         }
 
-        return redirect()->back();    
+        return redirect()->back();
     }
 }

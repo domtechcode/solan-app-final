@@ -309,6 +309,7 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Pengajuan Barang Personal</a></li>
                                             <li><a href="{{ route('hitungBahan.pengajuanBarangPersonal') }}" class="slide-item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}">Pengajuan Barang Personal</a></li>
+                                            <li><a href="{{ route('hitungBahan.pengajuanBarangSpk') }}" class="slide-item {{ ($title === "Pengajuan Barang SPK") ? 'active' : ''}}">Pengajuan Barang SPK</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -469,6 +470,7 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Pengajuan Barang Personal</a></li>
                                             <li><a href="{{ route('jadwal.pengajuanBarangPersonal') }}" class="slide-item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}">Pengajuan Barang Personal</a></li>
+                                            <li><a href="{{ route('jadwal.pengajuanBarangSpk') }}" class="slide-item {{ ($title === "Pengajuan Barang SPK") ? 'active' : ''}}">Pengajuan Barang SPK</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -523,6 +525,9 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Pengajuan Barang Personal</a></li>
                                             <li><a href="{{ route('operator.pengajuanBarangPersonal') }}" class="slide-item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}">Pengajuan Barang Personal</a></li>
+                                            @if( auth()->user()->jobdesk == 'Setting' || auth()->user()->jobdesk == 'Plate')
+                                            <li><a href="{{ route('operator.pengajuanBarangSpk') }}" class="slide-item {{ ($title === "Pengajuan Barang SPK") ? 'active' : ''}}">Pengajuan Barang SPK</a></li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>
