@@ -72,12 +72,17 @@ class PengajuanBarangSpkIndex extends Component
 
     public function stockBarang($PengajuanBarangSelectedId)
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
         $updateStock = PengajuanBarangSpk::find($PengajuanBarangSelectedId);
         $updateStock->update([
@@ -95,19 +100,24 @@ class PengajuanBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-
+        event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
         $this->reset();
     }
 
     public function ajukanAccountingBarang($PengajuanBarangSelectedAccountingId)
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
         $updateAccounting = PengajuanBarangSpk::find($PengajuanBarangSelectedAccountingId);
         $updateAccounting->update([
@@ -130,19 +140,64 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateAccounting->instruction_id]);
         }
+        event(new IndexRenderEvent('refresh'));
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
+    }
 
+    public function editBarang($PengajuanBarangSelectedEditId)
+    {
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
+
+        $updateEdit = PengajuanBarangSpk::find($PengajuanBarangSelectedEditId);
+        $updateEdit->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 10,
+            'state' => 'Accounting',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Stock Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Accounting')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateEdit->instruction_id]);
+        }
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
     }
 
     public function ajukanRabBarang($PengajuanBarangSelectedRabId)
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
         $updateRab = PengajuanBarangSpk::find($PengajuanBarangSelectedRabId);
         $updateRab->update([
@@ -165,7 +220,7 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -173,12 +228,17 @@ class PengajuanBarangSpkIndex extends Component
 
     public function beliBarang($PengajuanBarangSelectedBeliId)
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
         $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
         $updateBeli->update([
@@ -196,7 +256,7 @@ class PengajuanBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -204,12 +264,17 @@ class PengajuanBarangSpkIndex extends Component
 
     public function completeBarang($PengajuanBarangSelectedCompleteId)
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
         $updateComplete = PengajuanBarangSpk::find($PengajuanBarangSelectedCompleteId);
         $updateComplete->update([
@@ -227,7 +292,7 @@ class PengajuanBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -235,18 +300,23 @@ class PengajuanBarangSpkIndex extends Component
 
     public function cekTotalHarga()
     {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-        ]);
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
 
-        $hargaSatuanSelected = currency_convert($this->harga_satuan);
+        $hargaSatuanSelected = $this->harga_satuan;
         $qtyPurchaseSelected = currency_convert($this->qty_purchase);
         $stockSelected = currency_convert($this->stock);
 
         $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
-        $this->total_harga = currency_idr($this->total_harga);
+        $this->total_harga = $this->total_harga;
     }
 
     public function modalPengajuanBarangSpk($PengajuanBarangId, $instructionId)
@@ -262,10 +332,17 @@ class PengajuanBarangSpkIndex extends Component
 
         $this->dataBarang = PengajuanBarangSpk::find($PengajuanBarangId);
 
-        $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-        $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-        $this->stock = currency_idr($this->dataBarang->stock);
-        $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        if (isset($this->dataBarang) && $this->dataBarang->harga_satuan != null) {
+            $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
+            $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
+            $this->stock = currency_idr($this->dataBarang->stock);
+            $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        } else {
+            $this->harga_satuan = '';
+            $this->qty_purchase = '';
+            $this->stock = '';
+            $this->total_harga = '';
+        }
 
         $this->dispatchBrowserEvent('show-detail-pengajuan-barang-spk');
     }

@@ -98,7 +98,7 @@ class PengajuanMaklunSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateAccounting->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -131,7 +131,7 @@ class PengajuanMaklunSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateRAB->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -159,7 +159,7 @@ class PengajuanMaklunSpkIndex extends Component
             'title' => 'Maklun Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }

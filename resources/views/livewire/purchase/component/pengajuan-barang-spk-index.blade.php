@@ -251,7 +251,7 @@
                             <div class="form-group">
                                 <label class="form-label">Harga Satuan</label>
                                 <div class="input-group">
-                                    <input type="text" wire:model="harga_satuan" id="harga_satuan" class="form-control" autocomplete="off" placeholder="Harga Satuan" type-currency="IDR">
+                                    <input type="text" wire:model="harga_satuan" id="harga_satuan" class="form-control" autocomplete="off" placeholder="Harga Satuan">
                                 </div>
                                 @error('harga_satuan') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                             </div>
@@ -290,20 +290,22 @@
                     @if(isset($dataBarang))
                         @if($dataBarang->state == 'Purchase')
                             @if($dataBarang->status_id == 8)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                                <button class="btn btn-warning" wire:click="stockBarang({{ $dataBarang->id }})">Check Stock</button>
+                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})" wire:key="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})" wire:key="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                                <button class="btn btn-warning" wire:click="stockBarang({{ $dataBarang->id }})" wire:key="stockBarang({{ $dataBarang->id }})">Check Stock</button>
                             @elseif($dataBarang->status_id == 9)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})" wire:key="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})" wire:key="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
                             @elseif($dataBarang->status_id == 12)
-                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
-                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
-                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})">Complete</button>
+                                <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})" wire:key="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Accounting</button>
+                                <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})" wire:key="ajukanRabBarang({{ $dataBarang->id }})">Ajukan <i class="fe fe-arrow-right"></i> Rab</button>
+                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})" wire:key="completeBarang({{ $dataBarang->id }})">Complete</button>
                             @elseif(in_array($dataBarang->status_id, [13, 14]))
-                                <button class="btn btn-info" wire:click="beliBarang({{ $dataBarang->id }})">Beli</button>
+                                <button class="btn btn-info" wire:click="beliBarang({{ $dataBarang->id }})" wire:key="beliBarang({{ $dataBarang->id }})">Beli</button>
                             @elseif($dataBarang->status_id == 15)
-                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})">Complete</button>
+                                <button class="btn btn-success" wire:click="completeBarang({{ $dataBarang->id }})" wire:key="completeBarang({{ $dataBarang->id }})">Complete</button>
+                            @elseif($dataBarang->status_id == 18)
+                                <button class="btn btn-success" wire:click="editBarang({{ $dataBarang->id }})" wire:key="editBarang({{ $dataBarang->id }})">Edit & Ajukan Kembali</button>
                             @else
                             <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             @endif

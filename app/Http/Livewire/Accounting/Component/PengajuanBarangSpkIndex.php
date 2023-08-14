@@ -106,7 +106,7 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -143,7 +143,7 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateApprove->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -180,7 +180,7 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateReject->instruction_id]);
         }
-
+        event(new IndexRenderEvent('refresh'));
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
