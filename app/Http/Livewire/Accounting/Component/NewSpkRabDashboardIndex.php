@@ -85,7 +85,7 @@ class NewSpkRabDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
-                        $subQuery->where('spk_type', 'production')->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        $subQuery->where('spk_type', 'production');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
@@ -144,24 +144,51 @@ class NewSpkRabDashboardIndex extends Component
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
 
-        if($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null){
+        if ($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null) {
             $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 5)
-            ->first();
-            
-            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-            ->get();
-        }else{
-            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)->where('group_priority', 'parent')->first();
-            
-            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
-            ->where('work_step_list_id', 5)
-            ->first();
+                ->where('work_step_list_id', 5)
+                ->first();
 
-            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
-            ->get();
+            $rabLast = FormRab::where('instruction_id', $instructionId)
+                ->orderBy('updated_count', 'desc')
+                ->first();
+
+            if (isset($dataworkStepHitungBahanNew)) {
+                $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
+            }
+
+            if (isset($rabLast)) {
+                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                    ->where('updated_count', $rabLast->updated_count)
+                    ->get();
+            } else {
+                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
+            }
+        } else {
+            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
+                ->where('work_step_list_id', 5)
+                ->first();
+
+            $rabLast = FormRab::where('instruction_id', $instructionId)
+                ->orderBy('updated_count', 'desc')
+                ->first();
+
+            if (isset($dataworkStepHitungBahanNew)) {
+                $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
+            }
+
+            if (isset($rabLast)) {
+                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+                    ->where('updated_count', $rabLast->updated_count)
+                    ->get();
+            } else {
+                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)->get();
+            }
         }
-        
 
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList', 'user', 'machine')
@@ -182,17 +209,13 @@ class NewSpkRabDashboardIndex extends Component
             ->where('type_file', 'sample')
             ->get();
 
-        if (isset($dataworkStepHitungBahanNew)) {
-            $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
-        }
-
         if (isset($dataInstructionRab)) {
             foreach ($dataInstructionRab as $item) {
                 $datarab = [
                     'id' => $item['id'],
                     'jenis_pengeluaran' => $item['jenis_pengeluaran'],
-                    'rab' => $item['rab'],
-                    'real' => $item['real'],
+                    'rab' => currency_idr($item['rab']),
+                    'real' => currency_idr($item['real']),
                 ];
 
                 $this->dataRab[] = $datarab;

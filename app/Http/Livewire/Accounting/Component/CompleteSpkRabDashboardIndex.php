@@ -106,22 +106,50 @@ class CompleteSpkRabDashboardIndex extends Component
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
 
-        if($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null){
+        if ($this->selectedInstruction->group_id == null && $this->selectedInstruction->group_priority == null) {
             $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 5)
-            ->first();
-            
-            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-            ->get();
-        }else{
-            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)->where('group_priority', 'parent')->first();
-            
-            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
-            ->where('work_step_list_id', 5)
-            ->first();
+                ->where('work_step_list_id', 5)
+                ->first();
 
-            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
-            ->get();
+            $rabLast = FormRab::where('instruction_id', $instructionId)
+                ->orderBy('updated_count', 'desc')
+                ->first();
+
+            if (isset($dataworkStepHitungBahanNew)) {
+                $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
+            }
+
+            if (isset($rabLast)) {
+                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                    ->where('updated_count', $rabLast->updated_count)
+                    ->get();
+            } else {
+                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
+            }
+        } else {
+            $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
+            $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $parentSpk->id)
+                ->where('work_step_list_id', 5)
+                ->first();
+
+            $rabLast = FormRab::where('instruction_id', $instructionId)
+                ->orderBy('updated_count', 'desc')
+                ->first();
+
+            if (isset($dataworkStepHitungBahanNew)) {
+                $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
+            }
+
+            if (isset($rabLast)) {
+                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+                    ->where('updated_count', $rabLast->updated_count)
+                    ->get();
+            } else {
+                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)->get();
+            }
         }
 
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)

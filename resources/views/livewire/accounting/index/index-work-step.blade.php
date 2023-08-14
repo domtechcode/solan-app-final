@@ -48,7 +48,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                            @livewire('component.hitung-bahan-all-data-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                         </div>
                     </div>
                 </div>
