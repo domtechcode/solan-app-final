@@ -13,6 +13,9 @@ class TabDashboardIndex extends Component
     public $dataCountNewSpk;
     public $dataCountRunningSpk;
     public $dataCountIncomingSpk;
+    public $dataCountReady;
+    public $dataCountComplete;
+    public $dataCountReject;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -21,6 +24,13 @@ class TabDashboardIndex extends Component
     public function changeTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public $activeTabSpk = 'tabSpk1';
+
+    public function changeTabSpk($tabSpk)
+    {
+        $this->activeTabSpk = $tabSpk;
     }
 
     public function render()
@@ -40,6 +50,45 @@ class TabDashboardIndex extends Component
 
         $this->dataCountRunningSpk = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Running')
+            ->whereNotIn('status_id', [3, 7, 21, 22, 26])
+            ->where('job_id', '!=', 2)
+            ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
+
+        $this->dataCountReady = WorkStep::where('work_step_list_id', 2)
+            ->where('state_task', 'Running')
+            ->where('status_id', 2)
+            ->where('job_id', 2)
+            ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
+
+        $this->dataCountComplete = WorkStep::where('work_step_list_id', 2)
+            ->where('state_task', 'Running')
+            ->where('status_id', 7)
+            ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
+
+        $this->dataCountReject= WorkStep::where('work_step_list_id', 2)
+            ->where('state_task', 'Running')
+            ->whereIn('status_id', [3, 21, 22, 26])
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereHas('instruction', function ($query) {

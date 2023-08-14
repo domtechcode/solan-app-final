@@ -15,7 +15,7 @@ use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
-class RunningDashboardIndex extends Component
+class CompleteDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -150,9 +150,8 @@ class RunningDashboardIndex extends Component
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
         $dataRunning = WorkStep::where('work_step_list_id', 2)
-            ->where('state_task', 'Running')
-            ->whereNotIn('status_id', [3, 7, 21, 22, 26])
-            ->where('job_id', '!=', 2)
+        ->where('state_task', 'Running')
+        ->where('status_id', 7)
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereHas('instruction', function ($query) {
@@ -178,7 +177,7 @@ class RunningDashboardIndex extends Component
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateRunning);
 
-        return view('livewire.penjadwalan.component.running-dashboard-index', ['instructionsRunning' => $dataRunning])
+        return view('livewire.penjadwalan.component.complete-dashboard-index', ['instructionsRunning' => $dataRunning])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
