@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\URL;
 
 class GroupIndex extends Component
 {
