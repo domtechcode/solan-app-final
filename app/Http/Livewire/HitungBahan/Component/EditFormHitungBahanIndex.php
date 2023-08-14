@@ -1247,7 +1247,7 @@ class EditFormHitungBahanIndex extends Component
 
 
         if($updateTask->status_task == 'Reject Requirements'){
-            if(!empty($statePlateDiff) || !empty($stateScreenDiff) || $newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen || $newTotalHargaBahan > $currentTotalHargaBahan){
+            if($newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen || $newTotalHargaBahan > $currentTotalHargaBahan){
                 if ($updateTask) {
                     $updateTask->update([
                         'state_task' => 'Complete',
