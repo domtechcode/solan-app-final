@@ -35,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($instructionsRunning as $key => $dataInstruction)
+                        @forelse ($instructionsDijadwalkan as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -45,7 +45,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupRunning" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupDijadwalkan" wire:click="modalInstructionDetailsGroupDijadwalkan({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -139,7 +139,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalRunning" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalDijadwalkan" wire:click="modalInstructionDetailsDijadwalkan({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -157,13 +157,13 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructionsRunning->links() }}
+            {{ $instructionsDijadwalkan->links() }}
         </div>
     </div>
     
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="openModalRunning" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalDijadwalkan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -336,7 +336,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#openModalDijadwalkan" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
                                                                         <option label="Select Langkah Kerja"></option>
                                                                         @forelse ($dataWorkSteps as $dataWorkStep)
                                                                             <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
@@ -372,7 +372,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#openModalDijadwalkan" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
                                                                         <option label="Select User"></option>
                                                                         @forelse ($dataUsers as $dataUser)
                                                                         <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
@@ -390,7 +390,7 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
+                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#openModalDijadwalkan" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
                                                                         <option label="Select Machine"></option>
                                                                         @forelse ($dataMachines as $dataMachine)
                                                                             <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
@@ -598,7 +598,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="openModalGroupRunning" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupDijadwalkan" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1115,8 +1115,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-running', event => {
-            $('#openModalRunning').modal('hide');
+        window.addEventListener('close-modal-dijadwalkan', event => {
+            $('#openModalDijadwalkan').modal('hide');
         });
     </script>
 @endpush

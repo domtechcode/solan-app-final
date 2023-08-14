@@ -98,7 +98,7 @@
                                                 @livewire('penjadwalan.component.complete-dashboard-index')
                                             </div>
                                             <div class="tab-pane {{ $activeTabSpk === 'tabSpk5' ? 'active' : '' }}" id="tabSpk5">
-                                                <h5 class="card-title">Complete</h5>
+                                                <h5 class="card-title">Reject</h5>
                                                 @livewire('penjadwalan.component.reject-dashboard-index')
                                             </div>
                                         </div>

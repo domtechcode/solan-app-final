@@ -21,8 +21,8 @@ class CompleteDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateRunning = 10;
-    public $searchRunning = '';
+    public $paginateComplete = 10;
+    public $searchComplete = '';
 
     public $dataWorkSteps;
     public $dataUsers;
@@ -133,7 +133,7 @@ class CompleteDashboardIndex extends Component
 
     public function mount()
     {
-        $this->searchRunning = request()->query('search', $this->searchRunning);
+        $this->searchComplete = request()->query('search', $this->searchComplete);
     }
 
     public function sumGroup($groupId)
@@ -149,13 +149,13 @@ class CompleteDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
-        $dataRunning = WorkStep::where('work_step_list_id', 2)
+        $dataComplete = WorkStep::where('work_step_list_id', 2)
         ->where('state_task', 'Running')
         ->where('status_id', 7)
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchRunning . '%';
+                $searchTerms = '%' . $this->searchComplete . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -175,9 +175,9 @@ class CompleteDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateRunning);
+            ->paginate($this->paginateComplete);
 
-        return view('livewire.penjadwalan.component.complete-dashboard-index', ['instructionsRunning' => $dataRunning])
+        return view('livewire.penjadwalan.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -301,7 +301,7 @@ class CompleteDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
@@ -314,7 +314,7 @@ class CompleteDashboardIndex extends Component
         $this->keteranganReschedule = '';
     }
 
-    public function modalInstructionDetailsRunning($instructionId)
+    public function modalInstructionDetailsComplete($instructionId)
     {
         $this->workSteps = [];
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
@@ -395,7 +395,7 @@ class CompleteDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupRunning($groupId)
+    public function modalInstructionDetailsGroupComplete($groupId)
     {
         $this->workSteps = [];
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
@@ -483,7 +483,7 @@ class CompleteDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function startDuetButton($workStepId)
@@ -560,7 +560,7 @@ class CompleteDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function pauseButton($workStepId)
@@ -617,7 +617,7 @@ class CompleteDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function startButtonReject($workStepId)
@@ -646,7 +646,7 @@ class CompleteDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function rejectButton($workStepId)
@@ -688,7 +688,7 @@ class CompleteDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK Reject', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function rejectSpk()
@@ -737,7 +737,7 @@ class CompleteDashboardIndex extends Component
         ]);
 
         $this->keteranganReject = '';
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-complete');
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }

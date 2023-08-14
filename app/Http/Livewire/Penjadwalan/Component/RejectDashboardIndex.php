@@ -21,8 +21,8 @@ class RejectDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateRunning = 10;
-    public $searchRunning = '';
+    public $paginareReject = 10;
+    public $searchReject = '';
 
     public $dataWorkSteps;
     public $dataUsers;
@@ -133,7 +133,7 @@ class RejectDashboardIndex extends Component
 
     public function mount()
     {
-        $this->searchRunning = request()->query('search', $this->searchRunning);
+        $this->searchReject = request()->query('search', $this->searchReject);
     }
 
     public function sumGroup($groupId)
@@ -149,13 +149,13 @@ class RejectDashboardIndex extends Component
         // Init Event
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
-        $dataRunning = WorkStep::where('work_step_list_id', 2)
+        $dataReject = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Running')
             ->whereIn('status_id', [3, 21, 22, 26])
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchRunning . '%';
+                $searchTerms = '%' . $this->searchReject . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -175,9 +175,9 @@ class RejectDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateRunning);
+            ->paginate($this->paginareReject);
 
-        return view('livewire.penjadwalan.component.reject-dashboard-index', ['instructionsRunning' => $dataRunning])
+        return view('livewire.penjadwalan.component.reject-dashboard-index', ['instructionsReject' => $dataReject])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -301,7 +301,7 @@ class RejectDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
@@ -314,7 +314,7 @@ class RejectDashboardIndex extends Component
         $this->keteranganReschedule = '';
     }
 
-    public function modalInstructionDetailsRunning($instructionId)
+    public function modalInstructionDetailsReject($instructionId)
     {
         $this->workSteps = [];
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
@@ -395,7 +395,7 @@ class RejectDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupRunning($groupId)
+    public function modalInstructionDetailsGroupReject($groupId)
     {
         $this->workSteps = [];
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
@@ -483,7 +483,7 @@ class RejectDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
     }
 
     public function startDuetButton($workStepId)
@@ -560,7 +560,7 @@ class RejectDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
     }
 
     public function pauseButton($workStepId)
@@ -617,7 +617,7 @@ class RejectDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
     }
 
     public function startButtonReject($workStepId)
@@ -646,7 +646,7 @@ class RejectDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
     }
 
     public function rejectButton($workStepId)
@@ -688,7 +688,7 @@ class RejectDashboardIndex extends Component
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK Reject', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
     }
 
     public function rejectSpk()
@@ -737,7 +737,7 @@ class RejectDashboardIndex extends Component
         ]);
 
         $this->keteranganReject = '';
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-reject');
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }
