@@ -16,6 +16,7 @@ class TabDashboardIndex extends Component
     public $dataCountReady;
     public $dataCountComplete;
     public $dataCountReject;
+    public $dataCountManageSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -86,7 +87,7 @@ class TabDashboardIndex extends Component
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
 
-        $this->dataCountReject= WorkStep::where('work_step_list_id', 2)
+        $this->dataCountReject = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Running')
             ->whereIn('status_id', [3, 21, 22, 26])
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
@@ -97,6 +98,8 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+
+        $this->dataCountManageSpk = $this->dataCountNewSpk + $this->dataCountRunningSpk + $this->dataCountReady + $this->dataCountComplete + $this->dataCountReject;
 
         $this->dataCountIncomingSpk = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Not Running')

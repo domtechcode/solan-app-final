@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Penjadwalan\Component;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
@@ -14,6 +15,7 @@ use App\Models\WorkStepList;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\PengajuanBarangSpk;
 
 class RejectDashboardIndex extends Component
 {
@@ -59,6 +61,29 @@ class RejectDashboardIndex extends Component
     public $keteranganReject;
 
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public $pengajuanBarang;
+    public function addPengajuanBarang($workStepListId)
+    {
+        $dataWorkStepList = WorkStepList::find($workStepListId);
+        $this->pengajuanBarang[] = [
+            'work_step_list' => $dataWorkStepList->name,
+            'work_step_list_id' => $dataWorkStepList->id,
+            'nama_barang' => '',
+            'tgl_target_datang' => '',
+            'qty_barang' => '',
+            'keterangan' => '',
+            'status_id' => '8',
+            'status' => 'Pending',
+            'state_pengajuan' => 'New',
+        ];
+    }
+
+    public function removePengajuanBarang($indexBarang)
+    {
+        unset($this->pengajuanBarang[$indexBarang]);
+        $this->pengajuanBarang = array_values($this->pengajuanBarang);
+    }
 
     public function urgent($instructionSelectedIdUrgent)
     {
@@ -342,6 +367,32 @@ class RejectDashboardIndex extends Component
             ->first();
         if (isset($dataworkStepHitungBahan)) {
             $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
+        }
+
+        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)
+            ->with('workStepList', 'status')
+            ->get();
+
+        if (isset($dataPengajuanBarang)) {
+            foreach ($dataPengajuanBarang as $key => $dataBarang) {
+                $dataPengajuan = [
+                    'work_step_list' => $dataBarang->workStepList->name,
+                    'work_step_list_id' => $dataBarang->work_step_list_id,
+                    'nama_barang' => $dataBarang->nama_barang,
+                    'tgl_target_datang' => $dataBarang->tgl_target_datang,
+                    'qty_barang' => $dataBarang->qty_barang,
+                    'keterangan' => $dataBarang->keterangan,
+                    'status_id' => $dataBarang->status_id,
+                    'status' => $dataBarang->status->desc_status,
+                    'state_pengajuan' => 'Exist',
+                ];
+
+                $this->pengajuanBarang[] = $dataPengajuan;
+            }
+        }
+
+        if (empty($this->pengajuanBarang)) {
+            $this->pengajuanBarang = [];
         }
 
         foreach ($this->selectedWorkStep as $key => $dataSelected) {
@@ -740,6 +791,48 @@ class RejectDashboardIndex extends Component
         $this->dispatchBrowserEvent('close-modal-reject');
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
+    }
+
+    public function ajukanBarang()
+    {
+        $this->validate([
+            'pengajuanBarang' => 'required|array|min:1',
+            'pengajuanBarang.*.nama_barang' => 'required',
+            'pengajuanBarang.*.tgl_target_datang' => 'required',
+            'pengajuanBarang.*.qty_barang' => 'required',
+        ]);
+
+        if (isset($this->pengajuanBarang)) {
+            foreach ($this->pengajuanBarang as $key => $item) {
+                if ($item['state_pengajuan'] == 'New') {
+                    $createPengajuan = PengajuanBarangSpk::create([
+                        'instruction_id' => $this->selectedInstruction->id,
+                        'work_step_list_id' => $item['work_step_list_id'],
+                        'nama_barang' => $item['nama_barang'],
+                        'user_id' => Auth()->user()->id,
+                        'tgl_pengajuan' => Carbon::now(),
+                        'tgl_target_datang' => $item['tgl_target_datang'],
+                        'qty_barang' => $item['qty_barang'],
+                        'keterangan' => $item['keterangan'],
+                        'status_id' => $item['status_id'],
+                        'state' => 'Purchase',
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
+            'message' => 'Data Pengajuan Barang berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang SPK', 'instruction_id' => $this->selectedInstruction->id]);
+        }
+
+        $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
     public function messageSent($arguments)

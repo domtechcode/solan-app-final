@@ -317,7 +317,7 @@
                                             <th class="border-bottom-0">STATUS</th>
                                             <th class="border-bottom-0">ACTIONS</th>
                                             <th class="border-bottom-0">KET. REJECT</th>
-                                            {{-- <th class="border-bottom-0">REJECT FOR</th> --}}
+                                            <th class="border-bottom-0">BARANG</th>
                                             <th class="border-bottom-0">HASIL</th>
                                         </tr>
                                     </thead>
@@ -442,9 +442,14 @@
                                                         @endif
                                                     </ul>
                                                 </td>
-                                                {{-- <td>
-                                                    -
-                                                </td> --}}
+                                                <td>
+                                                    <div class="btn-list">
+                                                        <button type="button"
+                                                            class="btn btn-icon btn-sm btn-info"
+                                                            wire:click="addPengajuanBarang({{ $dataWork['work_step_list_id'] }})"><i
+                                                                class="fe fe-plus"></i> Ajukan Barang</button>
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     @if($dataWork['status_task'] == 'Complete')       
                                                     <div class="btn-list">  
@@ -462,6 +467,110 @@
                         </div>
                     </div>
 
+
+                    <!-- Row -->
+                    <div class="row mb-3">
+                        <div class="col-xl-12">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>LANGKAH KERJA</th>
+                                            <th>NAMA BARANG</th>
+                                            <th>TARGET TERSEDIA</th>
+                                            <th>QTY</th>
+                                            <th>KETERANGAN</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($pengajuanBarang))
+                                            @foreach ($pengajuanBarang as $key => $dataPengajuan)
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model.defer="pengajuanBarang.{{ $key }}.work_step_list"
+                                                                class="form-control" readonly>
+                                                            @error('pengajuanBarang.' . $key . '.work_step_list')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="pengajuanBarang.{{ $key }}.nama_barang"
+                                                                placeholder="Nama Barang" class="form-control">
+                                                            @error('pengajuanBarang.' . $key . '.nama_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="date" autocomplete="off"
+                                                                wire:model="pengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                id="pengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                placeholder="Target Tersedia" class="form-control">
+                                                            @error('pengajuanBarang.' . $key . '.tgl_target_datang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="pengajuanBarang.{{ $key }}.qty_barang"
+                                                                class="form-control" placeholder="QTY">
+                                                            @error('pengajuanBarang.' . $key . '.qty_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group control-group">
+                                                            <textarea class="form-control" placeholder="Keterangan" rows="1"
+                                                                wire:model="pengajuanBarang.{{ $key }}.keterangan"></textarea>
+                                                        </div>
+                                                        @error('pengajuanBarang.' . $key . '.keterangan')
+                                                            <p class="mt-2 text-sm text-danger">
+                                                                {{ $message }}</p>
+                                                        @enderror
+                                                    </td>
+                                                    <td>
+                                                        {{ $pengajuanBarang[$key]['status'] }}
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-list">
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-danger"
+                                                                wire:click="removePengajuanBarang({{ $key }})"><i
+                                                                    class="fe fe-x"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="btn-list text-center">
+                                                    <button type="button" class="btn btn-success"
+                                                        wire:click="ajukanBarang">Ajukan Barang</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Keterangan Reschedule</label>
@@ -471,6 +580,7 @@
                                 @error('keteranganReschedule') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                         </div>
                     </div>
+                    
 
 
                     {{-- file --}}
