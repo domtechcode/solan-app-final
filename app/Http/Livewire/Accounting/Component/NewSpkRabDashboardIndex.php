@@ -85,7 +85,7 @@ class NewSpkRabDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
-                        $subQuery->where('spk_type', 'production');
+                        $subQuery->whereIn('spk_type', ['production', 'sample']);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
