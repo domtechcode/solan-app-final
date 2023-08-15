@@ -70,6 +70,8 @@
                                                             @foreach ($groupCurrentId as $groupId)
                                                                 <option value="{{ $groupId }}">Group -
                                                                     {{ $groupId }}</option>
+                                                                <option value="48">Group -
+                                                                    48</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
