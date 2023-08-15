@@ -117,11 +117,11 @@
                         <!-- ROW-2-->
                         <div class="row">
                             <!-- COL-END -->
-                            <div class="col-md-12">
+                            <div class="col-md-3 col-sm-3">
                                 <div class="card">
                                     <div class="card-status bg-cyan br-te-7 br-ts-7"></div>
                                     <div class="card-header">
-                                        <h3 class="card-title">Operator</h3>
+                                        <h3 class="card-title">Cetak</h3>
                                     </div>
                                     <div class="card-body">
                                         
