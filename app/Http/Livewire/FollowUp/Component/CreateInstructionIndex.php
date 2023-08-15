@@ -110,7 +110,7 @@ class CreateInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
-        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up'])->get();
 
         return view('livewire.follow-up.component.create-instruction-index')
             ->extends('layouts.app')
