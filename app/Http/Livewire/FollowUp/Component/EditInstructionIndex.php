@@ -114,7 +114,7 @@ class EditInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
-        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up'])->get();
 
         $this->instructions = Instruction::findorfail($instructionId);
         $this->spk_type = $this->instructions->type_order;
