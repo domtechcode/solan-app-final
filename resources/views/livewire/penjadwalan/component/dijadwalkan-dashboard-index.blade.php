@@ -2,7 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateRunning">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateDijadwalkan">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -10,7 +10,7 @@
                 </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchRunning">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchDijadwalkan">
         </div>
     </div>
     <div class="row mt-3">
