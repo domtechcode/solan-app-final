@@ -69,7 +69,7 @@ class RejectDashboardIndex extends Component
                     ->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [3, 22, 26]);
                     })
-                    ->where(function ($subQuery) {
+                    ->orWhere(function ($subQuery) {
                         $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
                     });
             })
