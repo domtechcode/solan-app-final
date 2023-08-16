@@ -326,7 +326,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
                 <div class="expanel expanel-default">
                     <div class="expanel-body">
                         <div class="form-group">
@@ -350,33 +350,34 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-8 col-md-8">
                 <div class="expanel expanel-default">
                     <div class="expanel-body">
                         <label class="form-label mb-3">List Langkah Kerja</label>
-                        <div class="form-group">
-                            <div class="selectgroup selectgroup-pills">
-                                @foreach ($dataworksteplists as $key)
-                                    <label class="selectgroup-item">
-                                        @if (
-                                            $key['name'] == 'Cetak Label' ||
-                                                $key['name'] == 'Hot Cutting' ||
-                                                $key['name'] == 'Hot Cutting Folding' ||
-                                                $key['name'] == 'Lipat Perahu' ||
-                                                $key['name'] == 'Lipat Kanan Kiri')
-                                            <input type="button" class="btn btn-outline-info add_field"
-                                                wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
-                                                value="{{ $key['name'] }}">
-                                        @else
-                                            <input type="button" class="btn btn-outline-primary add_field"
-                                                wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
-                                                value="{{ $key['name'] }}">
-                                        @endif
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
+                        <div class="row">
+                            @foreach ($dataworksteplists as $key)
+                                @if (
+                                    $key['name'] == 'Cetak Label' ||
+                                        $key['name'] == 'Hot Cutting' ||
+                                        $key['name'] == 'Hot Cutting Folding' ||
+                                        $key['name'] == 'Lipat Perahu' ||
+                                        $key['name'] == 'Lipat Kanan Kiri')
+                                    <div class="col-md-2 mb-3">
+                                        <input type="button" class="btn btn-outline-info add_field"
+                                            wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
+                                            value="{{ $key['name'] }}">
 
+                                    </div>
+                                @else
+                                    <div class="col-md-2 mb-3">
+                                        <input type="button" class="btn btn-outline-primary add_field"
+                                            wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
+                                            value="{{ $key['name'] }}">
+
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -451,14 +452,14 @@
                                                 wire:click="removeNote({{ $index }})"><i
                                                     class="fe fe-x"></i></button>
                                         </div>
-                                        @error('notes.'. $index .'.tujuan') 
+                                        @error('notes.' . $index . '.tujuan')
                                             <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                         @enderror
                                         <div class="input-group control-group" style="padding-top: 5px;">
                                             <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
                                                 wire:model="notes.{{ $index }}.catatan"></textarea>
                                         </div>
-                                        @error('notes.'. $index .'.catatan') 
+                                        @error('notes.' . $index . '.catatan')
                                             <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>

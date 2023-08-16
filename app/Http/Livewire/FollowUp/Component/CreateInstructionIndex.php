@@ -110,7 +110,9 @@ class CreateInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
-        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up'])->get();
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'RAB', 'Penjadwalan'])
+            ->orderBy('no_urut', 'asc')
+            ->get();
 
         return view('livewire.follow-up.component.create-instruction-index')
             ->extends('layouts.app')
@@ -499,7 +501,7 @@ class CreateInstructionIndex extends Component
     {
         $folder = 'public/' . $this->spk_number . '/follow-up';
         $nocontoh = 1;
-        
+
         foreach ($this->filecontoh as $file) {
             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);

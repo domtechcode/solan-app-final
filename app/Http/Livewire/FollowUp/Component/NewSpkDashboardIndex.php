@@ -59,7 +59,6 @@ class NewSpkDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
-            ->whereIn('status_id', [1, 2])
             ->whereHas('instruction', function ($query) {
                 $searchTerms = '%' . $this->searchNewSpk . '%';
                 $query

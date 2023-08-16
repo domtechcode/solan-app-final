@@ -101,97 +101,104 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
                 <div class="expanel expanel-default">
                     <div class="expanel-body">
                         <div class="form-group">
                             <label class="form-label mb-3">Langkah Kerja</label>
-                            @if ($spkSelected)
-                                @foreach ($workSteps as $index => $step)
-                                    <div class="input-group control-group" style="padding-top: 5px;"
-                                        id="row_remove{{ $index }}">
-                                        <input type="text" class="form-control" value="{{ $step['id'] }}"
-                                            wire:model.defer="workSteps.{{ $index }}.id" style="display: none;">
-                                        <input type="text" class="form-control" value="{{ $step['name'] }}"
-                                            readonly>
-                                        {{-- <button class="btn btn-danger btn_remove" type="button" wire:click="removeField({{ $index }})"><i class="fe fe-x"></i></button> --}}
-                                    </div>
-                                @endforeach
-                            @endif
+                            @foreach ($workSteps as $index => $step)
+                                <div class="input-group control-group" style="padding-top: 5px;"
+                                    id="row_remove{{ $index }}">
+                                    <input type="text" class="form-control" value="{{ $step['id'] }}"
+                                        wire:model.defer="workSteps.{{ $index }}.id" style="display: none;">
+                                    <input type="text" class="form-control" value="{{ $step['name'] }}" readonly>
+                                    <button class="btn btn-danger btn_remove" type="button"
+                                        wire:click="removeField({{ $index }})"><i class="fe fe-x"></i></button>
+                                </div>
+                            @endforeach
                         </div>
-                        @error('workStep')
-                            <div><span class="text-danger">{{ $message }}</span></div>
-                        @enderror
                     </div>
                 </div>
             </div>
 
-            {{-- <div class="col-sm-6 col-md-6">
-                <div class="expanel expanel-default">
-                    <div class="expanel-body">
-                        <label class="form-label mb-3">List Langkah Kerja</label>
-                        <div class="form-group">
-                            <div class="selectgroup selectgroup-pills">
+                <div class="col-sm-8 col-md-8">
+                    <div class="expanel expanel-default">
+                        <div class="expanel-body">
+                            <label class="form-label mb-3">List Langkah Kerja</label>
+                            <div class="row">
                                 @foreach ($dataworksteplists as $key)
-                                    <label class="selectgroup-item">
-                                        @if ($key['name'] == 'Cetak Label' || $key['name'] == 'Hot Cutting' || $key['name'] == 'Hot Cutting Folding' || $key['name'] == 'Lipat Perahu' || $key['name'] == 'Lipat Kanan Kiri')
-                                            <input type="button" class="btn btn-outline-info" wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')" value="{{ $key['name'] }}">
-                                        @else
-                                            <input type="button" class="btn btn-outline-primary" wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')" value="{{ $key['name'] }}">
-                                        @endif
-                                    </label>
+                                    @if (
+                                        $key['name'] == 'Cetak Label' ||
+                                            $key['name'] == 'Hot Cutting' ||
+                                            $key['name'] == 'Hot Cutting Folding' ||
+                                            $key['name'] == 'Lipat Perahu' ||
+                                            $key['name'] == 'Lipat Kanan Kiri')
+                                        <div class="col-md-2 mb-3">
+                                            <input type="button" class="btn btn-outline-info add_field"
+                                                wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
+                                                value="{{ $key['name'] }}">
+
+                                        </div>
+                                    @else
+                                        <div class="col-md-2 mb-3">
+                                            <input type="button" class="btn btn-outline-primary add_field"
+                                                wire:click="addField('{{ $key['name'] }}', '{{ $key['id'] }}')"
+                                                value="{{ $key['name'] }}">
+
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         </div>
-
                     </div>
                 </div>
-            </div> --}}
 
-            <div class="col-sm-6 col-md-6">
-                <div class="expanel expanel-default">
-                    <div class="expanel-body">
-                        <div class="form-group">
-                            <label class="form-label mb-3">Catatan</label>
-                            <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
-                                    class="fe fe-plus"></i>Tambah Catatan</button>
-                        </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="expanel expanel-default">
+                        <div class="expanel-body">
+                            <div class="form-group">
+                                <label class="form-label mb-3">Catatan</label>
+                                <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
+                                        class="fe fe-plus"></i>Tambah Catatan</button>
+                            </div>
 
-                        @foreach ($notes as $index => $note)
-                            <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
-                                <div class="expanel expanel-default">
-                                    <div class="expanel-body">
-                                        <div class="input-group control-group" style="padding-top: 5px;">
-                                            <select class="form-control form-select"
-                                                data-bs-placeholder="Pilih Tujuan Catatan"
-                                                wire:model.defer="notes.{{ $index }}.tujuan" required>
-                                                <option label="Pilih Tujuan Catatan"></option>
-                                                @foreach ($workSteps as $key)
-                                                    @if ($key['name'] == 'Hitung Bahan')
-                                                        <option value="2">Penjadwalan</option>
-                                                        <option value="3">RAB</option>
-                                                    @endif
-                                                    <option value="{{ $key['id'] }}">{{ $key['name'] }}</option>
-                                                @endforeach
+                            @foreach ($notes as $index => $note)
+                                <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                    <div class="expanel expanel-default">
+                                        <div class="expanel-body">
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <select class="form-control form-select"
+                                                    data-bs-placeholder="Pilih Tujuan Catatan"
+                                                    wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                    <option label="Pilih Tujuan Catatan"></option>
+                                                    @foreach ($workSteps as $key)
+                                                        @if ($key['name'] == 'Hitung Bahan')
+                                                            <option value="2">Penjadwalan</option>
+                                                            <option value="3">RAB</option>
+                                                        @endif
+                                                        <option value="{{ $key['id'] }}">{{ $key['name'] }}
+                                                        </option>
+                                                    @endforeach
 
-                                            </select>
-                                            <button class="btn btn-danger" type="button"
-                                                wire:click="removeNote({{ $index }})"><i
-                                                    class="fe fe-x"></i></button>
+                                                </select>
+                                                <button class="btn btn-danger" type="button"
+                                                    wire:click="removeNote({{ $index }})"><i
+                                                        class="fe fe-x"></i></button>
+                                            </div>
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                    wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                            </div>
+
                                         </div>
-                                        <div class="input-group control-group" style="padding-top: 5px;">
-                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
-                                        </div>
-
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
 
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-12">
+                <div class="col-sm-6 col-md-6">
                     <div class="form-group">
                         <label class="form-label">File Contoh</label>
                         <x-forms.filepond wire:model="filecontoh" multiple allowImagePreview
@@ -202,12 +209,11 @@
                         @enderror
                     </div>
                 </div>
+
             </div>
 
-        </div>
 
-
-        <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
+            <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
 </div>
 

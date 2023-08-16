@@ -114,13 +114,14 @@ class EditInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
-        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up'])->get();
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'RAB', 'Penjadwalan'])
+            ->orderBy('no_urut', 'asc')
+            ->get();
 
         $this->instructions = Instruction::findorfail($instructionId);
         $this->spk_type = $this->instructions->type_order;
         $this->sub_spk = $this->instructions->sub_spk;
-        $this->customerCurrent = Customer::where('name', $this->instructions->customer_name)
-            ->first();
+        $this->customerCurrent = Customer::where('name', $this->instructions->customer_name)->first();
         if (isset($this->customerCurrent)) {
             $this->customer = $this->customerCurrent->id;
         } else {
@@ -616,7 +617,7 @@ class EditInstructionIndex extends Component
         foreach ($this->fileaccounting as $file) {
             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
-            
+
             $uniqueId = uniqid();
             $noarsipaccounting++;
             $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $extension;

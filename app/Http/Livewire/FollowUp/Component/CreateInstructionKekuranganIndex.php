@@ -48,8 +48,10 @@ class CreateInstructionKekuranganIndex extends Component
 
     public function removeField($index)
     {
-        unset($this->workSteps[$index]);
-        $this->workSteps = array_values($this->workSteps);
+        if (isset($this->workSteps[$index])) {
+            unset($this->workSteps[$index]);
+            $this->workSteps = array_values($this->workSteps);
+        }
     }
 
     public function addEmptyNote()
@@ -66,6 +68,8 @@ class CreateInstructionKekuranganIndex extends Component
     public function mount()
     {
         $this->select2();
+
+        
     }
 
     public function render()
@@ -73,22 +77,10 @@ class CreateInstructionKekuranganIndex extends Component
         $this->dataInstructions = Instruction::where('spk_type', 'production')
             ->where('request_kekurangan', null)
             ->get();
-        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
 
-        if ($this->spkSelected && empty($this->workSteps)) {
-            $dataWorkStep = WorkStep::where('instruction_id', $this->spkSelected)
-                ->whereNotIn('work_step_list_id', [1, 2, 3])
-                ->with('workStepList')
-                ->get();
-
-            foreach ($dataWorkStep as $workStep) {
-                $this->workSteps[] = [
-                    'name' => $workStep->workStepList->name,
-                    'id' => $workStep->work_step_list_id,
-                    'user_id' => $workStep->user_id,
-                ];
-            }
-        }
+        $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'RAB', 'Penjadwalan'])
+            ->orderBy('no_urut', 'asc')
+            ->get();
 
         return view('livewire.follow-up.component.create-instruction-kekurangan-index')
             ->extends('layouts.app')
@@ -136,6 +128,8 @@ class CreateInstructionKekuranganIndex extends Component
         $instruction->spk_number = $this->spk_number;
         $instruction->quantity = currency_convert($this->quantity);
         $instruction->stock = null;
+        $instruction->group_id = null;
+        $instruction->group_priority = null;
         if ($this->requestKekurangan == 'Pemesan') {
             $instruction->spk_state = 'Kekurangan Request Pemesan';
         } elseif ($this->requestKekurangan == 'QC') {
