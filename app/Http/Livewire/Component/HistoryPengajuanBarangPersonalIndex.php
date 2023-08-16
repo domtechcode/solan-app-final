@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp\Component;
+namespace App\Http\Livewire\Component;
 
 use Carbon\Carbon;
 use App\Models\User;
@@ -13,14 +13,14 @@ use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
-class CompleteDashboardIndex extends Component
+class HistoryPengajuanBarangPersonalIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateComplete = 10;
-    public $searchComplete = '';
+    public $paginateAcc = 10;
+    public $searchAcc = '';
     public $notes = [];
 
     public $selectedInstruction;
@@ -61,41 +61,23 @@ class CompleteDashboardIndex extends Component
 
     public function mount()
     {
-        $this->searchComplete = request()->query('search', $this->searchComplete);
-    }
-
-    public function sumGroup($groupId)
-    {
-        $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
-        $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
-        $totalQuantity = $totalQuantityGroup - $totalStockGroup;
-        return $totalQuantity;
+        $this->searchAcc = request()->query('search', $this->searchAcc);
     }
 
     public function render()
     {
-        $dataComplete = WorkStep::where('work_step_list_id', 1)
-            ->whereIn('spk_status', ['Selesai'])
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchComplete . '%';
-                $query->where(function ($subQuery) use ($searchTerms) {
-                    $subQuery
-                        ->orWhere('spk_number', 'like', $searchTerms)
-                        ->orWhere('spk_type', 'like', $searchTerms)
-                        ->orWhere('customer_name', 'like', $searchTerms)
-                        ->orWhere('order_name', 'like', $searchTerms)
-                        ->orWhere('customer_number', 'like', $searchTerms)
-                        ->orWhere('code_style', 'like', $searchTerms)
-                        ->orWhere('shipping_date', 'like', $searchTerms);
-                });
-            })
-            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-            ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
-            ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateComplete);
+        $dataAcc = PengajuanBarang::where('user_id', Auth()->user()->id)
+            ->orWhere('spk_number', 'like', $searchTerms)
+            ->orWhere('spk_type', 'like', $searchTerms)
+            ->orWhere('customer_name', 'like', $searchTerms)
+            ->orWhere('order_name', 'like', $searchTerms)
+            ->orWhere('customer_number', 'like', $searchTerms)
+            ->orWhere('code_style', 'like', $searchTerms)
+            ->orWhere('shipping_date', 'like', $searchTerms)
+            ->orderBy('tgl_pengajuan', 'asc')
+            ->paginate($this->paginateAcc);
 
-        return view('livewire.follow-up.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
+        return view('livewire.component.history-pengajuan-barang-personal-index', ['instructionsAcc' => $dataAcc])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -288,15 +270,5 @@ class CompleteDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = 'info';
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

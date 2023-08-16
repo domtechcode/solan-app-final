@@ -13,14 +13,14 @@ use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
-class CompleteDashboardIndex extends Component
+class AccSpkDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateComplete = 10;
-    public $searchComplete = '';
+    public $paginateAcc = 10;
+    public $searchAcc = '';
     public $notes = [];
 
     public $selectedInstruction;
@@ -61,7 +61,7 @@ class CompleteDashboardIndex extends Component
 
     public function mount()
     {
-        $this->searchComplete = request()->query('search', $this->searchComplete);
+        $this->searchAcc = request()->query('search', $this->searchAcc);
     }
 
     public function sumGroup($groupId)
@@ -74,10 +74,10 @@ class CompleteDashboardIndex extends Component
 
     public function render()
     {
-        $dataComplete = WorkStep::where('work_step_list_id', 1)
-            ->whereIn('spk_status', ['Selesai'])
+        $dataAcc = WorkStep::where('work_step_list_id', 1)
+            ->whereIn('spk_status', ['Acc'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchComplete . '%';
+                $searchTerms = '%' . $this->searchAcc . '%';
                 $query->where(function ($subQuery) use ($searchTerms) {
                     $subQuery
                         ->orWhere('spk_number', 'like', $searchTerms)
@@ -93,9 +93,9 @@ class CompleteDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateComplete);
+            ->paginate($this->paginateAcc);
 
-        return view('livewire.follow-up.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
+        return view('livewire.follow-up.component.acc-spk-dashboard-index', ['instructionsAcc' => $dataAcc])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);

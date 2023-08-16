@@ -11,8 +11,8 @@
                             <li>
                                 <button href="#tab1"
                                     class="{{ $activeTab === 'tab1' ? 'active' : '' }} btn btn-dark mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab1')" wire:key="tab1">New SPK -
-                                    {{ $dataCountNewSpk }}
+                                    data-bs-toggle="tab" wire:click="changeTab('tab1')" wire:key="tab1">SPK -
+                                    {{ $dataCountSpk }}
                                 </button>
                             </li>
                             <li>
@@ -24,43 +24,29 @@
                             </li>
                             <li>
                                 <button href="#tab3"
-                                    class="{{ $activeTab === 'tab3' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Running -
-                                    {{ $dataCountRunningSpk }}
-                                </button>
-                            </li>
-                            <li>
-                                <button href="#tab4"
-                                    class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-danger mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Hold -
+                                    class="{{ $activeTab === 'tab3' ? 'active' : '' }} btn btn-danger mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Hold -
                                     {{ $dataCountHoldSpk }}
                                 </button>
                             </li>
                             <li>
+                                <button href="#tab4"
+                                    class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-purple mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Pengajuan Barang
+                                    -
+                                </button>
+                            </li>
+                            <li>
                                 <button href="#tab5"
-                                    class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-warning mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Cancel -
-                                    {{ $dataCountCancelSpk }}
-                                </button>
-                            </li>
-                            <li>
-                                <button href="#tab6"
-                                    class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Complete -
-                                    {{ $dataCountCompleteSpk }}
-                                </button>
-                            </li>
-                            <li>
-                                <button href="#tab7"
-                                    class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">All -
+                                    class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">All -
                                     {{ $dataCountAllSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab8"
-                                    class="{{ $activeTab === 'tab8' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab8')" wire:key="tab8">Last Data
+                                <button href="#tab6"
+                                    class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Last Data
                                     Training Program
                                 </button>
                             </li>
@@ -77,14 +63,70 @@
                     <div class="tab-pane {{ $activeTab === 'tab1' ? 'active' : '' }}" id="tab1">
                         <!-- ROW-2-->
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-status bg-dark br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">New SPK</h3>
+                            <div class="col-xl-12 col-md-12">
+                                <div class="card card-headpills">
+                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                    <div class="card-header border-bottom">
+                                        <ul class="nav nav-pills card-header-pills">
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk1' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk1')"
+                                                    wire:key="tabSpk1" href="#tabSpk1">New SPK -
+                                                    {{ $dataCountNewSpk }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-green mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk2')"
+                                                    wire:key="tabSpk2" href="#tabSpk2">Acc SPK -
+                                                    {{ $dataCountAccSpk }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk3' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk3')"
+                                                    wire:key="tabSpk3" href="#tabSpk3">Complete -
+                                                    {{ $dataCountCompleteSpk }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-warning mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk4' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk4')"
+                                                    wire:key="tabSpk4" href="#tabSpk4">Cancel -
+                                                    {{ $dataCountCancelSpk }}</button>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <div class="card-body">
-                                        @livewire('follow-up.component.new-spk-dashboard-index')
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk1' ? 'active' : '' }}"
+                                                id="tabSpk1">
+                                                <h5 class="card-title">New SPK</h5>
+                                                @livewire('follow-up.component.new-spk-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk2' ? 'active' : '' }}"
+                                                id="tabSpk2">
+                                                <h5 class="card-title">Acc Spk</h5>
+                                                @livewire('follow-up.component.acc-spk-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk3' ? 'active' : '' }}"
+                                                id="tabSpk3">
+                                                <h5 class="card-title">Complete</h5>
+                                                @livewire('follow-up.component.complete-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk4' ? 'active' : '' }}"
+                                                id="tabSpk4">
+                                                <h5 class="card-title">Cancel</h5>
+                                                @livewire('follow-up.component.cancel-dashboard-index')
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -113,23 +155,6 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
-                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Running</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        @livewire('follow-up.component.running-dashboard-index')
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ROW-2 END -->
-                    </div>
-                    <div class="tab-pane {{ $activeTab === 'tab4' ? 'active' : '' }}" id="tab4">
-                        <!-- ROW-2-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
                                     <div class="card-status bg-danger br-te-7 br-ts-7"></div>
                                     <div class="card-header">
                                         <h3 class="card-title">Hold</h3>
@@ -142,41 +167,24 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
+                    <div class="tab-pane {{ $activeTab === 'tab4' ? 'active' : '' }}" id="tab4">
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-status bg-purple br-te-7 br-ts-7"></div>
+                                    <div class="card-header">
+                                        <h3 class="card-title">Pengajuan Barang</h3>
+                                    </div>
+                                    <div class="card-body">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                    </div>
                     <div class="tab-pane {{ $activeTab === 'tab5' ? 'active' : '' }}" id="tab5">
-                        <!-- ROW-2-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-status bg-warning br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Cancel</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        @livewire('follow-up.component.cancel-dashboard-index')
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ROW-2 END -->
-                    </div>
-                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
-                        <!-- ROW-2-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-status bg-success br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Complete</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        @livewire('follow-up.component.complete-dashboard-index')
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ROW-2 END -->
-                    </div>
-                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">
@@ -193,7 +201,7 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab8' ? 'active' : '' }}" id="tab8">
+                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">

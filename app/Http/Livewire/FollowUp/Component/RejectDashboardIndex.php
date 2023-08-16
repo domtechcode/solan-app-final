@@ -38,7 +38,17 @@ class RejectDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
+    public function updatingSearchReject()
+    {
+        $this->resetPage();
+    }
 
     public function mount()
     {
