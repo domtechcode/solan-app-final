@@ -329,7 +329,7 @@
                                                                 <th>Jumlah Lembar Cetak</th>
                                                                 <th>Waste</th>
                                                                 <th>Nama Plate</th>
-                                                                <th>Action</th>
+                                                                {{-- <th>Action</th> --}}
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -418,7 +418,7 @@
                                                                             @enderror
                                                                         </div>
                                                                     </td>
-                                                                    <td>
+                                                                    {{-- <td>
                                                                         <div
                                                                             class="form-group input-group control-group">
                                                                             <button class="btn btn-primary"
@@ -426,7 +426,7 @@
                                                                                 wire:click="removeRincianPlate({{ $keteranganIndex }}, {{ $rincianIndexPlate }})"><i
                                                                                     class="fe fe-x"></i></button>
                                                                         </div>
-                                                                    </td>
+                                                                    </td> --}}
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>
