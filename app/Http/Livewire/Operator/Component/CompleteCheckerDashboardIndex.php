@@ -156,6 +156,23 @@ class CompleteCheckerDashboardIndex extends Component
             ]);
         }
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $updateAlasanRevisi->id,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $updateAlasanRevisi->update([
             'count' => $updateAlasanRevisi->count + 1,
         ]);
@@ -180,23 +197,6 @@ class CompleteCheckerDashboardIndex extends Component
                     'type_file' => 'arsip',
                     'file_name' => $fileName,
                     'file_path' => $folder,
-                ]);
-            }
-        }
-
-        if ($this->notes) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $updateAlasanRevisi->id,
-                    'user_id' => Auth()->user()->id,
                 ]);
             }
         }

@@ -658,12 +658,23 @@
                                         <label class="form-label mb-3">Alasan Revisi Sample</label>
                                     </div>
                                     <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Alasan Revisi Sample" rows="4"
-                                            wire:model.defer="alasan_revisi"></textarea>
+                                        <textarea class="form-control mb-4" placeholder="Alasan Revisi Sample" rows="4" wire:model="alasan_revisi"></textarea>
                                     </div>
                                     @error('alasan_revisi')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
+
+                                    <div class="form-group">
+                                        <label class="form-label general">File Revisi Customer (Dokumen
+                                            Arsip/Email)</label>
+                                        <x-forms.filepond wire:model="filearsiprevisi" multiple allowImagePreview
+                                            imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
+                                            maxFileSize="1024mb" />
+
+                                        @error('filearsiprevisi')
+                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="expanel expanel-default">
@@ -681,7 +692,7 @@
                                                     <div class="input-group control-group" style="padding-top: 5px;">
                                                         <select class="form-control form-select"
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan">
+                                                            wire:model="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             @foreach ($workSteps as $key)
                                                                 <option value="{{ $key['work_step_list_id'] }}">
@@ -693,9 +704,12 @@
                                                             wire:click="removeNote({{ $index }})"><i
                                                                 class="fe fe-x"></i></button>
                                                     </div>
+                                                    @error('notes.' . $index . '.tujuan')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
                                                     <div class="input-group control-group" style="padding-top: 5px;">
                                                         <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                            wire:model.defer="notes.{{ $index }}.catatan"></textarea>
+                                                            wire:model="notes.{{ $index }}.catatan"></textarea>
                                                     </div>
                                                     @error('notes.' . $index . '.catatan')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -707,11 +721,27 @@
 
                                 </div>
                             </div>
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="form-group">
+                                        <label class="form-label general">File ACC Customer</label>
+                                        <x-forms.filepond wire:model="filearsipacc" multiple allowImagePreview
+                                            imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
+                                            maxFileSize="1024mb" />
+
+                                        @error('filearsipacc')
+                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="revisiSample" wire:key="revisiSample">Revisi Sample</button>
+                    <button class="btn btn-success" wire:click="accCustomer">Acc Customer</button>
+                    <button class="btn btn-primary" wire:click="revisiSample" wire:key="revisiSample">Revisi
+                        Sample</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

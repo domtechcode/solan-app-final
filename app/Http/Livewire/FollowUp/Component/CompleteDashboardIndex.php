@@ -12,6 +12,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use Illuminate\Support\Facades\Storage;
 
 class CompleteDashboardIndex extends Component
 {
@@ -105,6 +106,7 @@ class CompleteDashboardIndex extends Component
     {
         $this->validate([
             'alasan_revisi' => 'required',
+            'filearsiprevisi' => 'required',
         ]);
 
         $updateAlasanRevisi = Instruction::find($this->selectedInstruction->id);
@@ -140,6 +142,30 @@ class CompleteDashboardIndex extends Component
                     'kategori' => 'catatan',
                     'instruction_id' => $updateAlasanRevisi->id,
                     'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
+        if (!empty($this->filearsiprevisi)) {
+            $folder = 'public/' . $updateAlasanRevisi->spk_number . '/checker';
+
+            $norevisi = Files::where('instruction_id', $updateAlasanRevisi->id)
+                ->where('type_file', 'arsip')
+                ->count();
+            foreach ($this->filearsiprevisi as $file) {
+                $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $updateAlasanRevisi->id . '-file-arsip-sample-revisi-customer-' . $norevisi . '.' . $extension;
+
+                Storage::putFileAs($folder, $file, $fileName);
+                $norevisi++;
+
+                Files::create([
+                    'instruction_id' => $updateAlasanRevisi->id,
+                    'user_id' => Auth()->user()->id,
+                    'type_file' => 'arsip',
+                    'file_name' => $fileName,
+                    'file_path' => $folder,
                 ]);
             }
         }
@@ -205,6 +231,50 @@ class CompleteDashboardIndex extends Component
         $this->alasan_revisi = null;
 
         $this->dispatchBrowserEvent('close-modal-revisi-sample');
+    }
+
+    public function accCustomer()
+    {
+        $this->validate([
+            'filearsipacc' => 'required',
+        ]);
+
+        $dataCurrentWorkStepAcc = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+            'spk_status' => 'Acc',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Acc Instruksi Kerja',
+            'message' => 'Berhasil Acc instruksi kerja',
+        ]);
+
+        $updateAcc = Instruction::find($this->selectedInstruction->id);
+
+        if (!empty($this->filearsipacc)) {
+            $folder = 'public/' . $updateAcc->spk_number . '/checker';
+
+            $noarispacc = Files::where('instruction_id', $updateAcc->id)
+                ->where('type_file', 'arsip')
+                ->count();
+            foreach ($this->filearsipacc as $file) {
+                $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+                $fileName = $updateAcc->id . '-file-arsip-sample-acc-customer-' . $noarispacc . '.' . $extension;
+                Storage::putFileAs($folder, $file, $fileName);
+                $noarispacc++;
+
+                Files::create([
+                    'instruction_id' => $updateAcc->id,
+                    'user_id' => Auth()->user()->id,
+                    'type_file' => 'arsip',
+                    'file_name' => $fileName,
+                    'file_path' => $folder,
+                ]);
+            }
+        }
+
+        $this->dispatchBrowserEvent('close-modal-complete-checker');
     }
 
     public function modalInstructionDetailsComplete($instructionId)

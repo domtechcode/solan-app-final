@@ -542,7 +542,8 @@
                                             <tbody>
                                                 @forelse ($filecontohCurrent as $file)
                                                     <tr>
-                                                        <td>{{ $file->file_name }}</td>
+                                                        <td><a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a></td>
                                                         <td>
                                                             <div class="btn-list">
                                                                 <button type="button"
@@ -576,7 +577,8 @@
                                             <tbody>
                                                 @forelse ($filearsipCurrent as $file)
                                                     <tr>
-                                                        <td>{{ $file->file_name }}</td>
+                                                        <td><a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a></td>
                                                         <td>
                                                             <div class="btn-list">
                                                                 <button type="button"
@@ -610,7 +612,8 @@
                                             <tbody>
                                                 @forelse ($fileaccountingCurrent as $file)
                                                     <tr>
-                                                        <td>{{ $file->file_name }}</td>
+                                                        <td><a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a></td>
                                                         <td>
                                                             <div class="btn-list">
                                                                 <button type="button"
