@@ -61,12 +61,7 @@ class RejectDashboardIndex extends Component
     public $keteranganReject;
     public $tujuanReject;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function updatingSearchReject()
     {
