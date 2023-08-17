@@ -8,14 +8,14 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class SettingDashboardIndex extends Component
+class CheckerDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateSetting = 10;
-    public $searchSetting = '';
+    public $paginateChecker = 10;
+    public $searchChecker = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -45,14 +45,14 @@ class SettingDashboardIndex extends Component
         $this->render();
     }
 
-    public function updatingSearchSetting()
+    public function updatingSearchChecker()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->searchSetting = request()->query('search', $this->searchSetting);
+        $this->searchChecker = request()->query('search', $this->searchChecker);
     }
 
     public function sumGroup($groupId)
@@ -65,12 +65,12 @@ class SettingDashboardIndex extends Component
 
     public function render()
     {
-        $dataSetting = WorkStep::where('work_step_list_id', 6)
+        $dataChecker = WorkStep::where('work_step_list_id', 37)
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
             ->where('spk_status', 'Running')
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchSetting . '%';
+                $searchTerms = '%' . $this->searchChecker . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -90,19 +90,19 @@ class SettingDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction', 'user'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateSetting);
+            ->paginate($this->paginateChecker);
 
-        $instructionsByUserSetting = $dataSetting->groupBy(function ($item) {
+        $instructionsByUserChecker = $dataChecker->groupBy(function ($item) {
             return $item->user->name; // Ubah nama kolom pengguna sesuai dengan struktur tabel Anda
         });
 
-        return view('livewire.penjadwalan.component.operator.setting-dashboard-index', ['instructionsByUserSetting' => $instructionsByUserSetting, 'instructionsSetting' => $dataSetting])
+        return view('livewire.penjadwalan.component.operator.checker-dashboard-index', ['instructionsByUserChecker' => $instructionsByUserChecker , 'instructionsChecker' => $dataChecker])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsSetting($instructionId)
+    public function modalInstructionDetailsChecker($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
@@ -125,7 +125,7 @@ class SettingDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupSetting($groupId)
+    public function modalInstructionDetailsGroupChecker($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')

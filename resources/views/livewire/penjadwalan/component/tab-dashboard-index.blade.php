@@ -114,7 +114,49 @@
                         <!-- ROW-2 END -->
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab3' ? 'active' : '' }}" id="tab3">
-                        {{-- @livewire('penjadwalan.component.operator.setting-dashboard-index') --}}
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-xl-12 col-md-12">
+                                <div class="card card-headpills">
+                                    <div class="card-status bg-cyan br-te-7 br-ts-7"></div>
+                                    <div class="card-header border-bottom">
+                                        <ul class="nav nav-pills card-header-pills">
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator1' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator1')" wire:key="tabOperator1" href="#tabOperator1">Setting</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator2' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator2')" wire:key="tabOperator2" href="#tabOperator2">Checker</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator3' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator3')" wire:key="tabOperator3" href="#tabOperator3">Plate</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator1' ? 'active' : '' }}" id="tabOperator1">
+                                                <h5 class="card-title">Setting</h5>
+                                                @livewire('penjadwalan.component.operator.setting-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator2' ? 'active' : '' }}" id="tabOperator2">
+                                                <h5 class="card-title">Checker</h5>
+                                                @livewire('penjadwalan.component.operator.checker-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator3' ? 'active' : '' }}" id="tabOperator3">
+                                                <h5 class="card-title">Plate</h5>
+                                                @livewire('penjadwalan.component.operator.plate-dashboard-index')
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                        
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab4' ? 'active' : '' }}" id="tab4">
                         <!-- ROW-2-->

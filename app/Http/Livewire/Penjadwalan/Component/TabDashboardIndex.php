@@ -6,6 +6,7 @@ use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
+use App\Models\WorkStepList;
 use Livewire\WithPagination;
 
 class TabDashboardIndex extends Component
@@ -18,7 +19,12 @@ class TabDashboardIndex extends Component
     public $dataCountReject;
     public $dataCountManageSpk;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public $activeTab = 'tab1';
 
@@ -32,6 +38,13 @@ class TabDashboardIndex extends Component
     public function changeTabSpk($tabSpk)
     {
         $this->activeTabSpk = $tabSpk;
+    }
+
+    public $activeTabOperator = 'tabOperator1';
+
+    public function changeTabOperator($tabOperator)
+    {
+        $this->activeTabOperator = $tabOperator;
     }
 
     public function render()
