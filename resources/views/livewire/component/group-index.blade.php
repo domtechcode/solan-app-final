@@ -72,8 +72,6 @@
                                                                     {{ $groupId }}</option>
                                                                 
                                                             @endforeach
-                                                            <option value="48">Group -
-                                                                48</option>
                                                         </select>
                                                     </div>
                                                 </div>

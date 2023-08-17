@@ -67,6 +67,8 @@ class Statistik extends Component
                 'message' => $conversation_id,
             ]);
         }
+
+        $this->render();
     }
 
     public function render()

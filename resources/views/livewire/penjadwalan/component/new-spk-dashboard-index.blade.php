@@ -26,8 +26,8 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
-                            <th class="border-bottom-0">Total Qty</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
+                            <th class="border-bottom-0">Total Lembar Cetak</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
                             <th class="border-bottom-0">Action</th>
@@ -60,14 +60,19 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if ($dataInstruction->instruction->group_id)
-                                    <td>
-                                        {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
-                                    </td>
-                                @else
-                                    <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
-                                    </td>
-                                @endif
+
+                                <?php
+                                    $totalLembarCetak = 0;
+                                ?>
+
+                                @foreach ($dataInstruction->instruction->layoutBahan as $data)
+                                    <?php
+                                        $totalLembarCetak += $data->total_lembar_cetak;
+                                    ?>
+                                @endforeach
+
+                                <td>{{ currency_idr($totalLembarCetak) }}</td>
+
                                 @if (in_array($dataInstruction->status_id, [1, 8]))
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
@@ -133,7 +138,7 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#openModalNewSpk"
-                                            wire:click.prevent="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -572,6 +577,130 @@
                         </div>
                     </div>
 
+                    <!-- Row -->
+                    <div class="row mb-3">
+                        <div class="col-xl-12">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>LANGKAH KERJA</th>
+                                            <th>NAMA BARANG</th>
+                                            <th>TARGET TERSEDIA</th>
+                                            <th>QTY</th>
+                                            <th>KETERANGAN</th>
+                                            <th>STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($historyPengajuanBarang))
+                                            @foreach ($historyPengajuanBarang as $key => $dataPengajuan)
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.work_step_list"
+                                                                class="form-control" readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.work_step_list')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.nama_barang"
+                                                                placeholder="Nama Barang" class="form-control"
+                                                                readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.nama_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="date" autocomplete="off"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                id="historyPengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                placeholder="Target Tersedia" class="form-control"
+                                                                readonly>
+                                                            @error('historyPengajuanBarang.' . $key .
+                                                                '.tgl_target_datang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.qty_barang"
+                                                                class="form-control" placeholder="QTY" readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.qty_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group control-group">
+                                                            <textarea class="form-control" placeholder="Keterangan" rows="1"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.keterangan" readonly></textarea>
+                                                        </div>
+                                                        @error('historyPengajuanBarang.' . $key . '.keterangan')
+                                                            <p class="mt-2 text-sm text-danger">
+                                                                {{ $message }}</p>
+                                                        @enderror
+                                                    </td>
+                                                    <td>
+                                                        {{ $dataPengajuan['status'] }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">Tujuan Reject</label>
+                                            <div class="form_group">
+                                                <select class="form-control form-select"
+                                                    data-bs-placeholder="Pilih Tujuan Reject"
+                                                    wire:model="tujuanReject">
+                                                    <option label="Pilih Tujuan Reject"></option>
+                                                    <option value="1">Follow Up</option>
+                                                    <option value="5">Hitung Bahan</option>
+                                                </select>
+                                            </div>
+                                            @error('tujuanReject')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">Keterangan Reject</label>
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                            </div>
+                                            @error('keteranganReject')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- file --}}
                     <div class="row mb-3">
                         <div class="col-xl-4">
@@ -671,26 +800,10 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    <label class="form-label mb-3">Keterangan Reject</label>
-                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
-                                    </div>
-                                    @error('keteranganReject')
-                                        <div><span class="text-danger">{{ $message }}</span></div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i>
-                        Follow Up</button>
-                    <button class="btn btn-success" wire:click="save">Submit</button>
+                    <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject</button>
+                    <button class="btn btn-success" wire:click="save" wire:key="save">Submit</button>
                 </div>
             </div>
         </div>

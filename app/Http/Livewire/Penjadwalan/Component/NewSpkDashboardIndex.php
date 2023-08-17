@@ -53,11 +53,23 @@ class NewSpkDashboardIndex extends Component
     public $selectedGroupChild;
     public $workStepHitungBahan;
     public $notes;
+    public $tujuanReject;
     public $keteranganReject;
 
     public $pengajuanBarang;
+    public $historyPengajuanBarang;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
+    public function updatingSearchNewSpk()
+    {
+        $this->resetPage();
+    }
 
     public function addField($index)
     {
@@ -162,7 +174,7 @@ class NewSpkDashboardIndex extends Component
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan'])
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateNewSpk);
 
@@ -309,7 +321,7 @@ class NewSpkDashboardIndex extends Component
     public function modalInstructionDetailsNewSpk($instructionId)
     {
         $this->workSteps = [];
-        $this->pengajuanBarang = [];
+        $this->historyPengajuanBarang = null;
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
         $this->dataMachines = Machine::all();
@@ -320,10 +332,12 @@ class NewSpkDashboardIndex extends Component
             ->where('state_task', '!=', 'Complete')
             ->with('workStepList', 'user', 'machine')
             ->get();
+
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
-        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)
+
+        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)->where('user_id', Auth()->user()->id)
             ->with('workStepList', 'status')
             ->get();
 
@@ -338,15 +352,14 @@ class NewSpkDashboardIndex extends Component
                     'keterangan' => $dataBarang->keterangan,
                     'status_id' => $dataBarang->status_id,
                     'status' => $dataBarang->status->desc_status,
-                    'state_pengajuan' => 'Exist',
                 ];
 
-                $this->pengajuanBarang[] = $dataPengajuan;
+                $this->historyPengajuanBarang[] = $dataPengajuan;
             }
         }
 
-        if (empty($this->pengajuanBarang)) {
-            $this->pengajuanBarang = [];
+        if (empty($this->historyPengajuanBarang)) {
+            $this->historyPengajuanBarang = [];
         }
 
         if (isset($dataworkStepHitungBahan)) {
@@ -399,6 +412,7 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'sample')
             ->get();
+
         $this->notes = Catatan::where('instruction_id', $instructionId)
             ->where('kategori', 'catatan')
             ->where('tujuan', 2)
@@ -445,17 +459,20 @@ class NewSpkDashboardIndex extends Component
     public function rejectSpk()
     {
         $this->validate([
+            'tujuanReject' => 'required',
             'keteranganReject' => 'required',
         ]);
 
         $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('work_step_list_id', 2)
             ->first();
+
         $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', 1)
+            ->where('work_step_list_id', $this->tujuanReject)
             ->first();
 
         $workStepDestination->update([
+            'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
             'reject_from_status' => $workStepCurrent->status_id,
@@ -469,7 +486,7 @@ class NewSpkDashboardIndex extends Component
         ]);
 
         $updateKeterangan = Catatan::create([
-            'tujuan' => 1,
+            'tujuan' => $this->tujuanReject,
             'catatan' => $this->keteranganReject,
             'kategori' => 'reject',
             'instruction_id' => $this->selectedInstruction->id,
@@ -487,6 +504,7 @@ class NewSpkDashboardIndex extends Component
             'message' => 'Berhasil reject instruksi kerja',
         ]);
 
+        $this->tujuanReject = null;
         $this->keteranganReject = null;
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
