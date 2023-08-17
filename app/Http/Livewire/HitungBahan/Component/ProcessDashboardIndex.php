@@ -50,6 +50,11 @@ class ProcessDashboardIndex extends Component
         $this->searchProcess = request()->query('search', $this->searchProcess);
     }
 
+    public function updatingSearchProcess()
+    {
+        $this->resetPage();
+    }
+
     public function sumGroup($groupId)
     {
         $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
@@ -172,6 +177,7 @@ class ProcessDashboardIndex extends Component
             ->first();
 
         $workStepDestination->update([
+            'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
             'reject_from_status' => $workStepCurrent->status_id,

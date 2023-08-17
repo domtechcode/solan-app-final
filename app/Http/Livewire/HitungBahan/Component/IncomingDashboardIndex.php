@@ -40,6 +40,11 @@ class IncomingDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchIncoming()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchIncoming = request()->query('search', $this->searchIncoming);

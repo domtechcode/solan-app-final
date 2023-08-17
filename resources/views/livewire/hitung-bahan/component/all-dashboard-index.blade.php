@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col">
             {{-- <label class="form-label">Customize Select</label> --}}
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -11,7 +11,7 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="search">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchAll">
         </div>
     </div>
     <div class="row mt-3">
@@ -27,7 +27,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -35,8 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
-                        @forelse ($instructions as $key => $dataInstruction)
+                        @forelse ($instructionsAll as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -48,7 +47,7 @@
 
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info"
-                                            wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -133,7 +132,7 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark"
-                                            wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -152,7 +151,7 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{ $instructionsAll->links() }}
         </div>
     </div>
 
@@ -180,7 +179,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -455,7 +454,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -736,7 +735,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>
@@ -996,23 +995,5 @@
             </div>
         </div>
     </div>
-
-    {{-- @livewire('component.detail-instruction') --}}
 </div>
 
-@push('scripts')
-    <script>
-        window.addEventListener('close-modal-all', event => {
-            $('#detailInstructionModalAll').modal('hide');
-            $('#detailInstructionModalGroupAll').modal('hide');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-all', event => {
-            $('#detailInstructionModalAll').modal('show');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-group-all', event => {
-            $('#detailInstructionModalGroupAll').modal('show');
-        });
-    </script>
-@endpush

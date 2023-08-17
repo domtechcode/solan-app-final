@@ -31,7 +31,7 @@
                             </li>
                             <li>
                                 <button href="#tab4"
-                                    class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-warning mt-1 mb-1 me-3"
+                                    class="{{ $activeTab === 'tab4' ? 'active' : '' }} btn btn-cyan mt-1 mb-1 me-3"
                                     data-bs-toggle="tab" wire:click="changeTab('tab4')" wire:key="tab4">Incoming -
                                     {{ $dataCountIncomingSpk }}
                                 </button>
@@ -115,7 +115,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
-                                    <div class="card-status bg-warning br-te-7 br-ts-7"></div>
+                                    <div class="card-status bg-cyan br-te-7 br-ts-7"></div>
                                     <div class="card-header">
                                         <h3 class="card-title">Incoming</h3>
                                     </div>

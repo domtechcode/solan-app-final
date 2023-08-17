@@ -89,20 +89,7 @@ class TabDashboardIndex extends Component
 
         $this->dataCountIncomingSpk = WorkStep::where('work_step_list_id', 5)
             ->where('state_task', 'Not Running')
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
-            ->where(function ($query) {
-                $query
-                    ->where(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [3]);
-                    })
-                    ->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [22, 26])->where('user_id', Auth()->user()->id);
-                    });
-            })
-            ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-            })
-            ->orderBy('shipping_date', 'asc')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
 

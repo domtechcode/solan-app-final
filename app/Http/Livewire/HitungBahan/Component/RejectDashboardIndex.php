@@ -45,6 +45,11 @@ class RejectDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchReject()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchReject = request()->query('search', $this->searchReject);
@@ -172,6 +177,7 @@ class RejectDashboardIndex extends Component
             ->first();
 
         $workStepDestination->update([
+            'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
             'reject_from_status' => $workStepCurrent->status_id,

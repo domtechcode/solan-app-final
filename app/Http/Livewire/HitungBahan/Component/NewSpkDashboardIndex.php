@@ -45,6 +45,11 @@ class NewSpkDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchNewSpk()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
@@ -172,6 +177,7 @@ class NewSpkDashboardIndex extends Component
             ->first();
 
         $workStepDestination->update([
+            'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
             'reject_from_status' => $workStepCurrent->status_id,
