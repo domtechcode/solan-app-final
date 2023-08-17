@@ -136,13 +136,13 @@ class NewSpkDashboardIndex extends Component
         $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
     }
 
-    public function sumGroup($groupId)
-    {
-        $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
-        $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
-        $totalQuantity = $totalQuantityGroup - $totalStockGroup;
-        return $totalQuantity;
-    }
+    // public function sumGroup($groupId)
+    // {
+    //     $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
+    //     $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
+    //     $totalQuantity = $totalQuantityGroup - $totalStockGroup;
+    //     return $totalQuantity;
+    // }
 
     public function render()
     {
@@ -283,6 +283,7 @@ class NewSpkDashboardIndex extends Component
             'pengajuanBarang.*.nama_barang' => 'required',
             'pengajuanBarang.*.tgl_target_datang' => 'required',
             'pengajuanBarang.*.qty_barang' => 'required',
+            'pengajuanBarang.*.keterangan' => 'required',
         ]);
 
         if (isset($this->pengajuanBarang)) {
@@ -320,7 +321,7 @@ class NewSpkDashboardIndex extends Component
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
-        $this->workSteps = [];
+        $this->workSteps = null;
         $this->historyPengajuanBarang = null;
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();

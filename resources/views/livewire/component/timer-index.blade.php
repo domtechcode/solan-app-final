@@ -13,6 +13,13 @@
                         <div class="text-center timer">
                             <h3 class="display-3" id="display">{{ $timerDataWorkStep }}</h3>
                         </div>
+                        
+                        @if(Auth()->user()->id == 12)
+                        <div class="text-center">
+                            <p>SEMANGAT BABY <i class="fa fa-heart" aria-hidden="true"></i></p>
+                        </div>
+                        @endif
+
                         <div class="form-row">
                             <div class="col-lg-12">
                                 <div class="form-group">
@@ -116,6 +123,7 @@
             timerInterval = null;
             isPaused = true;
             elapsedTime = Date.now() - startTime;
+            document.getElementById("start").style.display = "none";
             document.getElementById("pause").style.display = "none";
             document.getElementById("continue").style.display = "inline-block";
 

@@ -26,8 +26,8 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
-                            <th class="border-bottom-0">Total Qty</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
+                            <th class="border-bottom-0">Total Lembar Cetak</th>
                             <th class="border-bottom-0">Urgent</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -45,7 +45,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupRunning" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupRunning" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -58,13 +58,27 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if($dataInstruction->instruction->group_id)
+                                {{-- @if($dataInstruction->instruction->group_id)
                                 <td>
                                     {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
                                 </td>
                                 @else
                                     <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}</td>
-                                @endif
+                                @endif --}}
+
+                                <?php
+                                $totalLembarCetak = 0;
+                                ?>
+
+                                @foreach ($dataInstruction->instruction->layoutBahan as $data)
+                                    <?php
+                                    $totalLembarCetak += $data->total_lembar_cetak;
+                                    ?>
+                                @endforeach
+
+                                <td>{{ currency_idr($totalLembarCetak) }}</td>
+
+
                                 @if($dataInstruction->task_priority == 'Urgent')
                                 <td>
                                     <div class="form-group">
@@ -139,7 +153,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalRunning" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalRunning" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -229,7 +243,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -326,9 +340,15 @@
                                         @foreach ($workSteps as $key => $dataWork)
                                             <tr>
                                                 <td>
-                                                    <div class="btn-list">         
-                                                        <button type="button" class="btn btn-icon btn-sm btn-success" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-plus"></i></button>
-                                                        <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-x"></i></button>
+                                                    <div class="btn-list">
+                                                        <button type="button" class="btn btn-icon btn-sm btn-success"
+                                                            wire:click="addField({{ $key }})"
+                                                            wire:loading.attr="disabled"><i
+                                                                class="fe fe-plus"></i></button>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-danger"
+                                                            wire:click="removeField({{ $key }})"
+                                                            wire:loading.attr="disabled"><i
+                                                                class="fe fe-x"></i></button>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -336,35 +356,66 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control work_step_list_id-{{ $key }}" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja" wire:model.defer="workSteps.{{ $key }}.work_step_list_id" id="work_step_list_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;"
+                                                                        class="form-control work_step_list_id-{{ $key }}"
+                                                                        data-clear data-pharaonic="select2"
+                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-component-id="{{ $this->id }}"
+                                                                        data-placeholder="Select Langkah Kerja"
+                                                                        wire:model="workSteps.{{ $key }}.work_step_list_id"
+                                                                        id="work_step_list_id-{{ $key }}">
                                                                         <option label="Select Langkah Kerja"></option>
                                                                         @forelse ($dataWorkSteps as $dataWorkStep)
-                                                                            <option value="{{ $dataWorkStep->id }}">{{ $dataWorkStep->name }}</option>
+                                                                            <option value="{{ $dataWorkStep->id }}">
+                                                                                {{ $dataWorkStep->name }}</option>
                                                                         @empty
-                                                                            <option label="Select Langkah Kerja"></option>
+                                                                            <option label="Select Langkah Kerja">
+                                                                            </option>
                                                                         @endforelse
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            @error('workSteps.' . $key . '.work_step_list_id')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.target_date" id="workSteps.{{ $key }}.target_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.target_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        <input type="date"
+                                                            wire:model="workSteps.{{ $key }}.target_date"
+                                                            id="workSteps.{{ $key }}.target_date"
+                                                            class="form-control">
+                                                        @error('workSteps.{{ $key }}.target_date')
+                                                            <div><span class="text-danger">{{ $message }}</span>
+                                                            </div>
+                                                        @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="date" wire:model.defer="workSteps.{{ $key }}.schedule_date" id="workSteps.{{ $key }}.schedule_date" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.schedule_date') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        <input type="date"
+                                                            wire:model="workSteps.{{ $key }}.schedule_date"
+                                                            id="workSteps.{{ $key }}.schedule_date"
+                                                            class="form-control">
+                                                        @error('workSteps.{{ $key }}.schedule_date')
+                                                            <div><span class="text-danger">{{ $message }}</span>
+                                                            </div>
+                                                        @enderror
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <input type="text" wire:model.defer="workSteps.{{ $key }}.target_time" id="workSteps.{{ $key }}.target_time" placeholder="Target Jam" class="form-control" required>
-                                                        @error('workSteps.{{ $key }}.target_time') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                        <input type="text"
+                                                            wire:model="workSteps.{{ $key }}.target_time"
+                                                            id="workSteps.{{ $key }}.target_time"
+                                                            placeholder="Target Jam" class="form-control">
+                                                        @error('workSteps.{{ $key }}.target_time')
+                                                            <div><span class="text-danger">{{ $message }}</span>
+                                                            </div>
+                                                        @enderror
                                                     </div>
                                                 </td>
                                                 <td>
@@ -372,16 +423,28 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control user_id" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select User" wire:model.defer="workSteps.{{ $key }}.user_id" id="user_id-{{ $key }}" required>
+                                                                    <select style="width: 100%;"
+                                                                        class="form-control user_id" data-clear
+                                                                        data-pharaonic="select2"
+                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-component-id="{{ $this->id }}"
+                                                                        data-placeholder="Select User"
+                                                                        wire:model.defer="workSteps.{{ $key }}.user_id"
+                                                                        id="user_id-{{ $key }}">
                                                                         <option label="Select User"></option>
                                                                         @forelse ($dataUsers as $dataUser)
-                                                                        <option value="{{ $dataUser->id }}">{{ $dataUser->name }}</option>
+                                                                            <option value="{{ $dataUser->id }}">
+                                                                                {{ $dataUser->name }}</option>
                                                                         @empty
                                                                             <option label="Select User"></option>
-                                                                        @endforelse 
+                                                                        @endforelse
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            @error('workSteps.{{ $key }}.user_id')
+                                                                <div><span class="text-danger">{{ $message }}</span>
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </td>
@@ -390,16 +453,29 @@
                                                         <div class="col-md-12">
                                                             <div wire:ignore>
                                                                 <div class="form-group">
-                                                                    <select style="width: 100%;" class="form-control machine_id" data-clear data-pharaonic="select2" data-parent="#openModalRunning" data-component-id="{{ $this->id }}" data-placeholder="Select Machine" wire:model.defer="workSteps.{{ $key }}.machine_id" id="machine_id-{{ $key }}">
+                                                                    <select style="width: 100%;"
+                                                                        class="form-control machine_id" data-clear
+                                                                        data-pharaonic="select2"
+                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-component-id="{{ $this->id }}"
+                                                                        data-placeholder="Select Machine"
+                                                                        wire:model="workSteps.{{ $key }}.machine_id"
+                                                                        id="machine_id-{{ $key }}">
                                                                         <option label="Select Machine"></option>
                                                                         @forelse ($dataMachines as $dataMachine)
-                                                                            <option value="{{ $dataMachine->id }}">{{ $dataMachine->machine_identity }}</option>
+                                                                            <option value="{{ $dataMachine->id }}">
+                                                                                {{ $dataMachine->machine_identity }}
+                                                                            </option>
                                                                         @empty
                                                                             <option label="Select Machine"></option>
-                                                                        @endforelse 
+                                                                        @endforelse
                                                                     </select>
                                                                 </div>
                                                             </div>
+                                                            @error('workSteps.{{ $key }}.user_id')
+                                                                <div><span class="text-danger">{{ $message }}</span>
+                                                                </div>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </td>
@@ -408,52 +484,75 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-list">
-                                                        @if(empty($stateRejectPenjadwalan))
-                                                            @if($dataWork['status_task'] === 'Pending Start')
+                                                        @if (empty($stateRejectPenjadwalan))
+                                                            @if ($dataWork['status_task'] === 'Pending Start')
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="addField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-left-up"></i></button> --}}
-                                                                <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
-                                                                <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startDuetButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i> Start Duet</button>
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-info"
+                                                                    wire:click="startButton({{ $dataWork['id'] }})"
+                                                                    wire:loading.attr="disabled"><i
+                                                                        class="fe fe-play"></i></button>
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-info"
+                                                                    wire:click="startDuetButton({{ $dataWork['id'] }})"
+                                                                    wire:loading.attr="disabled"><i
+                                                                        class="fe fe-play"></i> Start Duet</button>
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-danger" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-slash"></i></button> --}}
                                                                 {{-- <button type="button" class="btn btn-icon btn-sm btn-warning" wire:click="removeField({{ $key }})" wire:loading.attr="disabled"><i class="fe fe-corner-right-down"></i></button> --}}
-
-                                                            
                                                             @elseif($dataWork['status_task'] === 'Pending Approved' || $dataWork['status_task'] === 'Process')
-                                                                <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="pauseButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-pause"></i></button>
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-primary"
+                                                                    wire:click="pauseButton({{ $dataWork['id'] }})"
+                                                                    wire:loading.attr="disabled"><i
+                                                                        class="fe fe-pause"></i></button>
                                                             @elseif($dataWork['status_task'] === 'Pause')
-                                                                <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-play"></i></button>
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-info"
+                                                                    wire:click="startButton({{ $dataWork['id'] }})"
+                                                                    wire:loading.attr="disabled"><i
+                                                                        class="fe fe-play"></i></button>
                                                             @endif
                                                         @else
-                                                            <button type="button" class="btn btn-icon btn-sm btn-primary" wire:click="rejectButton({{ $dataWork['id'] }})" wire:loading.attr="disabled"><i class="fe fe-arrow-left"></i> Reject</button>
-                                                            <button type="button" class="btn btn-icon btn-sm btn-info" wire:click="startButtonReject({{ $dataWork['id'] }})" wire:loading.attr="disabled">Start Order <i class="fe fe-arrow-right"></i></button>
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-primary"
+                                                                wire:click="rejectButton({{ $dataWork['id'] }})"
+                                                                wire:loading.attr="disabled"><i
+                                                                    class="fe fe-arrow-left"></i> Reject</button>
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-info"
+                                                                wire:click="startButtonReject({{ $dataWork['id'] }})"
+                                                                wire:loading.attr="disabled">Start Order <i
+                                                                    class="fe fe-arrow-right"></i></button>
                                                         @endif
                                                     </div>
                                                 </td>
+
                                                 <td>
                                                     <ul>
-                                                        @if(isset($dataWork['keterangan_reject']))
-                                                        
-                                                        <?php
+                                                        @if (isset($dataWork['keterangan_reject']))
+                                                            <?php
                                                             $data = json_decode($dataWork['keterangan_reject'], true);
-                                                        ?>
+                                                            ?>
                                                             @foreach ($data as $index => $item)
-                                                            <li>{{ $index + 1 }} . {{ $item }} </li>
+                                                                <li>{{ $index + 1 }} . {{ $item }} </li>
                                                             @endforeach
                                                         @endif
                                                     </ul>
                                                 </td>
                                                 <td>
                                                     <div class="btn-list">
-                                                        <button type="button"
-                                                            class="btn btn-icon btn-sm btn-info"
+                                                        <button type="button" class="btn btn-icon btn-sm btn-info"
                                                             wire:click="addPengajuanBarang({{ $dataWork['work_step_list_id'] }})"><i
                                                                 class="fe fe-plus"></i> Ajukan Barang</button>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    @if($dataWork['status_task'] == 'Complete')       
-                                                    <div class="btn-list">  
-                                                        <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $this->selectedInstruction->id, 'workStepId' => $dataWork['id']]) }}"><i class="fe fe-link"></i></a>
-                                                    </div>
+                                                    @if ($dataWork['status_task'] == 'Complete')
+                                                        <div class="btn-list">
+                                                            <a target="blank" class="btn btn-icon btn-sm btn-dark"
+                                                                href="{{ route('jadwal.indexWorkStep', ['instructionId' => $this->selectedInstruction->id, 'workStepId' => $dataWork['id']]) }}"><i
+                                                                    class="fe fe-link"></i></a>
+                                                        </div>
                                                     @else
                                                         -
                                                     @endif
@@ -489,7 +588,7 @@
                                                     <td>
                                                         <div class="form-group">
                                                             <input type="text"
-                                                                wire:model.defer="pengajuanBarang.{{ $key }}.work_step_list"
+                                                                wire:model="pengajuanBarang.{{ $key }}.work_step_list"
                                                                 class="form-control" readonly>
                                                             @error('pengajuanBarang.' . $key . '.work_step_list')
                                                                 <p class="mt-2 text-sm text-danger">
@@ -569,14 +668,140 @@
                         </div>
                     </div>
 
+                    <!-- Row -->
+                    <div class="row mb-3">
+                        <div class="col-xl-12">
+                            <div class="table-responsive">
+                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>LANGKAH KERJA</th>
+                                            <th>NAMA BARANG</th>
+                                            <th>TARGET TERSEDIA</th>
+                                            <th>QTY</th>
+                                            <th>KETERANGAN</th>
+                                            <th>STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (!empty($historyPengajuanBarang))
+                                            @foreach ($historyPengajuanBarang as $key => $dataPengajuan)
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.work_step_list"
+                                                                class="form-control" readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.work_step_list')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.nama_barang"
+                                                                placeholder="Nama Barang" class="form-control"
+                                                                readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.nama_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="date" autocomplete="off"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                id="historyPengajuanBarang.{{ $key }}.tgl_target_datang"
+                                                                placeholder="Target Tersedia" class="form-control"
+                                                                readonly>
+                                                            @error('historyPengajuanBarang.' . $key .
+                                                                '.tgl_target_datang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.qty_barang"
+                                                                class="form-control" placeholder="QTY" readonly>
+                                                            @error('historyPengajuanBarang.' . $key . '.qty_barang')
+                                                                <p class="mt-2 text-sm text-danger">
+                                                                    {{ $message }}</p>
+                                                            @enderror
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group control-group">
+                                                            <textarea class="form-control" placeholder="Keterangan" rows="1"
+                                                                wire:model="historyPengajuanBarang.{{ $key }}.keterangan" readonly></textarea>
+                                                        </div>
+                                                        @error('historyPengajuanBarang.' . $key . '.keterangan')
+                                                            <p class="mt-2 text-sm text-danger">
+                                                                {{ $message }}</p>
+                                                        @enderror
+                                                    </td>
+                                                    <td>
+                                                        {{ $dataPengajuan['status'] }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-12">
                             <label class="form-label">Keterangan Reschedule</label>
-                                <div class="input-group control-group" style="padding-top: 5px;">
-                                    <textarea class="form-control mb-4" placeholder="Keterangan Reschedule" rows="4" wire:model="keteranganReschedule"></textarea>
+                            <div class="input-group control-group" style="padding-top: 5px;">
+                                <textarea class="form-control mb-4" placeholder="Keterangan Reschedule" rows="4"
+                                    wire:model="keteranganReschedule"></textarea>
+                            </div>
+                            @error('keteranganReschedule')
+                                <div><span class="text-danger">{{ $message }}</span></div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">Tujuan Reject</label>
+                                            <div class="form_group">
+                                                <select class="form-control form-select"
+                                                    data-bs-placeholder="Pilih Tujuan Reject"
+                                                    wire:model="tujuanReject">
+                                                    <option label="Pilih Tujuan Reject"></option>
+                                                    <option value="1">Follow Up</option>
+                                                    <option value="5">Hitung Bahan</option>
+                                                </select>
+                                            </div>
+                                            @error('tujuanReject')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">Keterangan Reject</label>
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                            </div>
+                                            @error('keteranganReject')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-                                @error('keteranganReschedule') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                            </div>
                         </div>
                     </div>
 
@@ -679,26 +904,10 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    <label class="form-label mb-3">Keterangan Reject</label>
-                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
-                                    </div>
-                                    @error('keteranganReject')
-                                        <div><span class="text-danger">{{ $message }}</span></div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="rejectSpk">Reject <i class="fe fe-arrow-right"></i> Follow Up</button>
-                    <button class="btn btn-success"  wire:click="reschedule">Reschedule</button>
+                    <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject</button>
+                    <button class="btn btn-success" wire:click="reschedule" wire:key="reschedule">Reschedule</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -744,7 +953,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -990,7 +1199,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>

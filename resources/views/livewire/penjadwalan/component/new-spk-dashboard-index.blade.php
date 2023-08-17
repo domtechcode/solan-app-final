@@ -47,7 +47,8 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupNewSpk"
-                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -62,12 +63,12 @@
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
 
                                 <?php
-                                    $totalLembarCetak = 0;
+                                $totalLembarCetak = 0;
                                 ?>
 
                                 @foreach ($dataInstruction->instruction->layoutBahan as $data)
                                     <?php
-                                        $totalLembarCetak += $data->total_lembar_cetak;
+                                    $totalLembarCetak += $data->total_lembar_cetak;
                                     ?>
                                 @endforeach
 
@@ -138,7 +139,8 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#openModalNewSpk"
-                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -215,7 +217,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -320,7 +322,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Langkah Kerja"
-                                                                            wire:model.defer="workSteps.{{ $key }}.work_step_list_id"
+                                                                            wire:model="workSteps.{{ $key }}.work_step_list_id"
                                                                             id="work_step_list_id-{{ $key }}">
                                                                             <option label="Select Langkah Kerja">
                                                                             </option>
@@ -335,11 +337,11 @@
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
-                                                                    @error('workSteps.' . $key . '.work_step_list_id')
-                                                                        <p class="mt-2 text-sm text-danger">
-                                                                            {{ $message }}</p>
-                                                                    @enderror
                                                                 </div>
+                                                                @error('workSteps.' . $key . '.work_step_list_id')
+                                                                    <p class="mt-2 text-sm text-danger">
+                                                                        {{ $message }}</p>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                     </td>
@@ -372,8 +374,7 @@
                                                             <input type="number" autocomplete="off"
                                                                 wire:model="workSteps.{{ $key }}.target_time"
                                                                 id="workSteps.{{ $key }}.target_time"
-                                                                placeholder="Target Jam" class="form-control"
-                                                                required>
+                                                                placeholder="Target Jam" class="form-control">
                                                             @error('workSteps.' . $key . '.target_time')
                                                                 <p class="mt-2 text-sm text-danger">
                                                                     {{ $message }}</p>
@@ -391,7 +392,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select User"
-                                                                            wire:model.defer="workSteps.{{ $key }}.user_id"
+                                                                            wire:model="workSteps.{{ $key }}.user_id"
                                                                             id="user_id-{{ $key }}">
                                                                             <option label="Select User"></option>
                                                                             @forelse ($dataUsers as $dataUser)
@@ -403,11 +404,11 @@
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
-                                                                    @error('workSteps.' . $key . '.user_id')
-                                                                        <p class="mt-2 text-sm text-danger">
-                                                                            {{ $message }}</p>
-                                                                    @enderror
                                                                 </div>
+                                                                @error('workSteps.' . $key . '.user_id')
+                                                                    <p class="mt-2 text-sm text-danger">
+                                                                        {{ $message }}</p>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                     </td>
@@ -422,7 +423,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Machine"
-                                                                            wire:model.defer="workSteps.{{ $key }}.machine_id"
+                                                                            wire:model="workSteps.{{ $key }}.machine_id"
                                                                             id="machine_id-{{ $key }}">
                                                                             <option label="Select Machine">
                                                                             </option>
@@ -437,11 +438,11 @@
                                                                             @endforelse
                                                                         </select>
                                                                     </div>
-                                                                    @error('workSteps.' . $key . '.machine_id')
-                                                                        <p class="mt-2 text-sm text-danger">
-                                                                            {{ $message }}</p>
-                                                                    @enderror
                                                                 </div>
+                                                                @error('workSteps.' . $key . '.machine_id')
+                                                                    <p class="mt-2 text-sm text-danger">
+                                                                        {{ $message }}</p>
+                                                                @enderror
                                                             </div>
                                                         </div>
                                                     </td>
@@ -497,7 +498,7 @@
                                                     <td>
                                                         <div class="form-group">
                                                             <input type="text"
-                                                                wire:model.defer="pengajuanBarang.{{ $key }}.work_step_list"
+                                                                wire:model="pengajuanBarang.{{ $key }}.work_step_list"
                                                                 class="form-control" readonly>
                                                             @error('pengajuanBarang.' . $key . '.work_step_list')
                                                                 <p class="mt-2 text-sm text-danger">
@@ -848,7 +849,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -1094,7 +1095,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>

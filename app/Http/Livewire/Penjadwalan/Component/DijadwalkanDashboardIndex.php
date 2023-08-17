@@ -59,10 +59,13 @@ class DijadwalkanDashboardIndex extends Component
     public $notereject;
     public $rejectKeterangan;
     public $keteranganReject;
+    public $tujuanReject;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
     public $pengajuanBarang;
+    public $historyPengajuanBarang;
+
     public function addPengajuanBarang($workStepListId)
     {
         $dataWorkStepList = WorkStepList::find($workStepListId);
@@ -161,13 +164,13 @@ class DijadwalkanDashboardIndex extends Component
         $this->searchDijadwalkan = request()->query('search', $this->searchDijadwalkan);
     }
 
-    public function sumGroup($groupId)
-    {
-        $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
-        $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
-        $totalQuantity = $totalQuantityGroup - $totalStockGroup;
-        return $totalQuantity;
-    }
+    // public function sumGroup($groupId)
+    // {
+    //     $totalQuantityGroup = Instruction::where('group_id', $groupId)->sum('quantity');
+    //     $totalStockGroup = Instruction::where('group_id', $groupId)->sum('stock');
+    //     $totalQuantity = $totalQuantityGroup - $totalStockGroup;
+    //     return $totalQuantity;
+    // }
 
     public function render()
     {
@@ -199,7 +202,7 @@ class DijadwalkanDashboardIndex extends Component
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan'])
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateDijadwalkan);
 
@@ -342,7 +345,8 @@ class DijadwalkanDashboardIndex extends Component
 
     public function modalInstructionDetailsDijadwalkan($instructionId)
     {
-        $this->workSteps = [];
+        $this->workSteps = null;
+        $this->pengajuanBarang = null;
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
@@ -370,7 +374,7 @@ class DijadwalkanDashboardIndex extends Component
             $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
         }
 
-        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)
+        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)->where('user_id', Auth()->user()->id)
             ->with('workStepList', 'status')
             ->get();
 
@@ -385,15 +389,14 @@ class DijadwalkanDashboardIndex extends Component
                     'keterangan' => $dataBarang->keterangan,
                     'status_id' => $dataBarang->status_id,
                     'status' => $dataBarang->status->desc_status,
-                    'state_pengajuan' => 'Exist',
                 ];
 
-                $this->pengajuanBarang[] = $dataPengajuan;
+                $this->historyPengajuanBarang[] = $dataPengajuan;
             }
         }
 
-        if (empty($this->pengajuanBarang)) {
-            $this->pengajuanBarang = [];
+        if (empty($this->historyPengajuanBarang)) {
+            $this->historyPengajuanBarang = [];
         }
 
         foreach ($this->selectedWorkStep as $key => $dataSelected) {
@@ -746,17 +749,20 @@ class DijadwalkanDashboardIndex extends Component
     public function rejectSpk()
     {
         $this->validate([
+            'tujuanReject' => 'required',
             'keteranganReject' => 'required',
         ]);
 
         $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('work_step_list_id', 2)
             ->first();
+
         $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', 1)
+            ->where('work_step_list_id', $this->tujuanReject)
             ->first();
 
         $workStepDestination->update([
+            'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
             'reject_from_status' => $workStepCurrent->status_id,
@@ -770,7 +776,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $updateKeterangan = Catatan::create([
-            'tujuan' => 1,
+            'tujuan' => $this->tujuanReject,
             'catatan' => $this->keteranganReject,
             'kategori' => 'reject',
             'instruction_id' => $this->selectedInstruction->id,
@@ -788,10 +794,11 @@ class DijadwalkanDashboardIndex extends Component
             'message' => 'Berhasil reject instruksi kerja',
         ]);
 
-        $this->keteranganReject = '';
-        $this->dispatchBrowserEvent('close-modal-dijadwalkan');
+        $this->tujuanReject = null;
+        $this->keteranganReject = null;
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
     public function ajukanBarang()
@@ -801,6 +808,7 @@ class DijadwalkanDashboardIndex extends Component
             'pengajuanBarang.*.nama_barang' => 'required',
             'pengajuanBarang.*.tgl_target_datang' => 'required',
             'pengajuanBarang.*.qty_barang' => 'required',
+            'pengajuanBarang.*.keterangan' => 'required',
         ]);
 
         if (isset($this->pengajuanBarang)) {
