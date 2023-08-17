@@ -26,7 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -47,7 +47,8 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupHold"
-                                            wire:click="modalInstructionDetailsGroupHold({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupHold({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupHold({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -134,12 +135,14 @@
                                         @if ($dataInstruction->spk_status == 'Hold')
                                             <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                                 data-bs-target="#openModalHold"
-                                                wire:click="modalInstructionDetailsHold({{ $dataInstruction->instruction->id }})"><i
+                                                wire:click="modalInstructionDetailsHold({{ $dataInstruction->instruction->id }})"
+                                                wire:key="modalInstructionDetailsHold({{ $dataInstruction->instruction->id }})"><i
                                                     class="fe fe-eye"></i></button>
                                         @else
                                             <button class="btn btn-icon btn-sm btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#openModalHoldQc"
-                                                wire:click="modalInstructionDetailsHoldQc({{ $dataInstruction->instruction->id }})"><i
+                                                wire:click="modalInstructionDetailsHoldQc({{ $dataInstruction->instruction->id }})"
+                                                wire:key="modalInstructionDetailsHoldQc({{ $dataInstruction->instruction->id }})"><i
                                                     class="fe fe-eye"></i></button>
                                         @endif
                                     </div>
@@ -187,7 +190,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -434,7 +437,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -728,7 +731,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -992,7 +995,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>
