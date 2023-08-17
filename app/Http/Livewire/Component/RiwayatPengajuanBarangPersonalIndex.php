@@ -23,14 +23,6 @@ class RiwayatPengajuanBarangPersonalIndex extends Component
     public $paginateRiwayatPengajuanBarangPersonal = 10;
     public $searchRiwayatPengajuanBarangPersonal = '';
 
-    public $selectedInstruction;
-    public $selectedWorkStep;
-    public $selectedFileContoh;
-    public $selectedFileArsip;
-    public $selectedFileAccounting;
-    public $selectedFileLayout;
-    public $selectedFileSample;
-
     public $selectedInstructionParent;
     public $selectedWorkStepParent;
     public $selectedFileContohParent;
@@ -58,7 +50,7 @@ class RiwayatPengajuanBarangPersonalIndex extends Component
         $this->render();
     }
 
-    public function updatingSearchRiwayatPengajuanBarangPersonal ()
+    public function updatingSearchRiwayatPengajuanBarangPersonal()
     {
         $this->resetPage();
     }
@@ -70,9 +62,14 @@ class RiwayatPengajuanBarangPersonalIndex extends Component
 
     public function render()
     {
-        $dataRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)
+        $dataRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where(function ($query) {
+            $query->where('qty_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                ->orWhere('nama_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                ->orWhere('tgl_target_datang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%');
+        })
+            ->orderBy('tgl_pengajuan', 'asc')
             ->with(['status', 'user'])
-            ->orderBy('tgl_target_datang', 'asc')
             ->paginate($this->paginateRiwayatPengajuanBarangPersonal);
 
         return view('livewire.component.riwayat-pengajuan-barang-personal-index', ['riwayatPengajuanBarangPersonal' => $dataRiwayatPengajuanBarangPersonal])

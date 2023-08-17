@@ -37,6 +37,13 @@ class TabDashboardIndex extends Component
         $this->activeTabSpk = $tabSpk;
     }
 
+    public $activeTabPengajuanBarangPersonal = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarangPersonal)
+    {
+        $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
+    }
+
     public function render()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 1)
