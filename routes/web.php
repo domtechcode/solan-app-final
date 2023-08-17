@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexEditInstruction')->name('followUp.editInstruction');
         Route::get('/update-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexUpdateInstruction')->name('followUp.updateInstruction');
         Route::get('/reorder-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexReorderInstruction')->name('followUp.reorderInstruction');
+        Route::get('/create-acc-instruction/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexCreateAccInstruction')->name('followUp.createAccInstruction');
         Route::get('/group', 'App\Http\Livewire\FollowUp\Index\IndexGroup')->name('followUp.group');
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\FollowUp\Index\IndexPengajuanBarangPersonal')->name('followUp.pengajuanBarangPersonal');
