@@ -4,7 +4,7 @@
     <div class="row">
         <div class="row mb-3">
             <div class="col">
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateSetting">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePotongJadi">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -12,12 +12,12 @@
                 </select>
             </div>
             <div class="col d-flex justify-content-end">
-                <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchSetting">
+                <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPotongJadi">
             </div>
         </div>
 
         <div class="row">
-            @foreach ($instructionsByUserSetting as $user => $instructions)
+            @foreach ($instructionsByUserPotongJadi as $user => $instructions)
                 <div class="col-lg-6">
                     <div class="expanel">
                         <div class="expanel-heading">
@@ -35,6 +35,7 @@
                                                     <th class="border-bottom-0">No SPK</th>
                                                     <th class="border-bottom-0">Permintaan Kirim
                                                     </th>
+                                                    <th class="border-bottom-0">Machine</th>
                                                     <th class="border-bottom-0">Status</th>
                                                     <th class="border-bottom-0">Action</th>
                                                 </tr>
@@ -53,12 +54,14 @@
                                                             @if ($dataInstruction->instruction->group_id)
                                                                 <button class="btn btn-icon btn-sm btn-info"
                                                                     data-bs-toggle="modal"
-                                                                    data-bs-target="#openModalGroupSetting"
-                                                                    wire:click="modalInstructionDetailsGroupSetting({{ $dataInstruction->instruction->group_id }})"
-                                                                    wire:key="modalInstructionDetailsGroupSetting({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                                                    data-bs-target="#openModalGroupPotongJadi"
+                                                                    wire:click="modalInstructionDetailsGroupPotongJadi({{ $dataInstruction->instruction->group_id }})"
+                                                                    wire:key="modalInstructionDetailsGroupPotongJadi({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                                             @endif
                                                         </td>
                                                         <td>{{ $dataInstruction->instruction->shipping_date }}
+                                                        </td>
+                                                        <td>{{ $dataInstruction->machine->machine_identity }}
                                                         </td>
                                                         @if (in_array($dataInstruction->status_id, [1, 8]))
                                                             <td>
@@ -101,9 +104,9 @@
                                                             <div class="btn-list">
                                                                 <button class="btn btn-icon btn-sm btn-dark"
                                                                     data-bs-toggle="modal"
-                                                                    data-bs-target="#openModalSetting"
-                                                                    wire:click="modalInstructionDetailsSetting({{ $dataInstruction->instruction->id }})"
-                                                                    wire:key="modalInstructionDetailsSetting({{ $dataInstruction->instruction->id }})"><i
+                                                                    data-bs-target="#openModalPotongJadi"
+                                                                    wire:click="modalInstructionDetailsPotongJadi({{ $dataInstruction->instruction->id }})"
+                                                                    wire:key="modalInstructionDetailsPotongJadi({{ $dataInstruction->instruction->id }})"><i
                                                                         class="fe fe-eye"></i></button>
                                                             </div>
                                                         </td>
@@ -128,14 +131,14 @@
         </div>
 
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructionsSetting->links() }}
+            {{ $instructionsPotongJadi->links() }}
         </div>
     </div>
 
     <!-- ROW-2 END -->
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="openModalSetting" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalPotongJadi" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -362,7 +365,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="openModalGroupSetting" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupPotongJadi" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">

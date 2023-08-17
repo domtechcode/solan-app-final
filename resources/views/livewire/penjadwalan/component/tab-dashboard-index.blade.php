@@ -130,6 +130,18 @@
                                             <li class="nav-item">
                                                 <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator3' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator3')" wire:key="tabOperator3" href="#tabOperator3">Plate</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator4' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator4')" wire:key="tabOperator4" href="#tabOperator4">Potong Bahan</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator5' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator5')" wire:key="tabOperator5" href="#tabOperator5">Cetak</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator6' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator6')" wire:key="tabOperator6" href="#tabOperator6">Potong Jadi</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="btn btn-outline-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator7' ? 'active' : '' }}" data-bs-toggle="tab" wire:click="changeTabOperator('tabOperator7')" wire:key="tabOperator7" href="#tabOperator7">Pond</button>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="card-body">
@@ -149,6 +161,30 @@
                                             <div class="tab-pane {{ $activeTabOperator === 'tabOperator3' ? 'active' : '' }}" id="tabOperator3">
                                                 <h5 class="card-title">Plate</h5>
                                                 @livewire('penjadwalan.component.operator.plate-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator4' ? 'active' : '' }}" id="tabOperator4">
+                                                <h5 class="card-title">Potong Bahan</h5>
+                                                @livewire('penjadwalan.component.operator.potong-bahan-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator5' ? 'active' : '' }}" id="tabOperator5">
+                                                <h5 class="card-title">Cetak</h5>
+                                                @livewire('penjadwalan.component.operator.cetak-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator6' ? 'active' : '' }}" id="tabOperator6">
+                                                <h5 class="card-title">Potong Jadi</h5>
+                                                @livewire('penjadwalan.component.operator.potong-jadi-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator7' ? 'active' : '' }}" id="tabOperator7">
+                                                <h5 class="card-title">Pond</h5>
+                                                @livewire('penjadwalan.component.operator.pond-dashboard-index')
                                             </div>
                                         </div>
                                     </div>

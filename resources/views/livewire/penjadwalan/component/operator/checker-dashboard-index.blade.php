@@ -4,8 +4,7 @@
     <div class="row">
         <div class="row mb-3">
             <div class="col">
-                <select id="" name="" class="form-control form-select w-auto"
-                    wire:model="paginateChecker">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateChecker">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -13,119 +12,121 @@
                 </select>
             </div>
             <div class="col d-flex justify-content-end">
-                <input type="text" class="form-control w-auto" placeholder="Search"
-                    wire:model="searchChecker">
+                <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchChecker">
             </div>
         </div>
 
-        @foreach ($instructionsByUserChecker as $user => $instructions)
-            <div class="col-lg-6">
-                <div class="expanel">
-                    <div class="expanel-heading">
-                        <h3 class="expanel-title">{{ $user }}</h3>
-                    </div>
-                    <div class="expanel-body">
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <div class="table-responsive">
-                                    <table
-                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th class="border-bottom-0">No</th>
-                                                <th class="border-bottom-0">No SPK</th>
-                                                <th class="border-bottom-0">Permintaan Kirim
-                                                </th>
-                                                <th class="border-bottom-0">Status</th>
-                                                <th class="border-bottom-0">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($instructions as $key => $dataInstruction)
+        <div class="row">
+            @foreach ($instructionsByUserChecker as $user => $instructions)
+                <div class="col-lg-6">
+                    <div class="expanel">
+                        <div class="expanel-heading">
+                            <h3 class="expanel-title">{{ $user }}</h3>
+                        </div>
+                        <div class="expanel-body">
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table
+                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>
-                                                        {{ $dataInstruction->instruction->spk_number }}
-                                                        @if ($dataInstruction->instruction->spk_number_fsc)
-                                                            <span
-                                                                class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
-                                                        @endif
+                                                    <th class="border-bottom-0">No</th>
+                                                    <th class="border-bottom-0">No SPK</th>
+                                                    <th class="border-bottom-0">Permintaan Kirim
+                                                    </th>
+                                                    <th class="border-bottom-0">Status</th>
+                                                    <th class="border-bottom-0">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($instructions as $key => $dataInstruction)
+                                                    <tr>
+                                                        <td>{{ $key + 1 }}</td>
+                                                        <td>
+                                                            {{ $dataInstruction->instruction->spk_number }}
+                                                            @if ($dataInstruction->instruction->spk_number_fsc)
+                                                                <span
+                                                                    class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                                            @endif
 
-                                                        @if ($dataInstruction->instruction->group_id)
-                                                            <button class="btn btn-icon btn-sm btn-info"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#openModalGroupChecker"
-                                                                wire:click="modalInstructionDetailsGroupChecker({{ $dataInstruction->instruction->group_id }})"
-                                                                wire:key="modalInstructionDetailsGroupChecker({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                                            @if ($dataInstruction->instruction->group_id)
+                                                                <button class="btn btn-icon btn-sm btn-info"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#openModalGroupChecker"
+                                                                    wire:click="modalInstructionDetailsGroupChecker({{ $dataInstruction->instruction->group_id }})"
+                                                                    wire:key="modalInstructionDetailsGroupChecker({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $dataInstruction->instruction->shipping_date }}
+                                                        </td>
+                                                        @if (in_array($dataInstruction->status_id, [1, 8]))
+                                                            <td>
+                                                                @if ($dataInstruction->spk_status != 'Running')
+                                                                    <span
+                                                                        class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                                                @endif
+                                                                <span
+                                                                    class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                            </td>
+                                                        @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
+                                                            <td>
+                                                                @if ($dataInstruction->spk_status != 'Running')
+                                                                    <span
+                                                                        class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                                                @endif
+                                                                <span
+                                                                    class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                            </td>
+                                                        @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
+                                                            <td>
+                                                                @if ($dataInstruction->spk_status != 'Running')
+                                                                    <span
+                                                                        class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                                                @endif
+                                                                <span
+                                                                    class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                            </td>
+                                                        @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
+                                                            <td>
+                                                                @if ($dataInstruction->spk_status != 'Running')
+                                                                    <span
+                                                                        class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                                                @endif
+                                                                <span
+                                                                    class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                            </td>
                                                         @endif
-                                                    </td>
-                                                    <td>{{ $dataInstruction->instruction->shipping_date }}
-                                                    </td>
-                                                    @if (in_array($dataInstruction->status_id, [1, 8]))
                                                         <td>
-                                                            @if ($dataInstruction->spk_status != 'Running')
-                                                                <span
-                                                                    class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                                            @endif
-                                                            <span
-                                                                class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                            <div class="btn-list">
+                                                                <button class="btn btn-icon btn-sm btn-dark"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#openModalChecker"
+                                                                    wire:click="modalInstructionDetailsChecker({{ $dataInstruction->instruction->id }})"
+                                                                    wire:key="modalInstructionDetailsChecker({{ $dataInstruction->instruction->id }})"><i
+                                                                        class="fe fe-eye"></i></button>
+                                                            </div>
                                                         </td>
-                                                    @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
-                                                        <td>
-                                                            @if ($dataInstruction->spk_status != 'Running')
-                                                                <span
-                                                                    class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                                            @endif
-                                                            <span
-                                                                class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="100%">
+                                                            No Data!
                                                         </td>
-                                                    @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
-                                                        <td>
-                                                            @if ($dataInstruction->spk_status != 'Running')
-                                                                <span
-                                                                    class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                                            @endif
-                                                            <span
-                                                                class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                                        </td>
-                                                    @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
-                                                        <td>
-                                                            @if ($dataInstruction->spk_status != 'Running')
-                                                                <span
-                                                                    class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                                            @endif
-                                                            <span
-                                                                class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                                        </td>
-                                                    @endif
-                                                    <td>
-                                                        <div class="btn-list">
-                                                            <button class="btn btn-icon btn-sm btn-dark"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#openModalChecker"
-                                                                wire:click="modalInstructionDetailsChecker({{ $dataInstruction->instruction->id }})"
-                                                                wire:key="modalInstructionDetailsChecker({{ $dataInstruction->instruction->id }})"><i
-                                                                    class="fe fe-eye"></i></button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="100%">
-                                                        No Data!
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
+
         <div class="col d-flex justify-content-end mt-3">
             {{ $instructionsChecker->links() }}
         </div>
