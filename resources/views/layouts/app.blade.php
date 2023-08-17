@@ -78,6 +78,10 @@
     <!-- BOOTSTRAP JS -->
     <script src="{{ asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+    
+    <!-- ACCORDION JS -->
+    <script src="{{ asset('assets/plugins/accordion/accordion.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/accordion/accordion.js') }}"></script>
 
     <!-- Perfect SCROLLBAR JS-->
     <script src="{{ asset('assets/plugins/p-scroll/perfect-scrollbar.js') }}"></script>

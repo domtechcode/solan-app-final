@@ -114,11 +114,7 @@
                         <!-- ROW-2 END -->
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab3' ? 'active' : '' }}" id="tab3">
-                        <!-- ROW-2-->
-                        <div class="row">
-                            
-                        </div>
-                        <!-- ROW-2 END -->
+                        {{-- @livewire('penjadwalan.component.operator.setting-dashboard-index') --}}
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab4' ? 'active' : '' }}" id="tab4">
                         <!-- ROW-2-->

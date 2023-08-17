@@ -1,27 +1,21 @@
 <?php
 
-namespace App\Http\Livewire\FollowUp\Component;
+namespace App\Http\Livewire\Penjadwalan\Component\Operator;
 
-use Carbon\Carbon;
-use App\Models\User;
 use App\Models\Files;
-use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
-use App\Events\IndexRenderEvent;
-use App\Events\NotificationSent;
 
-class AccSpkDashboardIndex extends Component
+class SettingDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateAcc = 10;
-    public $searchAcc = '';
-    public $notes = [];
+    public $paginateSetting = 10;
+    public $searchSetting = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -43,8 +37,6 @@ class AccSpkDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
-    public $alasan_revisi;
-    public $workSteps;
 
     protected $listeners = ['indexRender' => 'renderIndex'];
 
@@ -53,25 +45,14 @@ class AccSpkDashboardIndex extends Component
         $this->render();
     }
 
-    public function updatingSearchAcc()
+    public function updatingSearchSetting()
     {
         $this->resetPage();
     }
 
-    public function addEmptyNote()
-    {
-        $this->notes[] = '';
-    }
-
-    public function removeNote($index)
-    {
-        unset($this->notes[$index]);
-        $this->notes = array_values($this->notes);
-    }
-
     public function mount()
     {
-        $this->searchAcc = request()->query('search', $this->searchAcc);
+        $this->searchSetting = request()->query('search', $this->searchSetting);
     }
 
     public function sumGroup($groupId)
@@ -83,12 +64,15 @@ class AccSpkDashboardIndex extends Component
     }
 
     public function render()
-    {
-        $dataAcc = WorkStep::where('work_step_list_id', 1)
-            ->whereIn('spk_status', ['Acc'])
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchAcc . '%';
-                $query->where(function ($subQuery) use ($searchTerms) {
+{
+    $dataSetting = WorkStep::where('work_step_list_id', 6)
+        ->where('state_task', 'Running')
+        ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+        ->where('spk_status', 'Running')
+        ->whereHas('instruction', function ($query) {
+            $searchTerms = '%' . $this->searchSetting . '%';
+            $query
+                ->where(function ($subQuery) use ($searchTerms) {
                     $subQuery
                         ->orWhere('spk_number', 'like', $searchTerms)
                         ->orWhere('spk_type', 'like', $searchTerms)
@@ -97,21 +81,29 @@ class AccSpkDashboardIndex extends Component
                         ->orWhere('customer_number', 'like', $searchTerms)
                         ->orWhere('code_style', 'like', $searchTerms)
                         ->orWhere('shipping_date', 'like', $searchTerms);
+                })
+                ->where(function ($subQuery) {
+                    $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                 });
-            })
-            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-            ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
-            ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateAcc);
+        })
+        ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+        ->select('work_steps.*')
+        ->with(['status', 'job', 'workStepList', 'instruction', 'user'])
+        ->orderBy('instructions.shipping_date', 'asc')
+        ->get(); // Menggunakan get() untuk mengambil semua data
 
-        return view('livewire.follow-up.component.acc-spk-dashboard-index', ['instructionsAcc' => $dataAcc])
-            ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
-    }
+    $instructionsByUser = $dataSetting->groupBy(function ($item) {
+        return $item->user->name; // Ubah nama kolom pengguna sesuai dengan struktur tabel Anda
+    });
 
-    public function modalInstructionDetailsAcc($instructionId)
+    return view('livewire.penjadwalan.component.operator.setting-dashboard-index', ['instructionsByUser' => $instructionsByUser])
+        ->extends('layouts.app')
+        ->section('content')
+        ->layoutData(['title' => 'Dashboard']);
+}
+
+
+    public function modalInstructionDetailsIncoming($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
@@ -134,7 +126,7 @@ class AccSpkDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupAcc($groupId)
+    public function modalInstructionDetailsGroupIncoming($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')
@@ -165,15 +157,5 @@ class AccSpkDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = 'info';
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
