@@ -41,6 +41,11 @@ class RejectDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchReject()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchReject = request()->query('search', $this->searchReject);

@@ -40,6 +40,11 @@ class NewSpkDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchNewSpk()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchNewSpk = request()->query('search', $this->searchNewSpk);

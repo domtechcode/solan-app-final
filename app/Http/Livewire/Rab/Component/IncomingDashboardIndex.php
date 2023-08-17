@@ -40,6 +40,11 @@ class IncomingDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchIncoming()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchIncoming = request()->query('search', $this->searchIncoming);
@@ -108,8 +113,6 @@ class IncomingDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'sample')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-incoming');
     }
 
     public function modalInstructionDetailsGroupIncoming($groupId)
@@ -145,7 +148,5 @@ class IncomingDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-incoming');
     }
 }

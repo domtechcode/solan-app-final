@@ -14,9 +14,8 @@ class AllDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
-    public $data;
+    public $paginateAll = 10;
+    public $searchAll = '';
 
     public $instructionSelectedId;
     public $selectedInstruction;
@@ -42,9 +41,14 @@ class AllDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchAll()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchAll = request()->query('search', $this->searchAll);
     }
 
     public function sumGroup($groupId)
@@ -57,10 +61,10 @@ class AllDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 1)
+        $dataAll = WorkStep::where('work_step_list_id', 1)
             ->whereNotIn('spk_status', ['Training Program'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+                $searchTerms = '%' . $this->searchAll . '%';
                 $query->where(function ($subQuery) use ($searchTerms) {
                     $subQuery
                         ->orWhere('spk_number', 'like', $searchTerms)
@@ -76,9 +80,9 @@ class AllDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginateAll);
 
-        return view('livewire.rab.component.all-dashboard-index', ['instructions' => $data])
+        return view('livewire.rab.component.all-dashboard-index', ['instructionsAll' => $dataAll])
             ->extends('layouts.app')
             ->layoutData(['title' => 'Dashboard']);
     }
@@ -174,8 +178,6 @@ class AllDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'sample')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-all');
     }
 
     public function modalInstructionDetailsGroupAll($groupId)
@@ -211,7 +213,5 @@ class AllDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-all');
     }
 }

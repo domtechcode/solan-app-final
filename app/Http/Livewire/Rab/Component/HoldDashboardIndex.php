@@ -41,6 +41,11 @@ class HoldDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchHold()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchHold = request()->query('search', $this->searchHold);

@@ -2,8 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                {{-- <label class="form-label">Customize Select</label> --}}
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -11,7 +10,7 @@
                 </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="search">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchAll">
         </div>
     </div>
     <div class="row mt-3">
@@ -27,7 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -35,8 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
-                        @forelse ($instructions as $key => $dataInstruction)
+                        @forelse ($instructionsAll as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -46,7 +44,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -121,7 +119,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -139,7 +137,7 @@
             
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{ $instructionsAll->links() }}
         </div>
     </div>
 
@@ -167,7 +165,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -430,7 +428,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -678,7 +676,7 @@
                                                                 <th class="border-bottom-0">ORDER</th>
                                                                 <th class="border-bottom-0">CODE STYLE</th>
                                                                 <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                 <th class="border-bottom-0">QTY</th>
                                                                 <th class="border-bottom-0">STOCK</th>
                                                                 <th class="border-bottom-0">HARGA</th>
