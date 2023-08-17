@@ -162,15 +162,18 @@ class ReorderInstructionIndex extends Component
 
         $dataNotes = Catatan::where('instruction_id', $instructionId)
             ->where('kategori', 'catatan')
-            ->where('user_id', 1)
+            ->where('user_id', Auth()->user()->id)
             ->get();
-        $this->notes = [];
 
-        foreach ($dataNotes as $note) {
-            $this->notes[] = [
-                'tujuan' => $note->tujuan,
-                'catatan' => $note->catatan,
-            ];
+        if (isset($dataNotes)) {
+            foreach ($dataNotes as $note) {
+                $this->notes[] = [
+                    'tujuan' => $note->tujuan,
+                    'catatan' => $note->catatan,
+                ];
+            }
+        } else {
+            $this->notes = [];
         }
 
         $this->select2();
@@ -246,6 +249,28 @@ class ReorderInstructionIndex extends Component
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
             ]);
+
+            $currentCatata = Catatan::where('user_id', Auth()->user()->id)
+                ->where('kategori', 'catatan')
+                ->where('instruction_id', $instruction->id)
+                ->delete();
+
+            if (isset($this->notes)) {
+                $this->validate([
+                    'notes.*.tujuan' => 'required',
+                    'notes.*.catatan' => 'required',
+                ]);
+
+                foreach ($this->notes as $input) {
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $instruction->id,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
+            }
 
             $this->workSteps = array_map(function ($workSteps) {
                 $workSteps['user_id'] = null;
@@ -936,18 +961,6 @@ class ReorderInstructionIndex extends Component
                             }
                         }
                     }
-                }
-            }
-
-            if ($this->notes) {
-                foreach ($this->notes as $input) {
-                    $catatan = Catatan::create([
-                        'tujuan' => $input['tujuan'],
-                        'catatan' => $input['catatan'],
-                        'kategori' => 'catatan',
-                        'instruction_id' => $instruction->id,
-                        'user_id' => Auth()->user()->id,
-                    ]);
                 }
             }
 

@@ -227,6 +227,23 @@ class CreateInstructionIndex extends Component
                 'count' => $countSample,
             ]);
 
+            if (isset($this->notes)) {
+                $this->validate([
+                    'notes.*.tujuan' => 'required',
+                    'notes.*.catatan' => 'required',
+                ]);
+
+                foreach ($this->notes as $input) {
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $instruction->id,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
+            }
+
             $this->workSteps = array_map(function ($workSteps) {
                 $workSteps['user_id'] = null;
                 return $workSteps;
@@ -420,23 +437,6 @@ class CreateInstructionIndex extends Component
 
             if ($this->uploadFiles($instruction->id)) {
                 $this->uploadFiles($instruction->id);
-            }
-
-            if (isset($this->notes)) {
-                $this->validate([
-                    'notes.*.tujuan' => 'required',
-                    'notes.*.catatan' => 'required',
-                ]);
-
-                foreach ($this->notes as $input) {
-                    $catatan = Catatan::create([
-                        'tujuan' => $input['tujuan'],
-                        'catatan' => $input['catatan'],
-                        'kategori' => 'catatan',
-                        'instruction_id' => $instruction->id,
-                        'user_id' => Auth()->user()->id,
-                    ]);
-                }
             }
 
             $this->workSteps = [];

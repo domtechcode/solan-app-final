@@ -96,8 +96,7 @@ class UpdateInstructionIndex extends Component
         $this->instructions = Instruction::findorfail($instructionId);
         $this->spk_type = $this->instructions->type_order;
         $this->sub_spk = $this->instructions->sub_spk;
-        $this->customerCurrent = Customer::where('name', $this->instructions->customer_name)
-            ->first();
+        $this->customerCurrent = Customer::where('name', $this->instructions->customer_name)->first();
         $this->customer = $this->customerCurrent->id;
         $this->spk_parent = $this->instructions->spk_parent;
         $this->spk_number = $this->instructions->spk_number;
@@ -135,15 +134,18 @@ class UpdateInstructionIndex extends Component
 
         $dataNotes = Catatan::where('instruction_id', $instructionId)
             ->where('kategori', 'catatan')
-            ->where('user_id', 1)
+            ->where('user_id', Auth()->user()->id)
             ->get();
-        $this->notes = [];
 
-        foreach ($dataNotes as $note) {
-            $this->notes[] = [
-                'tujuan' => $note->tujuan,
-                'catatan' => $note->catatan,
-            ];
+        if (isset($dataNotes)) {
+            foreach ($dataNotes as $note) {
+                $this->notes[] = [
+                    'tujuan' => $note->tujuan,
+                    'catatan' => $note->catatan,
+                ];
+            }
+        } else {
+            $this->notes = [];
         }
 
         $this->select2();
@@ -218,6 +220,28 @@ class UpdateInstructionIndex extends Component
                 'type_order' => $this->type_order,
             ]);
 
+            $currentCatatan = Catatan::where('user_id', Auth()->user()->id)
+                ->where('kategori', 'catatan')
+                ->where('instruction_id', $this->currentInstructionId)
+                ->delete();
+
+            if (isset($this->notes)) {
+                $this->validate([
+                    'notes.*.tujuan' => 'required',
+                    'notes.*.catatan' => 'required',
+                ]);
+
+                foreach ($this->notes as $input) {
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->currentInstructionId,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
+            }
+
             if ($this->spk_layout_number) {
                 $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
                 $files = Files::where('instruction_id', $selectedLayout->id)
@@ -278,22 +302,6 @@ class UpdateInstructionIndex extends Component
                 $this->uploadFiles($this->currentInstructionId);
             }
 
-            Catatan::where('user_id', 1)
-                ->where('kategori', 'catatan')
-                ->where('instruction_id', $this->currentInstructionId)
-                ->delete();
-            if ($this->notes) {
-                foreach ($this->notes as $input) {
-                    $catatan = Catatan::create([
-                        'tujuan' => $input['tujuan'],
-                        'catatan' => $input['catatan'],
-                        'kategori' => 'catatan',
-                        'instruction_id' => $this->currentInstructionId,
-                        'user_id' => 1,
-                    ]);
-                }
-            }
-
             if ($this->qtyState == 'Ya') {
                 $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)
                     ->where('work_step_list_id', 5)
@@ -325,7 +333,7 @@ class UpdateInstructionIndex extends Component
                     $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
                 }
             }
-            
+
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Create Instruksi Kerja',

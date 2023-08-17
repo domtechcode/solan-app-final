@@ -171,17 +171,20 @@ class EditInstructionIndex extends Component
 
         $dataNotes = Catatan::where('instruction_id', $instructionId)
             ->where('kategori', 'catatan')
-            ->where('user_id', 1)
+            ->where('user_id', Auth()->user()->id)
             ->get();
-        $this->notes = [];
-
-        foreach ($dataNotes as $note) {
-            $this->notes[] = [
-                'tujuan' => $note->tujuan,
-                'catatan' => $note->catatan,
-            ];
+        
+        if(isset($dataNotes)){
+            foreach ($dataNotes as $note) {
+                $this->notes[] = [
+                    'tujuan' => $note->tujuan,
+                    'catatan' => $note->catatan,
+                ];
+            }
+        }else{
+            $this->notes = [];
         }
-
+        
         $this->select2();
     }
 
@@ -262,6 +265,28 @@ class EditInstructionIndex extends Component
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
             ]);
+
+            $currentCatata = Catatan::where('user_id', Auth()->user()->id)
+                ->where('kategori', 'catatan')
+                ->where('instruction_id', $this->currentInstructionId)
+                ->delete();
+
+            if (isset($this->notes)) {
+                $this->validate([
+                    'notes.*.tujuan' => 'required',
+                    'notes.*.catatan' => 'required',
+                ]);
+
+                foreach ($this->notes as $input) {
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->currentInstructionId,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
+            }
 
             $this->workSteps = array_map(function ($workSteps) {
                 $workSteps['user_id'] = null;
@@ -521,22 +546,6 @@ class EditInstructionIndex extends Component
 
             if ($this->uploadFiles($this->currentInstructionId)) {
                 $this->uploadFiles($this->currentInstructionId);
-            }
-
-            Catatan::where('user_id', 1)
-                ->where('kategori', 'catatan')
-                ->where('instruction_id', $this->currentInstructionId)
-                ->delete();
-            if ($this->notes) {
-                foreach ($this->notes as $input) {
-                    $catatan = Catatan::create([
-                        'tujuan' => $input['tujuan'],
-                        'catatan' => $input['catatan'],
-                        'kategori' => 'catatan',
-                        'instruction_id' => $this->currentInstructionId,
-                        'user_id' => 1,
-                    ]);
-                }
             }
 
             $this->emit('flashMessage', [

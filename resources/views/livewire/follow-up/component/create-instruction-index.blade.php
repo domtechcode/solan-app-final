@@ -440,13 +440,12 @@
                                                 wire:model="notes.{{ $index }}.tujuan">
                                                 <option label="Pilih Tujuan Catatan"></option>
                                                 @foreach ($workSteps as $key)
+                                                    <option value="2">Penjadwalan</option>
                                                     @if ($key['name'] == 'Hitung Bahan')
-                                                        <option value="2">Penjadwalan</option>
                                                         <option value="3">RAB</option>
                                                     @endif
                                                     <option value="{{ $key['id'] }}">{{ $key['name'] }}</option>
                                                 @endforeach
-
                                             </select>
                                             <button class="btn btn-danger" type="button"
                                                 wire:click="removeNote({{ $index }})"><i

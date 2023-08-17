@@ -539,23 +539,31 @@
                                             <div class="input-group control-group" style="padding-top: 5px;">
                                                 <select class="form-control form-select"
                                                     data-bs-placeholder="Pilih Tujuan Catatan"
-                                                    wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                    wire:model="notes.{{ $index }}.tujuan">
                                                     <option label="Pilih Tujuan Catatan"></option>
                                                     @foreach ($dataworksteplists as $key)
-                                                        <option value="{{ $key['id'] }}">{{ $key['name'] }}
-                                                        </option>
+                                                        <option value="2">Penjadwalan</option>
+                                                        @if ($key['name'] == 'Hitung Bahan')
+                                                            <option value="3">RAB</option>
+                                                        @endif
+                                                        <option value="{{ $key['id'] }}">
+                                                            {{ $key['name'] }}</option>
                                                     @endforeach
-
                                                 </select>
                                                 <button class="btn btn-danger" type="button"
                                                     wire:click="removeNote({{ $index }})"><i
                                                         class="fe fe-x"></i></button>
                                             </div>
+                                            @error('notes.' . $index . '.tujuan')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                             <div class="input-group control-group" style="padding-top: 5px;">
                                                 <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                    wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                    wire:model="notes.{{ $index }}.catatan"></textarea>
                                             </div>
-
+                                            @error('notes.' . $index . '.catatan')
+                                                <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
