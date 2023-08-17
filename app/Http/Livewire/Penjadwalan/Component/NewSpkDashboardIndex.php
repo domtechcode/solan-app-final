@@ -338,7 +338,8 @@ class NewSpkDashboardIndex extends Component
             ->where('work_step_list_id', 5)
             ->first();
 
-        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)->where('user_id', Auth()->user()->id)
+        $dataPengajuanBarang = PengajuanBarangSpk::where('instruction_id', $instructionId)
+            ->where('user_id', Auth()->user()->id)
             ->with('workStepList', 'status')
             ->get();
 

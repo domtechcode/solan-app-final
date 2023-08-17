@@ -61,7 +61,17 @@ class CompleteDashboardIndex extends Component
     public $keteranganReject;
     public $tujuanReject;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
+    public function updatingSearchComplete()
+    {
+        $this->resetPage();
+    }
 
     public $pengajuanBarang;
     public $historyPengajuanBarang;
@@ -87,7 +97,6 @@ class CompleteDashboardIndex extends Component
         unset($this->pengajuanBarang[$indexBarang]);
         $this->pengajuanBarang = array_values($this->pengajuanBarang);
     }
-
 
     public function urgent($instructionSelectedIdUrgent)
     {
@@ -179,8 +188,8 @@ class CompleteDashboardIndex extends Component
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
         $dataComplete = WorkStep::where('work_step_list_id', 2)
-        ->where('state_task', 'Running')
-        ->where('status_id', 7)
+            ->where('state_task', 'Running')
+            ->where('status_id', 7)
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereHas('instruction', function ($query) {

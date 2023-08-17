@@ -61,7 +61,17 @@ class RunningDashboardIndex extends Component
     public $keteranganReject;
     public $tujuanReject;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
+    public function updatingSearchRunning()
+    {
+        $this->resetPage();
+    }
 
     public $pengajuanBarang;
     public $historyPengajuanBarang;

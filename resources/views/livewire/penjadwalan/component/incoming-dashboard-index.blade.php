@@ -26,7 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -44,7 +44,7 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupIncoming" wire:click="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupIncoming" wire:click="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -119,7 +119,7 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalIncoming" wire:click="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalIncoming" wire:click="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -165,7 +165,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -407,7 +407,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -651,7 +651,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>

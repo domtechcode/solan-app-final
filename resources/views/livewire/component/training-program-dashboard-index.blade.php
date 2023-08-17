@@ -26,7 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">TGL Kirim</th>
+                            <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
@@ -47,7 +47,7 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupTraining"
-                                            wire:click="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -123,7 +123,7 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#openModalTraining"
-                                            wire:click="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -170,7 +170,7 @@
                                             <th class="border-bottom-0">ORDER</th>
                                             <th class="border-bottom-0">CODE STYLE</th>
                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                             <th class="border-bottom-0">QTY</th>
                                             <th class="border-bottom-0">STOCK</th>
                                             <th class="border-bottom-0">HARGA</th>
@@ -430,7 +430,7 @@
                                                             <th class="border-bottom-0">ORDER</th>
                                                             <th class="border-bottom-0">CODE STYLE</th>
                                                             <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                            <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                             <th class="border-bottom-0">QTY</th>
                                                             <th class="border-bottom-0">STOCK</th>
                                                             <th class="border-bottom-0">HARGA</th>
@@ -692,7 +692,7 @@
                                                                     <th class="border-bottom-0">ORDER</th>
                                                                     <th class="border-bottom-0">CODE STYLE</th>
                                                                     <th class="border-bottom-0">TGL. PO MASUK</th>
-                                                                    <th class="border-bottom-0">TGL. DIKIRIM</th>
+                                                                    <th class="border-bottom-0">PERMINTAAN KIRIM</th>
                                                                     <th class="border-bottom-0">QTY</th>
                                                                     <th class="border-bottom-0">STOCK</th>
                                                                     <th class="border-bottom-0">HARGA</th>

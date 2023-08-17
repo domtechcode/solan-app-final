@@ -2,12 +2,12 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateRunning">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateRunning">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
         </div>
         <div class="col d-flex justify-content-end">
             <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchRunning">
@@ -40,12 +40,16 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
-                                    @if($dataInstruction->instruction->spk_number_fsc)
-                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                    @if ($dataInstruction->instruction->spk_number_fsc)
+                                        <span
+                                            class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
 
-                                    @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupRunning" wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                    @if ($dataInstruction->instruction->group_id)
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#openModalGroupRunning"
+                                            wire:click="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupRunning({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -58,7 +62,7 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                {{-- @if($dataInstruction->instruction->group_id)
+                                {{-- @if ($dataInstruction->instruction->group_id)
                                 <td>
                                     {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
                                 </td>
@@ -79,81 +83,97 @@
                                 <td>{{ currency_idr($totalLembarCetak) }}</td>
 
 
-                                @if($dataInstruction->task_priority == 'Urgent')
-                                <td>
-                                    <div class="form-group">
-                                        <label class="custom-switch form-switch me-5">
-                                            <input type="radio" wire:click="normal({{ $dataInstruction->instruction->id }})" class="custom-switch-input" checked>
-                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        </label>
-                                    </div>
-                                </td>
+                                @if ($dataInstruction->task_priority == 'Urgent')
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="custom-switch form-switch me-5">
+                                                <input type="radio"
+                                                    wire:click="normal({{ $dataInstruction->instruction->id }})"
+                                                    class="custom-switch-input" checked>
+                                                <span class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                            </label>
+                                        </div>
+                                    </td>
                                 @else
-                                <td>
-                                    <div class="form-group">
-                                        <label class="custom-switch form-switch me-5">
-                                            <input type="radio" wire:click="urgent({{ $dataInstruction->instruction->id }})" class="custom-switch-input">
-                                            <span class="custom-switch-indicator custom-switch-indicator-md"></span>
-                                        </label>
-                                    </div>
-                                </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="custom-switch form-switch me-5">
+                                                <input type="radio"
+                                                    wire:click="urgent({{ $dataInstruction->instruction->id }})"
+                                                    class="custom-switch-input">
+                                                <span class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                            </label>
+                                        </div>
+                                    </td>
                                 @endif
-                                @if(in_array($dataInstruction->status_id, [1, 8]))
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                @if (in_array($dataInstruction->status_id, [1, 8]))
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                </td>
-                                <td>
-                                    @if($dataInstruction->task_priority != 'Normal')
-                                        <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
-                                    @endif
-                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($dataInstruction->task_priority != 'Normal')
+                                            <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        <span
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                    </td>
                                 @endif
                                 <td>
-                                    <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalRunning" wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                    <div class="btn-list">
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                            data-bs-target="#openModalRunning"
+                                            wire:click="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsRunning({{ $dataInstruction->instruction->id }})"><i
+                                                class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -168,13 +188,13 @@
                 </table>
 
             </div>
-            
+
         </div>
         <div class="col d-flex justify-content-end mt-3">
             {{ $instructionsRunning->links() }}
         </div>
     </div>
-    
+
 
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="openModalRunning" tabindex="-1" role="dialog">
@@ -194,7 +214,15 @@
                                     <div class="text-wrap">
                                         <div class="">
                                             <div class="alert alert-info">
-                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24"><path fill="#70a9ee" d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z"/><circle cx="12" cy="17" r="1" fill="#1170e4"/><path fill="#1170e4" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z"/></svg></span>
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
+                                                        height="40" width="40" viewBox="0 0 24 24">
+                                                        <path fill="#70a9ee"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1"
+                                                            fill="#1170e4" />
+                                                        <path fill="#1170e4"
+                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
                                                 <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
                                                 <hr class="message-inner-separator">
                                                 <p>{{ $datanote->catatan }}</p>
@@ -209,25 +237,34 @@
                         @endforeach
                     @endif
 
-                    @if(isset($stateRejectPenjadwalan))
+                    @if (isset($stateRejectPenjadwalan))
                         @foreach ($notereject as $datanotereject)
-                        @if (isset($datanotereject))
-                            <div class="row row-sm mb-5">
-                                <div class="text-wrap">
-                                    <div class="">
-                                        <div class="alert alert-danger">
-                                            <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24"><path fill="#f07f8f" d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z"/><circle cx="12" cy="17" r="1" fill="#e62a45"/><path fill="#e62a45" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z"/></svg></span>
-                                            <strong>Catatan Reject Dari Operator : {{ $datanotereject->user->name }}</strong>
-                                            <hr class="message-inner-separator">
-                                            <p>{{ $datanotereject->catatan }}</p>
-                                            <div class="d-flex justify-content-end">
-                                                <small>{{ $datanotereject->created_at }}</small>
+                            @if (isset($datanotereject))
+                                <div class="row row-sm mb-5">
+                                    <div class="text-wrap">
+                                        <div class="">
+                                            <div class="alert alert-danger">
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
+                                                        height="40" width="40" viewBox="0 0 24 24">
+                                                        <path fill="#f07f8f"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1"
+                                                            fill="#e62a45" />
+                                                        <path fill="#e62a45"
+                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
+                                                <strong>Catatan Reject Dari Operator :
+                                                    {{ $datanotereject->user->name }}</strong>
+                                                <hr class="message-inner-separator">
+                                                <p>{{ $datanotereject->catatan }}</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <small>{{ $datanotereject->created_at }}</small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
                         @endforeach
                     @endif
                     <!-- Row -->
@@ -306,14 +343,16 @@
 
                     <div class="row mb-3">
                         <div class="col d-flex justify-content-center">
-                            @if(isset($workStepHitungBahan))
-                                <div class="btn-list">  
-                                    <a target="blank" class="btn btn-icon btn-sm btn-dark" href="{{ route('jadwal.indexWorkStep', ['instructionId' =>  $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
+                            @if (isset($workStepHitungBahan))
+                                <div class="btn-list">
+                                    <a target="blank" class="btn btn-icon btn-sm btn-dark"
+                                        href="{{ route('jadwal.indexWorkStep', ['instructionId' => $selectedInstruction->id, 'workStepId' => $workStepHitungBahan]) }}"><i
+                                            class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
                                 </div>
                             @endif
                         </div>
                     </div>
-                    
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">

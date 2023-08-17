@@ -61,7 +61,17 @@ class DijadwalkanDashboardIndex extends Component
     public $keteranganReject;
     public $tujuanReject;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
+
+    public function updatingSearchDijadwalkan()
+    {
+        $this->resetPage();
+    }
 
     public $pengajuanBarang;
     public $historyPengajuanBarang;
@@ -841,7 +851,7 @@ class DijadwalkanDashboardIndex extends Component
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang SPK', 'instruction_id' => $this->selectedInstruction->id]);
         }
 
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
     public function messageSent($arguments)

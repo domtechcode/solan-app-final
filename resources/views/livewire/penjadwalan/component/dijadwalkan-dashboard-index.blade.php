@@ -48,7 +48,8 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupDijadwalkan"
-                                            wire:click="modalInstructionDetailsGroupDijadwalkan({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupDijadwalkan({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupDijadwalkan({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
