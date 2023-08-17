@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
@@ -18,6 +19,7 @@ class TabDashboardIndex extends Component
     public $dataCountCompleteSpk;
     public $dataCountAccSpk;
     public $dataCountAllSpk;
+    public $dataCountPengajuanBarangPersonal;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -96,16 +98,18 @@ class TabDashboardIndex extends Component
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
 
-            $this->dataCountAccSpk = WorkStep::where('work_step_list_id', 1)
-                ->where('spk_status', 'Acc')
-                ->whereHas('instruction', function ($query) {
-                    $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-                })
-                ->orderBy('shipping_date', 'asc')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->count();
+        $this->dataCountAccSpk = WorkStep::where('work_step_list_id', 1)
+            ->where('spk_status', 'Acc')
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
 
-                $this->dataCountSpk = $this->dataCountNewSpk + $this->dataCountCompleteSpk + $this->dataCountAccSpk;
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+
+        $this->dataCountSpk = $this->dataCountNewSpk + $this->dataCountCompleteSpk + $this->dataCountAccSpk;
 
         return view('livewire.follow-up.component.tab-dashboard-index')
             ->extends('layouts.app')
