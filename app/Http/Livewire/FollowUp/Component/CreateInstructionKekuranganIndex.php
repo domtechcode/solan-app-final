@@ -159,29 +159,60 @@ class CreateInstructionKekuranganIndex extends Component
             }
         }
 
-        // Menambahkan elemen sebelum array indeks 0
-        array_unshift($this->workSteps, [
-            'name' => 'Follow Up',
-            'id' => '1',
-            'user_id' => Auth()->user()->id,
-        ]);
+        $this->workSteps = array_map(function ($workSteps) {
+            $workSteps['user_id'] = null;
+            return $workSteps;
+        }, $this->workSteps);
 
-        $indexHitungBahan = array_search('Hitung Bahan', array_column($this->workSteps, 'name'));
-        $indexRAB = array_search('RAB', array_column($this->workSteps, 'name'));
-        $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
-
-        if ($indexHitungBahan !== false) {
-            // Elemen "Hitung Bahan" ditemukan
-            array_splice($this->workSteps, $indexHitungBahan + 1, 0, [
+        if ($instruction->spk_type == 'layout') {
+            // Menambahkan elemen sebelum array indeks 0
+            array_unshift(
+                $this->workSteps,
                 [
-                    'name' => 'RAB',
-                    'id' => '3',
-                    'user_id' => null,
+                    'name' => 'Follow Up',
+                    'id' => '1',
+                    'user_id' => Auth()->user()->id,
                 ],
+                [
+                    'name' => 'Penjadwalan',
+                    'id' => '2',
+                    'user_id' => '4',
+                ],
+            );
+        } else {
+            // Menambahkan elemen sebelum array indeks 0
+            array_unshift($this->workSteps, [
+                'name' => 'Follow Up',
+                'id' => '1',
+                'user_id' => Auth()->user()->id,
             ]);
+
+            $indexHitungBahan = array_search('Hitung Bahan', array_column($this->workSteps, 'name'));
             $indexRAB = array_search('RAB', array_column($this->workSteps, 'name'));
-            if ($indexRAB !== false) {
-                // Elemen "RAB" ditemukan setelah "Hitung Bahan"
+            $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
+
+            if ($indexHitungBahan !== false) {
+                // Elemen "Hitung Bahan" ditemukan
+                array_splice($this->workSteps, $indexHitungBahan + 1, 0, [
+                    [
+                        'name' => 'RAB',
+                        'id' => '3',
+                        'user_id' => null,
+                    ],
+                ]);
+                $indexRAB = array_search('RAB', array_column($this->workSteps, 'name'));
+                if ($indexRAB !== false) {
+                    // Elemen "RAB" ditemukan setelah "Hitung Bahan"
+                    array_splice($this->workSteps, $indexRAB + 1, 0, [
+                        [
+                            'name' => 'Penjadwalan',
+                            'id' => '2',
+                            'user_id' => '4',
+                        ],
+                    ]);
+                }
+            } elseif ($indexRAB !== false) {
+                // Elemen "Hitung Bahan" tidak ditemukan, tetapi elemen "RAB" ditemukan
                 array_splice($this->workSteps, $indexRAB + 1, 0, [
                     [
                         'name' => 'Penjadwalan',
@@ -189,40 +220,31 @@ class CreateInstructionKekuranganIndex extends Component
                         'user_id' => '4',
                     ],
                 ]);
-            }
-        } elseif ($indexRAB !== false) {
-            // Elemen "Hitung Bahan" tidak ditemukan, tetapi elemen "RAB" ditemukan
-            array_splice($this->workSteps, $indexRAB + 1, 0, [
-                [
-                    'name' => 'Penjadwalan',
-                    'id' => '2',
-                    'user_id' => '4',
-                ],
-            ]);
-        } else {
-            // Tidak ada elemen "Hitung Bahan" atau "RAB"
-            $indexFollowUp = array_search('Follow Up', array_column($this->workSteps, 'name'));
-            $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
-
-            if ($indexFollowUp !== false && $indexCariStock !== false && $indexCariStock > $indexFollowUp) {
-                // Elemen "Cari/Ambil Stock" ditemukan setelah "Follow Up"
-                array_splice($this->workSteps, $indexCariStock + 1, 0, [
-                    [
-                        'name' => 'Penjadwalan',
-                        'id' => '2',
-                        'user_id' => '4',
-                    ],
-                ]);
             } else {
-                // Tidak ada elemen "Cari/Ambil Stock" atau "Cari/Ambil Stock" sebelum "Follow Up"
-                if ($indexFollowUp !== false) {
-                    array_splice($this->workSteps, $indexFollowUp + 1, 0, [
+                // Tidak ada elemen "Hitung Bahan" atau "RAB"
+                $indexFollowUp = array_search('Follow Up', array_column($this->workSteps, 'name'));
+                $indexCariStock = array_search('Cari/Ambil Stock', array_column($this->workSteps, 'name'));
+
+                if ($indexFollowUp !== false && $indexCariStock !== false && $indexCariStock > $indexFollowUp) {
+                    // Elemen "Cari/Ambil Stock" ditemukan setelah "Follow Up"
+                    array_splice($this->workSteps, $indexCariStock + 1, 0, [
                         [
                             'name' => 'Penjadwalan',
                             'id' => '2',
                             'user_id' => '4',
                         ],
                     ]);
+                } else {
+                    // Tidak ada elemen "Cari/Ambil Stock" atau "Cari/Ambil Stock" sebelum "Follow Up"
+                    if ($indexFollowUp !== false) {
+                        array_splice($this->workSteps, $indexFollowUp + 1, 0, [
+                            [
+                                'name' => 'Penjadwalan',
+                                'id' => '2',
+                                'user_id' => '4',
+                            ],
+                        ]);
+                    }
                 }
             }
         }
