@@ -50,7 +50,12 @@ class PengajuanBarangPersonalIndex extends Component
     public $total_harga;
     public $stock;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public function mount()
     {

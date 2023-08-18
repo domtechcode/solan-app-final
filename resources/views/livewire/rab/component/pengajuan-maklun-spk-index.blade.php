@@ -77,7 +77,8 @@
                             @endif
                             <td>
                                 <div class="btn-list">         
-                                    <button class="btn btn-icon btn-sm btn-dark" wire:click="modalPengajuanMaklunSpk({{ $itemPengajuanMaklunSpk->id }}, {{ $itemPengajuanMaklunSpk->instruction_id }})"><i class="fe fe-eye"></i></button>
+                                    <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                    data-bs-target="#modalPengajuanMaklunSpk" wire:key="modalPengajuanMaklunSpk({{ $itemPengajuanMaklunSpk->id }}, {{ $itemPengajuanMaklunSpk->instruction_id }})" wire:click="modalPengajuanMaklunSpk({{ $itemPengajuanMaklunSpk->id }}, {{ $itemPengajuanMaklunSpk->instruction_id }})"><i class="fe fe-eye"></i></button>
                                 </div>
                             </td>
                         </tr>

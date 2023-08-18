@@ -46,7 +46,8 @@
                                     @endif
 
                                     @if ($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info"
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#detailInstructionModalGroupAll"
                                             wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})"
                                             wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
@@ -132,7 +133,8 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">
-                                        <button class="btn btn-icon btn-sm btn-dark"
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                            data-bs-target="#detailInstructionModalAll"
                                             wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"
                                             wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>

@@ -46,8 +46,10 @@
                                     @endif
 
                                     @if ($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info"
-                                            wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
+                                            data-bs-target="#detailInstructionModalGroupAll"
+                                            wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -131,8 +133,10 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">
-                                        <button class="btn btn-icon btn-sm btn-dark"
-                                            wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                            data-bs-target="#detailInstructionModalAll"
+                                            wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -809,7 +813,8 @@
                                             <div class="row mb-3">
                                                 <div class="col-xl-12">
                                                     <div class="table-responsive">
-                                                        <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                        <table
+                                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                                             <thead>
                                                                 <tr>
                                                                     <th>LANGKAH KERJA</th>
@@ -825,13 +830,19 @@
                                                                 @if (isset($selectedWorkStep))
                                                                     @forelse ($selectedWorkStep as $workstep)
                                                                         <tr>
-                                                                            <td>{{ $workstep->workStepList->name ?? '-' }}</td>
-                                                                            <td>{{ $workstep->target_date ?? '-' }}</td>
+                                                                            <td>{{ $workstep->workStepList->name ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->target_date ?? '-' }}
+                                                                            </td>
                                                                             <td>{{ $workstep->selesai ?? '-' }}</td>
-                                                                            <td>{{ $workstep->status_task ?? '-' }}</td>
-                                                                            <td>{{ $workstep->target_time ?? '-' }}</td>
-                                                                            <td>{{ $workstep->user->name ?? '-' }}</td>
-                                                                            <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
+                                                                            <td>{{ $workstep->status_task ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->target_time ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->user->name ?? '-' }}
+                                                                            </td>
+                                                                            <td>{{ $workstep->machine->machine_identity ?? '-' }}
+                                                                            </td>
                                                                         </tr>
                                                                     @empty
                                                                         <p>No files found.</p>
@@ -996,4 +1007,3 @@
         </div>
     </div>
 </div>
-

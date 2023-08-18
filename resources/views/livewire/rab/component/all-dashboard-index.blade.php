@@ -44,7 +44,8 @@
                                     @endif
 
                                     @if($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
+                                        data-bs-target="#detailInstructionModalGroupAll" wire:click="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupAll({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -119,7 +120,8 @@
                                 @endif
                                 <td>
                                     <div class="btn-list">         
-                                        <button class="btn btn-icon btn-sm btn-dark" wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
+                                        data-bs-target="#detailInstructionModalAll" wire:click="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsAll({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -925,14 +927,6 @@
         window.addEventListener('close-modal-all', event =>{
             $('#detailInstructionModalAll').modal('hide');
             $('#detailInstructionModalGroupAll').modal('hide');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-all', event =>{
-            $('#detailInstructionModalAll').modal('show');
-        });
-
-        window.addEventListener('show-detail-instruction-modal-group-all', event =>{
-            $('#detailInstructionModalGroupAll').modal('show');
         });
     </script>
 @endpush

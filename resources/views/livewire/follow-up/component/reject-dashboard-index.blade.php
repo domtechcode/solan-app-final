@@ -45,7 +45,7 @@
                                     @endif
 
                                     @if ($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info"
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupReject"
                                             wire:click="modalInstructionDetailsGroupReject({{ $dataInstruction->instruction->group_id }})"
                                             wire:key="modalInstructionDetailsGroupReject({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>

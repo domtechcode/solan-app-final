@@ -43,7 +43,12 @@ class ProcessDashboardIndex extends Component
 
     public $keteranganReject;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public function mount()
     {

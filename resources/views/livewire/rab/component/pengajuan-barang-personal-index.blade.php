@@ -87,7 +87,7 @@
                             @endif
                             <td>
                                 <div class="btn-list">         
-                                    <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#modalPengajuanBarangPersonal" wire:key="modalPengajuanBarangPersonal" wire:click="modalPengajuanBarangPersonal({{ $itemPengajuanBarangPersonal->id }})"><i class="fe fe-eye"></i></button>
+                                    <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#modalPengajuanBarangPersonal" wire:key="modalPengajuanBarangPersonal({{ $itemPengajuanBarangPersonal->id }})" wire:click="modalPengajuanBarangPersonal({{ $itemPengajuanBarangPersonal->id }})"><i class="fe fe-eye"></i></button>
                                 </div>
                             </td>
                         </tr>
