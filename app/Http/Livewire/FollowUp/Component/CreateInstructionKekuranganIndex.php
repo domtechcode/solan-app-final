@@ -34,6 +34,7 @@ class CreateInstructionKekuranganIndex extends Component
     public $shipping_date;
     public $quantity;
     public $type_order;
+    public $order_date;
 
     //data
     public $dataInstructions = [];
@@ -117,6 +118,7 @@ class CreateInstructionKekuranganIndex extends Component
             'quantity' => 'required',
             'workSteps' => 'required',
             'filecontoh' => 'required',
+            'order_date' => 'required',
         ]);
 
         // Copy the Instruction
@@ -130,6 +132,7 @@ class CreateInstructionKekuranganIndex extends Component
         $instruction->stock = null;
         $instruction->group_id = null;
         $instruction->group_priority = null;
+        $instruction->order_date = $this->order_date;
         if ($this->requestKekurangan == 'Pemesan') {
             $instruction->spk_state = 'Kekurangan Request Pemesan';
         } elseif ($this->requestKekurangan == 'QC') {

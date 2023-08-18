@@ -59,11 +59,11 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-3 col-md-3">
                 <div class="form-group">
                     <label class="form-label">No. SPK Kekurangan<span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="spk_number" id="spk_number"
+                        <input type="text" wire:model="spk_number" id="spk_number"
                             class="form-control @error('spk_number') is-invalid @enderror" placeholder="No SPK"
                             readonly>
                         <button class="btn btn-primary" type="button" wire:click="generateCode">Generate</button>
@@ -78,7 +78,7 @@
                 <div class="form-group">
                     <label class="form-label">Tanggal Permintaan Kirim <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="shipping_date" id="shipping_date"
+                        <input type="date" wire:model="shipping_date" id="shipping_date"
                             class="form-control @error('shipping_date') is-invalid @enderror">
                     </div>
                     @error('shipping_date')
@@ -89,9 +89,22 @@
 
             <div class="col-sm-3 col-md-3">
                 <div class="form-group">
+                    <label class="form-label">Tanggal Po Masuk <span class="text-red">*</span></label>
+                    <div class="input-group">
+                        <input type="date" wire:model="order_date" id="order_date"
+                            class="form-control @error('order_date') is-invalid @enderror">
+                    </div>
+                    @error('order_date')
+                        <div><span class="text-danger">{{ $message }}</span></div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
                     <label class="form-label">Quantity</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="quantity" id="quantity"
+                        <input type="text" wire:model="quantity" id="quantity"
                             class="form-control @error('quantity') is-invalid @enderror" autocomplete="off"
                             placeholder="Quantity" type-currency="IDR">
                     </div>
@@ -110,7 +123,7 @@
                                 <div class="input-group control-group" style="padding-top: 5px;"
                                     id="row_remove{{ $index }}">
                                     <input type="text" class="form-control" value="{{ $step['id'] }}"
-                                        wire:model.defer="workSteps.{{ $index }}.id" style="display: none;">
+                                        wire:model="workSteps.{{ $index }}.id" style="display: none;">
                                     <input type="text" class="form-control" value="{{ $step['name'] }}" readonly>
                                     <button class="btn btn-danger btn_remove" type="button"
                                         wire:click="removeField({{ $index }})"><i class="fe fe-x"></i></button>
@@ -169,7 +182,7 @@
                                             <div class="input-group control-group" style="padding-top: 5px;">
                                                 <select class="form-control form-select"
                                                     data-bs-placeholder="Pilih Tujuan Catatan"
-                                                    wire:model.defer="notes.{{ $index }}.tujuan" required>
+                                                    wire:model="notes.{{ $index }}.tujuan" required>
                                                     <option label="Pilih Tujuan Catatan"></option>
                                                     @foreach ($workSteps as $key)
                                                         @if ($key['name'] == 'Hitung Bahan')
@@ -187,7 +200,7 @@
                                             </div>
                                             <div class="input-group control-group" style="padding-top: 5px;">
                                                 <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                    wire:model.defer="notes.{{ $index }}.catatan" required></textarea>
+                                                    wire:model="notes.{{ $index }}.catatan" required></textarea>
                                             </div>
 
                                         </div>

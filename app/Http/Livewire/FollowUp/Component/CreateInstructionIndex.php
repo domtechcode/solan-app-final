@@ -178,10 +178,6 @@ class CreateInstructionIndex extends Component
         );
 
         $customerList = Customer::find($this->customer);
-        $dataInstruction = Instruction::where('sub_spk', '!=', 'sub')
-            ->whereNotNull('customer_number')
-            ->where('customer_number', $this->customer_number)
-            ->first();
 
         if ($this->spk_type == 'stock') {
             $this->spk_type = 'production';
@@ -191,6 +187,12 @@ class CreateInstructionIndex extends Component
             $this->taxes_type = $customerList->taxes;
             $this->type_order = $this->spk_type;
         }
+
+        $dataInstruction = Instruction::where('customer_number', $this->customer_number)
+            ->whereNotNull('customer_number')
+            ->where('sub_spk', null)
+            ->where('spk_type', $this->spk_type)
+            ->first();
 
         if ($this->spk_type == 'sample' || $this->spk_type == 'layout') {
             $countSample = 1;
