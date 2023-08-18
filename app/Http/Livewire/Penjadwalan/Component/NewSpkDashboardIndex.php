@@ -59,7 +59,12 @@ class NewSpkDashboardIndex extends Component
     public $pengajuanBarang;
     public $historyPengajuanBarang;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public function updatingSearchNewSpk()
     {

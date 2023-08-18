@@ -169,13 +169,13 @@
                 console.log(data);
             });
 </script>
-
+{{-- 
 <script>
     Echo.channel('refresh')
             .listen('IndexRenderEvent', function (e) {
                 Livewire.emit('indexRender');
             });
-</script>
+</script> --}}
 
 {{-- <script>
     window.livewire.onError(statusCode => {

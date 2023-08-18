@@ -36,7 +36,6 @@ class Statistik extends Component
     public $spkCompleteStock;
     public $userId;
 
-    // protected $listeners = ['notifSent' => 'refreshIndex'];
 
     public function getListeners()
     {
@@ -56,7 +55,7 @@ class Statistik extends Component
             $instructionData = Instruction::find($instruction_id);
 
             $this->emit('flashMessage', [
-                'type' => $message,
+                'type' => 'info',
                 'title' => $conversation_id,
                 'message' => 'SPK ' . $instructionData->spk_number,
             ]);
@@ -67,7 +66,7 @@ class Statistik extends Component
                 'message' => $conversation_id,
             ]);
         }
-
+        
         $this->render();
     }
 

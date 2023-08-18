@@ -19,7 +19,12 @@ class TabDashboardIndex extends Component
     public $dataCountReject;
     public $dataCountManageSpk;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public $activeTab = 'tab1';
 

@@ -41,7 +41,12 @@ class HoldDashboardIndex extends Component
     public $waitingSpkHoldQc;
     public $spkProduction;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public function updatingSearchHold()
     {

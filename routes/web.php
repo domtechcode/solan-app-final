@@ -24,8 +24,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logoutProcess'
 
 Route::get('/sender', function () {
     // Logic untuk route ini (jika diperlukan)
-    event(new IndexRenderEvent("refresh"));
-    // event(new NotificationSent(2, "asdasdasd", "asdasd", "1", 4));
+    // event(new IndexRenderEvent("refresh"));
+    event(new NotificationSent(2, '123123', '123123', 1, 4));
 });
 
 Route::group(['middleware' => ['auth']], function () {

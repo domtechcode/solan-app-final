@@ -4,6 +4,7 @@ namespace App\Http\Livewire\FollowUp\Index;
 
 use Livewire\Component;
 use App\Models\Instruction;
+use App\Events\NotificationSent;
 
 class IndexDashboard extends Component
 {

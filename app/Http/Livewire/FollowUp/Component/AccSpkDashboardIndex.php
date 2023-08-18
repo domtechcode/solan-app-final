@@ -46,7 +46,12 @@ class AccSpkDashboardIndex extends Component
     public $alasan_revisi;
     public $workSteps;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'renderIndex'];
+
+    public function renderIndex()
+    {
+        $this->render();
+    }
 
     public function updatingSearchAcc()
     {
