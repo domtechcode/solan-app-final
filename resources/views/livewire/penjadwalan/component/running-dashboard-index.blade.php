@@ -398,7 +398,7 @@
                                                                     <select style="width: 100%;"
                                                                         class="form-control work_step_list_id-{{ $key }}"
                                                                         data-clear data-pharaonic="select2"
-                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-parent="#openModalRunning"
                                                                         data-component-id="{{ $this->id }}"
                                                                         data-placeholder="Select Langkah Kerja"
                                                                         wire:model="workSteps.{{ $key }}.work_step_list_id"
@@ -465,7 +465,7 @@
                                                                     <select style="width: 100%;"
                                                                         class="form-control user_id" data-clear
                                                                         data-pharaonic="select2"
-                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-parent="#openModalRunning"
                                                                         data-component-id="{{ $this->id }}"
                                                                         data-placeholder="Select User"
                                                                         wire:model.defer="workSteps.{{ $key }}.user_id"
@@ -495,7 +495,7 @@
                                                                     <select style="width: 100%;"
                                                                         class="form-control machine_id" data-clear
                                                                         data-pharaonic="select2"
-                                                                        data-parent="#openModalDijadwalkan"
+                                                                        data-parent="#openModalRunning"
                                                                         data-component-id="{{ $this->id }}"
                                                                         data-placeholder="Select Machine"
                                                                         wire:model="workSteps.{{ $key }}.machine_id"
