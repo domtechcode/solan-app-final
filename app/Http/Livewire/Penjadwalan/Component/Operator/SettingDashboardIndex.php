@@ -64,6 +64,7 @@ class SettingDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
             ->where('spk_status', 'Running')
+            ->where('user_id', '!=', null)
             ->whereHas('instruction', function ($query) {
                 $searchTerms = '%' . $this->searchSetting . '%';
                 $query
