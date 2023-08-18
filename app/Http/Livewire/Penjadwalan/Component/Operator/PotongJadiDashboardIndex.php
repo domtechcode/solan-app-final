@@ -38,12 +38,7 @@ class PotongJadiDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => 'renderIndex'];
-
-    public function renderIndex()
-    {
-        $this->render();
-    }
+    protected $listeners = ['indexRender' => '$refresh'];
 
     public function updatingSearchPotongJadi()
     {
