@@ -16,7 +16,7 @@ class TabDashboardIndex extends Component
     public $dataCountIncomingSpk;
     public $dataCountAllSpk;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
 
@@ -25,7 +25,7 @@ class TabDashboardIndex extends Component
         $this->activeTab = $tab;
     }
 
-    public function render()
+    private function mount()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 5)
             ->where('state_task', 'Running')
@@ -101,7 +101,10 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+    }
 
+    public function render()
+    {
         return view('livewire.hitung-bahan.component.tab-dashboard-index')
             ->extends('layouts.app')
             ->section('content')

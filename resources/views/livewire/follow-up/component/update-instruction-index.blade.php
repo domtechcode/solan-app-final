@@ -318,9 +318,12 @@
                 <div class="form-group">
                     <label class="form-label">Harga</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="price" id="price"
-                            class="form-control @error('price') is-invalid @enderror" autocomplete="off"
-                            placeholder="Harga">
+                        <input x-data
+                        x-mask:dynamic="$money($input, '.', ',', 4)"
+                        x-ref="input"
+                        type="text"
+                        placeholder="Enter decimal number"
+                        wire:model="price"  class="form-control @error('price') is-invalid @enderror">
                     </div>
                     @error('price')
                         <div><span class="text-danger">{{ $message }}</span></div>

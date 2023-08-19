@@ -19,7 +19,7 @@ class TabDashboardIndex extends Component
     public $dataCountReject;
     public $dataCountManageSpk;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
 
@@ -42,7 +42,7 @@ class TabDashboardIndex extends Component
         $this->activeTabOperator = $tabOperator;
     }
 
-    public function render()
+    public function mount()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Running')
@@ -118,7 +118,10 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+    }
 
+    public function render()
+    {
         return view('livewire.penjadwalan.component.tab-dashboard-index')
             ->extends('layouts.app')
             ->section('content')

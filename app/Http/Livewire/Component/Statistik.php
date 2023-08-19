@@ -36,9 +36,9 @@ class Statistik extends Component
     public $spkCompleteStock;
     public $userId;
 
-
     public function getListeners()
     {
+        $this->userId = Auth()->user()->id;
         return [
             "echo:notif.{$this->userId},NotificationSent" => 'refreshIndex',
         ];
@@ -66,13 +66,10 @@ class Statistik extends Component
                 'message' => $conversation_id,
             ]);
         }
-        
-        $this->render();
     }
 
-    public function render()
+    public function mount()
     {
-        $this->userId = Auth()->user()->id;
         $this->totalOrder = Instruction::count();
         $this->prosesOrder = Instruction::whereHas('workstep', function ($query) {
             $query->where('spk_state', '!=', 'Training Program')->where('status_id', 2);
@@ -161,7 +158,10 @@ class Statistik extends Component
                 $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
             })
             ->count();
+    }
 
+    public function render()
+    {           
         return view('livewire.component.statistik');
     }
 }

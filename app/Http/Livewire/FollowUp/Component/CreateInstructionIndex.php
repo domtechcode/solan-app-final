@@ -170,11 +170,8 @@ class CreateInstructionIndex extends Component
                 'quantity' => 'required',
                 'workSteps' => 'required',
                 'filecontoh' => 'required',
-                'price' => 'numeric|regex:/^\d*(\.\d{1,2})?$/',
-            ],
-            [
-                'price.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
-            ],
+                'price' => 'required',
+            ]
         );
 
         $customerList = Customer::find($this->customer);
@@ -449,20 +446,17 @@ class CreateInstructionIndex extends Component
                 foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                event(new IndexRenderEvent('refresh'));
             } elseif ($firstWorkStep->work_step_list_id == 5) {
                 $userDestination = User::where('role', 'Hitung Bahan')->get();
                 foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                event(new IndexRenderEvent('refresh'));
-            } else {
-                $userDestination = User::where('role', 'Penjadwalan')->get();
+            }
+
+            $userDestination = User::where('role', 'Penjadwalan')->get();
                 foreach ($userDestination as $dataUser) {
                     $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
                 }
-                event(new IndexRenderEvent('refresh'));
-            }
 
             $userDestination = User::where('role', 'Accounting')->get();
             foreach ($userDestination as $dataUser) {

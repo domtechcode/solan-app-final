@@ -216,6 +216,7 @@ class CreateAccInstructionIndex extends Component
             'shipping_date' => 'required',
             'order_name' => 'required',
             'quantity' => 'required',
+            'price' => 'required',
             'workSteps' => 'required',
         ]);
 

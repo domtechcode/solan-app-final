@@ -21,7 +21,7 @@ class TabDashboardIndex extends Component
     public $dataCountAllSpk;
     public $dataCountPengajuanBarangPersonal;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
 
@@ -44,7 +44,7 @@ class TabDashboardIndex extends Component
         $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
     }
 
-    public function render()
+    public function mount()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 1)
             ->where('state_task', 'Running')
@@ -117,7 +117,10 @@ class TabDashboardIndex extends Component
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
 
         $this->dataCountSpk = $this->dataCountNewSpk + $this->dataCountCompleteSpk + $this->dataCountAccSpk;
+    }
 
+    public function render()
+    {
         return view('livewire.follow-up.component.tab-dashboard-index')
             ->extends('layouts.app')
             ->section('content')

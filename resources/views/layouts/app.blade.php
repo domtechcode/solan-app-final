@@ -32,14 +32,18 @@
     <!-- INTERNAL Switcher css -->
     <link href="{{ asset('assets/switcher/css/switcher.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/switcher/demo.css') }}" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/toastr-cdn.css') }}" rel="stylesheet">
 
     <style>
         .select2-selection__arrow {
             display: none;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <!-- Alpine Plugins -->
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+ 
+<!-- Alpine Core -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @livewireStyles
     @stack('styles')
     
@@ -113,8 +117,8 @@
     <!-- Switcher js -->
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
     <script src="{{ asset('vendor/pharaonic/pharaonic.select2.min.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
+    <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
+    <script src="{{ asset('assets/js/toastr-cdn.js') }}"></script>
     @livewireScripts
     @stack('scripts')
     <script>
@@ -166,16 +170,17 @@
 <script>
     Echo.channel('notif.' + {{ Auth::user()->id }})
             .listen('NotificationSent', function (data) {
-                console.log(data);
+                // console.log(data);
+                Livewire.emit('indexRender');
             });
 </script>
 
-<script>
+{{-- <script>
     Echo.channel('refresh')
             .listen('IndexRenderEvent', function (e) {
                 Livewire.emit('indexRender');
             });
-</script>
+</script> --}}
 
 {{-- <script>
     window.livewire.onError(statusCode => {
