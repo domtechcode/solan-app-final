@@ -293,7 +293,7 @@
                                     <div class="input-group">
                                         <input type="text" wire:model.defer="customer_number" id="customer_number"
                                             class="form-control @error('customer_number') is-invalid @enderror"
-                                            autocomplete="off" placeholder="No. Po Konsumen">
+                                            autocomplete="off" placeholder="No. Po Konsumen" readonly>
                                     </div>
                                     @error('customer_number')
                                         <div><span class="text-danger">{{ $message }}</span></div>
