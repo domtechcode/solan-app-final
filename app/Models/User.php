@@ -6,6 +6,7 @@ use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
 use App\Models\WorkStep;
+use App\Models\CatatanPengajuan;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
@@ -56,6 +57,11 @@ class User extends Authenticatable
     public function catatan()
     {
         return $this->hasMany(Catatan::class);
+    }
+
+    public function catatanPengajuan()
+    {
+        return $this->hasMany(CatatanPengajuan::class);
     }
 
     public function file()

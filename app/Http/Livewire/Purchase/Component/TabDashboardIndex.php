@@ -13,16 +13,19 @@ use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
-    public $dataCountPengajuanBarangSpk;
+    public $dataCountTotalPengajuanBarangSpk;
+
+    public $dataCountNewPengajuanBarangSpk;
+    public $dataCountProcessPengajuanBarangSpk;
+    public $dataCountRejectPengajuanBarangSpk;
+    public $dataCountStockPengajuanBarangSpk;
+    public $dataCountBeliPengajuanBarangSpk;
+    public $dataCountCompletePengajuanBarangSpk;
+    
     public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanMaklun;
-    public $dataCountRunningSpk;
-    public $dataCountHoldSpk;
-    public $dataCountCancelSpk;
-    public $dataCountCompleteSpk;
-    public $dataCountAllSpk;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
 
@@ -31,13 +34,42 @@ class TabDashboardIndex extends Component
         $this->activeTab = $tab;
     }
 
-    public function render()
+    public $activeTabPengajuanBarangSpk = 'tabPengajuanBarangSpk1';
+
+    public function changeTabPengajuanBarangSpk($tabPengajuanBarangSpk)
     {
-        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', '!=', 16)->count();
+        $this->activeTabPengajuanBarangSpk = $tabPengajuanBarangSpk;
+    }
+
+    public function mount()
+    {
+        $this->dataCountNewPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 8)
+        ->where('state', 'Purchase')->count();
+
+        $this->dataCountProcessPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [9, 10, 11])->count();
+
+        $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [17, 18])->count();
+
+        $this->dataCountStockPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 12)
+        ->where('state', 'Purchase')->count();
+
+        $this->dataCountBeliPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 15)
+        ->where('state', 'Purchase')->count();
+
+        $this->dataCountCompletePengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 16)
+        ->where('state', 'Purchase')->count();
+
+        $this->dataCountTotalPengajuanBarangSpk = $this->dataCountNewPengajuanBarangSpk + $this->dataCountProcessPengajuanBarangSpk + $this->dataCountRejectPengajuanBarangSpk + $this->dataCountStockPengajuanBarangSpk + $this->dataCountBeliPengajuanBarangSpk + $this->dataCountCompletePengajuanBarangSpk;
+
+
+
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', '!=', 16)->count();
 
         $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'Purchase')->count();
+    }
 
+    public function render()
+    {
         return view('livewire.purchase.component.tab-dashboard-index')
             ->extends('layouts.app')
             ->section('content')

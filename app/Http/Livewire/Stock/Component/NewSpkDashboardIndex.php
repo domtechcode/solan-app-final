@@ -302,6 +302,23 @@ class NewSpkDashboardIndex extends Component
             'keteranganReject' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = Catatan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'user_id' => Auth()->user()->id,
+                ]);
+            }
+        }
+
         $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('work_step_list_id', 4)
             ->first();
