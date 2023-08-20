@@ -109,7 +109,7 @@ class UpdateInstructionIndex extends Component
         $this->customer_number = $this->instructions->customer_number;
         $this->order_name = $this->instructions->order_name;
         $this->code_style = $this->instructions->code_style;
-        $this->quantity = currency_idr($this->instructions->quantity);
+        $this->quantity = $this->instructions->quantity;
         $this->price = $this->instructions->price;
         $this->follow_up = $this->instructions->follow_up;
         $this->type_ppn = $this->instructions->type_ppn;
@@ -202,7 +202,7 @@ class UpdateInstructionIndex extends Component
                 'order_name' => $this->order_name,
                 'code_style' => $this->code_style,
                 'quantity' => currency_convert($this->quantity),
-                'price' => $this->price,
+                'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
                 'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,

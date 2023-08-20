@@ -209,7 +209,7 @@ class CreateInstructionIndex extends Component
                 'order_name' => $this->order_name,
                 'code_style' => $this->code_style,
                 'quantity' => currency_convert($this->quantity),
-                'price' => $this->price,
+                'price' => currency_convert($this->price),
                 'shipping_date_first' => $this->shipping_date,
                 'spk_state' => 'New',
                 'sub_spk' => $this->sub_spk,

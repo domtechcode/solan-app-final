@@ -333,9 +333,9 @@
                                 <div class="form-group">
                                     <label class="form-label">Quantity</label>
                                     <div class="input-group">
-                                        <input type="text" wire:model.defer="quantity" id="quantity"
-                                            class="form-control @error('quantity') is-invalid @enderror"
-                                            autocomplete="off" placeholder="Quantity" type-currency="IDR">
+                                        <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                            type="text" placeholder="Quantity" wire:model="quantity"
+                                            class="form-control @error('quantity') is-invalid @enderror">
                                     </div>
                                     @error('quantity')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -363,7 +363,7 @@
                                     <label class="form-label">Harga</label>
                                     <div class="input-group">
                                         <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
-                                            type="text" placeholder="Enter decimal number" wire:model="price"
+                                            type="text" placeholder="Harga" wire:model="price"
                                             class="form-control @error('price') is-invalid @enderror">
                                     </div>
                                     @error('price')
@@ -464,7 +464,7 @@
                                         @enderror
                                     </div>
                                 </div>
-    
+
                                 <div class="col-sm-6 col-md-6">
                                     <label class="form-label">Ulangi Proses Dari Awal</label>
                                     <div class="row">
