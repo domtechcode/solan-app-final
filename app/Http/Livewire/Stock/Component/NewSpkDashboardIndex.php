@@ -84,14 +84,18 @@ class NewSpkDashboardIndex extends Component
             ->where('spk_status', 'Running')
             ->whereIn('status_id', [1, 2])
             ->whereHas('instruction', function ($query) {
+                $searchTerms = '%' . $this->searchNewSpk . '%';
                 $query
-                    ->where('spk_number', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('spk_type', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('customer_name', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('order_name', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('customer_number', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('code_style', 'like', '%' . $this->searchNewSpk . '%')
-                    ->orWhere('shipping_date', 'like', '%' . $this->searchNewSpk . '%');
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms);
+                    });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
@@ -101,8 +105,7 @@ class NewSpkDashboardIndex extends Component
 
         return view('livewire.stock.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
+            ->section('content');
     }
 
     public function save()
@@ -122,7 +125,7 @@ class NewSpkDashboardIndex extends Component
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
-                    'instruction_id' => $updateAlasanRevisi->id,
+                    'instruction_id' => $this->selectedInstruction->id,
                     'user_id' => Auth()->user()->id,
                 ]);
             }
@@ -191,7 +194,7 @@ class NewSpkDashboardIndex extends Component
                     Files::create([
                         'instruction_id' => $this->selectedInstruction->id,
                         'user_id' => Auth()->user()->id,
-                        'type_file' => 'rincian-stock',
+                        'type_file' => 'arsip',
                         'file_name' => $fileName,
                         'file_path' => $folder,
                     ]);
@@ -212,7 +215,7 @@ class NewSpkDashboardIndex extends Component
 
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal-new-spk');
+            $this->dispatchBrowserEvent('close-modal-new-spk-stock');
         } else {
             $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
                 'stock' => currency_convert($this->stock),
@@ -260,7 +263,7 @@ class NewSpkDashboardIndex extends Component
                     Files::create([
                         'instruction_id' => $this->selectedInstruction->id,
                         'user_id' => Auth()->user()->id,
-                        'type_file' => 'rincian-stock',
+                        'type_file' => 'arsip',
                         'file_name' => $fileName,
                         'file_path' => $folder,
                     ]);
@@ -289,7 +292,7 @@ class NewSpkDashboardIndex extends Component
 
             $this->reset();
             $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal-new-spk');
+            $this->dispatchBrowserEvent('close-modal-new-spk-stock');
         }
     }
 
@@ -339,13 +342,17 @@ class NewSpkDashboardIndex extends Component
         ]);
 
         $this->keteranganReject = null;
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-new-spk-stock');
         $this->messageSent(['conversation' => 'SPK Reject dari Stock', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
     }
 
     public function modalInstructionStockNewSpk($instructionId)
     {
+        $this->stock = null;
+        $this->keteranganReject = null;
+        $this->notes = null;
+
         $updateStatusStock = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 4)
             ->update([

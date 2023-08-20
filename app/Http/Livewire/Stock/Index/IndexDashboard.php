@@ -6,8 +6,6 @@ use Livewire\Component;
 
 class IndexDashboard extends Component
 {
-    public $title = 'Dashboard';
-
     public function render()
     {
         return view('livewire.stock.index.index-dashboard')->extends('layouts.app')

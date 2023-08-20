@@ -57,12 +57,14 @@ class RiwayatPengajuanBarangPersonalIndex extends Component
 
     public function render()
     {
-        $dataRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where(function ($query) {
-            $query->where('qty_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
-                ->orWhere('nama_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
-                ->orWhere('tgl_target_datang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
-                ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%');
-        })
+        $dataRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)
+            ->where(function ($query) {
+                $query
+                    ->where('qty_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchRiwayatPengajuanBarangPersonal . '%');
+            })
             ->orderBy('tgl_pengajuan', 'asc')
             ->with(['status', 'user'])
             ->paginate($this->paginateRiwayatPengajuanBarangPersonal);

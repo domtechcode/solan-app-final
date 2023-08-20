@@ -88,8 +88,7 @@ class CompleteDashboardIndex extends Component
 
         return view('livewire.stock.component.complete-dashboard-index', ['instructionsComplete' => $dataComplete])
             ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
+            ->section('content');
     }
 
     public function save()

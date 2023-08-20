@@ -7,6 +7,8 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangSpk;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
@@ -15,6 +17,9 @@ class TabDashboardIndex extends Component
     public $dataCountRejectSpk;
     public $dataCountIncomingSpk;
     public $dataCountAllSpk;
+    public $dataCountPengajuanBarangPersonal;
+    public $dataCountPengajuanBarangSpk;
+    public $dataCountTotalPengajuanBarang;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -25,7 +30,14 @@ class TabDashboardIndex extends Component
         $this->activeTab = $tab;
     }
 
-    private function mount()
+    public $activeTabPengajuanBarangPersonal = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarangPersonal)
+    {
+        $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
+    }
+
+    public function mount()
     {
         $this->dataCountNewSpk = WorkStep::where('work_step_list_id', 5)
             ->where('state_task', 'Running')
@@ -101,13 +113,16 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
     }
 
     public function render()
     {
         return view('livewire.hitung-bahan.component.tab-dashboard-index')
             ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
+            ->section('content');
     }
 }

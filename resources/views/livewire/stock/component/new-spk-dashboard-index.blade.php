@@ -279,7 +279,7 @@
                                             <div class="form-group">
                                                 <label class="form-label">Stock</label>
                                                 <div class="input-group">
-                                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)"
+                                                    <input x-data x-mask:dynamic="$money($input)"
                                                         x-ref="input" type="text" placeholder="Stock"
                                                         wire:model="stock"
                                                         class="form-control @error('stock') is-invalid @enderror">
@@ -469,9 +469,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" wire:click="rejectSpk()">Reject Ke Follow
+                    <button type="button" class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject Ke Follow
                         Up</button>
-                    <button type="button" class="btn btn-success" wire:click="save()">Submit</button>
+                    <button type="button" class="btn btn-success" wire:click="save" wire:key="save">Submit</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1225,7 +1225,7 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-new-spk', event => {
+        window.addEventListener('close-modal-new-spk-stock', event => {
             $('#openModalNewSpkStock').modal('hide');
         });
     </script>

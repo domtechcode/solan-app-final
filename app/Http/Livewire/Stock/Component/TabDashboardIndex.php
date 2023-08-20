@@ -65,14 +65,13 @@ class TabDashboardIndex extends Component
             ->orderBy('instructions.shipping_date', 'asc')
             ->count();
 
-            $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
     }
-    
+
     public function render()
     {
         return view('livewire.stock.component.tab-dashboard-index')
             ->extends('layouts.app')
-            ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
+            ->section('content');
     }
 }
