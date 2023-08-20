@@ -60,9 +60,14 @@ class EditFormRabIndex extends Component
         if (!$cekGroup) {
             $this->instructionData = Instruction::where('id', $instructionId)->get();
             foreach ($this->instructionData as $instruction) {
+                if($instruction->price == '0'){
+                    $harga = null;
+                }else{
+                    $harga = $instruction->price;
+                }
                 $this->instructionItems[] = [
                     'spk_number' => $instruction->spk_number,
-                    'price' => currency_idr($instruction->price),
+                    'price' => $harga,
                 ];
             }
         } else {
