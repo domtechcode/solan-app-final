@@ -7,6 +7,9 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangSpk;
+use App\Models\FormPengajuanMaklun;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
@@ -15,6 +18,11 @@ class TabDashboardIndex extends Component
     public $dataCountIncomingSpk;
     public $dataCountHoldSpk;
     public $dataCountAllSpk;
+    public $dataCountRiwayatPengajuanBarangPersonal;
+    public $dataCountPengajuanMaklun;
+    public $dataCountPengajuanBarang;
+    public $dataCountPengajuanBarangSpk;
+    public $dataCountPengajuanBarangPersonal;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -23,6 +31,20 @@ class TabDashboardIndex extends Component
     public function changeTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public $activeTabPengajuanBarangPersonal = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarangPersonal)
+    {
+        $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
+    }
+
+    public $activeTabPengajuanBarang = 'tabPengajuanBarang1';
+
+    public function changeTabPengajuanBarang($tabPengajuanBarang)
+    {
+        $this->activeTabPengajuanBarang = $tabPengajuanBarang;
     }
 
     public function mount()
@@ -86,6 +108,13 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+
+        $this->dataCountRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'RAB')->count();
+
+        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 11)->count();
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 11)->count();
+        $this->dataCountPengajuanBarang = $this->dataCountPengajuanBarangSpk + $this->dataCountPengajuanBarangPersonal;
     }
 
     public function render()
