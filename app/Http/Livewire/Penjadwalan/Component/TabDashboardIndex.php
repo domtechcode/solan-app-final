@@ -8,6 +8,8 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangSpk;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
@@ -18,6 +20,9 @@ class TabDashboardIndex extends Component
     public $dataCountComplete;
     public $dataCountReject;
     public $dataCountManageSpk;
+    public $dataCountPengajuanBarangPersonal;
+    public $dataCountPengajuanBarangSpk;
+    public $dataCountTotalPengajuanBarang;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -40,6 +45,13 @@ class TabDashboardIndex extends Component
     public function changeTabOperator($tabOperator)
     {
         $this->activeTabOperator = $tabOperator;
+    }
+
+    public $activeTabPengajuanBarang = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarang)
+    {
+        $this->activeTabPengajuanBarang = $tabPengajuanBarang;
     }
 
     public function mount()
@@ -118,6 +130,10 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
     }
 
     public function render()

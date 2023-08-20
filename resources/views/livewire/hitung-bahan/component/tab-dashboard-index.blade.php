@@ -145,14 +145,14 @@
                                         <ul class="nav nav-pills card-header-pills">
                                             <li class="nav-item">
                                                 <button
-                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
                                                     data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal1')"
                                                     wire:key="tabPengajuanBarangPersonal1" href="#tabPengajuanBarangPersonal1">Pengajuan Barang Personal -
                                                     {{ $dataCountPengajuanBarangPersonal }}</button>
                                             </li>
                                             <li class="nav-item">
                                                 <button
-                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
                                                     data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk1')"
                                                     wire:key="tabPengajuanBarangSpk1" href="#tabPengajuanBarangSpk1">Pengajuan Barang SPK -
                                                     {{ $dataCountPengajuanBarangSpk }}</button>
@@ -161,12 +161,12 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="tab-content">
-                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
+                                            <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangPersonal1">
                                                 <h5 class="card-title">Pengajuan Barang Personal</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-personal-index')
                                             </div>
-                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
+                                            <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangSpk1">
                                                 <h5 class="card-title">Pengajuan Barang SPK</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-spk-index')

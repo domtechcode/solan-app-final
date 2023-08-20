@@ -30,11 +30,11 @@ class TabDashboardIndex extends Component
         $this->activeTab = $tab;
     }
 
-    public $activeTabPengajuanBarangPersonal = 'tabPengajuanBarangPersonal1';
+    public $activeTabPengajuanBarang = 'tabPengajuanBarangPersonal1';
 
-    public function changeTabPengajuanBarangPersonal($tabPengajuanBarangPersonal)
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarang)
     {
-        $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
+        $this->activeTabPengajuanBarang = $tabPengajuanBarang;
     }
 
     public function mount()

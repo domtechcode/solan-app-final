@@ -89,7 +89,7 @@ class CetakDashboardIndex extends Component
             ->paginate($this->paginateCetak);
 
         $instructionsByUserCetak = $dataCetak->groupBy(function ($item) {
-            return $item->user->name; // Ubah nama kolom pengguna sesuai dengan struktur tabel Anda
+            return $item->machine->machine_identity; // Ubah nama kolom pengguna sesuai dengan struktur tabel Anda
         });
 
         return view('livewire.penjadwalan.component.operator.cetak-dashboard-index', ['instructionsByUserCetak' => $instructionsByUserCetak, 'instructionsCetak' => $dataCetak])

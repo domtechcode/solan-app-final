@@ -17,11 +17,11 @@
         </div>
 
         <div class="row">
-            @foreach ($instructionsByUserCetak as $user => $instructions)
+            @foreach ($instructionsByUserCetak as $machine => $instructions)
                 <div class="col-lg-6">
                     <div class="expanel">
                         <div class="expanel-heading">
-                            <h3 class="expanel-title">{{ $user }}</h3>
+                            <h3 class="expanel-title">{{ $machine }}</h3>
                         </div>
                         <div class="expanel-body">
                             <div class="row mt-3">
