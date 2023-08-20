@@ -75,7 +75,7 @@ class ProcessDashboardIndex extends Component
                         $subQuery->whereIn('status_id', [1, 23]);
                     })
                     ->orWhere(function ($subQuery) {
-                        $subQuery->where('status_id', 2)->where('user_id', Auth()->user()->id);
+                        $subQuery->whereIn('status_id', [2, 3])->where('user_id', Auth()->user()->id);
                     });
             })
             ->whereHas('instruction', function ($query) {

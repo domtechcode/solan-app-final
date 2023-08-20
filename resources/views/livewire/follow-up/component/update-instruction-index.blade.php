@@ -259,7 +259,7 @@
                             <label class="form-label">Quantity</label>
                             <div class="input-group">
                                 <input x-data
-                                x-mask:dynamic="$money($input, '.', ',', 4)"
+                                x-mask:dynamic="$money($input)"
                                 x-ref="input"
                                 type="text"
                                 placeholder="Quantity"

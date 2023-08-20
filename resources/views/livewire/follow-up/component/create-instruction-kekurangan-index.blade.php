@@ -104,9 +104,12 @@
                 <div class="form-group">
                     <label class="form-label">Quantity</label>
                     <div class="input-group">
-                        <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
-                            type="text" placeholder="Quantity" wire:model="quantity"
-                            class="form-control @error('quantity') is-invalid @enderror">
+                        <input x-data
+                        x-mask:dynamic="$money($input)"
+                        x-ref="input"
+                        type="text"
+                        placeholder="Quantity"
+                        wire:model="quantity"  class="form-control @error('quantity') is-invalid @enderror">
                     </div>
                     @error('quantity')
                         <div><span class="text-danger">{{ $message }}</span></div>

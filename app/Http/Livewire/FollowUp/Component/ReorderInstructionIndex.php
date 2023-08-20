@@ -519,7 +519,7 @@ class ReorderInstructionIndex extends Component
                 }
 
                 $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
-                    ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianScreen', 'fileRincian')
+                    ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
                     ->get();
                 foreach ($keteranganData as $dataKeterangan) {
                     $keterangan = [
@@ -581,7 +581,27 @@ class ReorderInstructionIndex extends Component
                                 'plate' => $dataRincianPlate['plate'],
                                 'jumlah_lembar_cetak' => $dataRincianPlate['jumlah_lembar_cetak'],
                                 'waste' => $dataRincianPlate['waste'],
+                                'name' => $dataRincianPlate['name'],
+                                'tempat_plate' => $dataRincianPlate['tempat_plate'],
+                                'tgl_pembuatan_plate' => $dataRincianPlate['tgl_pembuatan_plate'],
+                                'status' => $dataRincianPlate['status'],
+                                'de' => $dataRincianPlate['de'],
+                                'l' => $dataRincianPlate['l'],
+                                'a' => $dataRincianPlate['a'],
+                                'b' => $dataRincianPlate['b'],
                             ];
+
+                            foreach ($dataRincianPlate['warnaPlate'] as $dataWarnaPlate) {
+                                $keterangan['warnaPlate'][] = [
+                                    'rincian_plate_id' => $dataRincianPlate['id'],
+                                    'warna' => $dataWarnaPlate['warna'],
+                                    'keterangan' => $dataWarnaPlate['keterangan'],
+                                    'de' => $dataWarnaPlate['de'],
+                                    'l' => $dataWarnaPlate['l'],
+                                    'a' => $dataWarnaPlate['a'],
+                                    'b' => $dataWarnaPlate['b'],
+                                ];
+                            }
                         }
                     }
 
@@ -870,7 +890,31 @@ class ReorderInstructionIndex extends Component
                                         'plate' => $rincianPlate['plate'],
                                         'jumlah_lembar_cetak' => $rincianPlate['jumlah_lembar_cetak'],
                                         'waste' => $rincianPlate['waste'],
+                                        'name' => $rincianPlate['name'],
+                                        'tempat_plate' => $rincianPlate['tempat_plate'],
+                                        'tgl_pembuatan_plate' => !empty($rincianPlate['tgl_pembuatan_plate']) ? $rincianPlate['tgl_pembuatan_plate'] : null,
+                                        'status' => $rincianPlate['status'],
+                                        'de' => $rincianPlate['de'],
+                                        'l' => $rincianPlate['l'],
+                                        'a' => $rincianPlate['a'],
+                                        'b' => $rincianPlate['b'],
                                     ]);
+        
+                                    
+                                    if(isset($keteranganData['warnaPlate'])) {
+                                        foreach ($keteranganData['warnaPlate'] as $dataWarna) {
+                                            $warnaPlate = $rincianPlate->warnaPlate()->create([
+                                                'instruction_id' => $instruction->id,
+                                                'rincian_plate_id' => $rincianPlate->id,
+                                                'warna' => $dataWarna['warna'],
+                                                'keterangan' => $dataWarna['keterangan'],
+                                                'de' => $dataWarna['de'],
+                                                'l' => $dataWarna['l'],
+                                                'a' => $dataWarna['a'],
+                                                'b' => $dataWarna['b'],
+                                            ]);
+                                        }
+                                    }
                                 }
                             }
 

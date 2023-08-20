@@ -233,9 +233,12 @@
                 <div class="form-group">
                     <label class="form-label">Quantity</label>
                     <div class="input-group">
-                        <input type="text" wire:model="quantity" id="quantity"
-                            class="form-control @error('quantity') is-invalid @enderror" autocomplete="off"
-                            placeholder="Quantity" type-currency="IDR">
+                        <input x-data
+                        x-mask:dynamic="$money($input)"
+                        x-ref="input"
+                        type="text"
+                        placeholder="Quantity"
+                        wire:model="quantity"  class="form-control @error('quantity') is-invalid @enderror">
                     </div>
                     @error('quantity')
                         <div><span class="text-danger">{{ $message }}</span></div>

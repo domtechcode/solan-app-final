@@ -197,6 +197,7 @@ class CreateFormHitungBahanIndex extends Component
             'fileRincian' => [],
             'fileRincianLast' => [],
             'rincianPlate' => [],
+            'warnaPlate' => [],
             'notes' => '',
         ];
     }
@@ -214,6 +215,14 @@ class CreateFormHitungBahanIndex extends Component
             'plate' => '',
             'jumlah_lembar_cetak' => '',
             'waste' => '',
+            'name' => '',
+            'tempat_plate' => '',
+            'tgl_pembuatan_plate' => '',
+            'status' => '',
+            'de' => '',
+            'l' => '',
+            'a' => '',
+            'b' => '',
         ];
     }
 
@@ -330,7 +339,7 @@ class CreateFormHitungBahanIndex extends Component
         }
 
         $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
-            ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianScreen', 'fileRincian')
+            ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
             ->get();
 
         foreach ($keteranganData as $dataKeterangan) {
@@ -386,6 +395,7 @@ class CreateFormHitungBahanIndex extends Component
                     ],
                 ],
                 'rincianPlate' => [],
+                'warnaPlate' => [],
                 'rincianScreen' => [],
                 'fileRincianLast' => [],
             ];
@@ -488,7 +498,27 @@ class CreateFormHitungBahanIndex extends Component
                         'plate' => $dataRincianPlate['plate'],
                         'jumlah_lembar_cetak' => $dataRincianPlate['jumlah_lembar_cetak'],
                         'waste' => $dataRincianPlate['waste'],
+                        'name' => $dataRincianPlate['name'],
+                        'tempat_plate' => $dataRincianPlate['tempat_plate'],
+                        'tgl_pembuatan_plate' => $dataRincianPlate['tgl_pembuatan_plate'],
+                        'status' => $dataRincianPlate['status'],
+                        'de' => $dataRincianPlate['de'],
+                        'l' => $dataRincianPlate['l'],
+                        'a' => $dataRincianPlate['a'],
+                        'b' => $dataRincianPlate['b'],
                     ];
+
+                    foreach ($dataRincianPlate['warnaPlate'] as $dataWarnaPlate) {
+                        $keterangan['warnaPlate'][] = [
+                            'rincian_plate_id' => $dataRincianPlate['id'],
+                            'warna' => $dataWarnaPlate['warna'],
+                            'keterangan' => $dataWarnaPlate['keterangan'],
+                            'de' => $dataWarnaPlate['de'],
+                            'l' => $dataWarnaPlate['l'],
+                            'a' => $dataWarnaPlate['a'],
+                            'b' => $dataWarnaPlate['b'],
+                        ];
+                    }
                 }
             }
 
@@ -615,6 +645,7 @@ class CreateFormHitungBahanIndex extends Component
                 'fileRincian' => [],
                 'fileRincianLast' => [],
                 'rincianPlate' => [],
+                'warnaPlate' => [],
                 'rincianScreen' => [],
                 'notes' => '',
             ];
@@ -1142,7 +1173,30 @@ class CreateFormHitungBahanIndex extends Component
                                 'plate' => $rincianPlate['plate'],
                                 'jumlah_lembar_cetak' => $rincianPlate['jumlah_lembar_cetak'],
                                 'waste' => $rincianPlate['waste'],
+                                'name' => $rincianPlate['name'],
+                                'tempat_plate' => $rincianPlate['tempat_plate'],
+                                'tgl_pembuatan_plate' => !empty($rincianPlate['tgl_pembuatan_plate']) ? $rincianPlate['tgl_pembuatan_plate'] : null,
+                                'status' => $rincianPlate['status'],
+                                'de' => $rincianPlate['de'],
+                                'l' => $rincianPlate['l'],
+                                'a' => $rincianPlate['a'],
+                                'b' => $rincianPlate['b'],
                             ]);
+
+                            if (isset($keteranganData['warnaPlate'])) {
+                                foreach ($keteranganData['warnaPlate'] as $dataWarna) {
+                                    $warnaPlate = $rincianPlate->warnaPlate()->create([
+                                        'instruction_id' => $this->currentInstructionId,
+                                        'rincian_plate_id' => $rincianPlate->id,
+                                        'warna' => $dataWarna['warna'],
+                                        'keterangan' => $dataWarna['keterangan'],
+                                        'de' => $dataWarna['de'],
+                                        'l' => $dataWarna['l'],
+                                        'a' => $dataWarna['a'],
+                                        'b' => $dataWarna['b'],
+                                    ]);
+                                }
+                            }
                         }
                     }
 
