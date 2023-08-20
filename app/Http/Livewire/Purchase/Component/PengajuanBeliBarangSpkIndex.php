@@ -128,9 +128,9 @@ class PengajuanBeliBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
-        $this->reset();
 
+        $this->emit('indexRender');
+        $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-beli-barang-spk');
     }
 
@@ -173,15 +173,5 @@ class PengajuanBeliBarangSpkIndex extends Component
                 $this->notes [] = $notes;
             }
         }
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = 'info';
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

@@ -126,7 +126,7 @@ class PengajuanNewBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
         $this->reset();
     }
@@ -178,7 +178,7 @@ class PengajuanNewBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateAccounting->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
     }
@@ -230,7 +230,7 @@ class PengajuanNewBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateEdit->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
     }
@@ -282,7 +282,7 @@ class PengajuanNewBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
@@ -330,7 +330,7 @@ class PengajuanNewBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
@@ -378,7 +378,7 @@ class PengajuanNewBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');

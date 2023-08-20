@@ -14,14 +14,14 @@ use App\Events\NotificationSent;
 use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
-class PengajuanProcessBarangSpkIndex extends Component
+class PengajuanApprovedBarangSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginatePengajuanProcessBarangSpk = 10;
-    public $searchPengajuanProcessBarangSpk = '';
+    public $paginatePengajuanApprovedBarangSpk = 10;
+    public $searchPengajuanApprovedBarangSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -42,7 +42,7 @@ class PengajuanProcessBarangSpkIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchPengajuanProcessBarangSpk()
+    public function updatingSearchPengajuanApprovedBarangSpk()
     {
         $this->resetPage();
     }
@@ -60,30 +60,66 @@ class PengajuanProcessBarangSpkIndex extends Component
 
     public function mount()
     {
-        $this->searchPengajuanProcessBarangSpk = request()->query('search', $this->searchPengajuanProcessBarangSpk);
+        $this->searchPengajuanApprovedBarangSpk = request()->query('search', $this->searchPengajuanApprovedBarangSpk);
     }
 
     public function render()
     {
-        $dataPengajuanProcessBarangSpk = PengajuanBarangSpk::whereIn('status_id', [9, 10, 11])
+        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'purchase')
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%');
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%');
             })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginatePengajuanProcessBarangSpk);
+            ->paginate($this->paginatePengajuanApprovedBarangSpk);
 
-        return view('livewire.purchase.component.pengajuan-process-barang-spk-index', ['pengajuanProcessBarangSpk' => $dataPengajuanProcessBarangSpk])
+        return view('livewire.purchase.component.pengajuan-approved-barang-spk-index', ['pengajuanApprovedBarangSpk' => $dataPengajuanApprovedBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalPengajuanProcessBarangSpk($PengajuanBarangId, $instructionId)
+    public function beliBarang($PengajuanBarangSelectedBeliId)
+    {
+        $this->validate(
+            [
+                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'qty_purchase' => 'required',
+                'stock' => 'required',
+                'total_harga' => 'required',
+            ],
+            [
+                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
+            ],
+        );
+
+        $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
+        $updateBeli->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 15,
+            'state' => 'Purchase',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Stock Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $this->emit('indexRender');
+        $this->reset();
+        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-spk');
+    }
+
+    public function modalPengajuanApprovedBarangSpk($PengajuanBarangId, $instructionId)
     {
         $this->notes = [];
 
@@ -122,5 +158,15 @@ class PengajuanProcessBarangSpkIndex extends Component
                 $this->notes [] = $notes;
             }
         }
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

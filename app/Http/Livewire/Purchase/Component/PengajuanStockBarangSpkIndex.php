@@ -134,7 +134,7 @@ class PengajuanStockBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateAccounting->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-stock-barang-spk');
     }
@@ -189,7 +189,7 @@ class PengajuanStockBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-stock-barang-spk');
@@ -240,7 +240,7 @@ class PengajuanStockBarangSpkIndex extends Component
             'title' => 'Stock Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-stock-barang-spk');

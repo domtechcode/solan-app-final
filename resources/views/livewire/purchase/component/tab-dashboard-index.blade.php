@@ -70,16 +70,23 @@
                                             </li>
                                             <li class="nav-item">
                                                 <button
-                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk5' ? 'active' : '' }}"
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk5' ? 'active' : '' }}"
                                                     data-bs-toggle="tab" wire:click="changeTabPengajuanBarangSpk('tabPengajuanBarangSpk5')"
-                                                    wire:key="tabPengajuanBarangSpk5" href="#tabPengajuanBarangSpk5">Beli -
+                                                    wire:key="tabPengajuanBarangSpk5" href="#tabPengajuanBarangSpk5">Approved -
+                                                    {{ $dataCountApprovedPengajuanBarangSpk }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk6' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangSpk('tabPengajuanBarangSpk6')"
+                                                    wire:key="tabPengajuanBarangSpk6" href="#tabPengajuanBarangSpk6">Beli -
                                                     {{ $dataCountBeliPengajuanBarangSpk }}</button>
                                             </li>
                                             <li class="nav-item">
                                                 <button
-                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk6' ? 'active' : '' }}"
-                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangSpk('tabPengajuanBarangSpk6')"
-                                                    wire:key="tabPengajuanBarangSpk6" href="#tabPengajuanBarangSpk6">Complete -
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk7' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangSpk('tabPengajuanBarangSpk7')"
+                                                    wire:key="tabPengajuanBarangSpk7" href="#tabPengajuanBarangSpk7">Complete -
                                                     {{ $dataCountCompletePengajuanBarangSpk }}</button>
                                             </li>
                                         </ul>
@@ -116,13 +123,20 @@
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk5' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangSpk5">
-                                                <h5 class="card-title">Beli</h5>
-                                                @livewire('purchase.component.pengajuan-beli-barang-spk-index')
+                                                <h5 class="card-title">Approved</h5>
+                                                @livewire('purchase.component.pengajuan-approved-barang-spk-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk6' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangSpk6">
+                                                <h5 class="card-title">Beli</h5>
+                                                @livewire('purchase.component.pengajuan-beli-barang-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangSpk === 'tabPengajuanBarangSpk7' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangSpk7">
                                                 <h5 class="card-title">Complete</h5>
                                                 @livewire('purchase.component.pengajuan-complete-barang-spk-index')
                                             </div>

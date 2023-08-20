@@ -19,9 +19,10 @@ class TabDashboardIndex extends Component
     public $dataCountProcessPengajuanBarangSpk;
     public $dataCountRejectPengajuanBarangSpk;
     public $dataCountStockPengajuanBarangSpk;
+    public $dataCountApprovedPengajuanBarangSpk;
     public $dataCountBeliPengajuanBarangSpk;
     public $dataCountCompletePengajuanBarangSpk;
-    
+
     public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanMaklun;
 
@@ -44,24 +45,29 @@ class TabDashboardIndex extends Component
     public function mount()
     {
         $this->dataCountNewPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 8)
-        ->where('state', 'Purchase')->count();
+            ->where('state', 'Purchase')
+            ->count();
 
         $this->dataCountProcessPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [9, 10, 11])->count();
 
         $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [17, 18])->count();
+        $this->dataCountApprovedPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])
+            ->where('state', 'purchase')
+            ->count();
 
         $this->dataCountStockPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 12)
-        ->where('state', 'Purchase')->count();
+            ->where('state', 'Purchase')
+            ->count();
 
         $this->dataCountBeliPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 15)
-        ->where('state', 'Purchase')->count();
+            ->where('state', 'Purchase')
+            ->count();
 
         $this->dataCountCompletePengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 16)
-        ->where('state', 'Purchase')->count();
+            ->where('state', 'Purchase')
+            ->count();
 
-        $this->dataCountTotalPengajuanBarangSpk = $this->dataCountNewPengajuanBarangSpk + $this->dataCountProcessPengajuanBarangSpk + $this->dataCountRejectPengajuanBarangSpk + $this->dataCountStockPengajuanBarangSpk + $this->dataCountBeliPengajuanBarangSpk + $this->dataCountCompletePengajuanBarangSpk;
-
-
+        $this->dataCountTotalPengajuanBarangSpk = $this->dataCountNewPengajuanBarangSpk + $this->dataCountProcessPengajuanBarangSpk + $this->dataCountRejectPengajuanBarangSpk + $this->dataCountApprovedPengajuanBarangSpk + $this->dataCountStockPengajuanBarangSpk + $this->dataCountBeliPengajuanBarangSpk + $this->dataCountCompletePengajuanBarangSpk;
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', '!=', 16)->count();
 

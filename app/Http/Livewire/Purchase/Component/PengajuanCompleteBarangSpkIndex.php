@@ -123,14 +123,4 @@ class PengajuanCompleteBarangSpkIndex extends Component
             }
         }
     }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = 'info';
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
-    }
 }
