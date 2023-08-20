@@ -50,9 +50,7 @@ class TabDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
-            ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-            })
+            
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
@@ -62,9 +60,6 @@ class TabDashboardIndex extends Component
             ->whereIn('status_task', ['Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->whereIn('status_id', [3, 22])
-            ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-            })
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();

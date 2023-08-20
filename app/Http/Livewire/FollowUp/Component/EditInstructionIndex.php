@@ -69,6 +69,7 @@ class EditInstructionIndex extends Component
     public $keteranganReject;
     public $keteranganCatatan;
     public $qtyState;
+    public $awalState;
 
     public function addField($name, $id)
     {
@@ -173,18 +174,18 @@ class EditInstructionIndex extends Component
             ->where('kategori', 'catatan')
             ->where('user_id', Auth()->user()->id)
             ->get();
-        
-        if(isset($dataNotes)){
+
+        if (isset($dataNotes)) {
             foreach ($dataNotes as $note) {
                 $this->notes[] = [
                     'tujuan' => $note->tujuan,
                     'catatan' => $note->catatan,
                 ];
             }
-        }else{
+        } else {
             $this->notes = [];
         }
-        
+
         $this->select2();
     }
 
@@ -208,23 +209,22 @@ class EditInstructionIndex extends Component
             ]);
         }
 
-        $this->validate(
-            [
-                'spk_type' => 'required',
-                'spk_number' => 'required',
-                'customer' => 'required',
-                'order_date' => 'required',
-                'shipping_date' => 'required',
-                'order_name' => 'required',
-                'quantity' => 'required',
-                'workSteps' => 'required',
-                'qtyState' => 'required',
-                'price' => 'required',
-            ]
-        );
+        $this->validate([
+            'spk_type' => 'required',
+            'spk_number' => 'required',
+            'customer' => 'required',
+            'order_date' => 'required',
+            'shipping_date' => 'required',
+            'order_name' => 'required',
+            'quantity' => 'required',
+            'workSteps' => 'required',
+            'qtyState' => 'required',
+            'awalState' => 'required',
+            'price' => 'required',
+        ]);
 
         $customerList = Customer::find($this->customer);
-        
+
         if ($this->spk_type == 'stock') {
             $this->spk_type = 'production';
             $this->taxes_type = 'nonpajak';
@@ -389,161 +389,197 @@ class EditInstructionIndex extends Component
                     'step' => $no,
                     'task_priority' => 'Normal',
                     'user_id' => $step['user_id'],
+                    'spk_status' => 'Running',
                 ]);
                 $no++;
             }
 
-            foreach ($lastWorkStep as $lastwork) {
-                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
-                    ->where('work_step_list_id', $lastwork->work_step_list_id)
-                    ->update([
-                        'user_id' => $lastwork->user_id,
-                        'machine_id' => $lastwork->machine_id,
-                        'target_date' => $lastwork->target_date,
-                        'schedule_date' => $lastwork->schedule_date,
-                        'target_time' => $lastwork->target_time,
-                        'step' => $lastwork->step,
-                        'state_task' => $lastwork->state_task,
-                        'status_task' => $lastwork->status_task,
-                        'flag' => $lastwork->flag,
-                        'dikerjakan' => $lastwork->dikerjakan,
-                        'selesai' => $lastwork->selesai,
-                        'task_priority' => $lastwork->task_priority,
-                        'spk_status' => $lastwork->spk_status,
-                        'reject_from_id' => $lastwork->reject_from_id,
-                        'reject_from_status' => $lastwork->reject_from_status,
-                        'reject_from_job' => $lastwork->reject_from_job,
-                        'count_reject' => $lastwork->count_reject,
-                        'count_revisi' => $lastwork->count_revisi,
-                        'task_priority' => $lastwork->task_priority,
-                        'dikerjakan' => $lastwork->dikerjakan,
-                        'selesai' => $lastwork->selesai,
-                        'keterangan_reject' => $lastwork->keterangan_reject,
-                        'keterangan_reschedule' => $lastwork->keterangan_reschedule,
-                        'spk_status' => $lastwork->spk_status,
-                    ]);
-            }
-
-            $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('work_step_list_id', 1)
-                ->first();
-            $findSourceReject = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('work_step_list_id', $currentWorkStep->reject_from_job)
-                ->first();
-
-            if ($this->qtyState == 'Ya') {
-                $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)
-                    ->where('work_step_list_id', 5)
-                    ->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Revisi Qty',
-                    ]);
-
-                $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                    'status_id' => 26,
-                    'job_id' => 5,
-                    'spk_status' => 'Running',
+            if ($this->awalState == 'Ya') {
+                $updateFollowUp = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('step', 0)
+                ->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                    'target_date' => Carbon::now(),
+                    'schedule_date' => Carbon::now(),
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
 
-                $updateWorkStepRab = WorkStep::where('instruction_id', $this->currentInstructionId)
-                    ->where('work_step_list_id', 3)
-                    ->update([
-                        'state_task' => 'Not Running',
-                        'status_task' => 'Waiting',
-                    ]);
+            $firstWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('step', 1)
+                ->first();
 
-                $userDestinationEstimator = User::where('role', 'Hitung Bahan')->get();
-                foreach ($userDestinationEstimator as $dataUser) {
-                    $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
-                }
-
-                $userDestinationEstimator = User::where('role', 'RAB')->get();
-                foreach ($userDestinationEstimator as $dataUser) {
-                    $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
-                }
-            } else {
-                $findSourceReject->update([
+            $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                ->where('step', 1)
+                ->update([
+                    'state_task' => 'Running',
                     'status_task' => 'Pending Approved',
+                    'dikerjakan' => Carbon::now()->toDateTimeString(),
+                    'schedule_date' => Carbon::now(),
+                    'target_date' => Carbon::now(),
+                    'reject_from_id' => null,
+                    'reject_from_status' => null,
+                    'reject_from_job' => null,
                 ]);
 
-                $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                    'status_id' => $currentWorkStep->reject_from_status,
-                    'job_id' => $currentWorkStep->reject_from_job,
-                    'spk_status' => 'Running',
-                ]);
-
-                //notif
-                $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
-                event(new IndexRenderEvent('refresh'));
-            }
-
-            $currentWorkStep->update([
-                'reject_from_id' => null,
-                'reject_from_status' => null,
-                'reject_from_job' => null,
-                'state_task' => 'Running',
-                'status_task' => 'Process',
-                'selesai' => Carbon::now()->toDateTimeString(),
+            $updateStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                'status_id' => 1,
+                'job_id' => $firstWorkStep->work_step_list_id,
             ]);
+            } else {
+                foreach ($lastWorkStep as $lastwork) {
+                    $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                        ->where('work_step_list_id', $lastwork->work_step_list_id)
+                        ->update([
+                            'user_id' => $lastwork->user_id,
+                            'machine_id' => $lastwork->machine_id,
+                            'target_date' => $lastwork->target_date,
+                            'schedule_date' => $lastwork->schedule_date,
+                            'target_time' => $lastwork->target_time,
+                            'step' => $lastwork->step,
+                            'state_task' => $lastwork->state_task,
+                            'status_task' => $lastwork->status_task,
+                            'flag' => $lastwork->flag,
+                            'dikerjakan' => $lastwork->dikerjakan,
+                            'selesai' => $lastwork->selesai,
+                            'task_priority' => $lastwork->task_priority,
+                            'spk_status' => $lastwork->spk_status,
+                            'reject_from_id' => $lastwork->reject_from_id,
+                            'reject_from_status' => $lastwork->reject_from_status,
+                            'reject_from_job' => $lastwork->reject_from_job,
+                            'count_reject' => $lastwork->count_reject,
+                            'count_revisi' => $lastwork->count_revisi,
+                            'task_priority' => $lastwork->task_priority,
+                            'dikerjakan' => $lastwork->dikerjakan,
+                            'selesai' => $lastwork->selesai,
+                            'keterangan_reject' => $lastwork->keterangan_reject,
+                            'keterangan_reschedule' => $lastwork->keterangan_reschedule,
+                            'spk_status' => $lastwork->spk_status,
+                        ]);
+                }
 
-            if ($this->spk_layout_number) {
-                $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
-                $files = Files::where('instruction_id', $selectedLayout->id)
-                    ->where('type_file', 'layout')
-                    ->get();
-                $folder = 'public/' . $this->spk_number . '/follow-up';
+                $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('work_step_list_id', 1)
+                    ->first();
+                $findSourceReject = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('work_step_list_id', $currentWorkStep->reject_from_job)
+                    ->first();
 
-                if ($files) {
-                    foreach ($files as $file) {
-                        $sourcePath = $file->file_path . '/' . $file->file_name;
-                        $newFileName = $file->file_name;
+                if ($this->qtyState == 'Ya') {
+                    $updateWorkStepEstimator = WorkStep::where('instruction_id', $this->currentInstructionId)
+                        ->where('work_step_list_id', 5)
+                        ->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Revisi Qty',
+                        ]);
 
-                        if (!Storage::exists($folder . '/' . $newFileName)) {
-                            // Copy the file to the destination folder with the new name
-                            Storage::copy($sourcePath, $folder . '/' . $newFileName);
+                    $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => 26,
+                        'job_id' => 5,
+                        'spk_status' => 'Running',
+                    ]);
 
-                            Files::create([
-                                'instruction_id' => $this->currentInstructionId,
-                                'user_id' => '2',
-                                'type_file' => 'layout',
-                                'file_name' => $newFileName,
-                                'file_path' => $folder,
-                            ]);
+                    $updateWorkStepRab = WorkStep::where('instruction_id', $this->currentInstructionId)
+                        ->where('work_step_list_id', 3)
+                        ->update([
+                            'state_task' => 'Not Running',
+                            'status_task' => 'Waiting',
+                        ]);
+
+                    $userDestinationEstimator = User::where('role', 'Hitung Bahan')->get();
+                    foreach ($userDestinationEstimator as $dataUser) {
+                        $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
+                    }
+
+                    $userDestinationEstimator = User::where('role', 'RAB')->get();
+                    foreach ($userDestinationEstimator as $dataUser) {
+                        $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
+                    }
+                } else {
+                    $findSourceReject->update([
+                        'status_task' => 'Pending Approved',
+                    ]);
+
+                    $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                        'status_id' => $currentWorkStep->reject_from_status,
+                        'job_id' => $currentWorkStep->reject_from_job,
+                        'spk_status' => 'Running',
+                    ]);
+
+                    //notif
+                    $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
+                    event(new IndexRenderEvent('refresh'));
+                }
+
+                $currentWorkStep->update([
+                    'reject_from_id' => null,
+                    'reject_from_status' => null,
+                    'reject_from_job' => null,
+                    'state_task' => 'Running',
+                    'status_task' => 'Process',
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+
+                if ($this->spk_layout_number) {
+                    $selectedLayout = Instruction::where('spk_number', $this->spk_layout_number)->first();
+                    $files = Files::where('instruction_id', $selectedLayout->id)
+                        ->where('type_file', 'layout')
+                        ->get();
+                    $folder = 'public/' . $this->spk_number . '/follow-up';
+
+                    if ($files) {
+                        foreach ($files as $file) {
+                            $sourcePath = $file->file_path . '/' . $file->file_name;
+                            $newFileName = $file->file_name;
+
+                            if (!Storage::exists($folder . '/' . $newFileName)) {
+                                // Copy the file to the destination folder with the new name
+                                Storage::copy($sourcePath, $folder . '/' . $newFileName);
+
+                                Files::create([
+                                    'instruction_id' => $this->currentInstructionId,
+                                    'user_id' => '2',
+                                    'type_file' => 'layout',
+                                    'file_name' => $newFileName,
+                                    'file_path' => $folder,
+                                ]);
+                            }
                         }
                     }
                 }
-            }
 
-            if ($this->spk_sample_number) {
-                $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
-                $files = Files::where('instruction_id', $selectedSample->id)
-                    ->where('type_file', 'sample')
-                    ->get();
-                $folder = 'public/' . $this->spk_number . '/follow-up';
+                if ($this->spk_sample_number) {
+                    $selectedSample = Instruction::where('spk_number', $this->spk_sample_number)->first();
+                    $files = Files::where('instruction_id', $selectedSample->id)
+                        ->where('type_file', 'sample')
+                        ->get();
+                    $folder = 'public/' . $this->spk_number . '/follow-up';
 
-                if ($files) {
-                    foreach ($files as $file) {
-                        $sourcePath = $file->file_path . '/' . $file->file_name;
-                        $newFileName = $file->file_name;
+                    if ($files) {
+                        foreach ($files as $file) {
+                            $sourcePath = $file->file_path . '/' . $file->file_name;
+                            $newFileName = $file->file_name;
 
-                        if (!Storage::exists($folder . '/' . $newFileName)) {
-                            // Copy the file to the destination folder with the new name
-                            Storage::copy($sourcePath, $folder . '/' . $newFileName);
+                            if (!Storage::exists($folder . '/' . $newFileName)) {
+                                // Copy the file to the destination folder with the new name
+                                Storage::copy($sourcePath, $folder . '/' . $newFileName);
 
-                            Files::create([
-                                'instruction_id' => $this->currentInstructionId,
-                                'user_id' => '2',
-                                'type_file' => 'sample',
-                                'file_name' => $newFileName,
-                                'file_path' => $folder,
-                            ]);
+                                Files::create([
+                                    'instruction_id' => $this->currentInstructionId,
+                                    'user_id' => '2',
+                                    'type_file' => 'sample',
+                                    'file_name' => $newFileName,
+                                    'file_path' => $folder,
+                                ]);
+                            }
                         }
                     }
                 }
-            }
 
-            if ($this->uploadFiles($this->currentInstructionId)) {
-                $this->uploadFiles($this->currentInstructionId);
+                if ($this->uploadFiles($this->currentInstructionId)) {
+                    $this->uploadFiles($this->currentInstructionId);
+                }
             }
 
             $this->emit('flashMessage', [

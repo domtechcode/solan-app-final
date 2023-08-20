@@ -231,11 +231,7 @@ class CreateAccInstructionIndex extends Component
             $this->type_order = $this->spk_type;
         }
 
-        $dataInstruction = Instruction::where('customer_number', $this->customer_number)
-            ->whereNotNull('customer_number')
-            ->where('sub_spk', null)
-            ->where('spk_type', $this->spk_type)
-            ->first();
+        $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
 
         if ($dataInstruction != null) {
             $instruction = Instruction::create([
