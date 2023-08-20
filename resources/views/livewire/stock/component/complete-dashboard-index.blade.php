@@ -2,15 +2,15 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateNewSpk">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+                <select id="" name="" class="form-control form-select w-auto" wire:model="paginateComplete">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchNewSpk">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchComplete">
         </div>
     </div>
     <div class="row mt-3">
@@ -34,21 +34,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($instructionsNewSpk as $key => $dataInstruction)
+                        @forelse ($instructionsComplete as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
-                                    @if ($dataInstruction->instruction->spk_number_fsc)
-                                        <span
-                                            class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                    @if($dataInstruction->instruction->spk_number_fsc)
+                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
 
-                                    @if ($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#openModalGroupNewSpk"
-                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})"
-                                            wire:key="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                    @if($dataInstruction->instruction->group_id)
+                                        <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#openModalGroupComplete" wire:click="modalInstructionDetailsGroupComplete({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -57,81 +53,64 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
+                                <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}</td>
+                                @if(in_array($dataInstruction->status_id, [1, 8]))
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                 </td>
-                                @if (in_array($dataInstruction->status_id, [1, 8]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                </td>
                                 @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                </td>
                                 @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                </td>
                                 @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
+                                </td>
+                                <td>
+                                    @if($dataInstruction->spk_status != 'Running')
+                                        <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                    @endif
+                                    <span class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
+                                </td>
                                 @endif
                                 <td>
-                                    <div class="btn-list">
-                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#openModalNewSpk"
-                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
-                                            wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
-                                                class="fe fe-eye"></i></button>
-                                        <button class="btn btn-icon btn-sm btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#openModalNewSpkStock"
-                                            wire:click="modalInstructionStockNewSpk({{ $dataInstruction->instruction->id }})"
-                                            wire:key="modalInstructionStockNewSpk({{ $dataInstruction->instruction->id }})"><i
-                                                class="fe fe-edit"></i></button>
+                                    <div class="btn-list">         
+                                        <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#openModalComplete" wire:click="modalInstructionDetailsComplete({{ $dataInstruction->instruction->id }})"><i class="fe fe-eye"></i></button>
+                                        <button class="btn btn-icon btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#openModalCompleteStock" wire:click="modalInstructionStockComplete({{ $dataInstruction->instruction->id }})"><i class="fe fe-edit"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -146,15 +125,15 @@
                 </table>
 
             </div>
-
+            
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructionsNewSpk->links() }}
+            {{ $instructionsComplete->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="openModalNewSpkStock" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalCompleteStock" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -164,33 +143,25 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @if (isset($catatan))
+                    @if(isset($catatan))
                         @foreach ($catatan as $datanote)
-                            @if (isset($datanote))
-                                <div class="row row-sm mb-5">
-                                    <div class="text-wrap">
-                                        <div class="">
-                                            <div class="alert alert-info">
-                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
-                                                        height="40" width="40" viewBox="0 0 24 24">
-                                                        <path fill="#70a9ee"
-                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
-                                                        <circle cx="12" cy="17" r="1"
-                                                            fill="#1170e4" />
-                                                        <path fill="#1170e4"
-                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
-                                                    </svg></span>
-                                                <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
-                                                <hr class="message-inner-separator">
-                                                <p>{{ $datanote->catatan }}</p>
-                                                <div class="d-flex justify-content-end">
-                                                    <small>{{ $datanote->created_at }}</small>
-                                                </div>
+                        @if (isset($datanote))
+                            <div class="row row-sm mb-5">
+                                <div class="text-wrap">
+                                    <div class="">
+                                        <div class="alert alert-info">
+                                            <span class=""><svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 24 24"><path fill="#70a9ee" d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z"/><circle cx="12" cy="17" r="1" fill="#1170e4"/><path fill="#1170e4" d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z"/></svg></span>
+                                            <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                                            <hr class="message-inner-separator">
+                                            <p>{{ $datanote->catatan }}</p>
+                                            <div class="d-flex justify-content-end">
+                                                <small>{{ $datanote->created_at }}</small>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            </div>
+                        @endif
                         @endforeach
                     @endif
 
@@ -272,98 +243,48 @@
                         <div class="col-md-12">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    Form Stock
-                                    <hr>
+                                    Form Stock <hr>
                                     <div class="row">
                                         <div class="col-sm-6 col-md-6">
                                             <div class="form-group">
                                                 <label class="form-label">Stock</label>
                                                 <div class="input-group">
-                                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)"
-                                                        x-ref="input" type="text" placeholder="Stock"
-                                                        wire:model="stock"
-                                                        class="form-control @error('stock') is-invalid @enderror">
+                                                    <input type="text" wire:model="stock" id="stock" class="form-control @error('stock') is-invalid @enderror" autocomplete="off" placeholder="Stock" type-currency="IDR">
                                                 </div>
-                                                @error('stock')
-                                                    <div><span class="text-danger">{{ $message }}</span></div>
-                                                @enderror
+                                                @error('stock') <div><span class="text-danger">{{ $message }}</span></div> @enderror
                                             </div>
                                         </div>
                                         <div class="col-sm-6 col-md-6">
                                             <div class="form-group">
                                                 <label class="form-label">File Rincian</label>
-                                                <x-forms.filepond wire:model="fileRincian" multiple allowImagePreview
-                                                    imagePreviewMaxHeight="200" allowFileTypeValidation
-                                                    allowFileSizeValidation maxFileSize="1024mb" />
-                                                @error('fileRincian')
-                                                    <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                @enderror
+                                                <x-forms.filepond
+                                                    wire:model="fileRincian"
+                                                    multiple
+                                                    allowImagePreview
+                                                    imagePreviewMaxHeight="200"
+                                                    allowFileTypeValidation
+                                                    allowFileSizeValidation
+                                                    maxFileSize="1024mb"
+                                                />
+                                                @error('fileRincian') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    Form Reject
-                                    <hr>
-                                    <div class="row">
                                         <div class="col-sm-12 col-md-12">
                                             <div class="form-group">
                                                 <label class="form-label">Keterangan Reject</label>
                                                 <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
-                                                @error('keteranganReject')
-                                                    <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                                @enderror
+                                                @error('keteranganReject') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Catatan Untuk Hitung Bahan</label>
+                                                <textarea class="form-control mb-4" placeholder="Catatan Untuk Hitung Bahan" rows="4" wire:model="catatanHitungBahan"></textarea>
+                                                @error('catatanHitungBahan') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    <div class="form-group">
-                                        <label class="form-label mb-3">Catatan</label>
-                                        <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
-                                                class="fe fe-plus"></i>Tambah Catatan</button>
-                                    </div>
-
-                                    @foreach ($notes as $index => $note)
-                                        <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                                        <select class="form-control form-select"
-                                                            data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan">
-                                                            <option label="Pilih Tujuan Catatan"></option>
-                                                            @foreach ($workSteps as $key)
-                                                                <option value="{{ $key['work_step_list_id'] }}">
-                                                                    {{ $key['workStepList']['name'] }}</option>
-                                                            @endforeach
-
-                                                        </select>
-                                                        <button class="btn btn-danger" type="button"
-                                                            wire:click="removeNote({{ $index }})"><i
-                                                                class="fe fe-x"></i></button>
-                                                    </div>
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                            wire:model.defer="notes.{{ $index }}.catatan"></textarea>
-                                                    </div>
-                                                    @error('notes.' . $index .
-                                                                    '.catatan')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
+                                    
                                 </div>
                             </div>
                         </div>
@@ -469,8 +390,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" wire:click="rejectSpk()">Reject Ke Follow
-                        Up</button>
+                    <button type="button" class="btn btn-primary" wire:click="rejectSpk()">Reject Ke Follow Up</button>
                     <button type="button" class="btn btn-success" wire:click="save()">Submit</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -479,7 +399,7 @@
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="openModalNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalComplete" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -706,7 +626,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="openModalGroupNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupComplete" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -797,8 +717,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td>{{ $selectedInstructionParent->follow_up ?? '-' }}
-                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->follow_up ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->spk_type ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->taxes_type ?? '-' }}
                                                             </td>
@@ -839,8 +758,7 @@
                                                         @if (isset($selectedWorkStepParent))
                                                             @foreach ($selectedWorkStepParent as $workstep)
                                                                 <tr>
-                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}
-                                                                    </td>
+                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->spk_parent ?? '-' }}</td>
@@ -1225,8 +1143,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-new-spk', event => {
-            $('#openModalNewSpkStock').modal('hide');
+        window.addEventListener('close-modal-new-spk', event =>{
+            $('#openModalCompleteStock').modal('hide');
         });
     </script>
 @endpush
