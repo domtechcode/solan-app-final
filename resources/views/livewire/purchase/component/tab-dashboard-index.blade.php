@@ -15,7 +15,7 @@
                             </li>
                             <li>
                                 <button href="#tab2" class="{{ $activeTab === 'tab2' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Pengajuan Barang Operator - {{ $dataCountPengajuanBarangPersonal }}
+                                    data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Pengajuan Barang Operator - {{ $dataCountTotalPengajuanBarangPersonal }}
                                 </button>
                             </li>
                             <li>
@@ -150,14 +150,112 @@
                     <div class="tab-pane {{ $activeTab === 'tab2' ? 'active' : '' }}" id="tab2">
                         <!-- ROW-2-->
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
+                            <div class="col-xl-12 col-md-12">
+                                <div class="card card-headpills">
                                     <div class="card-status bg-info br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Pengajuan Barang Operator</h3>
+                                    <div class="card-header border-bottom">
+                                        <ul class="nav nav-pills card-header-pills">
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-dark mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal1')"
+                                                    wire:key="tabPengajuanBarangPersonal1" href="#tabPengajuanBarangPersonal1">New -
+                                                    {{ $dataCountNewPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal2')"
+                                                    wire:key="tabPengajuanBarangPersonal2" href="#tabPengajuanBarangPersonal2">Process -
+                                                    {{ $dataCountProcessPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal3' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal3')"
+                                                    wire:key="tabPengajuanBarangPersonal3" href="#tabPengajuanBarangPersonal3">Reject -
+                                                    {{ $dataCountRejectPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-warning mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal4' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal4')"
+                                                    wire:key="tabPengajuanBarangPersonal4" href="#tabPengajuanBarangPersonal4">Stock -
+                                                    {{ $dataCountStockPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal5' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal5')"
+                                                    wire:key="tabPengajuanBarangPersonal5" href="#tabPengajuanBarangPersonal5">Approved -
+                                                    {{ $dataCountApprovedPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal6' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal6')"
+                                                    wire:key="tabPengajuanBarangPersonal6" href="#tabPengajuanBarangPersonal6">Beli -
+                                                    {{ $dataCountBeliPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal7' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal7')"
+                                                    wire:key="tabPengajuanBarangPersonal7" href="#tabPengajuanBarangPersonal7">Complete -
+                                                    {{ $dataCountCompletePengajuanBarangPersonal }}</button>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <div class="card-body">
-                                        @livewire('purchase.component.pengajuan-barang-personal-index')
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal1">
+                                                <h5 class="card-title">New</h5>
+                                                @livewire('purchase.component.pengajuan-new-barang-personal-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal2">
+                                                <h5 class="card-title">Process</h5>
+                                                @livewire('purchase.component.pengajuan-process-barang-personal-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal3' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal3">
+                                                <h5 class="card-title">Reject</h5>
+                                                @livewire('purchase.component.pengajuan-reject-barang-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal4' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal4">
+                                                <h5 class="card-title">Stock</h5>
+                                                @livewire('purchase.component.pengajuan-stock-barang-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal5' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal5">
+                                                <h5 class="card-title">Approved</h5>
+                                                @livewire('purchase.component.pengajuan-approved-barang-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal6' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal6">
+                                                <h5 class="card-title">Beli</h5>
+                                                @livewire('purchase.component.pengajuan-beli-barang-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal7' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangSpk7">
+                                                <h5 class="card-title">Complete</h5>
+                                                @livewire('purchase.component.pengajuan-complete-barang-spk-index')
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

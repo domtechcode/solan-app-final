@@ -65,7 +65,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     public function render()
     {
-        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'purchase')
+        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
