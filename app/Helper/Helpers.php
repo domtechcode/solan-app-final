@@ -17,3 +17,10 @@ if (!function_exists('currency_convert')) {
         return preg_replace('/[^0-9\.]/', '', $value);
     }
 }
+
+if(!function_exists('currency_convert_idr')){
+    function currency_convert_idr($value)
+    {
+        return preg_replace('/\D/', '', $value);
+    }
+}
