@@ -279,9 +279,8 @@
                                             <div class="form-group">
                                                 <label class="form-label">Stock</label>
                                                 <div class="input-group">
-                                                    <input x-data x-mask:dynamic="$money($input)"
-                                                        x-ref="input" type="text" placeholder="Stock"
-                                                        wire:model="stock"
+                                                    <input x-data x-mask:dynamic="$money($input)" x-ref="input"
+                                                        type="text" placeholder="Stock" wire:model="stock"
                                                         class="form-control @error('stock') is-invalid @enderror">
                                                 </div>
                                                 @error('stock')
@@ -332,38 +331,40 @@
                                                 class="fe fe-plus"></i>Tambah Catatan</button>
                                     </div>
 
-                                    @foreach ($notes as $index => $note)
-                                        <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                                        <select class="form-control form-select"
-                                                            data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan">
-                                                            <option label="Pilih Tujuan Catatan"></option>
-                                                            @foreach ($workSteps as $key)
-                                                                <option value="{{ $key['work_step_list_id'] }}">
-                                                                    {{ $key['workStepList']['name'] }}</option>
-                                                            @endforeach
+                                    @if (isset($notes))
+                                        @foreach ($notes as $index => $note)
+                                            <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                                <div class="expanel expanel-default">
+                                                    <div class="expanel-body">
+                                                        <div class="input-group control-group"
+                                                            style="padding-top: 5px;">
+                                                            <select class="form-control form-select"
+                                                                data-bs-placeholder="Pilih Tujuan Catatan"
+                                                                wire:model.defer="notes.{{ $index }}.tujuan">
+                                                                <option label="Pilih Tujuan Catatan"></option>
+                                                                @foreach ($workSteps as $key)
+                                                                    <option value="{{ $key['work_step_list_id'] }}">
+                                                                        {{ $key['workStepList']['name'] }}</option>
+                                                                @endforeach
 
-                                                        </select>
-                                                        <button class="btn btn-danger" type="button"
-                                                            wire:click="removeNote({{ $index }})"><i
-                                                                class="fe fe-x"></i></button>
+                                                            </select>
+                                                            <button class="btn btn-danger" type="button"
+                                                                wire:click="removeNote({{ $index }})"><i
+                                                                    class="fe fe-x"></i></button>
+                                                        </div>
+                                                        <div class="input-group control-group"
+                                                            style="padding-top: 5px;">
+                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                                wire:model.defer="notes.{{ $index }}.catatan"></textarea>
+                                                        </div>
+                                                        @error('notes.' . $index . '.catatan')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
-                                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                            wire:model.defer="notes.{{ $index }}.catatan"></textarea>
-                                                    </div>
-                                                    @error('notes.' . $index .
-                                                                    '.catatan')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
-
+                                        @endforeach
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -469,7 +470,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject Ke Follow
+                    <button type="button" class="btn btn-primary" wire:click="rejectSpk"
+                        wire:key="rejectSpk">Reject Ke Follow
                         Up</button>
                     <button type="button" class="btn btn-success" wire:click="save" wire:key="save">Submit</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

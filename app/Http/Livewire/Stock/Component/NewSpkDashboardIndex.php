@@ -369,6 +369,7 @@ class NewSpkDashboardIndex extends Component
         $this->stock = null;
         $this->keteranganReject = null;
         $this->notes = null;
+        $this->workSteps = null;
 
         $updateStatusStock = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 4)
