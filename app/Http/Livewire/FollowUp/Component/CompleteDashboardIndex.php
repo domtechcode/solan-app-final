@@ -44,6 +44,7 @@ class CompleteDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+    public $filearsiprevisi;
     public $alasan_revisi;
     public $workSteps;
 
@@ -111,7 +112,7 @@ class CompleteDashboardIndex extends Component
     {
         $this->validate([
             'alasan_revisi' => 'required',
-            'filearsiprevisi' => 'required',
+            // 'filearsiprevisi' => 'required',
         ]);
 
         $updateAlasanRevisi = Instruction::find($this->selectedInstruction->id);
