@@ -123,7 +123,7 @@ class PengajuanApprovedBarangPersonalIndex extends Component
 
     public function modalPengajuanApprovedBarangPersonal($PengajuanBarangId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 

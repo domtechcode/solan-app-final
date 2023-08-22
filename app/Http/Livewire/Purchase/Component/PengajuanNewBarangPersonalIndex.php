@@ -404,7 +404,7 @@ class PengajuanNewBarangPersonalIndex extends Component
 
     public function modalPengajuanNewBarangPersonal($PengajuanBarangId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 

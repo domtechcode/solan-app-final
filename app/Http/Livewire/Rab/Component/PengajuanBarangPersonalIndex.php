@@ -11,6 +11,8 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
+use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
 
 class PengajuanBarangPersonalIndex extends Component
@@ -19,8 +21,8 @@ class PengajuanBarangPersonalIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginatePengajuanBarangPersonal = 10;
+    public $searchPengajuanBarangPersonal = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -50,19 +52,47 @@ class PengajuanBarangPersonalIndex extends Component
     public $total_harga;
     public $stock;
 
+    public $notes = [];
+    public $catatan;
+    public $dataPengajuanBarangSpk;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function updatingSearchPengajuanBarangPersonal()
+    {
+        $this->resetPage();
+    }
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchPengajuanBarangPersonal = request()->query('search', $this->searchPengajuanBarangPersonal);
     }
 
     public function render()
     {
         $dataPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 11)
+            ->where('state', 'RAB')
+            ->where(function ($query) {
+                $query
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanBarangPersonal . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanBarangPersonal . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanBarangPersonal . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanBarangPersonal . '%');
+            })
             ->with(['status', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginatePengajuanBarangPersonal);
 
         return view('livewire.rab.component.pengajuan-barang-personal-index', ['pengajuanBarangPersonal' => $dataPengajuanBarangPersonal])
             ->extends('layouts.app')
@@ -78,6 +108,23 @@ class PengajuanBarangPersonalIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
 
         $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
         $destinationPrevious = $updateApprove->previous_state;
@@ -102,11 +149,10 @@ class PengajuanBarangPersonalIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Keputusan Pengajuan Barang Personal', 'instruction_id' => null]);
         }
-        event(new IndexRenderEvent('refresh'));
-        
+        $this->emit('indexRender');
+
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
-
     }
 
     public function rejectBarang($PengajuanBarangSelectedRejectId)
@@ -117,6 +163,23 @@ class PengajuanBarangPersonalIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
 
         $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
         $destinationPrevious = $updateReject->previous_state;
@@ -136,7 +199,7 @@ class PengajuanBarangPersonalIndex extends Component
             'title' => 'Pengajuan Barang Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
         $userDestination = User::where('role', $destinationPrevious)->get();
         foreach ($userDestination as $dataUser) {
@@ -145,35 +208,41 @@ class PengajuanBarangPersonalIndex extends Component
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
-
-    }
-
-    public function cekTotalHarga()
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-        ]);
-
-        $hargaSatuanSelected = currency_convert($this->harga_satuan);
-        $qtyPurchaseSelected = currency_convert($this->qty_purchase);
-        $stockSelected = currency_convert($this->stock);
-
-        $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
-        $this->total_harga = currency_idr($this->total_harga);
     }
 
     public function modalPengajuanBarangPersonal($PengajuanBarangId)
     {
+        $this->reset();
+
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 
-        $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-        $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-        $this->stock = currency_idr($this->dataBarang->stock);
-        $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        $this->harga_satuan = $this->dataBarang->harga_satuan;
+        $this->qty_purchase = $this->dataBarang->qty_purchase;
+        $this->stock = $this->dataBarang->stock;
+        $this->total_harga = $this->dataBarang->total_harga;
 
-        $this->dispatchBrowserEvent('show-detail-pengajuan-barang-personal');
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->get();
+
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->with('user')
+            ->get();
+
+        $this->dataPengajuanBarangSpk = PengajuanBarangSpk::where('id', $PengajuanBarangId)
+            ->with('workStepList', 'filesPengajuanBarangSpk')
+            ->get();
     }
 
     public function messageSent($arguments)

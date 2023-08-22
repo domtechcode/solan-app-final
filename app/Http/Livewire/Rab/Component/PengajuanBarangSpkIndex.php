@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
 class PengajuanBarangSpkIndex extends Component
@@ -19,8 +20,8 @@ class PengajuanBarangSpkIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginatePengajuanBarangSpk = 10;
+    public $searchPengajuanBarangSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -50,11 +51,30 @@ class PengajuanBarangSpkIndex extends Component
     public $total_harga;
     public $stock;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function updatingSearchPengajuanBarangSpk()
+    {
+        $this->resetPage();
+    }
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchPengajuanBarangSpk = request()->query('search', $this->searchPengajuanBarangSpk);
     }
 
     public function render()
@@ -62,7 +82,7 @@ class PengajuanBarangSpkIndex extends Component
         $dataPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 11)
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginatePengajuanBarangSpk);
 
         return view('livewire.rab.component.pengajuan-barang-spk-index', ['pengajuanBarangSpk' => $dataPengajuanBarangSpk])
             ->extends('layouts.app')
@@ -78,6 +98,23 @@ class PengajuanBarangSpkIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
 
         $updateApprove = PengajuanBarangSpk::find($PengajuanBarangSelectedApproveId);
         $destinationPrevious = $updateApprove->previous_state;
@@ -102,7 +139,7 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Keputusan Pengajuan Barang SPK', 'instruction_id' => $updateApprove->instruction_id]);
         }
-
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
@@ -116,6 +153,23 @@ class PengajuanBarangSpkIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
 
         $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
         $destinationPrevious = $updateReject->previous_state;
@@ -140,30 +194,15 @@ class PengajuanBarangSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Keputusan Pengajuan Barang SPK', 'instruction_id' => $updateReject->instruction_id]);
         }
-
+        $this->emit('indexRender');
         $this->reset();
 
         $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
     }
 
-    public function cekTotalHarga()
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-        ]);
-
-        $hargaSatuanSelected = currency_convert($this->harga_satuan);
-        $qtyPurchaseSelected = currency_convert($this->qty_purchase);
-        $stockSelected = currency_convert($this->stock);
-
-        $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
-        $this->total_harga = currency_idr($this->total_harga);
-    }
-
     public function modalPengajuanBarangSpk($PengajuanBarangId, $instructionId)
     {
+        $this->reset();
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
@@ -175,49 +214,30 @@ class PengajuanBarangSpkIndex extends Component
 
         $this->dataBarang = PengajuanBarangSpk::find($PengajuanBarangId);
 
-        $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-        $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-        $this->stock = currency_idr($this->dataBarang->stock);
-        $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        $this->harga_satuan = $this->dataBarang->harga_satuan;
+        $this->qty_purchase = $this->dataBarang->qty_purchase;
+        $this->stock = $this->dataBarang->stock;
+        $this->total_harga = $this->dataBarang->total_harga;
 
-        $this->dispatchBrowserEvent('show-detail-pengajuan-barang-spk');
-    }
-
-    public function modalInstructionDetailsGroupPengajuanBarangSpk($groupId)
-    {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'parent')
-            ->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
             ->get();
 
-        $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
-            ->with('workStepList', 'user', 'machine')
-            ->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'contoh')
-            ->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'arsip')
-            ->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'accounting')
-            ->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'layout')
-            ->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'sample')
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->with('user')
             ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
-            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
-            ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-barang-spk');
     }
 
     public function messageSent($arguments)

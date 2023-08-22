@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
@@ -99,6 +100,8 @@ class PengajuanCompleteMaklunSpkIndex extends Component
 
     public function modalPengajuanCompleteMaklunSpk($PengajuanMaklunId, $instructionId)
     {
+        $this->reset();
+        
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)

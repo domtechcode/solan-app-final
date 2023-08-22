@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
@@ -78,7 +79,7 @@ class PengajuanApprovedMaklunSpkIndex extends Component
 
     public function render()
     {
-        $dataPengajuanApprovedMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Approved RAB'])
+        $dataPengajuanApprovedMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Approve RAB'])
             ->where('pekerjaan', 'Accounting')
             ->where(function ($query) {
                 $query
@@ -215,6 +216,7 @@ class PengajuanApprovedMaklunSpkIndex extends Component
 
     public function modalPengajuanApprovedMaklunSpk($PengajuanMaklunId, $instructionId)
     {
+        $this->reset();
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)

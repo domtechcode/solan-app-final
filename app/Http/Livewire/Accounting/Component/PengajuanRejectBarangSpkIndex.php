@@ -274,7 +274,7 @@ class PengajuanRejectBarangSpkIndex extends Component
 
     public function modalPengajuanRejectBarangSpk($PengajuanBarangId, $instructionId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->selectedInstruction = Instruction::find($instructionId);
 

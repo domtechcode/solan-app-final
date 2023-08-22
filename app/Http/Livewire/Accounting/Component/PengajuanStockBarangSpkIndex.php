@@ -104,7 +104,7 @@ class PengajuanStockBarangSpkIndex extends Component
 
     public function modalPengajuanStockBarangSpk($PengajuanBarangId, $instructionId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->selectedInstruction = Instruction::find($instructionId);
 

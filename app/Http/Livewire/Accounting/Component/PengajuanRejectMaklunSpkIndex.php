@@ -146,7 +146,7 @@ class PengajuanRejectMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-maklun-spk');
     }
 
     public function approveMaklun($PengajuanMaklunSelectedApproveId)
@@ -197,7 +197,7 @@ class PengajuanRejectMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-maklun-spk');
     }
 
     public function rejectMaklun($PengajuanMaklunSelectedRejectId)
@@ -248,7 +248,7 @@ class PengajuanRejectMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-maklun-spk');
     }
 
     public function cekTotalHargaMaklun()
@@ -267,6 +267,7 @@ class PengajuanRejectMaklunSpkIndex extends Component
 
     public function modalPengajuanRejectMaklunSpk($PengajuanMaklunId, $instructionId)
     {
+        $this->reset();
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)

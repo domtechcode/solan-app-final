@@ -268,6 +268,8 @@ class PengajuanRejectMaklunSpkIndex extends Component
 
     public function modalPengajuanRejectMaklunSpk($PengajuanMaklunId, $instructionId)
     {
+        $this->reset();
+        
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)

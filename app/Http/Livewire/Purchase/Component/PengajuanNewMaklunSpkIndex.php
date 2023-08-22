@@ -259,6 +259,7 @@ class PengajuanNewMaklunSpkIndex extends Component
 
     public function modalPengajuanNewMaklunSpk($PengajuanMaklunId, $instructionId)
     {
+        $this->reset();
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)

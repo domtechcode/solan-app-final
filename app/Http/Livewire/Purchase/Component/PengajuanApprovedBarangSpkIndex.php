@@ -124,7 +124,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     public function modalPengajuanApprovedBarangSpk($PengajuanBarangId, $instructionId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->selectedInstruction = Instruction::find($instructionId);
 

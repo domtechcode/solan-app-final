@@ -157,7 +157,7 @@ class TabDashboardIndex extends Component
             ->where('pekerjaan', 'Accounting')
             ->count();
 
-        $this->dataCountApprovedPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Approved RAB'])
+        $this->dataCountApprovedPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Approve RAB'])
             ->where('pekerjaan', 'Accounting')
             ->count();
 

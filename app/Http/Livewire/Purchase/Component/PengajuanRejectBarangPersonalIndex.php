@@ -421,7 +421,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
 
     public function modalPengajuanRejectBarangPersonal($PengajuanBarangId)
     {
-        $this->notes = [];
+        $this->reset();
 
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 
