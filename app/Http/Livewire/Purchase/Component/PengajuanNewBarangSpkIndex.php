@@ -40,6 +40,7 @@ class PengajuanNewBarangSpkIndex extends Component
     public $qty_purchase;
     public $total_harga;
     public $stock;
+    public $dataPengajuanBarangSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -410,6 +411,7 @@ class PengajuanNewBarangSpkIndex extends Component
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
+
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
@@ -431,6 +433,8 @@ class PengajuanNewBarangSpkIndex extends Component
         $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
             ->with('user')
             ->get();
+
+        $this->dataPengajuanBarangSpk = PengajuanBarangSpk::where('id', $PengajuanBarangId)->with('workStepList','filesPengajuanBarangSpk')->get();
     }
 
     public function messageSent($arguments)

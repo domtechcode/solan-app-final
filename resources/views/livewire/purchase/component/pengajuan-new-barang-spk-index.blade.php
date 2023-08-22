@@ -2,7 +2,8 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePengajuanNewBarangSpk">
+            <select id="" name="" class="form-control form-select w-auto"
+                wire:model="paginatePengajuanNewBarangSpk">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +11,8 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPengajuanNewBarangSpk">
+            <input type="text" class="form-control w-auto" placeholder="Search"
+                wire:model="searchPengajuanNewBarangSpk">
         </div>
     </div>
     <div class="row mt-3">
@@ -273,15 +275,25 @@
                                             <th class="border-bottom-0">NAMA BARANG</th>
                                             <th class="border-bottom-0">QTY PENGAJUAN</th>
                                             <th class="border-bottom-0">KETERANGAN</th>
+                                            <th class="border-bottom-0">FILE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (isset($dataBarang))
+                                        @if (isset($dataPengajuanBarangSpk))
                                             <tr>
-                                                <td>{{ $dataBarang->workStepList->name }}</td>
-                                                <td>{{ $dataBarang->nama_barang }}</td>
-                                                <td>{{ $dataBarang->qty_barang }}</td>
-                                                <td>{{ $dataBarang->keterangan }}</td>
+                                                @foreach ($dataPengajuanBarangSpk as $data)
+                                                    <td>{{ $data->workStepList->name }}</td>
+                                                    <td>{{ $data->nama_barang }}</td>
+                                                    <td>{{ $data->qty_barang }}</td>
+                                                    <td>{{ $data->keterangan }}</td>
+                                                    <td>
+                                                        @foreach ($data->filesPengajuanBarangSpk as $file)
+                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                            download>{{ $file->file_name }}</a> <br>
+                                                        @endforeach
+                                                    </td>
+                                                    
+                                                @endforeach
                                             </tr>
                                         @endif
                                     </tbody>
@@ -309,8 +321,8 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror">
                                 </div>
                                 @error('qty_purchase')
@@ -322,8 +334,8 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Stock" wire:model="stock"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror">
                                 </div>
                                 @error('stock')

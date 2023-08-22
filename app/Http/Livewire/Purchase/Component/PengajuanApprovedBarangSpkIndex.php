@@ -40,6 +40,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
     public $qty_purchase;
     public $total_harga;
     public $stock;
+    public $dataPengajuanBarangSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -66,7 +67,8 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     public function render()
     {
-        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'Purchase')
+        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])
+            ->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
@@ -147,21 +149,27 @@ class PengajuanApprovedBarangSpkIndex extends Component
             $this->total_harga = '';
         }
 
-        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)->get();
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->get();
 
-        if(isset($dataNote)){
+        if (isset($dataNote)) {
             foreach ($dataNote as $data) {
                 $notes = [
                     'tujuan' => $data->tujuan,
                     'catatan' => $data->catatan,
                 ];
 
-                $this->notes [] = $notes;
+                $this->notes[] = $notes;
             }
         }
 
         $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
             ->with('user')
+            ->get();
+
+        $this->dataPengajuanBarangSpk = PengajuanBarangSpk::where('id', $PengajuanBarangId)
+            ->with('workStepList', 'filesPengajuanBarangSpk')
             ->get();
     }
 
