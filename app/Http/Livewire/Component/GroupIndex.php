@@ -73,8 +73,6 @@ class GroupIndex extends Component
             ->orderBy('group_id', 'asc')
             ->pluck('group_id');
 
-            dd($sortedUniqueGroupIds);
-
         $incrementedGroupIds = [];
 
         foreach ($sortedUniqueGroupIds as $index => $groupId) {
