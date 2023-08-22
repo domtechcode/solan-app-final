@@ -28,8 +28,23 @@ class TabDashboardIndex extends Component
     public $dataCountBeliPengajuanBarangSpk;
     public $dataCountCompletePengajuanBarangSpk;
 
-    public $dataCountPengajuanBarangPersonal;
-    public $dataCountPengajuanMaklun;
+    public $dataCountTotalPengajuanBarangPersonal;
+
+    public $dataCountNewPengajuanBarangPersonal;
+    public $dataCountProcessPengajuanBarangPersonal;
+    public $dataCountRejectPengajuanBarangPersonal;
+    public $dataCountStockPengajuanBarangPersonal;
+    public $dataCountApprovedPengajuanBarangPersonal;
+    public $dataCountBeliPengajuanBarangPersonal;
+    public $dataCountCompletePengajuanBarangPersonal;
+
+    public $dataCountTotalPengajuanMaklun;
+
+    public $dataCountNewPengajuanMaklun;
+    public $dataCountProcessPengajuanMaklun;
+    public $dataCountRejectPengajuanMaklun;
+    public $dataCountApprovedPengajuanMaklun;
+    public $dataCountCompletePengajuanMaklun;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -45,6 +60,20 @@ class TabDashboardIndex extends Component
     public function changeTabPengajuanBarangSpk($tabPengajuanBarangSpk)
     {
         $this->activeTabPengajuanBarangSpk = $tabPengajuanBarangSpk;
+    }
+
+    public $activeTabPengajuanBarangPersonal = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarangPersonal)
+    {
+        $this->activeTabPengajuanBarangPersonal = $tabPengajuanBarangPersonal;
+    }
+
+    public $activeTabPengajuanMaklun = 'tabPengajuanMaklun1';
+
+    public function changeTabPengajuanMaklun($tabPengajuanMaklun)
+    {
+        $this->activeTabPengajuanMaklun = $tabPengajuanMaklun;
     }
 
     public function mount()
@@ -88,17 +117,56 @@ class TabDashboardIndex extends Component
 
         $this->dataCountTotalPengajuanBarangSpk = $this->dataCountNewPengajuanBarangSpk + $this->dataCountProcessPengajuanBarangSpk + $this->dataCountRejectPengajuanBarangSpk + $this->dataCountApprovedPengajuanBarangSpk + $this->dataCountStockPengajuanBarangSpk + $this->dataCountBeliPengajuanBarangSpk + $this->dataCountCompletePengajuanBarangSpk;
 
-        // $this->dataCountCompleteSpkRab = WorkStep::where('work_step_list_id', 3)
-        //     ->where('state_task', 'Complete Accounting')
-        //     ->where('status_task', 'Complete')
-        //     ->where('user_id', '!=', null)
-        //     ->count();
+        $this->dataCountNewPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 10)
+            ->where('state', 'Accounting')
+            ->count();
 
-        // $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('state', 'Accounting')->count();
+        $this->dataCountProcessPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [11])
+            ->count();
 
-        // $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('state', 'Accounting')->count();
+        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [17])
+            ->where('state', 'Accounting')
+            ->count();
+            
+        $this->dataCountApprovedPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [14])
+            ->where('state', 'Accounting')
+            ->count();
 
-        // $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'Accounting')->count();
+        $this->dataCountStockPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 12)
+            ->where('state', 'Purchase')
+            ->count();
+
+        $this->dataCountBeliPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 15)
+            ->where('state', 'Purchase')
+            ->count();
+
+        $this->dataCountCompletePengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 16)
+            ->where('state', 'Purchase')
+            ->count();
+
+        $this->dataCountTotalPengajuanBarangPersonal = $this->dataCountNewPengajuanBarangPersonal + $this->dataCountProcessPengajuanBarangPersonal + $this->dataCountRejectPengajuanBarangPersonal + $this->dataCountApprovedPengajuanBarangPersonal + $this->dataCountStockPengajuanBarangPersonal + $this->dataCountBeliPengajuanBarangPersonal + $this->dataCountCompletePengajuanBarangPersonal;
+
+        $this->dataCountNewPengajuanMaklun = FormPengajuanMaklun::where('status', 'Pengajuan Purchase')
+            ->where('pekerjaan', 'Purchase')
+            ->count();
+
+        $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan Accounting', 'Pengajuan RAB'])
+            ->where('pekerjaan', 'Purchase')
+            ->count();
+
+        $this->dataCountRejectPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Reject Accounting', 'Reject RAB'])
+            ->where('pekerjaan', 'Purchase')
+            ->count();
+
+        $this->dataCountApprovedPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Approved Accounting', 'Approved RAB'])
+            ->where('pekerjaan', 'Purchase')
+            ->count();
+
+        $this->dataCountCompletePengajuanMaklun = FormPengajuanMaklun::where('status', 'Complete')
+            ->where('pekerjaan', 'Purchase')
+            ->count();
+
+        $this->dataCountTotalPengajuanMaklun = $this->dataCountNewPengajuanMaklun + $this->dataCountProcessPengajuanMaklun + $this->dataCountRejectPengajuanMaklun + $this->dataCountApprovedPengajuanMaklun + $this->dataCountCompletePengajuanMaklun;
     }
 
     public function render()
