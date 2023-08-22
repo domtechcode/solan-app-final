@@ -94,6 +94,26 @@ class PengajuanNewBarangPersonalIndex extends Component
             'stock' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
         $updateRab = PengajuanBarangPersonal::find($PengajuanBarangSelectedRabId);
         $updateRab->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
@@ -131,6 +151,26 @@ class PengajuanNewBarangPersonalIndex extends Component
             'stock' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
         $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
         $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
@@ -167,6 +207,26 @@ class PengajuanNewBarangPersonalIndex extends Component
             'total_harga' => 'required',
             'stock' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
 
         $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
         $updateReject->update([

@@ -84,42 +84,6 @@ class PengajuanApprovedBarangPersonalIndex extends Component
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function beliBarang($PengajuanBarangSelectedBeliId)
-    {
-        $this->validate(
-            [
-                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-                'qty_purchase' => 'required',
-                'stock' => 'required',
-                'total_harga' => 'required',
-            ],
-            [
-                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
-            ],
-        );
-
-        $updateBeli = PengajuanBarangPersonal::find($PengajuanBarangSelectedBeliId);
-        $updateBeli->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 15,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-personal');
-    }
-
     public function modalPengajuanApprovedBarangPersonal($PengajuanBarangId)
     {
         $this->notes = [];

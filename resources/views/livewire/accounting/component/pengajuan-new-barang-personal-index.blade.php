@@ -243,7 +243,7 @@
                                                             wire:model.defer="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             <option value="RAB">RAB</option>
-                                                            <option value="Accounting">Accounting</option>
+                                                            <option value="Purchase">Purchase</option>
                                                         </select>
                                                         <button class="btn btn-danger" type="button"
                                                             wire:click="removeNote({{ $index }})"><i

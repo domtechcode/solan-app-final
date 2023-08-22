@@ -101,13 +101,16 @@ class PengajuanRejectBarangSpkIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
                     'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
                 ]);
             }
         }
@@ -155,13 +158,16 @@ class PengajuanRejectBarangSpkIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
                     'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
                 ]);
             }
         }
@@ -209,13 +215,16 @@ class PengajuanRejectBarangSpkIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
                     'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
                 ]);
             }
         }

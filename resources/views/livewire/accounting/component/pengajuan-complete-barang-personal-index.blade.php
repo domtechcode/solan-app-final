@@ -232,7 +232,7 @@
                                                             wire:model.defer="notes.{{ $index }}.tujuan" readonly>
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             <option value="RAB">RAB</option>
-                                                            <option value="Accounting">Accounting</option>
+                                                            <option value="Purchase">Purchase</option>
                                                         </select>
                                                     </div>
                                                     <div class="input-group control-group" style="padding-top: 5px;">
