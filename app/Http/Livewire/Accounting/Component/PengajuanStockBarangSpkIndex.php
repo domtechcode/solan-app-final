@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -14,14 +14,14 @@ use App\Events\NotificationSent;
 use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
-class PengajuanApprovedBarangSpkIndex extends Component
+class PengajuanStockBarangSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginatePengajuanApprovedBarangSpk = 10;
-    public $searchPengajuanApprovedBarangSpk = '';
+    public $paginatePengajuanStockBarangSpk = 10;
+    public $searchPengajuanStockBarangSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -43,7 +43,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchPengajuanApprovedBarangSpk()
+    public function updatingSearchPengajuanStockBarangSpk()
     {
         $this->resetPage();
     }
@@ -61,66 +61,47 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     public function mount()
     {
-        $this->searchPengajuanApprovedBarangSpk = request()->query('search', $this->searchPengajuanApprovedBarangSpk);
+        $this->searchPengajuanStockBarangSpk = request()->query('search', $this->searchPengajuanStockBarangSpk);
     }
 
     public function render()
     {
-        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'Purchase')
+        $dataPengajuanStockBarangSpk = PengajuanBarangSpk::where('status_id', 12)
+            ->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%');
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanStockBarangSpk . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanStockBarangSpk . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanStockBarangSpk . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanStockBarangSpk . '%');
             })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginatePengajuanApprovedBarangSpk);
+            ->paginate($this->paginatePengajuanStockBarangSpk);
 
-        return view('livewire.purchase.component.pengajuan-approved-barang-spk-index', ['pengajuanApprovedBarangSpk' => $dataPengajuanApprovedBarangSpk])
+        return view('livewire.accounting.component.pengajuan-stock-barang-spk-index', ['pengajuanStockBarangSpk' => $dataPengajuanStockBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function beliBarang($PengajuanBarangSelectedBeliId)
+    public function cekTotalHarga()
     {
-        $this->validate(
-            [
-                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-                'qty_purchase' => 'required',
-                'stock' => 'required',
-                'total_harga' => 'required',
-            ],
-            [
-                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
-            ],
-        );
-
-        $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
-        $updateBeli->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 15,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
+        $this->validate([
+            'harga_satuan' => 'required',
+            'qty_purchase' => 'required',
+            'stock' => 'required',
         ]);
 
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
+        $hargaSatuanSelected = currency_convert($this->harga_satuan);
+        $qtyPurchaseSelected = currency_convert($this->qty_purchase);
+        $stockSelected = currency_convert($this->stock);
 
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-spk');
+        $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
+        $this->total_harga = $this->total_harga;
     }
 
-    public function modalPengajuanApprovedBarangSpk($PengajuanBarangId, $instructionId)
+    public function modalPengajuanStockBarangSpk($PengajuanBarangId, $instructionId)
     {
         $this->notes = [];
 
@@ -147,16 +128,18 @@ class PengajuanApprovedBarangSpkIndex extends Component
             $this->total_harga = '';
         }
 
-        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)->get();
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->get();
 
-        if(isset($dataNote)){
+        if (isset($dataNote)) {
             foreach ($dataNote as $data) {
                 $notes = [
                     'tujuan' => $data->tujuan,
                     'catatan' => $data->catatan,
                 ];
 
-                $this->notes [] = $notes;
+                $this->notes[] = $notes;
             }
         }
 

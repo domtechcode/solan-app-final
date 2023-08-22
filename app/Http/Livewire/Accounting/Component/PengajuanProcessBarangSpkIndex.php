@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -66,7 +66,8 @@ class PengajuanProcessBarangSpkIndex extends Component
 
     public function render()
     {
-        $dataPengajuanProcessBarangSpk = PengajuanBarangSpk::whereIn('status_id', [9, 10, 11])
+        $dataPengajuanProcessBarangSpk = PengajuanBarangSpk::whereIn('status_id', [11])
+            ->where('state', 'Accounting')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%')
@@ -78,7 +79,7 @@ class PengajuanProcessBarangSpkIndex extends Component
             ->orderBy('tgl_target_datang', 'asc')
             ->paginate($this->paginatePengajuanProcessBarangSpk);
 
-        return view('livewire.purchase.component.pengajuan-process-barang-spk-index', ['pengajuanProcessBarangSpk' => $dataPengajuanProcessBarangSpk])
+        return view('livewire.accounting.component.pengajuan-process-barang-spk-index', ['pengajuanProcessBarangSpk' => $dataPengajuanProcessBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -111,16 +112,18 @@ class PengajuanProcessBarangSpkIndex extends Component
             $this->total_harga = '';
         }
 
-        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)->get();
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->get();
 
-        if(isset($dataNote)){
+        if (isset($dataNote)) {
             foreach ($dataNote as $data) {
                 $notes = [
                     'tujuan' => $data->tujuan,
                     'catatan' => $data->catatan,
                 ];
 
-                $this->notes [] = $notes;
+                $this->notes[] = $notes;
             }
         }
 

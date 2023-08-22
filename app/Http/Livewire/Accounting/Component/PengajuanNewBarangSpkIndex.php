@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -31,7 +31,6 @@ class PengajuanNewBarangSpkIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
     public $notes = [];
-    public $catatan = [];
 
     public $workStepHitungBahanNew;
 
@@ -66,8 +65,8 @@ class PengajuanNewBarangSpkIndex extends Component
 
     public function render()
     {
-        $dataPengajuanNewBarangSpk = PengajuanBarangSpk::where('status_id', 8)
-            ->where('state', 'Purchase')
+        $dataPengajuanNewBarangSpk = PengajuanBarangSpk::where('status_id', 10)
+            ->where('state', 'Accounting')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
@@ -79,161 +78,10 @@ class PengajuanNewBarangSpkIndex extends Component
             ->orderBy('tgl_target_datang', 'asc')
             ->paginate($this->paginatePengajuanNewBarangSpk);
 
-        return view('livewire.purchase.component.pengajuan-new-barang-spk-index', ['pengajuanNewBarangSpk' => $dataPengajuanNewBarangSpk])
+        return view('livewire.accounting.component.pengajuan-new-barang-spk-index', ['pengajuanNewBarangSpk' => $dataPengajuanNewBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
-    }
-
-    public function stockBarang($PengajuanBarangSelectedId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-            'total_harga' => 'required',
-        ]);
-
-        if (isset($this->notes)) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            foreach ($this->notes as $input) {
-                $catatan = CatatanPengajuan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
-                ]);
-            }
-        }
-
-        $updateStock = PengajuanBarangSpk::find($PengajuanBarangSelectedId);
-        $updateStock->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 12,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-        $this->emit('indexRender');
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
-        $this->reset();
-    }
-
-    public function ajukanAccountingBarang($PengajuanBarangSelectedAccountingId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-            'total_harga' => 'required',
-        ]);
-
-        if (isset($this->notes)) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            foreach ($this->notes as $input) {
-                $catatan = CatatanPengajuan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
-                ]);
-            }
-        }
-
-        $updateAccounting = PengajuanBarangSpk::find($PengajuanBarangSelectedAccountingId);
-        $updateAccounting->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 10,
-            'state' => 'Accounting',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $userDestination = User::where('role', 'Accounting')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateAccounting->instruction_id]);
-        }
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
-    }
-
-    public function editBarang($PengajuanBarangSelectedEditId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-            'total_harga' => 'required',
-        ]);
-
-        if (isset($this->notes)) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            foreach ($this->notes as $input) {
-                $catatan = CatatanPengajuan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
-                ]);
-            }
-        }
-
-        $updateEdit = PengajuanBarangSpk::find($PengajuanBarangSelectedEditId);
-        $updateEdit->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 10,
-            'state' => 'Accounting',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $userDestination = User::where('role', 'Accounting')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateEdit->instruction_id]);
-        }
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
     }
 
     public function ajukanRabBarang($PengajuanBarangSelectedRabId)
@@ -241,8 +89,8 @@ class PengajuanNewBarangSpkIndex extends Component
         $this->validate([
             'harga_satuan' => 'required',
             'qty_purchase' => 'required',
-            'stock' => 'required',
             'total_harga' => 'required',
+            'stock' => 'required',
         ]);
 
         if (isset($this->notes)) {
@@ -262,7 +110,7 @@ class PengajuanNewBarangSpkIndex extends Component
             }
         }
 
-        $updateRab = PengajuanBarangSpk::find($PengajuanBarangSelectedRabId);
+        $updateRab = PengajuanBarangPersonal::find($PengajuanBarangSelectedRabId);
         $updateRab->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -270,7 +118,8 @@ class PengajuanNewBarangSpkIndex extends Component
             'stock' => currency_convert($this->stock),
             'status_id' => 11,
             'state' => 'RAB',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
@@ -281,21 +130,21 @@ class PengajuanNewBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'RAB')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
-        $this->emit('indexRender');
-        $this->reset();
+        event(new IndexRenderEvent('refresh'));
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
-    public function beliBarang($PengajuanBarangSelectedBeliId)
+    public function approveBarang($PengajuanBarangSelectedApproveId)
     {
         $this->validate([
             'harga_satuan' => 'required',
             'qty_purchase' => 'required',
-            'stock' => 'required',
             'total_harga' => 'required',
+            'stock' => 'required',
         ]);
 
         if (isset($this->notes)) {
@@ -315,35 +164,41 @@ class PengajuanNewBarangSpkIndex extends Component
             }
         }
 
-        $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
-        $updateBeli->update([
+        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
+        $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
-            'status_id' => 15,
+            'status_id' => 13,
             'state' => 'Purchase',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        $this->emit('indexRender');
-        $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+        }
+        event(new IndexRenderEvent('refresh'));
+
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
-    public function completeBarang($PengajuanBarangSelectedCompleteId)
+    public function rejectBarang($PengajuanBarangSelectedRejectId)
     {
         $this->validate([
             'harga_satuan' => 'required',
             'qty_purchase' => 'required',
-            'stock' => 'required',
             'total_harga' => 'required',
+            'stock' => 'required',
         ]);
 
         if (isset($this->notes)) {
@@ -363,26 +218,31 @@ class PengajuanNewBarangSpkIndex extends Component
             }
         }
 
-        $updateComplete = PengajuanBarangSpk::find($PengajuanBarangSelectedCompleteId);
-        $updateComplete->update([
+        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
             'total_harga' => currency_convert($this->total_harga),
             'stock' => currency_convert($this->stock),
-            'status_id' => 16,
+            'status_id' => 18,
             'state' => 'Purchase',
-            'previous_state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        $this->emit('indexRender');
-        $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+        }
+        event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
     public function cekTotalHarga()

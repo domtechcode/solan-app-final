@@ -11,16 +11,17 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
-class PengajuanBarangSpkIndex extends Component
+class PengajuanRejectBarangSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginatePengajuanRejectBarangSpk = 10;
+    public $searchPengajuanRejectBarangSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -29,19 +30,9 @@ class PengajuanBarangSpkIndex extends Component
     public $selectedFileAccounting;
     public $selectedFileLayout;
     public $selectedFileSample;
+    public $notes = [];
+    public $catatan;
 
-    public $selectedInstructionParent;
-    public $selectedWorkStepParent;
-    public $selectedFileContohParent;
-    public $selectedFileArsipParent;
-    public $selectedFileAccountingParent;
-    public $selectedFileLayoutParent;
-    public $selectedFileSampleParent;
-
-    public $selectedInstructionChild;
-
-    public $selectedGroupParent;
-    public $selectedGroupChild;
     public $workStepHitungBahanNew;
 
     public $dataBarang;
@@ -52,24 +43,43 @@ class PengajuanBarangSpkIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function renderIndex()
+    public function updatingSearchPengajuanRejectBarangSpk()
     {
-        $this->reset();
+        $this->resetPage();
+    }
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
     }
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchPengajuanRejectBarangSpk = request()->query('search', $this->searchPengajuanRejectBarangSpk);
     }
 
     public function render()
     {
-        $dataPengajuanBarangSpk = PengajuanBarangSpk::where('state', 'Accounting')
+        $dataPengajuanRejectBarangSpk = PengajuanBarangSpk::whereIn('status_id', [17])
+            ->where('state', 'Accounting')
+            ->where(function ($query) {
+                $query
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanRejectBarangSpk . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanRejectBarangSpk . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanRejectBarangSpk . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanRejectBarangSpk . '%');
+            })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginatePengajuanRejectBarangSpk);
 
-        return view('livewire.accounting.component.pengajuan-barang-spk-index', ['pengajuanBarangSpk' => $dataPengajuanBarangSpk])
+        return view('livewire.accounting.component.pengajuan-reject-barang-spk-index', ['pengajuanRejectBarangSpk' => $dataPengajuanRejectBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -84,7 +94,24 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => 'required',
         ]);
 
-        $updateRab = PengajuanBarangSpk::find($PengajuanBarangSelectedRabId);
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
+        $updateRab = PengajuanBarangPersonal::find($PengajuanBarangSelectedRabId);
         $updateRab->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -104,12 +131,12 @@ class PengajuanBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'RAB')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
         event(new IndexRenderEvent('refresh'));
-        $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
     public function approveBarang($PengajuanBarangSelectedApproveId)
@@ -121,7 +148,24 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => 'required',
         ]);
 
-        $updateApprove = PengajuanBarangSpk::find($PengajuanBarangSelectedApproveId);
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
+        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
         $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -141,12 +185,12 @@ class PengajuanBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateApprove->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
         event(new IndexRenderEvent('refresh'));
-        $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->reset();
     }
 
     public function rejectBarang($PengajuanBarangSelectedRejectId)
@@ -158,7 +202,24 @@ class PengajuanBarangSpkIndex extends Component
             'stock' => 'required',
         ]);
 
-        $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
+        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
         $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -178,12 +239,11 @@ class PengajuanBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateReject->instruction_id]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
         }
         event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
         $this->reset();
-
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-spk');
     }
 
     public function cekTotalHarga()
@@ -199,11 +259,13 @@ class PengajuanBarangSpkIndex extends Component
         $stockSelected = currency_convert($this->stock);
 
         $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
-        $this->total_harga = currency_idr($this->total_harga);
+        $this->total_harga = $this->total_harga;
     }
 
-    public function modalPengajuanBarangSpk($PengajuanBarangId, $instructionId)
+    public function modalPengajuanRejectBarangSpk($PengajuanBarangId, $instructionId)
     {
+        $this->notes = [];
+
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
@@ -215,49 +277,36 @@ class PengajuanBarangSpkIndex extends Component
 
         $this->dataBarang = PengajuanBarangSpk::find($PengajuanBarangId);
 
-        $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-        $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-        $this->stock = currency_idr($this->dataBarang->stock);
-        $this->total_harga = currency_idr($this->dataBarang->total_harga);
+        if (isset($this->dataBarang) && $this->dataBarang->harga_satuan != null) {
+            $this->harga_satuan = $this->dataBarang->harga_satuan;
+            $this->qty_purchase = $this->dataBarang->qty_purchase;
+            $this->stock = $this->dataBarang->stock;
+            $this->total_harga = $this->dataBarang->total_harga;
+        } else {
+            $this->harga_satuan = '';
+            $this->qty_purchase = '';
+            $this->stock = '';
+            $this->total_harga = '';
+        }
 
-        $this->dispatchBrowserEvent('show-detail-pengajuan-barang-spk');
-    }
-
-    public function modalInstructionDetailsGroupPengajuanBarangSpk($groupId)
-    {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'parent')
-            ->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
-            ->get();
-
-        $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
-            ->with('workStepList', 'user', 'machine')
-            ->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'contoh')
-            ->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'arsip')
-            ->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'accounting')
-            ->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'layout')
-            ->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'sample')
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
             ->get();
 
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
-            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
-            ->get();
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-barang-spk');
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

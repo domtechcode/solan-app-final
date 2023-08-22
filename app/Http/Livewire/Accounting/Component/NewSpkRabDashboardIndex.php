@@ -68,7 +68,6 @@ class NewSpkRabDashboardIndex extends Component
     {
         $data = WorkStep::where('work_step_list_id', 3)
             ->where('state_task', 'Complete')
-            ->where('status_task', 'Complete')
             ->where('user_id', '!=', null)
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
             ->whereHas('instruction', function ($query) {
@@ -87,6 +86,9 @@ class NewSpkRabDashboardIndex extends Component
                     ->where(function ($subQuery) {
                         $subQuery->whereIn('spk_type', ['production', 'sample']);
                     });
+            })
+            ->whereHas('instruction.formRab', function ($query) {
+                $query->where('real', null);
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
@@ -150,6 +152,7 @@ class NewSpkRabDashboardIndex extends Component
                 ->first();
 
             $rabLast = FormRab::where('instruction_id', $instructionId)
+                ->where('real', null)
                 ->orderBy('updated_count', 'desc')
                 ->first();
 
@@ -159,10 +162,14 @@ class NewSpkRabDashboardIndex extends Component
 
             if (isset($rabLast)) {
                 $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                    ->where('count', $rabLast->count)
                     ->where('updated_count', $rabLast->updated_count)
                     ->get();
             } else {
-                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
+                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                    ->where('count', $rabLast->count)
+                    ->where('updated_count', $rabLast->updated_count)
+                    ->get();
             }
         } else {
             $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)
@@ -214,8 +221,8 @@ class NewSpkRabDashboardIndex extends Component
                 $datarab = [
                     'id' => $item['id'],
                     'jenis_pengeluaran' => $item['jenis_pengeluaran'],
-                    'rab' => currency_idr($item['rab']),
-                    'real' => currency_idr($item['real']),
+                    'rab' => $item['rab'],
+                    'real' => $item['real'],
                 ];
 
                 $this->dataRab[] = $datarab;

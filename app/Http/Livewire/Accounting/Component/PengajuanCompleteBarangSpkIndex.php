@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -14,14 +14,14 @@ use App\Events\NotificationSent;
 use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
-class PengajuanApprovedBarangSpkIndex extends Component
+class PengajuanCompleteBarangSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginatePengajuanApprovedBarangSpk = 10;
-    public $searchPengajuanApprovedBarangSpk = '';
+    public $paginatePengajuanCompleteBarangSpk = 10;
+    public $searchPengajuanCompleteBarangSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -43,7 +43,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchPengajuanApprovedBarangSpk()
+    public function updatingSearchPengajuanCompleteBarangSpk()
     {
         $this->resetPage();
     }
@@ -61,66 +61,30 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
     public function mount()
     {
-        $this->searchPengajuanApprovedBarangSpk = request()->query('search', $this->searchPengajuanApprovedBarangSpk);
+        $this->searchPengajuanCompleteBarangSpk = request()->query('search', $this->searchPengajuanCompleteBarangSpk);
     }
 
     public function render()
     {
-        $dataPengajuanApprovedBarangSpk = PengajuanBarangSpk::whereIn('status_id', [13, 14])->where('state', 'Purchase')
+        $dataPengajuanCompleteBarangSpk = PengajuanBarangSpk::whereIn('status_id', [16])
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanApprovedBarangSpk . '%');
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%');
             })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginatePengajuanApprovedBarangSpk);
+            ->paginate($this->paginatePengajuanCompleteBarangSpk);
 
-        return view('livewire.purchase.component.pengajuan-approved-barang-spk-index', ['pengajuanApprovedBarangSpk' => $dataPengajuanApprovedBarangSpk])
+        return view('livewire.accounting.component.pengajuan-complete-barang-spk-index', ['pengajuanCompleteBarangSpk' => $dataPengajuanCompleteBarangSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function beliBarang($PengajuanBarangSelectedBeliId)
-    {
-        $this->validate(
-            [
-                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
-                'qty_purchase' => 'required',
-                'stock' => 'required',
-                'total_harga' => 'required',
-            ],
-            [
-                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
-            ],
-        );
-
-        $updateBeli = PengajuanBarangSpk::find($PengajuanBarangSelectedBeliId);
-        $updateBeli->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 15,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-spk');
-    }
-
-    public function modalPengajuanApprovedBarangSpk($PengajuanBarangId, $instructionId)
+    public function modalPengajuanCompleteBarangSpk($PengajuanBarangId, $instructionId)
     {
         $this->notes = [];
 
@@ -163,15 +127,5 @@ class PengajuanApprovedBarangSpkIndex extends Component
         $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
             ->with('user')
             ->get();
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = 'info';
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

@@ -31,6 +31,7 @@ class PengajuanRejectBarangSpkIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
     public $notes = [];
+    public $catatan;
 
     public $workStepHitungBahanNew;
 
@@ -459,6 +460,10 @@ class PengajuanRejectBarangSpkIndex extends Component
                 $this->notes[] = $notes;
             }
         }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

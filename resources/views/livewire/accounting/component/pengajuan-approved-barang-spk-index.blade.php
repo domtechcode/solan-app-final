@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col">
             <select id="" name="" class="form-control form-select w-auto"
-                wire:model="paginatePengajuanNewMaklunSpk">
+                wire:model="paginatePengajuanApprovedBarangSpk">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -12,7 +12,7 @@
         </div>
         <div class="col d-flex justify-content-end">
             <input type="text" class="form-control w-auto" placeholder="Search"
-                wire:model="searchPengajuanNewMaklunSpk">
+                wire:model="searchPengajuanApprovedBarangSpk">
         </div>
     </div>
     <div class="row mt-3">
@@ -23,81 +23,94 @@
                         <tr>
                             <th class="border-bottom-0">No</th>
                             <th class="border-bottom-0">No SPK</th>
-                            <th class="border-bottom-0">Bentuk Maklun</th>
-                            <th class="border-bottom-0">Rekanan</th>
-                            <th class="border-bottom-0">Tgl Keluar</th>
-                            <th class="border-bottom-0">QTY Keluar</th>
-                            <th class="border-bottom-0">Satuan Keluar</th>
+                            <th class="border-bottom-0">Langkah Kerja</th>
+                            <th class="border-bottom-0">Request</th>
+                            <th class="border-bottom-0">Nama Barang</th>
+                            <th class="border-bottom-0">Qty</th>
+                            <th class="border-bottom-0">Target Tersedia</th>
+                            <th class="border-bottom-0">Tgl Pengajuan</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
                             <th class="border-bottom-0">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pengajuanNewMaklunSpk as $key => $itemPengajuanNewMaklunSpk)
+                        @forelse ($pengajuanApprovedBarangSpk as $key => $itemPengajuanBarangSpk)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->instruction->spk_number }}
+                                    {{ $itemPengajuanBarangSpk->instruction->spk_number }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->bentuk_maklun }}
+                                    {{ $itemPengajuanBarangSpk->workStepList->name }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->rekanan }}
+                                    {{ $itemPengajuanBarangSpk->user->name }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->tgl_keluar }}
+                                    {{ $itemPengajuanBarangSpk->nama_barang }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->qty_keluar }}
+                                    {{ $itemPengajuanBarangSpk->qty_barang }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanNewMaklunSpk->satuan_keluar }}
+                                    {{ $itemPengajuanBarangSpk->tgl_target_datang }}
                                 </td>
-                                @if ($itemPengajuanNewMaklunSpk->status == 'Pengajuan Purchase')
+                                <td>
+                                    {{ $itemPengajuanBarangSpk->tgl_pengajuan }}
+                                </td>
+                                @if (in_array($itemPengajuanBarangSpk->status_id, [8]))
                                     <td>
                                         <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
                                     </td>
-                                @elseif(in_array($itemPengajuanNewMaklunSpk->status, ['Pengajuan Accounting', 'Pengajuan RAB']))
+                                @elseif(in_array($itemPengajuanBarangSpk->status_id, [9, 10, 11, 15]))
                                     <td>
                                         <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
-                                    </td>
-                                @elseif(in_array($itemPengajuanNewMaklunSpk->status, ['Reject Accounting', 'Reject RAB']))
-                                    <td>
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
+                                    </td>
+                                @elseif(in_array($itemPengajuanBarangSpk->status_id, [12]))
+                                    <td>
+                                        <span
+                                            class="badge bg-warning rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-warning rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
+                                    </td>
+                                @elseif(in_array($itemPengajuanBarangSpk->status_id, [17, 18]))
+                                    <td>
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
                                     </td>
                                 @else
                                     <td>
                                         <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangSpk->state }}</span>
                                     </td>
                                 @endif
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#modalPengajuanNewMaklunSpk"
-                                            wire:click="modalPengajuanNewMaklunSpk({{ $itemPengajuanNewMaklunSpk->id }}, {{ $itemPengajuanNewMaklunSpk->instruction_id }})"
-                                            wire:key="modalPengajuanNewMaklunSpk({{ $itemPengajuanNewMaklunSpk->id }}, {{ $itemPengajuanNewMaklunSpk->instruction_id }})"><i
+                                            data-bs-target="#modalPengajuanApprovedBarangSpk"
+                                            wire:click="modalPengajuanApprovedBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"
+                                            wire:key="modalPengajuanApprovedBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -116,12 +129,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $pengajuanNewMaklunSpk->links() }}
+            {{ $pengajuanApprovedBarangSpk->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="modalPengajuanNewMaklunSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modalPengajuanApprovedBarangSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -131,6 +144,36 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    @if (isset($catatan))
+                        @foreach ($catatan as $datanote)
+                            @if (isset($datanote))
+                                <div class="row row-sm mb-5">
+                                    <div class="text-wrap">
+                                        <div class="">
+                                            <div class="alert alert-info">
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
+                                                        height="40" width="40" viewBox="0 0 24 24">
+                                                        <path fill="#70a9ee"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1"
+                                                            fill="#1170e4" />
+                                                        <path fill="#1170e4"
+                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
+                                                <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                                                <hr class="message-inner-separator">
+                                                <p>{{ $datanote->catatan }}</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <small>{{ $datanote->created_at }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -214,7 +257,7 @@
                             @if (isset($workStepHitungBahanNew))
                                 <div class="btn-list">
                                     <a target="blank" class="btn btn-icon btn-sm btn-dark"
-                                        href="{{ route('purchase.indexWorkStep', ['instructionId' => $selectedInstruction->id, 'workStepId' => $workStepHitungBahanNew]) }}"><i
+                                        href="{{ route('accounting.indexWorkStep', ['instructionId' => $selectedInstruction->id, 'workStepId' => $workStepHitungBahanNew]) }}"><i
                                             class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
                                 </div>
                             @endif
@@ -229,23 +272,19 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="border-bottom-0">BENTUK MAKLUN</th>
-                                            <th class="border-bottom-0">REKANAN</th>
-                                            <th class="border-bottom-0">TGL KELUAR</th>
-                                            <th class="border-bottom-0">QTY KELUAR</th>
-                                            <th class="border-bottom-0">SATUAN KELUAR</th>
-                                            <th class="border-bottom-0">CATATAN</th>
+                                            <th class="border-bottom-0">LANGKAH KERJA</th>
+                                            <th class="border-bottom-0">NAMA BARANG</th>
+                                            <th class="border-bottom-0">QTY PENGAJUAN</th>
+                                            <th class="border-bottom-0">KETERANGAN</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (isset($dataMaklun))
+                                        @if (isset($dataBarang))
                                             <tr>
-                                                <td>{{ $dataMaklun->bentuk_maklun }}</td>
-                                                <td>{{ $dataMaklun->rekanan }}</td>
-                                                <td>{{ $dataMaklun->tgl_keluar }}</td>
-                                                <td>{{ $dataMaklun->qty_keluar }}</td>
-                                                <td>{{ $dataMaklun->satuan_keluar }}</td>
-                                                <td>{{ $dataMaklun->catatan }}</td>
+                                                <td>{{ $dataBarang->workStepList->name }}</td>
+                                                <td>{{ $dataBarang->nama_barang }}</td>
+                                                <td>{{ $dataBarang->qty_barang }}</td>
+                                                <td>{{ $dataBarang->keterangan }}</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -258,60 +297,105 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Harga Satuan Maklun</label>
+                                <label class="form-label">Harga Satuan</label>
                                 <div class="input-group">
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
-                                        type="text" placeholder="Harga Satuan Maklun"
-                                        wire:model="harga_satuan_maklun"
-                                        class="form-control @error('harga_satuan_maklun') is-invalid @enderror">
+                                        type="text" placeholder="Harga Satuan" wire:model="harga_satuan"
+                                        class="form-control @error('harga_satuan') is-invalid @enderror" readonly>
                                 </div>
-                                @error('harga_satuan_maklun')
+                                @error('harga_satuan')
                                     <div><span class="text-danger">{{ $message }}</span></div>
                                 @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Qty Purchase Maklun</label>
+                                <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
-                                        type="text" placeholder="Qty Purchase Maklun"
-                                        wire:model="qty_purchase_maklun"
-                                        class="form-control @error('qty_purchase_maklun') is-invalid @enderror">
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                        class="form-control @error('qty_purchase') is-invalid @enderror" readonly>
                                 </div>
-                                @error('qty_purchase_maklun')
+                                @error('qty_purchase')
                                     <div><span class="text-danger">{{ $message }}</span></div>
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label">Total Harga Maklun</label>
+                                <label class="form-label">Stock</label>
                                 <div class="input-group">
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
-                                        type="text" placeholder="Total Harga Maklun"
-                                        wire:model="total_harga_maklun"
-                                        class="form-control @error('total_harga_maklun') is-invalid @enderror"
-                                        readonly>
-                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHargaMaklun"
-                                        wire:key="cekTotalHargaMaklun">Cek Total</button>
+                                        type="text" placeholder="Stock" wire:model="stock"
+                                        class="form-control @error('stock') is-invalid @enderror" readonly>
                                 </div>
-                                @error('total_harga_maklun')
+                                @error('stock')
+                                    <div><span class="text-danger">{{ $message }}</span></div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Total Harga Barang</label>
+                                <div class="input-group">
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Total Harga" wire:model="total_harga"
+                                        class="form-control @error('total_harga') is-invalid @enderror" readonly>
+                                </div>
+                                @error('total_harga')
                                     <div><span class="text-danger">{{ $message }}</span></div>
                                 @enderror
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <label class="form-label mb-3">Catatan</label>
+                                    @foreach ($notes as $index => $note)
+                                        <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                            <div class="expanel expanel-default">
+                                                <div class="expanel-body">
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <select class="form-control form-select"
+                                                            data-bs-placeholder="Pilih Tujuan Catatan"
+                                                            wire:model.defer="notes.{{ $index }}.tujuan"
+                                                            readonly>
+                                                            <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="RAB">RAB</option>
+                                                            <option value="Accounting">Accounting</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                            wire:model.defer="notes.{{ $index }}.catatan" readonly></textarea>
+                                                    </div>
+                                                    @error('notes.' . $index . '.catatan')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="modal-footer">
-                    @if (isset($dataMaklun))
-                        <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})"
-                            wire:key="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i
-                                class="fe fe-arrow-right"></i> Accounting</button>
-                        <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})"
-                            wire:key="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i
-                                class="fe fe-arrow-right"></i> Rab</button>
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @if (isset($dataBarang))
+                        <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})"
+                            wire:key="ajukanRabBarang({{ $dataBarang->id }})">Ajukan
+                            <i class="fe fe-arrow-right"></i> Rab</button>
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})"
+                            wire:key="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})"
+                            wire:key="rejectBarang({{ $dataBarang->id }})">Reject</button>
                     @endif
                 </div>
             </div>
@@ -321,8 +405,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-pengajuan-new-maklun-spk', event => {
-            $('#modalPengajuanNewMaklunSpk').modal('hide');
+        window.addEventListener('close-modal-pengajuan-approved-barang-spk', event => {
+            $('#modalPengajuanApprovedBarangSpk').modal('hide');
         });
     </script>
 @endpush

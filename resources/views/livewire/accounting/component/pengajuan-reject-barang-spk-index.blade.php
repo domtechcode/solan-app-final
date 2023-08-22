@@ -2,7 +2,8 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePengajuanProcessBarangSpk">
+            <select id="" name="" class="form-control form-select w-auto"
+                wire:model="paginatePengajuanRejectBarangSpk">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +11,8 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPengajuanProcessBarangSpk">
+            <input type="text" class="form-control w-auto" placeholder="Search"
+                wire:model="searchPengajuanRejectBarangSpk">
         </div>
     </div>
     <div class="row mt-3">
@@ -33,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pengajuanProcessBarangSpk as $key => $itemPengajuanBarangSpk)
+                        @forelse ($pengajuanRejectBarangSpk as $key => $itemPengajuanBarangSpk)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -106,9 +108,9 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#modalPengajuanProcessBarangSpk"
-                                            wire:click="modalPengajuanProcessBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"
-                                            wire:key="modalPengajuanProcessBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"><i
+                                            data-bs-target="#modalPengajuanRejectBarangSpk"
+                                            wire:click="modalPengajuanRejectBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"
+                                            wire:key="modalPengajuanRejectBarangSpk({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -127,12 +129,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $pengajuanProcessBarangSpk->links() }}
+            {{ $pengajuanRejectBarangSpk->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="modalPengajuanProcessBarangSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modalPengajuanRejectBarangSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -299,7 +301,7 @@
                                 <div class="input-group">
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
                                         type="text" placeholder="Harga Satuan" wire:model="harga_satuan"
-                                        class="form-control @error('harga_satuan') is-invalid @enderror" readonly>
+                                        class="form-control @error('harga_satuan') is-invalid @enderror">
                                 </div>
                                 @error('harga_satuan')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -310,9 +312,9 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Quantity Purchase" wire:model="qty_purchase"
-                                        class="form-control @error('qty_purchase') is-invalid @enderror" readonly>
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                        class="form-control @error('qty_purchase') is-invalid @enderror">
                                 </div>
                                 @error('qty_purchase')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -323,9 +325,9 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Stock" wire:model="stock"
-                                        class="form-control @error('stock') is-invalid @enderror" readonly>
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Stock" wire:model="stock"
+                                        class="form-control @error('stock') is-invalid @enderror">
                                 </div>
                                 @error('stock')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -339,6 +341,9 @@
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
                                         type="text" placeholder="Total Harga" wire:model="total_harga"
                                         class="form-control @error('total_harga') is-invalid @enderror" readonly>
+                                    <button class="btn btn-primary" type="button" wire:click="cekTotalHarga"
+                                        wire:key="cekTotalHarga">Cek
+                                        Total</button>
                                 </div>
                                 @error('total_harga')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -351,7 +356,12 @@
                         <div class="col-md-12">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
-                                    <label class="form-label mb-3">Catatan</label>
+                                    <div class="form-group">
+                                        <label class="form-label mb-3">Catatan</label>
+                                        <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
+                                                class="fe fe-plus"></i>Tambah Catatan</button>
+                                    </div>
+
                                     @foreach ($notes as $index => $note)
                                         <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
                                             <div class="expanel expanel-default">
@@ -359,15 +369,18 @@
                                                     <div class="input-group control-group" style="padding-top: 5px;">
                                                         <select class="form-control form-select"
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan" readonly>
+                                                            wire:model.defer="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             <option value="RAB">RAB</option>
                                                             <option value="Accounting">Accounting</option>
                                                         </select>
+                                                        <button class="btn btn-danger" type="button"
+                                                            wire:click="removeNote({{ $index }})"><i
+                                                                class="fe fe-x"></i></button>
                                                     </div>
                                                     <div class="input-group control-group" style="padding-top: 5px;">
                                                         <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                            wire:model.defer="notes.{{ $index }}.catatan" readonly></textarea>
+                                                            wire:model.defer="notes.{{ $index }}.catatan"></textarea>
                                                     </div>
                                                     @error('notes.' . $index . '.catatan')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -385,7 +398,15 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @if (isset($dataBarang))
+                        <button class="btn btn-info" wire:click="ajukanRabBarang({{ $dataBarang->id }})"
+                            wire:key="ajukanRabBarang({{ $dataBarang->id }})">Ajukan
+                            <i class="fe fe-arrow-right"></i> Rab</button>
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})"
+                            wire:key="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})"
+                            wire:key="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -394,8 +415,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-pengajuan-process-barang-spk', event => {
-            $('#modalPengajuanProcessBarangSpk').modal('hide');
+        window.addEventListener('close-modal-pengajuan-reject-barang-spk', event => {
+            $('#modalPengajuanRejectBarangSpk').modal('hide');
         });
     </script>
 @endpush
