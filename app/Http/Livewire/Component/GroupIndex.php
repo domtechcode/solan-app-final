@@ -76,7 +76,7 @@ class GroupIndex extends Component
         $incrementedGroupIds = [];
 
         foreach ($sortedUniqueGroupIds as $index => $groupId) {
-            $incrementedGroupIds[] = $groupId + 1;
+            $incrementedGroupIds[] = $groupId;
         }
 
         $this->groupCurrentId = $incrementedGroupIds;
