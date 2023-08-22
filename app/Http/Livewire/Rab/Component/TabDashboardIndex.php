@@ -110,10 +110,16 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountRiwayatPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
-        $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('pekerjaan', 'RAB')->count();
 
-        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 11)->count();
-        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 11)->count();
+        $this->dataCountPengajuanMaklun = FormPengajuanMaklun::where('status', 'Pengajuan RAB')
+        ->where('pekerjaan', 'RAB')->count();
+
+        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 11)
+            ->where('state', 'RAB')
+            ->count();
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('status_id', 11)
+            ->where('state', 'RAB')
+            ->count();
         $this->dataCountPengajuanBarang = $this->dataCountPengajuanBarangSpk + $this->dataCountPengajuanBarangPersonal;
     }
 
