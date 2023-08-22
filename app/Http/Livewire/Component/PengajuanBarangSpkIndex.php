@@ -19,6 +19,7 @@ use App\Events\NotificationSent;
 use App\Models\PengajuanBarangSpk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use App\Models\FilesPengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -26,6 +27,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PengajuanBarangSpkIndex extends Component
 {
+    use WithFileUploads;
+
     public $nama_barang;
     public $qty_barang;
     public $tgl_target_datang;
@@ -46,6 +49,7 @@ class PengajuanBarangSpkIndex extends Component
             'tgl_target_datang' => null,
             'qty_barang' => null,
             'keterangan' => null,
+            'file_barang' => [],
             'status_id' => '8',
             'status' => 'Pending',
             'state_pengajuan' => 'New',
@@ -80,6 +84,7 @@ class PengajuanBarangSpkIndex extends Component
                 'tgl_target_datang' => null,
                 'qty_barang' => null,
                 'keterangan' => null,
+                'file_barang' => [],
                 'status_id' => '8',
                 'status' => 'Pending',
                 'state_pengajuan' => 'New',
@@ -121,6 +126,31 @@ class PengajuanBarangSpkIndex extends Component
                         'status_id' => $item['status_id'],
                         'state' => 'Purchase',
                     ]);
+                }
+
+                if(isset($item['file_barang'])){
+                    $dataInstruction = Instruction::find($item['instruction_id']);
+
+                    $folder = 'public/' . $dataInstruction->spk_number . '/purchase';
+
+                    foreach ($item['file_barang'] as $file) {
+                        
+                        $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+                        $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
+                        $uniqueId = uniqid();
+                        $fileName = $dataInstruction->spk_number . '-file-' . $item['nama_barang'] . '-' . $uniqueId . '.' . $extension;
+                        Storage::putFileAs($folder, $file, $fileName);
+
+                        FilesPengajuanBarangSpk::create([
+                            'instruction_id' => $item['instruction_id'],
+                            'user_id' => Auth()->user()->id,
+                            'pengajuan_barang_spk_id' => $createPengajuan->id,
+                            'type_file' => 'file-pengajuan',
+                            'file_name' => $fileName,
+                            'file_path' => $folder,
+                        ]);
+                    }
                 }
             }
         }

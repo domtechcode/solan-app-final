@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Status;
 use App\Models\Instruction;
 use App\Models\WorkStepList;
+use App\Models\FilesPengajuanBarangSpk;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -34,5 +35,10 @@ class PengajuanBarangSpk extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function filesPengajuanBarangSpk()
+    {
+        return $this->hasMany(FilesPengajuanBarangSpk::class);
     }
 }

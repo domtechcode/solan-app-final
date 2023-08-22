@@ -21,6 +21,7 @@
                                             <th>NAMA BARANG</th>
                                             <th>TARGET TERSEDIA</th>
                                             <th>QTY</th>
+                                            <th>FILE</th>
                                             <th>KETERANGAN</th>
                                             <th>ACTION</th>
                                         </tr>
@@ -33,27 +34,26 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 {{-- <div wire:ignore> --}}
-                                                                    <div class="form-group">
-                                                                        <select class="form-control" style="width: 100%;" data-clear
-                                                                            data-pharaonic="select2"
-                                                                            data-component-id="{{ $this->id }}"
-                                                                            wire:model="pengajuanBarang.{{ $key }}.instruction_id"
-                                                                            id="spk_number-{{ $key }}"
-                                                                            data-placeholder="Choose one">
-                                                                            <option label>Choose one</option>
-                                                                            @foreach ($dataSpkNumber as $data)
-                                                                                <option value="{{ $data->id }}">
-                                                                                    {{ $data->spk_number }} -
-                                                                                    {{ $data->order_name }}</option>
-                                                                            @endforeach
-                                                                        </select>
+                                                                <div class="form-group">
+                                                                    <select class="form-control" style="width: 100%;"
+                                                                        data-clear data-pharaonic="select2"
+                                                                        data-component-id="{{ $this->id }}"
+                                                                        wire:model="pengajuanBarang.{{ $key }}.instruction_id"
+                                                                        id="spk_number-{{ $key }}"
+                                                                        data-placeholder="Choose one">
+                                                                        <option label>Choose one</option>
+                                                                        @foreach ($dataSpkNumber as $data)
+                                                                            <option value="{{ $data->id }}">
+                                                                                {{ $data->spk_number }} -
+                                                                                {{ $data->order_name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                @error('pengajuanBarang.' . $key . '.instruction_id')
+                                                                    <div><span
+                                                                            class="text-danger">{{ $message }}</span>
                                                                     </div>
-                                                                    @error('pengajuanBarang.' . $key .
-                                                                            '.instruction_id')
-                                                                            <div><span
-                                                                                    class="text-danger">{{ $message }}</span>
-                                                                            </div>
-                                                                        @enderror
+                                                                @enderror
                                                                 {{-- </div> --}}
                                                             </div>
                                                         </div>
@@ -101,6 +101,23 @@
                                                             <div><span class="text-danger">{{ $message }}</span>
                                                             </div>
                                                         @enderror
+                                                    </td>
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <x-forms.filepond
+                                                                        wire:model="pengajuanBarang.{{ $key }}.file_barang"
+                                                                        multiple allowImagePreview imagePreviewMaxHeight="200"
+                                                                        allowFileTypeValidation allowFileSizeValidation
+                                                                        maxFileSize="1024mb" />
+                                                                    @error('pengajuanBarang.' . $key . '.file_barang')
+                                                                        <div><span class="text-danger">{{ $message }}</span>
+                                                                        </div>
+                                                                    @enderror
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <div class="btn-list">
