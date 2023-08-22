@@ -225,7 +225,7 @@
                                             <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal3' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangPersonal3">
                                                 <h5 class="card-title">Reject</h5>
-                                                @livewire('purchase.component.pengajuan-reject-barang-spk-index')
+                                                @livewire('purchase.component.pengajuan-reject-barang-personal-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">

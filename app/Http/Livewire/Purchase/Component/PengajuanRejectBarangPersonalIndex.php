@@ -12,7 +12,6 @@ use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use App\Models\CatatanPengajuan;
-use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
 
 class PengajuanRejectBarangPersonalIndex extends Component
@@ -66,8 +65,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
 
     public function render()
     {
-        $dataPengajuanRejectBarangPersonal = PengajuanBarangPersonal::where('status_id', 8)
-            ->where('state', 'Purchase')
+        $dataPengajuanRejectBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [17, 18])
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanRejectBarangPersonal . '%')
@@ -100,6 +98,9 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
@@ -128,7 +129,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
             'message' => 'Data berhasil disimpan',
         ]);
         $this->emit('indexRender');
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
         $this->reset();
     }
 
@@ -146,6 +147,10 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.tujuan' => 'required',
                 'notes.*.catatan' => 'required',
             ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
 
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
@@ -181,7 +186,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
     }
 
     public function editBarang($PengajuanBarangSelectedEditId)
@@ -199,6 +204,9 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
@@ -233,7 +241,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
     }
 
     public function ajukanRabBarang($PengajuanBarangSelectedRabId)
@@ -251,6 +259,9 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
@@ -286,7 +297,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
         $this->emit('indexRender');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
     }
 
     public function beliBarang($PengajuanBarangSelectedBeliId)
@@ -304,6 +315,9 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
@@ -334,7 +348,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
         $this->emit('indexRender');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
     }
 
     public function completeBarang($PengajuanBarangSelectedCompleteId)
@@ -352,6 +366,9 @@ class PengajuanRejectBarangPersonalIndex extends Component
                 'notes.*.catatan' => 'required',
             ]);
 
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
             foreach ($this->notes as $input) {
                 $catatan = CatatanPengajuan::create([
                     'tujuan' => $input['tujuan'],
@@ -382,7 +399,7 @@ class PengajuanRejectBarangPersonalIndex extends Component
         $this->emit('indexRender');
         $this->reset();
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-personal');
     }
 
     public function cekTotalHarga()
@@ -408,15 +425,30 @@ class PengajuanRejectBarangPersonalIndex extends Component
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 
         if (isset($this->dataBarang) && $this->dataBarang->harga_satuan != null) {
-            $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-            $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-            $this->stock = currency_idr($this->dataBarang->stock);
-            $this->total_harga = currency_idr($this->dataBarang->total_harga);
+            $this->harga_satuan = $this->dataBarang->harga_satuan;
+            $this->qty_purchase = $this->dataBarang->qty_purchase;
+            $this->stock = $this->dataBarang->stock;
+            $this->total_harga = $this->dataBarang->total_harga;
         } else {
             $this->harga_satuan = '';
             $this->qty_purchase = '';
             $this->stock = '';
             $this->total_harga = '';
+        }
+
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->get();
+
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
         }
     }
 

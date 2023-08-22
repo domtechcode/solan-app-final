@@ -181,7 +181,7 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
                                         placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror" readonly>
                                 </div>
@@ -194,7 +194,7 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
                                         placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror" readonly>
                                 </div>

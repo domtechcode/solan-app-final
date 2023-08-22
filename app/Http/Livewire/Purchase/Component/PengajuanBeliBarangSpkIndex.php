@@ -150,10 +150,10 @@ class PengajuanBeliBarangSpkIndex extends Component
         $this->dataBarang = PengajuanBarangSpk::find($PengajuanBarangId);
 
         if (isset($this->dataBarang) && $this->dataBarang->harga_satuan != null) {
-            $this->harga_satuan = currency_idr($this->dataBarang->harga_satuan);
-            $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
-            $this->stock = currency_idr($this->dataBarang->stock);
-            $this->total_harga = currency_idr($this->dataBarang->total_harga);
+            $this->harga_satuan = $this->dataBarang->harga_satuan;
+            $this->qty_purchase = $this->dataBarang->qty_purchase;
+            $this->stock = $this->dataBarang->stock;
+            $this->total_harga = $this->dataBarang->total_harga;
         } else {
             $this->harga_satuan = '';
             $this->qty_purchase = '';

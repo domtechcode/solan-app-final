@@ -2,7 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePengajuanNewBarangPersonal">
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePengajuanRejectBarangPersonal">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +10,7 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPengajuanNewBarangPersonal">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPengajuanRejectBarangPersonal">
         </div>
     </div>
     <div class="row mt-3">
@@ -31,7 +31,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pengajuanNewBarangPersonal as $key => $itemPengajuanBarangSpk)
+                        @forelse ($pengajuanRejectBarangPersonal as $key => $itemPengajuanBarangSpk)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -98,9 +98,9 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#modalPengajuanNewBarangPersonal"
-                                            wire:click="modalPengajuanNewBarangPersonal({{ $itemPengajuanBarangSpk->id }})"
-                                            wire:key="modalPengajuanNewBarangPersonal({{ $itemPengajuanBarangSpk->id }})"><i
+                                            data-bs-target="#modalPengajuanRejectBarangPersonal"
+                                            wire:click="modalPengajuanRejectBarangPersonal({{ $itemPengajuanBarangSpk->id }})"
+                                            wire:key="modalPengajuanRejectBarangPersonal({{ $itemPengajuanBarangSpk->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -119,12 +119,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $pengajuanNewBarangPersonal->links() }}
+            {{ $pengajuanRejectBarangPersonal->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="modalPengajuanNewBarangPersonal" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modalPengajuanRejectBarangPersonal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -181,7 +181,7 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
                                         placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror">
                                 </div>
@@ -194,7 +194,7 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
                                         placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror">
                                 </div>
@@ -285,8 +285,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-pengajuan-new-barang-personal', event => {
-            $('#modalPengajuanNewBarangPersonal').modal('hide');
+        window.addEventListener('close-modal-pengajuan-reject-barang-personal', event => {
+            $('#modalPengajuanRejectBarangPersonal').modal('hide');
         });
     </script>
 @endpush
