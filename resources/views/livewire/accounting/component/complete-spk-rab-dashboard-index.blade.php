@@ -438,25 +438,46 @@
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.jenis_pengeluaran" class="form-control" autocomplete="off" placeholder="Pengeluaran">
+                                                        <input type="text"
+                                                            wire:model="dataRab.{{ $key }}.jenis_pengeluaran"
+                                                            class="form-control" autocomplete="off"
+                                                            placeholder="Pengeluaran" readonly>
                                                     </div>
-                                                    @error('dataRab.'.$key.'.jenis_pengeluaran') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                    @error('dataRab.' . $key . '.jenis_pengeluaran')
+                                                        <div><span class="text-danger">{{ $message }}</span>
+                                                        </div>
+                                                    @enderror
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.rab" class="form-control" autocomplete="off" placeholder="RAB">
+                                                        <input x-data
+                                                            x-mask:dynamic="$money($input, '.', ',', 4)"
+                                                            x-ref="input" type="text" placeholder="RAB"
+                                                            wire:model="dataRab.{{ $key }}.rab"
+                                                            class="form-control @error('dataRab.' . $key . '.rab') is-invalid @enderror"
+                                                            readonly>
                                                     </div>
-                                                    @error('dataRab.'.$key.'.rab') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                    @error('dataRab.' . $key . '.rab')
+                                                        <div><span class="text-danger">{{ $message }}</span>
+                                                        </div>
+                                                    @enderror
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group">
                                                     <div class="input-group">
-                                                        <input type="text" wire:model="dataRab.{{ $key }}.real" class="form-control" autocomplete="off" placeholder="REAL">
+                                                        <input x-data
+                                                            x-mask:dynamic="$money($input, '.', ',', 4)"
+                                                            x-ref="input" type="text" placeholder="REAL"
+                                                            wire:model="dataRab.{{ $key }}.real"
+                                                            class="form-control @error('dataRab.' . $key . '.real') is-invalid @enderror">
                                                     </div>
-                                                    @error('dataRab.'.$key.'.real') <div><span class="text-danger">{{ $message }}</span></div> @enderror
+                                                    @error('dataRab.' . $key . '.real')
+                                                        <div><span class="text-danger">{{ $message }}</span>
+                                                        </div>
+                                                    @enderror
                                                 </div>
                                             </td>
                                         </tr>

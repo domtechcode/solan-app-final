@@ -39,6 +39,11 @@
                                     data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Last Data Training Program
                                 </button>
                             </li>
+                            <li>
+                                <button href="#tab7" class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">Complete RAB
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -410,6 +415,23 @@
                                     </div>
                                     <div class="card-body">
                                         @livewire('component.training-program-dashboard-index')
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                    </div>
+                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                    <div class="card-header">
+                                        <h3 class="card-title">Last Data Training Program</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        @livewire('accounting.component.complete-spk-rab-dashboard-index')
                                     </div>
                                 </div>
                             </div>

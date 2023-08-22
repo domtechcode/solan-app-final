@@ -184,8 +184,8 @@ class CompleteSpkRabDashboardIndex extends Component
                 $datarab = [
                     'id' => $item['id'],
                     'jenis_pengeluaran' => $item['jenis_pengeluaran'],
-                    'rab' => currency_idr($item['rab']),
-                    'real' => currency_idr($item['real']),
+                    'rab' => currency_convert_idr($item['rab']),
+                    'real' => currency_convert($item['real']),
                 ];
 
                 $this->dataRab[] = $datarab;
