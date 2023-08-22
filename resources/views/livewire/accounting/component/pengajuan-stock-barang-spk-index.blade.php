@@ -276,15 +276,25 @@
                                             <th class="border-bottom-0">NAMA BARANG</th>
                                             <th class="border-bottom-0">QTY PENGAJUAN</th>
                                             <th class="border-bottom-0">KETERANGAN</th>
+                                            <th class="border-bottom-0">FILE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (isset($dataBarang))
+                                        @if (isset($dataPengajuanBarangSpk))
                                             <tr>
-                                                <td>{{ $dataBarang->workStepList->name }}</td>
-                                                <td>{{ $dataBarang->nama_barang }}</td>
-                                                <td>{{ $dataBarang->qty_barang }}</td>
-                                                <td>{{ $dataBarang->keterangan }}</td>
+                                                @foreach ($dataPengajuanBarangSpk as $data)
+                                                    <td>{{ $data->workStepList->name }}</td>
+                                                    <td>{{ $data->nama_barang }}</td>
+                                                    <td>{{ $data->qty_barang }}</td>
+                                                    <td>{{ $data->keterangan }}</td>
+                                                    <td>
+                                                        @foreach ($data->filesPengajuanBarangSpk as $file)
+                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                            download>{{ $file->file_name }}</a> <br>
+                                                        @endforeach
+                                                    </td>
+                                                    
+                                                @endforeach
                                             </tr>
                                         @endif
                                     </tbody>
@@ -372,7 +382,7 @@
                                                             wire:model.defer="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             <option value="RAB">RAB</option>
-                                                            <option value="Accounting">Accounting</option>
+                                                            <option value="Purchase">Purchase</option>
                                                         </select>
                                                         <button class="btn btn-danger" type="button"
                                                             wire:click="removeNote({{ $index }})"><i
