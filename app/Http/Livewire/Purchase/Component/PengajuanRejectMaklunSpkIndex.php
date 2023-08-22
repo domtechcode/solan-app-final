@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
@@ -50,7 +51,21 @@ class PengajuanRejectMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function updatingSearchPengajuanRejectMaklunSpk()
     {
@@ -91,6 +106,26 @@ class PengajuanRejectMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_maklun_id', $this->dataMaklun->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
+
         $updateAccounting = FormPengajuanMaklun::find($PengajuanMaklunSelectedAccountingId);
         $updateAccounting->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
@@ -124,6 +159,26 @@ class PengajuanRejectMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_maklun_id', $this->dataMaklun->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
+
         $updateRAB = FormPengajuanMaklun::find($PengajuanMaklunSelectedRABId);
         $updateRAB->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
@@ -156,6 +211,26 @@ class PengajuanRejectMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_maklun_id', $this->dataMaklun->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateComplete = FormPengajuanMaklun::find($PengajuanMaklunSelectedCompleteId);
         $updateComplete->update([
@@ -207,6 +282,25 @@ class PengajuanRejectMaklunSpkIndex extends Component
         $this->harga_satuan_maklun = $this->dataMaklun->harga_satuan_maklun;
         $this->qty_purchase_maklun = $this->dataMaklun->qty_purchase_maklun;
         $this->total_harga_maklun = $this->dataMaklun->total_harga_maklun;
+
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->get();
+
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

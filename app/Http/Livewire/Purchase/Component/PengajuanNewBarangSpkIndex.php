@@ -31,7 +31,7 @@ class PengajuanNewBarangSpkIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
     public $notes = [];
-    public $catatan = [];
+    public $catatan;
 
     public $workStepHitungBahanNew;
 

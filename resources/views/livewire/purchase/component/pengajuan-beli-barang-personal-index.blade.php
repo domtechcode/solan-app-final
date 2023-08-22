@@ -135,7 +135,37 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body"><!-- Row -->
+                <div class="modal-body">
+                    @if (isset($catatan))
+                        @foreach ($catatan as $datanote)
+                            @if (isset($datanote))
+                                <div class="row row-sm mb-5">
+                                    <div class="text-wrap">
+                                        <div class="">
+                                            <div class="alert alert-info">
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
+                                                        height="40" width="40" viewBox="0 0 24 24">
+                                                        <path fill="#70a9ee"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1"
+                                                            fill="#1170e4" />
+                                                        <path fill="#1170e4"
+                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
+                                                <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                                                <hr class="message-inner-separator">
+                                                <p>{{ $datanote->catatan }}</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <small>{{ $datanote->created_at }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+                    <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
                             <div class="table-responsive">
@@ -182,8 +212,8 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror" readonly>
                                 </div>
                                 @error('qty_purchase')
@@ -195,8 +225,8 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Stock" wire:model="stock"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror" readonly>
                                 </div>
                                 @error('stock')

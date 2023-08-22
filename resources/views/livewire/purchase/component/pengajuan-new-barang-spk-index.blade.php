@@ -288,11 +288,10 @@
                                                     <td>{{ $data->keterangan }}</td>
                                                     <td>
                                                         @foreach ($data->filesPengajuanBarangSpk as $file)
-                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                            download>{{ $file->file_name }}</a> <br>
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a> <br>
                                                         @endforeach
                                                     </td>
-                                                    
                                                 @endforeach
                                             </tr>
                                         @endif

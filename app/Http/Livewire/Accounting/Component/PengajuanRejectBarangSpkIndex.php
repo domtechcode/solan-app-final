@@ -115,7 +115,7 @@ class PengajuanRejectBarangSpkIndex extends Component
             }
         }
 
-        $updateRab = PengajuanBarangPersonal::find($PengajuanBarangSelectedRabId);
+        $updateRab = PengajuanBarangSpk::find($PengajuanBarangSelectedRabId);
         $updateRab->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -135,11 +135,11 @@ class PengajuanRejectBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'RAB')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateRab->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-spk');
         $this->reset();
     }
 
@@ -172,7 +172,7 @@ class PengajuanRejectBarangSpkIndex extends Component
             }
         }
 
-        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
+        $updateApprove = PengajuanBarangSpk::find($PengajuanBarangSelectedApproveId);
         $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -192,11 +192,11 @@ class PengajuanRejectBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateApprove->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-spk');
         $this->reset();
     }
 
@@ -229,7 +229,7 @@ class PengajuanRejectBarangSpkIndex extends Component
             }
         }
 
-        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
         $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -249,10 +249,10 @@ class PengajuanRejectBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateReject->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-spk');
         $this->reset();
     }
 

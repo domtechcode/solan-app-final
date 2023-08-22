@@ -11,17 +11,18 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
-class PengajuanMaklunSpkIndex extends Component
+class PengajuanNewMaklunSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginatePengajuanNewMaklunSpk = 10;
+    public $searchPengajuanNewMaklunSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -50,26 +51,48 @@ class PengajuanMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function renderIndex()
+    public function addEmptyNote()
     {
-        $this->reset();
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
+
+    public function updatingSearchPengajuanNewMaklunSpk()
+    {
+        $this->resetPage();
     }
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchPengajuanNewMaklunSpk = request()->query('search', $this->searchPengajuanNewMaklunSpk);
     }
 
     public function render()
     {
-        $dataPengajuanMaklunSpk = FormPengajuanMaklun::where('pekerjaan', 'Accounting')
+        $dataPengajuanNewMaklunSpk = FormPengajuanMaklun::where('status', 'Pengajuan Accounting')
+        ->where('pekerjaan', 'Accounting')
+            ->where(function ($query) {
+                $query
+                    ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                    ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                    ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                    ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%');
+            })
             ->with(['instruction'])
             ->orderBy('tgl_keluar', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginatePengajuanNewMaklunSpk);
 
-        return view('livewire.accounting.component.pengajuan-maklun-spk-index', ['pengajuanMaklunSpk' => $dataPengajuanMaklunSpk])
+        return view('livewire.accounting.component.pengajuan-new-maklun-spk-index', ['pengajuanNewMaklunSpk' => $dataPengajuanNewMaklunSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -82,6 +105,23 @@ class PengajuanMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateRAB = FormPengajuanMaklun::find($PengajuanMaklunSelectedRABId);
         $updateRAB->update([
@@ -106,7 +146,7 @@ class PengajuanMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
     }
 
     public function approveMaklun($PengajuanMaklunSelectedApproveId)
@@ -116,6 +156,23 @@ class PengajuanMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateApprove = FormPengajuanMaklun::find($PengajuanMaklunSelectedApproveId);
         $updateApprove->update([
@@ -140,7 +197,7 @@ class PengajuanMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
     }
 
     public function rejectMaklun($PengajuanMaklunSelectedRejectId)
@@ -150,6 +207,23 @@ class PengajuanMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateReject = FormPengajuanMaklun::find($PengajuanMaklunSelectedRejectId);
         $updateReject->update([
@@ -174,7 +248,7 @@ class PengajuanMaklunSpkIndex extends Component
         }
         $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
     }
 
     public function cekTotalHargaMaklun()
@@ -188,64 +262,30 @@ class PengajuanMaklunSpkIndex extends Component
         $qtyPurchaseMaklunSelected = currency_convert($this->qty_purchase_maklun);
 
         $this->total_harga_maklun = $hargaSatuanMaklunSelected * $qtyPurchaseMaklunSelected;
-        $this->total_harga_maklun = currency_idr($this->total_harga_maklun);
+        $this->total_harga_maklun = $this->total_harga_maklun;
     }
 
-    public function modalPengajuanMaklunSpk($PengajuanMaklunId, $instructionId)
+    public function modalPengajuanNewMaklunSpk($PengajuanMaklunId, $instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
+
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
 
         $this->dataMaklun = FormPengajuanMaklun::find($PengajuanMaklunId);
 
-        $this->harga_satuan_maklun = currency_idr($this->dataMaklun->harga_satuan_maklun);
-        $this->qty_purchase_maklun = currency_idr($this->dataMaklun->qty_purchase_maklun);
-        $this->total_harga_maklun = currency_idr($this->dataMaklun->total_harga_maklun);
+        $this->harga_satuan_maklun = $this->dataMaklun->harga_satuan_maklun;
+        $this->qty_purchase_maklun = $this->dataMaklun->qty_purchase_maklun;
+        $this->total_harga_maklun = $this->dataMaklun->total_harga_maklun;
 
-        $this->dispatchBrowserEvent('show-detail-pengajuan-maklun-spk');
-    }
-
-    public function modalInstructionDetailsGroupPengajuanMaklunSpk($groupId)
-    {
-        $this->selectedGroupParent = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'parent')
-            ->first();
-        $this->selectedGroupChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->with('user')
             ->get();
-
-        $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
-        $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
-            ->with('workStepList', 'user', 'machine')
-            ->get();
-        $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'contoh')
-            ->get();
-        $this->selectedFileArsipParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'arsip')
-            ->get();
-        $this->selectedFileAccountingParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'accounting')
-            ->get();
-        $this->selectedFileLayoutParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'layout')
-            ->get();
-        $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
-            ->where('type_file', 'sample')
-            ->get();
-
-        $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
-            ->where('group_priority', 'child')
-            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
-            ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-pengajuan-maklun-spk');
     }
 
     public function messageSent($arguments)

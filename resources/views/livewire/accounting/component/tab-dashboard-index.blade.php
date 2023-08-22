@@ -345,35 +345,35 @@
                                             <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun1' ? 'active' : '' }}"
                                                 id="tabPengajuanMaklun1">
                                                 <h5 class="card-title">New</h5>
-                                                @livewire('purchase.component.pengajuan-new-maklun-spk-index')
+                                                @livewire('accounting.component.pengajuan-new-maklun-spk-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun2' ? 'active' : '' }}"
                                                 id="tabPengajuanMaklun2">
                                                 <h5 class="card-title">Process</h5>
-                                                @livewire('purchase.component.pengajuan-process-maklun-spk-index')
+                                                @livewire('accounting.component.pengajuan-process-maklun-spk-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun3' ? 'active' : '' }}"
                                                 id="tabPengajuanMaklun3">
                                                 <h5 class="card-title">Reject</h5>
-                                                @livewire('purchase.component.pengajuan-reject-maklun-spk-index')
+                                                @livewire('accounting.component.pengajuan-reject-maklun-spk-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun4' ? 'active' : '' }}"
                                                 id="tabPengajuanMaklun4">
                                                 <h5 class="card-title">Approved</h5>
-                                                @livewire('purchase.component.pengajuan-approved-maklun-spk-index')
+                                                @livewire('accounting.component.pengajuan-approved-maklun-spk-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun5' ? 'active' : '' }}"
                                                 id="tabPengajuanMaklun5">
                                                 <h5 class="card-title">Complete</h5>
-                                                @livewire('purchase.component.pengajuan-complete-maklun-spk-index')
+                                                @livewire('accounting.component.pengajuan-complete-maklun-spk-index')
                                             </div>
                                         </div>
                                     </div>

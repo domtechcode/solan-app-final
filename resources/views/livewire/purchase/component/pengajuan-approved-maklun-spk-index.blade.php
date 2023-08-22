@@ -131,6 +131,35 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    @if (isset($catatan))
+                        @foreach ($catatan as $datanote)
+                            @if (isset($datanote))
+                                <div class="row row-sm mb-5">
+                                    <div class="text-wrap">
+                                        <div class="">
+                                            <div class="alert alert-info">
+                                                <span class=""><svg xmlns="http://www.w3.org/2000/svg"
+                                                        height="40" width="40" viewBox="0 0 24 24">
+                                                        <path fill="#70a9ee"
+                                                            d="M20.05713,22H3.94287A3.02288,3.02288,0,0,1,1.3252,17.46631L9.38232,3.51123a3.02272,3.02272,0,0,1,5.23536,0L22.6748,17.46631A3.02288,3.02288,0,0,1,20.05713,22Z" />
+                                                        <circle cx="12" cy="17" r="1"
+                                                            fill="#1170e4" />
+                                                        <path fill="#1170e4"
+                                                            d="M12,14a1,1,0,0,1-1-1V9a1,1,0,0,1,2,0v4A1,1,0,0,1,12,14Z" />
+                                                    </svg></span>
+                                                <strong>Catatan Dari Operator : {{ $datanote->user->name }}</strong>
+                                                <hr class="message-inner-separator">
+                                                <p>{{ $datanote->catatan }}</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <small>{{ $datanote->created_at }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -302,6 +331,43 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <label class="form-label mb-3">Catatan</label>
+                                    @foreach ($notes as $index => $note)
+                                        <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
+                                            <div class="expanel expanel-default">
+                                                <div class="expanel-body">
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <select class="form-control form-select"
+                                                            data-bs-placeholder="Pilih Tujuan Catatan"
+                                                            wire:model.defer="notes.{{ $index }}.tujuan"
+                                                            readonly>
+                                                            <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="RAB">RAB</option>
+                                                            <option value="Accounting">Accounting</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                            wire:model.defer="notes.{{ $index }}.catatan" readonly></textarea>
+                                                    </div>
+                                                    @error('notes.' . $index . '.catatan')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataMaklun))

@@ -259,7 +259,12 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    @if (isset($dataBarang))
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})"
+                            wire:key="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})"
+                            wire:key="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                    @endif
                 </div>
             </div>
         </div>

@@ -86,60 +86,6 @@ class PengajuanApprovedBarangSpkIndex extends Component
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function ajukanRabBarang($PengajuanBarangSelectedRabId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'total_harga' => 'required',
-            'stock' => 'required',
-        ]);
-
-        if (isset($this->notes)) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            foreach ($this->notes as $input) {
-                $catatan = CatatanPengajuan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_spk_id' => $this->dataBarang->id,
-                ]);
-            }
-        }
-
-        $updateRab = PengajuanBarangPersonal::find($PengajuanBarangSelectedRabId);
-        $updateRab->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 11,
-            'state' => 'RAB',
-            'previous_state' => 'Accounting',
-            'accounting' => 'Accounting',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $userDestination = User::where('role', 'RAB')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
-        }
-        event(new IndexRenderEvent('refresh'));
-
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
-        $this->reset();
-    }
-
     public function approveBarang($PengajuanBarangSelectedApproveId)
     {
         $this->validate([
@@ -166,7 +112,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
             }
         }
 
-        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
+        $updateApprove = PengajuanBarangSpk::find($PengajuanBarangSelectedApproveId);
         $updateApprove->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -186,11 +132,11 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateApprove->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-spk');
         $this->reset();
     }
 
@@ -220,7 +166,7 @@ class PengajuanApprovedBarangSpkIndex extends Component
             }
         }
 
-        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
         $updateReject->update([
             'harga_satuan' => currency_convert($this->harga_satuan),
             'qty_purchase' => currency_convert($this->qty_purchase),
@@ -240,10 +186,10 @@ class PengajuanApprovedBarangSpkIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => $updateReject->instruction_id]);
         }
-        event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-spk');
         $this->reset();
     }
 

@@ -68,7 +68,6 @@ class PengajuanProcessBarangSpkIndex extends Component
     public function render()
     {
         $dataPengajuanProcessBarangSpk = PengajuanBarangSpk::whereIn('status_id', [11])
-            ->where('state', 'Accounting')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanProcessBarangSpk . '%')

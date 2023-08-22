@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
@@ -50,7 +51,21 @@ class PengajuanProcessMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function updatingSearchPengajuanProcessMaklunSpk()
     {
@@ -99,6 +114,25 @@ class PengajuanProcessMaklunSpkIndex extends Component
         $this->harga_satuan_maklun = $this->dataMaklun->harga_satuan_maklun;
         $this->qty_purchase_maklun = $this->dataMaklun->qty_purchase_maklun;
         $this->total_harga_maklun = $this->dataMaklun->total_harga_maklun;
+
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->get();
+
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

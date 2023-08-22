@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col">
             <select id="" name="" class="form-control form-select w-auto"
-                wire:model="paginatePengajuanRejectMaklunSpk">
+                wire:model="paginatePengajuanNewMaklunSpk">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -12,7 +12,7 @@
         </div>
         <div class="col d-flex justify-content-end">
             <input type="text" class="form-control w-auto" placeholder="Search"
-                wire:model="searchPengajuanRejectMaklunSpk">
+                wire:model="searchPengajuanNewMaklunSpk">
         </div>
     </div>
     <div class="row mt-3">
@@ -34,70 +34,70 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($pengajuanRejectMaklunSpk as $key => $itemPengajuanRejectMaklunSpk)
+                        @forelse ($pengajuanNewMaklunSpk as $key => $itemPengajuanNewMaklunSpk)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->instruction->spk_number }}
+                                    {{ $itemPengajuanNewMaklunSpk->instruction->spk_number }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->bentuk_maklun }}
+                                    {{ $itemPengajuanNewMaklunSpk->bentuk_maklun }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->rekanan }}
+                                    {{ $itemPengajuanNewMaklunSpk->rekanan }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->tgl_keluar }}
+                                    {{ $itemPengajuanNewMaklunSpk->tgl_keluar }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->qty_keluar }}
+                                    {{ $itemPengajuanNewMaklunSpk->qty_keluar }}
                                 </td>
                                 <td>
-                                    {{ $itemPengajuanRejectMaklunSpk->satuan_keluar }}
+                                    {{ $itemPengajuanNewMaklunSpk->satuan_keluar }}
                                 </td>
-                                @if ($itemPengajuanRejectMaklunSpk->status == 'Pengajuan Purchase')
+                                @if ($itemPengajuanNewMaklunSpk->status == 'Pengajuan Purchase')
                                     <td>
                                         <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->status }}</span>
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
                                     </td>
-                                @elseif(in_array($itemPengajuanRejectMaklunSpk->status, ['Pengajuan Accounting', 'Pengajuan RAB']))
+                                @elseif(in_array($itemPengajuanNewMaklunSpk->status, ['Pengajuan Accounting', 'Pengajuan RAB']))
                                     <td>
                                         <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->status }}</span>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->pekerjaan }}</span>
-                                    </td>
-                                @elseif(in_array($itemPengajuanRejectMaklunSpk->status, ['Reject Accounting', 'Reject RAB']))
-                                    <td>
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->status }}</span>
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
+                                    </td>
+                                @elseif(in_array($itemPengajuanNewMaklunSpk->status, ['Reject Accounting', 'Reject RAB']))
+                                    <td>
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
                                     </td>
                                 @else
                                     <td>
                                         <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->status }}</span>
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->status }}</span>
                                     </td>
                                     <td>
                                         <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanRejectMaklunSpk->pekerjaan }}</span>
+                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $itemPengajuanNewMaklunSpk->pekerjaan }}</span>
                                     </td>
                                 @endif
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#modalPengajuanRejectMaklunSpk"
-                                            wire:click="modalPengajuanRejectMaklunSpk({{ $itemPengajuanRejectMaklunSpk->id }}, {{ $itemPengajuanRejectMaklunSpk->instruction_id }})"
-                                            wire:key="modalPengajuanRejectMaklunSpk({{ $itemPengajuanRejectMaklunSpk->id }}, {{ $itemPengajuanRejectMaklunSpk->instruction_id }})"><i
+                                            data-bs-target="#modalPengajuanNewMaklunSpk"
+                                            wire:click="modalPengajuanNewMaklunSpk({{ $itemPengajuanNewMaklunSpk->id }}, {{ $itemPengajuanNewMaklunSpk->instruction_id }})"
+                                            wire:key="modalPengajuanNewMaklunSpk({{ $itemPengajuanNewMaklunSpk->id }}, {{ $itemPengajuanNewMaklunSpk->instruction_id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -116,12 +116,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $pengajuanRejectMaklunSpk->links() }}
+            {{ $pengajuanNewMaklunSpk->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="modalPengajuanRejectMaklunSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="modalPengajuanNewMaklunSpk" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -331,6 +331,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <div class="expanel expanel-default">
@@ -376,12 +377,13 @@
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataMaklun))
-                        <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})"
-                            wire:key="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i
-                                class="fe fe-arrow-right"></i> Accounting</button>
                         <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})"
                             wire:key="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i
                                 class="fe fe-arrow-right"></i> Rab</button>
+                        <button class="btn btn-success" wire:click="approveMaklun({{ $dataMaklun->id }})"
+                            wire:key="approveMaklun({{ $dataMaklun->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectMaklun({{ $dataMaklun->id }})"
+                            wire:key="rejectMaklun({{ $dataMaklun->id }})">Reject</button>
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     @endif
                 </div>
@@ -392,8 +394,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-pengajuan-reject-maklun-spk', event => {
-            $('#modalPengajuanRejectMaklunSpk').modal('hide');
+        window.addEventListener('close-modal-pengajuan-new-maklun-spk', event => {
+            $('#modalPengajuanNewMaklunSpk').modal('hide');
         });
     </script>
 @endpush

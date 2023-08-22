@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -91,7 +91,7 @@ class PengajuanCompleteMaklunSpkIndex extends Component
             ->orderBy('tgl_keluar', 'asc')
             ->paginate($this->paginatePengajuanCompleteMaklunSpk);
 
-        return view('livewire.purchase.component.pengajuan-complete-maklun-spk-index', ['pengajuanCompleteMaklunSpk' => $dataPengajuanCompleteMaklunSpk])
+        return view('livewire.accounting.component.pengajuan-complete-maklun-spk-index', ['pengajuanCompleteMaklunSpk' => $dataPengajuanCompleteMaklunSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);

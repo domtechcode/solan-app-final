@@ -50,7 +50,21 @@ class PengajuanApprovedMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function updatingSearchPengajuanApprovedMaklunSpk()
     {
@@ -65,7 +79,7 @@ class PengajuanApprovedMaklunSpkIndex extends Component
     public function render()
     {
         $dataPengajuanApprovedMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Approved Accounting', 'Approved RAB'])
-        ->where('pekerjaan', 'Purchase')
+            ->where('pekerjaan', 'Purchase')
             ->where(function ($query) {
                 $query
                     ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanApprovedMaklunSpk . '%')
@@ -91,6 +105,26 @@ class PengajuanApprovedMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_maklun_id', $this->dataMaklun->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
+
         $updateComplete = FormPengajuanMaklun::find($PengajuanMaklunSelectedCompleteId);
         $updateComplete->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
@@ -106,7 +140,7 @@ class PengajuanApprovedMaklunSpkIndex extends Component
             'title' => 'Maklun Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-approved-maklun-spk');
     }
@@ -141,6 +175,25 @@ class PengajuanApprovedMaklunSpkIndex extends Component
         $this->harga_satuan_maklun = $this->dataMaklun->harga_satuan_maklun;
         $this->qty_purchase_maklun = $this->dataMaklun->qty_purchase_maklun;
         $this->total_harga_maklun = $this->dataMaklun->total_harga_maklun;
+
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->get();
+
+        if (isset($dataNote)) {
+            foreach ($dataNote as $data) {
+                $notes = [
+                    'tujuan' => $data->tujuan,
+                    'catatan' => $data->catatan,
+                ];
+
+                $this->notes[] = $notes;
+            }
+        }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

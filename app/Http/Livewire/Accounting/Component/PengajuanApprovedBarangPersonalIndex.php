@@ -84,6 +84,119 @@ class PengajuanApprovedBarangPersonalIndex extends Component
             ->layoutData(['title' => 'Dashboard']);
     }
 
+    public function approveBarang($PengajuanBarangSelectedApproveId)
+    {
+        $this->validate([
+            'harga_satuan' => 'required',
+            'qty_purchase' => 'required',
+            'total_harga' => 'required',
+            'stock' => 'required',
+        ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
+        $updateApprove = PengajuanBarangPersonal::find($PengajuanBarangSelectedApproveId);
+        $updateApprove->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 13,
+            'state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => null]);
+        }
+        $this->emit('indexRender');
+
+        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-personal');
+        $this->reset();
+    }
+
+    public function rejectBarang($PengajuanBarangSelectedRejectId)
+    {
+        $this->validate([
+            'harga_satuan' => 'required',
+            'qty_purchase' => 'required',
+            'total_harga' => 'required',
+            'stock' => 'required',
+        ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
+                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
+                ->delete();
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
+                ]);
+            }
+        }
+
+        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $updateReject->update([
+            'harga_satuan' => currency_convert($this->harga_satuan),
+            'qty_purchase' => currency_convert($this->qty_purchase),
+            'total_harga' => currency_convert($this->total_harga),
+            'stock' => currency_convert($this->stock),
+            'status_id' => 18,
+            'state' => 'Purchase',
+            'previous_state' => 'Accounting',
+            'accounting' => 'Accounting',
+        ]);
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Pengajuan Barang Instruksi Kerja',
+            'message' => 'Data berhasil disimpan',
+        ]);
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => null]);
+        }
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-approved-barang-personal');
+        $this->reset();
+    }
+
     public function modalPengajuanApprovedBarangPersonal($PengajuanBarangId)
     {
         $this->notes = [];

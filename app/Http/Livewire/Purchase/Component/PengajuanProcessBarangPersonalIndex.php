@@ -31,6 +31,7 @@ class PengajuanProcessBarangPersonalIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
     public $notes = [];
+    public $catatan;
 
     public $workStepHitungBahanNew;
 
@@ -113,5 +114,9 @@ class PengajuanProcessBarangPersonalIndex extends Component
                 $this->notes [] = $notes;
             }
         }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->with('user')
+            ->get();
     }
 }

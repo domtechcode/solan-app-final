@@ -31,6 +31,7 @@ class PengajuanApprovedBarangPersonalIndex extends Component
     public $selectedFileLayout;
     public $selectedFileSample;
     public $notes = [];
+    public $catatan;
 
     public $workStepHitungBahanNew;
 
@@ -65,7 +66,8 @@ class PengajuanApprovedBarangPersonalIndex extends Component
 
     public function render()
     {
-        $dataPengajuanApprovedBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [13, 14])->where('state', 'Purchase')
+        $dataPengajuanApprovedBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [13, 14])
+            ->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
                     ->where('qty_barang', 'like', '%' . $this->searchPengajuanApprovedBarangPersonal . '%')
@@ -137,18 +139,24 @@ class PengajuanApprovedBarangPersonalIndex extends Component
             $this->total_harga = '';
         }
 
-        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)->where('form_pengajuan_barang_personal_id', $PengajuanBarangId)->get();
+        $dataNote = CatatanPengajuan::where('user_id', Auth()->user()->id)
+            ->where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->get();
 
-        if(isset($dataNote)){
+        if (isset($dataNote)) {
             foreach ($dataNote as $data) {
                 $notes = [
                     'tujuan' => $data->tujuan,
                     'catatan' => $data->catatan,
                 ];
 
-                $this->notes [] = $notes;
+                $this->notes[] = $notes;
             }
         }
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_barang_personal_id', $PengajuanBarangId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

@@ -134,11 +134,11 @@ class PengajuanNewBarangPersonalIndex extends Component
 
         $userDestination = User::where('role', 'RAB')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => null]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
         $this->reset();
     }
 
@@ -191,11 +191,11 @@ class PengajuanNewBarangPersonalIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => null]);
         }
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
 
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
         $this->reset();
     }
 
@@ -248,10 +248,10 @@ class PengajuanNewBarangPersonalIndex extends Component
 
         $userDestination = User::where('role', 'Purchase')->get();
         foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => 1]);
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang Baru', 'instruction_id' => null]);
         }
-        event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-pengajuan-barang-personal');
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
         $this->reset();
     }
 

@@ -376,12 +376,13 @@
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataMaklun))
-                        <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})"
-                            wire:key="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i
-                                class="fe fe-arrow-right"></i> Accounting</button>
                         <button class="btn btn-info" wire:click="ajukanRabMaklun({{ $dataMaklun->id }})"
                             wire:key="ajukanRabMaklun({{ $dataMaklun->id }})">Ajukan <i
                                 class="fe fe-arrow-right"></i> Rab</button>
+                        <button class="btn btn-success" wire:click="approveMaklun({{ $dataMaklun->id }})"
+                            wire:key="approveMaklun({{ $dataMaklun->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectMaklun({{ $dataMaklun->id }})"
+                            wire:key="rejectMaklun({{ $dataMaklun->id }})">Reject</button>
                         <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     @endif
                 </div>

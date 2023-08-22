@@ -146,20 +146,19 @@ class TabDashboardIndex extends Component
 
         $this->dataCountTotalPengajuanBarangPersonal = $this->dataCountNewPengajuanBarangPersonal + $this->dataCountProcessPengajuanBarangPersonal + $this->dataCountRejectPengajuanBarangPersonal + $this->dataCountApprovedPengajuanBarangPersonal + $this->dataCountStockPengajuanBarangPersonal + $this->dataCountBeliPengajuanBarangPersonal + $this->dataCountCompletePengajuanBarangPersonal;
 
-        $this->dataCountNewPengajuanMaklun = FormPengajuanMaklun::where('status', 'Pengajuan Purchase')
-            ->where('pekerjaan', 'Purchase')
+        $this->dataCountNewPengajuanMaklun = FormPengajuanMaklun::where('status', 'Pengajuan Accounting')
+            ->where('pekerjaan', 'Accounting')
             ->count();
 
-        $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan Accounting', 'Pengajuan RAB'])
-            ->where('pekerjaan', 'Purchase')
+        $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan RAB'])
             ->count();
 
-        $this->dataCountRejectPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Reject Accounting', 'Reject RAB'])
-            ->where('pekerjaan', 'Purchase')
+        $this->dataCountRejectPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Reject RAB'])
+            ->where('pekerjaan', 'Accounting')
             ->count();
 
-        $this->dataCountApprovedPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Approved Accounting', 'Approved RAB'])
-            ->where('pekerjaan', 'Purchase')
+        $this->dataCountApprovedPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Approved RAB'])
+            ->where('pekerjaan', 'Accounting')
             ->count();
 
         $this->dataCountCompletePengajuanMaklun = FormPengajuanMaklun::where('status', 'Complete')

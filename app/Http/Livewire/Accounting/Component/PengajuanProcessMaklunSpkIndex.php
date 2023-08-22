@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Purchase\Component;
+namespace App\Http\Livewire\Accounting\Component;
 
 use App\Models\User;
 use App\Models\Files;
@@ -11,17 +11,18 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
-class PengajuanCompleteMaklunSpkIndex extends Component
+class PengajuanProcessMaklunSpkIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginatePengajuanCompleteMaklunSpk = 10;
-    public $searchPengajuanCompleteMaklunSpk = '';
+    public $paginatePengajuanProcessMaklunSpk = 10;
+    public $searchPengajuanProcessMaklunSpk = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -66,38 +67,37 @@ class PengajuanCompleteMaklunSpkIndex extends Component
         $this->notes = array_values($this->notes);
     }
 
-    public function updatingSearchPengajuanCompleteMaklunSpk()
+    public function updatingSearchPengajuanProcessMaklunSpk()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->searchPengajuanCompleteMaklunSpk = request()->query('search', $this->searchPengajuanCompleteMaklunSpk);
+        $this->searchPengajuanProcessMaklunSpk = request()->query('search', $this->searchPengajuanProcessMaklunSpk);
     }
 
     public function render()
     {
-        $dataPengajuanCompleteMaklunSpk = FormPengajuanMaklun::where('status', 'Complete')
-        ->where('pekerjaan', 'Purchase')
+        $dataPengajuanProcessMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Pengajuan RAB'])
             ->where(function ($query) {
                 $query
-                    ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanCompleteMaklunSpk . '%')
-                    ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanCompleteMaklunSpk . '%')
-                    ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanCompleteMaklunSpk . '%')
-                    ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanCompleteMaklunSpk . '%');
+                    ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanProcessMaklunSpk . '%')
+                    ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanProcessMaklunSpk . '%')
+                    ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanProcessMaklunSpk . '%')
+                    ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanProcessMaklunSpk . '%');
             })
             ->with(['instruction'])
             ->orderBy('tgl_keluar', 'asc')
-            ->paginate($this->paginatePengajuanCompleteMaklunSpk);
+            ->paginate($this->paginatePengajuanProcessMaklunSpk);
 
-        return view('livewire.purchase.component.pengajuan-complete-maklun-spk-index', ['pengajuanCompleteMaklunSpk' => $dataPengajuanCompleteMaklunSpk])
+        return view('livewire.accounting.component.pengajuan-process-maklun-spk-index', ['pengajuanProcessMaklunSpk' => $dataPengajuanProcessMaklunSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalPengajuanCompleteMaklunSpk($PengajuanMaklunId, $instructionId)
+    public function modalPengajuanProcessMaklunSpk($PengajuanMaklunId, $instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
 

@@ -11,6 +11,7 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 
@@ -50,7 +51,21 @@ class PengajuanNewMaklunSpkIndex extends Component
     public $qty_purchase_maklun;
     public $total_harga_maklun;
 
+    public $notes = [];
+    public $catatan;
+
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function addEmptyNote()
+    {
+        $this->notes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->notes[$index]);
+        $this->notes = array_values($this->notes);
+    }
 
     public function updatingSearchPengajuanNewMaklunSpk()
     {
@@ -91,6 +106,23 @@ class PengajuanNewMaklunSpkIndex extends Component
             'total_harga_maklun' => 'required',
         ]);
 
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
+
         $updateAccounting = FormPengajuanMaklun::find($PengajuanMaklunSelectedAccountingId);
         $updateAccounting->update([
             'harga_satuan_maklun' => currency_convert($this->harga_satuan_maklun),
@@ -111,7 +143,7 @@ class PengajuanNewMaklunSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateAccounting->instruction_id]);
         }
-
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
     }
@@ -123,6 +155,23 @@ class PengajuanNewMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateRAB = FormPengajuanMaklun::find($PengajuanMaklunSelectedRABId);
         $updateRAB->update([
@@ -144,7 +193,7 @@ class PengajuanNewMaklunSpkIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $updateRAB->instruction_id]);
         }
-
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-maklun-spk');
     }
@@ -156,6 +205,23 @@ class PengajuanNewMaklunSpkIndex extends Component
             'qty_purchase_maklun' => 'required',
             'total_harga_maklun' => 'required',
         ]);
+
+        if (isset($this->notes)) {
+            $this->validate([
+                'notes.*.tujuan' => 'required',
+                'notes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->notes as $input) {
+                $catatan = CatatanPengajuan::create([
+                    'tujuan' => $input['tujuan'],
+                    'catatan' => $input['catatan'],
+                    'kategori' => 'catatan',
+                    'user_id' => Auth()->user()->id,
+                    'form_pengajuan_maklun_id' => $this->dataMaklun->id,
+                ]);
+            }
+        }
 
         $updateComplete = FormPengajuanMaklun::find($PengajuanMaklunSelectedCompleteId);
         $updateComplete->update([
@@ -172,7 +238,7 @@ class PengajuanNewMaklunSpkIndex extends Component
             'title' => 'Maklun Instruksi Kerja',
             'message' => 'Data berhasil disimpan',
         ]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
         $this->dispatchBrowserEvent('close-modal-pengajuan-maklun-spk');
     }
@@ -198,6 +264,7 @@ class PengajuanNewMaklunSpkIndex extends Component
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
+
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
@@ -207,6 +274,10 @@ class PengajuanNewMaklunSpkIndex extends Component
         $this->harga_satuan_maklun = $this->dataMaklun->harga_satuan_maklun;
         $this->qty_purchase_maklun = $this->dataMaklun->qty_purchase_maklun;
         $this->total_harga_maklun = $this->dataMaklun->total_harga_maklun;
+
+        $this->catatan = CatatanPengajuan::where('form_pengajuan_maklun_id', $PengajuanMaklunId)
+            ->with('user')
+            ->get();
     }
 
     public function messageSent($arguments)

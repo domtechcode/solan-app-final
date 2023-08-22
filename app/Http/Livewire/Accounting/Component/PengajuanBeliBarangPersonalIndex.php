@@ -83,57 +83,6 @@ class PengajuanBeliBarangPersonalIndex extends Component
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function completeBarang($PengajuanBarangSelectedCompleteId)
-    {
-        $this->validate([
-            'harga_satuan' => 'required',
-            'qty_purchase' => 'required',
-            'stock' => 'required',
-            'total_harga' => 'required',
-        ]);
-
-        if (isset($this->notes)) {
-            $this->validate([
-                'notes.*.tujuan' => 'required',
-                'notes.*.catatan' => 'required',
-            ]);
-
-            $deleteCatatan = CatatanPengajuan::where('user_id', Auth()->user()->id)
-                ->where('form_pengajuan_barang_personal_id', $this->dataBarang->id)
-                ->delete();
-            foreach ($this->notes as $input) {
-                $catatan = CatatanPengajuan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'user_id' => Auth()->user()->id,
-                    'form_pengajuan_barang_personal_id' => $this->dataBarang->id,
-                ]);
-            }
-        }
-
-        $updateComplete = PengajuanBarangPersonal::find($PengajuanBarangSelectedCompleteId);
-        $updateComplete->update([
-            'harga_satuan' => currency_convert($this->harga_satuan),
-            'qty_purchase' => currency_convert($this->qty_purchase),
-            'total_harga' => currency_convert($this->total_harga),
-            'stock' => currency_convert($this->stock),
-            'status_id' => 16,
-            'state' => 'Purchase',
-            'previous_state' => 'Purchase',
-        ]);
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Stock Instruksi Kerja',
-            'message' => 'Data berhasil disimpan',
-        ]);
-
-        $this->emit('indexRender');
-        $this->reset();
-        $this->dispatchBrowserEvent('close-modal-pengajuan-beli-barang-personal');
-    }
-
     public function modalPengajuanBeliBarangPersonal($PengajuanBarangId)
     {
         $this->notes = [];
