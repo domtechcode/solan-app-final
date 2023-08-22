@@ -15,14 +15,14 @@ use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
 
-class PengajuanNewBarangPersonalIndex extends Component
+class PengajuanRejectBarangPersonalIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginatePengajuanNewBarangPersonal = 10;
-    public $searchPengajuanNewBarangPersonal = '';
+    public $paginatePengajuanRejectBarangPersonal = 10;
+    public $searchPengajuanRejectBarangPersonal = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -43,7 +43,7 @@ class PengajuanNewBarangPersonalIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchPengajuanNewBarangPersonal()
+    public function updatingSearchPengajuanRejectBarangPersonal()
     {
         $this->resetPage();
     }
@@ -61,25 +61,25 @@ class PengajuanNewBarangPersonalIndex extends Component
 
     public function mount()
     {
-        $this->searchPengajuanNewBarangPersonal = request()->query('search', $this->searchPengajuanNewBarangPersonal);
+        $this->searchPengajuanRejectBarangPersonal = request()->query('search', $this->searchPengajuanRejectBarangPersonal);
     }
 
     public function render()
     {
-        $dataPengajuanNewBarangPersonal = PengajuanBarangPersonal::where('status_id', 8)
+        $dataPengajuanRejectBarangPersonal = PengajuanBarangPersonal::where('status_id', 8)
             ->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanNewBarangPersonal . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanNewBarangPersonal . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanNewBarangPersonal . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanNewBarangPersonal . '%');
+                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanRejectBarangPersonal . '%')
+                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanRejectBarangPersonal . '%')
+                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanRejectBarangPersonal . '%')
+                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanRejectBarangPersonal . '%');
             })
             ->with(['status', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
-            ->paginate($this->paginatePengajuanNewBarangPersonal);
+            ->paginate($this->paginatePengajuanRejectBarangPersonal);
 
-        return view('livewire.purchase.component.pengajuan-new-barang-personal-index', ['pengajuanNewBarangPersonal' => $dataPengajuanNewBarangPersonal])
+        return view('livewire.purchase.component.pengajuan-reject-barang-personal-index', ['pengajuanRejectBarangPersonal' => $dataPengajuanRejectBarangPersonal])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -401,7 +401,7 @@ class PengajuanNewBarangPersonalIndex extends Component
         $this->total_harga = $this->total_harga;
     }
 
-    public function modalPengajuanNewBarangPersonal($PengajuanBarangId)
+    public function modalPengajuanRejectBarangPersonal($PengajuanBarangId)
     {
         $this->notes = [];
 

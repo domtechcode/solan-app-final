@@ -68,13 +68,12 @@ class GroupIndex extends Component
         $this->search = request()->query('search', $this->search);
 
         $sortedUniqueGroupIds = Instruction::whereNotNull('group_id')
-        ->whereHas('workStep', function ($query) {
-            $query->where('spk_status', '!=', 'Selesai');
-        })
             ->select('group_id')
             ->distinct()
             ->orderBy('group_id', 'asc')
             ->pluck('group_id');
+
+            dd($sortedUniqueGroupIds);
 
         $incrementedGroupIds = [];
 

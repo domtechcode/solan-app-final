@@ -20,8 +20,6 @@
                     <thead>
                         <tr>
                             <th class="border-bottom-0">No</th>
-                            <th class="border-bottom-0">No SPK</th>
-                            <th class="border-bottom-0">Langkah Kerja</th>
                             <th class="border-bottom-0">Request</th>
                             <th class="border-bottom-0">Nama Barang</th>
                             <th class="border-bottom-0">Qty</th>
@@ -36,12 +34,6 @@
                         @forelse ($pengajuanProcessBarangPersonal as $key => $itemPengajuanBarangSpk)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>
-                                    {{ $itemPengajuanBarangSpk->instruction->spk_number }}
-                                </td>
-                                <td>
-                                    {{ $itemPengajuanBarangSpk->workStepList->name }}
-                                </td>
                                 <td>
                                     {{ $itemPengajuanBarangSpk->user->name }}
                                 </td>
@@ -107,8 +99,8 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#modalPengajuanProcessBarangPersonal"
-                                            wire:click="modalPengajuanProcessBarangPersonal({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"
-                                            wire:key="modalPengajuanProcessBarangPersonal({{ $itemPengajuanBarangSpk->id }}, {{ $itemPengajuanBarangSpk->instruction_id }})"><i
+                                            wire:click="modalPengajuanProcessBarangPersonal({{ $itemPengajuanBarangSpk->id }})"
+                                            wire:key="modalPengajuanProcessBarangPersonal({{ $itemPengajuanBarangSpk->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -149,98 +141,7 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="border-bottom-0">NO. SPK</th>
-                                            <th class="border-bottom-0">PEMESAN</th>
-                                            <th class="border-bottom-0">NO. PO</th>
-                                            <th class="border-bottom-0">ORDER</th>
-                                            <th class="border-bottom-0">CODE STYLE</th>
-                                            <th class="border-bottom-0">TGL. PO MASUK</th>
-                                            <th class="border-bottom-0">TGL. DIKIRIM</th>
-                                            <th class="border-bottom-0">QTY SPK</th>
-                                            <th class="border-bottom-0">STOCK SPK</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if ($selectedInstruction)
-                                            <tr>
-                                                <td>{{ $selectedInstruction->spk_number ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->customer_name ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->customer_number ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->order_name ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->code_style ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->order_date ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            </tr>
-                                        @endif
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row -->
-                    <div class="row mb-3">
-                        <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">FOLLOW UP</th>
-                                            <th class="border-bottom-0">TYPE SPK</th>
-                                            <th class="border-bottom-0">PAJAK</th>
-                                            <th class="border-bottom-0">MASTER SPK</th>
-                                            <th class="border-bottom-0">SUB SPK</th>
-                                            <th class="border-bottom-0">GROUP</th>
-                                            <th class="border-bottom-0">NO. SPK LAYOUT</th>
-                                            <th class="border-bottom-0">NO. SPK SAMPLE</th>
-                                            <th class="border-bottom-0">TGL AWAL PERMINTAAN KIRIM</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if ($selectedInstruction)
-                                            <tr>
-                                                <td>{{ $selectedInstruction->follow_up ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->spk_type ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->taxes_type ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->spk_parent ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->sub_spk ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->group_id ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->spk_layout_number ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->spk_sample_number ?? '-' }}</td>
-                                                <td>{{ $selectedInstruction->shipping_date_first ?? '-' }}</td>
-                                            </tr>
-                                        @endif
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col d-flex justify-content-center">
-                            @if (isset($workStepHitungBahanNew))
-                                <div class="btn-list">
-                                    <a target="blank" class="btn btn-icon btn-sm btn-dark"
-                                        href="{{ route('accounting.indexWorkStep', ['instructionId' => $selectedInstruction->id, 'workStepId' => $workStepHitungBahanNew]) }}"><i
-                                            class="fe fe-link"></i> Cek Hasil Pekerjaan Hitung Bahan</a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-
-                    <!-- Row -->
-                    <div class="row mb-3">
-                        <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">LANGKAH KERJA</th>
+                                            <th class="border-bottom-0">REQUEST</th>
                                             <th class="border-bottom-0">NAMA BARANG</th>
                                             <th class="border-bottom-0">QTY PENGAJUAN</th>
                                             <th class="border-bottom-0">KETERANGAN</th>
@@ -249,7 +150,7 @@
                                     <tbody>
                                         @if (isset($dataBarang))
                                             <tr>
-                                                <td>{{ $dataBarang->workStepList->name }}</td>
+                                                <td>{{ $dataBarang->user->name }}</td>
                                                 <td>{{ $dataBarang->nama_barang }}</td>
                                                 <td>{{ $dataBarang->qty_barang }}</td>
                                                 <td>{{ $dataBarang->keterangan }}</td>

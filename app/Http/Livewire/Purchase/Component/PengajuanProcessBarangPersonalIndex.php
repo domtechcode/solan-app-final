@@ -73,7 +73,7 @@ class PengajuanProcessBarangPersonalIndex extends Component
                     ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanProcessBarangPersonal . '%')
                     ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanProcessBarangPersonal . '%');
             })
-            ->with(['status', 'workStepList', 'instruction', 'user'])
+            ->with(['status', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
             ->paginate($this->paginatePengajuanProcessBarangPersonal);
 
@@ -83,19 +83,10 @@ class PengajuanProcessBarangPersonalIndex extends Component
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalPengajuanProcessBarangPersonal($PengajuanBarangId, $instructionId)
+    public function modalPengajuanProcessBarangPersonal($PengajuanBarangId)
     {
         $this->notes = [];
-
-        $this->selectedInstruction = Instruction::find($instructionId);
-
-        $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 5)
-            ->first();
-        if (isset($dataworkStepHitungBahanNew)) {
-            $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
-        }
-
+        
         $this->dataBarang = PengajuanBarangPersonal::find($PengajuanBarangId);
 
         if (isset($this->dataBarang) && $this->dataBarang->harga_satuan != null) {
