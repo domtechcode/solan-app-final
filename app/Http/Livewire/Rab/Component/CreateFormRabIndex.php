@@ -67,7 +67,7 @@ class CreateFormRabIndex extends Component
                 }
                 $this->instructionItems[] = [
                     'spk_number' => $instruction->spk_number,
-                    'price' => $harga,
+                    'price' => currency_convert($harga),
                 ];
             }
         } else {
@@ -76,7 +76,7 @@ class CreateFormRabIndex extends Component
             foreach ($this->instructionData as $instruction) {
                 $this->instructionItems[] = [
                     'spk_number' => $instruction->spk_number,
-                    'price' => currency_idr($instruction->price),
+                    'price' => currency_convert($instruction->price),
                 ];
             }
         }
@@ -95,7 +95,7 @@ class CreateFormRabIndex extends Component
 
         $this->rabItems[] = [
             'jenisPengeluaran' => 'Bahan Baku',
-            'rab' => currency_idr($totalPrice),
+            'rab' => currency_convert($totalPrice),
         ];
 
         $plateTotal = KeteranganPlate::where('instruction_id', $instructionId)->get();
@@ -246,7 +246,7 @@ class CreateFormRabIndex extends Component
 
         foreach ($this->instructionItems as $dataInstructionItem) {
             $updatePrice = Instruction::where('spk_number', $dataInstructionItem['spk_number'])->update([
-                'price' => $dataInstructionItem['price'],
+                'price' => currency_convert($dataInstructionItem['price']),
             ]);
         }
 
@@ -257,7 +257,7 @@ class CreateFormRabIndex extends Component
                 'instruction_id' => $this->currentInstructionId,
                 'user_id' => Auth()->user()->id,
                 'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'],
-                'rab' => $datarabItem['rab'],
+                'rab' => currency_convert($datarabItem['rab']),
                 'count' => $currentInstructionData['count'],
             ]);
         }

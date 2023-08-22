@@ -46,10 +46,10 @@
                                                     </td>
                                                     <td>
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
+                                                            <input x-data x-mask:dynamic="$money($input, '.', ',', 4)"
+                                                                x-ref="input" type="text" placeholder="Price"
                                                                 wire:model="instructionItems.{{ $key }}.price"
-                                                                class="form-control" placeholder="Price"
-                                                                type-currency="IDR">
+                                                                class="form-control @error('instructionItems.' . $key . '.price') is-invalid @enderror">
                                                         </div>
                                                         @error('instructionItems.' . $key . '.price')
                                                             <p class="mt-2 text-sm text-danger">{{ $message }}</p>
@@ -109,10 +109,10 @@
                                                     </td>
                                                     <td>
                                                         <div class="form-group">
-                                                            <input type="text" autocomplete="off"
+                                                            <input x-data x-mask:dynamic="$money($input, '.', ',', 4)"
+                                                                x-ref="input" type="text" placeholder="RAB"
                                                                 wire:model="rabItems.{{ $index }}.rab"
-                                                                class="form-control" placeholder="RAB"
-                                                                type-currency="IDR">
+                                                                class="form-control @error('rabItems.' . $index . '.rab') is-invalid @enderror">
                                                             @error('rabItems.' . $index . '.rab')
                                                                 <p class="mt-2 text-sm text-danger">{{ $message }}</p>
                                                             @enderror
