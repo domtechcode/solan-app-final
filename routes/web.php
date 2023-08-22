@@ -97,7 +97,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'purchase', 'middleware' => ['role:Purchase']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Purchase\Index\IndexDashboard')->name('purchase.dashboard');
-
+        Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Purchase\Index\IndexWorkStep')->name('purchase.indexWorkStep');
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Purchase\Index\IndexPengajuanBarangPersonal')->name('purchase.pengajuanBarangPersonal');
     });
     

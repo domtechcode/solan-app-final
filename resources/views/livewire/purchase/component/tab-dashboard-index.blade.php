@@ -20,7 +20,7 @@
                             </li>
                             <li>
                                 <button href="#tab3" class="{{ $activeTab === 'tab3' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Pengajuan Maklun - {{ $dataCountPengajuanMaklun }}
+                                    data-bs-toggle="tab" wire:click="changeTab('tab3')" wire:key="tab3">Pengajuan Maklun - {{ $dataCountTotalPengajuanMaklun }}
                                 </button>
                             </li>
                         </ul>
@@ -265,14 +265,84 @@
                     <div class="tab-pane {{ $activeTab === 'tab3' ? 'active' : '' }}" id="tab3">
                         <!-- ROW-2-->
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
+                            <div class="col-xl-12 col-md-12">
+                                <div class="card card-headpills">
                                     <div class="card-status bg-info br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Pengajuan Maklun</h3>
+                                    <div class="card-header border-bottom">
+                                        <ul class="nav nav-pills card-header-pills">
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-dark mt-1 mb-1 me-3 {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun1' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanMaklun('tabPengajuanMaklun1')"
+                                                    wire:key="tabPengajuanMaklun1" href="#tabPengajuanMaklun1">New -
+                                                    {{ $dataCountNewPengajuanMaklun }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanMaklun('tabPengajuanMaklun2')"
+                                                    wire:key="tabPengajuanMaklun2" href="#tabPengajuanMaklun2">Process -
+                                                    {{ $dataCountProcessPengajuanMaklun }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun3' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanMaklun('tabPengajuanMaklun3')"
+                                                    wire:key="tabPengajuanMaklun3" href="#tabPengajuanMaklun3">Reject -
+                                                    {{ $dataCountRejectPengajuanMaklun }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun4' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanMaklun('tabPengajuanMaklun4')"
+                                                    wire:key="tabPengajuanMaklun4" href="#tabPengajuanMaklun4">Approved -
+                                                    {{ $dataCountApprovedPengajuanMaklun }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun5' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanMaklun('tabPengajuanMaklun5')"
+                                                    wire:key="tabPengajuanMaklun5" href="#tabPengajuanMaklun5">Complete -
+                                                    {{ $dataCountCompletePengajuanMaklun }}</button>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <div class="card-body">
-                                        @livewire('purchase.component.pengajuan-maklun-spk-index')
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun1' ? 'active' : '' }}"
+                                                id="tabPengajuanMaklun1">
+                                                <h5 class="card-title">New</h5>
+                                                @livewire('purchase.component.pengajuan-new-maklun-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun2' ? 'active' : '' }}"
+                                                id="tabPengajuanMaklun2">
+                                                <h5 class="card-title">Process</h5>
+                                                @livewire('purchase.component.pengajuan-process-maklun-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun3' ? 'active' : '' }}"
+                                                id="tabPengajuanMaklun3">
+                                                <h5 class="card-title">Reject</h5>
+                                                @livewire('purchase.component.pengajuan-reject-maklun-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun4' ? 'active' : '' }}"
+                                                id="tabPengajuanMaklun4">
+                                                <h5 class="card-title">Approved</h5>
+                                                @livewire('purchase.component.pengajuan-approved-maklun-spk-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabPengajuanMaklun === 'tabPengajuanMaklun5' ? 'active' : '' }}"
+                                                id="tabPengajuanMaklun5">
+                                                <h5 class="card-title">Complete</h5>
+                                                @livewire('purchase.component.pengajuan-complete-maklun-spk-index')
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
