@@ -1069,9 +1069,12 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'contoh')
             ->count();
         foreach ($this->filecontoh as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
             $nocontoh++;
-            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([
@@ -1087,9 +1090,12 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'arsip')
             ->count();
         foreach ($this->filearsip as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
             $noarsip++;
-            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-' . $noarsip . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([
@@ -1105,9 +1111,12 @@ class ReorderInstructionIndex extends Component
             ->where('type_file', 'accounting')
             ->count();
         foreach ($this->fileaccounting as $file) {
+            $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
+            $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
+
             $uniqueId = uniqid();
             $noarsipaccounting++;
-            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $file->getClientOriginalExtension();
+            $fileName = $this->spk_number . '-file-arsip-accounting-' . $noarsipaccounting . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([

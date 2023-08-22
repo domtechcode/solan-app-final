@@ -371,7 +371,7 @@ class UpdateInstructionIndex extends Component
 
             $uniqueId = uniqid();
             $nocontoh++;
-            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '.' . $extension;
+            $fileName = $this->spk_number . '-file-contoh-' . $nocontoh . '-' . $uniqueId . '-' . $uniqueId . '.' . $extension;
             Storage::putFileAs($folder, $file, $fileName);
 
             Files::create([
