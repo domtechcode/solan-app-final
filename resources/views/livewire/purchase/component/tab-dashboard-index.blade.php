@@ -232,28 +232,28 @@
                                             <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal4' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangPersonal4">
                                                 <h5 class="card-title">Stock</h5>
-                                                @livewire('purchase.component.pengajuan-stock-barang-spk-index')
+                                                @livewire('purchase.component.pengajuan-stock-barang-personal-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal5' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangPersonal5">
                                                 <h5 class="card-title">Approved</h5>
-                                                @livewire('purchase.component.pengajuan-approved-barang-spk-index')
+                                                @livewire('purchase.component.pengajuan-approved-barang-personal-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal6' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangPersonal6">
                                                 <h5 class="card-title">Beli</h5>
-                                                @livewire('purchase.component.pengajuan-beli-barang-spk-index')
+                                                @livewire('purchase.component.pengajuan-beli-barang-personal-index')
                                             </div>
                                         </div>
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal7' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangSpk7">
                                                 <h5 class="card-title">Complete</h5>
-                                                @livewire('purchase.component.pengajuan-complete-barang-spk-index')
+                                                @livewire('purchase.component.pengajuan-complete-barang-personal-index')
                                             </div>
                                         </div>
                                     </div>
