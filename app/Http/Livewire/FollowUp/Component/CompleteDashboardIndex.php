@@ -10,6 +10,7 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
 class CompleteDashboardIndex extends Component
 {
     use WithPagination;
+    use WithFileUploads;
+
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
@@ -44,7 +47,8 @@ class CompleteDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
-    public $filearsiprevisi;
+    public $filearsiprevisi = [];
+    public $filearsipacc = [];
     public $alasan_revisi;
     public $workSteps;
 
@@ -158,7 +162,9 @@ class CompleteDashboardIndex extends Component
             $norevisi = Files::where('instruction_id', $updateAlasanRevisi->id)
                 ->where('type_file', 'arsip')
                 ->count();
+
             foreach ($this->filearsiprevisi as $file) {
+
                 $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                 $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                 $fileName = $updateAlasanRevisi->id . '-file-arsip-sample-revisi-customer-' . $norevisi . '.' . $extension;
