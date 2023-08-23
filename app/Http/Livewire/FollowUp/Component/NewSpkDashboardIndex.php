@@ -64,25 +64,35 @@ class NewSpkDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
-            ->whereHas('instruction', function ($query) {
+            ->where(function ($query) {
                 $searchTerms = '%' . $this->searchNewSpk . '%';
                 $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                            ->orWhere('spk_number', 'like', $searchTerms)
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms);
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                    })
+                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_status', 'like', $searchTerms);
+                    })
+                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_job', 'like', $searchTerms);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->with(['status', 'job', 'workStepList', 'instruction' => function ($query) {
+                $query->orderBy('shipping_date', 'asc');
+            }])
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateNewSpk);
+
 
         return view('livewire.follow-up.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')

@@ -74,7 +74,7 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label class="custom-switch form-switch me-5">
-                                <input type="checkbox" wire:model.defer="sub_spk"
+                                <input type="checkbox" wire:model="sub_spk"
                                     class="custom-switch-input @error('sub_spk') is-invalid @enderror" value="sub"
                                     {{ $instructions->sub_spk == 'sub' ? 'checked' : '' }}>
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
@@ -86,7 +86,7 @@
                                 <div wire:ignore>
                                     <select class="form-control" id="spk_parent" data-clear data-pharaonic="select2"
                                         data-component-id="{{ $this->id }}" data-placeholder="Select SPK Parent"
-                                        wire:model.defer="spk_parent">
+                                        wire:model="spk_parent">
                                         <option value="">Select Parent</option>
                                         @foreach ($dataparents as $spkparent)
                                             <option value="{{ $spkparent->spk_number }}">[
@@ -108,10 +108,10 @@
                 <div class="form-group">
                     <label class="form-label">No. SPK <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="spk_number" id="spk_number"
+                        <input type="text" wire:model="spk_number" id="spk_number"
                             class="form-control @error('spk_number') is-invalid @enderror" placeholder="No SPK"
                             autocomplete="off">
-                        <button class="btn btn-primary" type="button" wire:click="generateCode">Generate</button>
+                        <button class="btn btn-primary" type="button" wire:click="generateCode" wire:key="generateCode">Generate</button>
                     </div>
                     @error('spk_number')
                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -125,7 +125,7 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label class="custom-switch form-switch me-5">
-                                <input type="checkbox" wire:model.defer="spk_fsc"
+                                <input type="checkbox" wire:model="spk_fsc"
                                     class="custom-switch-input @error('spk_fsc') is-invalid @enderror" value="fsc"
                                     {{ $instructions->spk_fsc == 'fsc' ? 'checked' : '' }}>
                                 <span class="custom-switch-indicator custom-switch-indicator-md"></span>
@@ -137,7 +137,7 @@
                         </div>
                         <div class="col-md-10">
                             <div class="form-group">
-                                <select wire:model.defer="fsc_type" class="form-control form-select"
+                                <select wire:model="fsc_type" class="form-control form-select"
                                     data-bs-placeholder="Pilih Tipe FSC">
                                     <option label="-- Pilih Tipe FSC --"></option>
                                     <option value="FS">FS</option>
@@ -157,10 +157,10 @@
                 <div class="form-group">
                     <label class="form-label">No. SPK FSC</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="spk_number_fsc" id="spk_number_fsc"
+                        <input type="text" wire:model="spk_number_fsc" id="spk_number_fsc"
                             class="form-control @error('spk_number_fsc') is-invalid @enderror"
                             placeholder="No SPK FSC" autocomplete="off">
-                        <button class="btn btn-primary" type="button" wire:click="generateCodeFsc">Generate
+                        <button class="btn btn-primary" type="button" wire:click="generateCodeFsc" wire:key="generateCodeFsc">Generate
                             FSC</button>
                     </div>
                     @error('spk_number_fsc')
@@ -174,7 +174,7 @@
                 <div class="form-group">
                     <label class="form-label">Tanggal Po Masuk <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="order_date" id="order_date"
+                        <input type="date" wire:model="order_date" id="order_date"
                             class="form-control @error('order_date') is-invalid @enderror">
                     </div>
                     @error('order_date')
@@ -187,7 +187,7 @@
                 <div class="form-group">
                     <label class="form-label">Tanggal Permintaan Kirim <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="shipping_date" id="shipping_date"
+                        <input type="date" wire:model="shipping_date" id="shipping_date"
                             class="form-control @error('shipping_date') is-invalid @enderror">
                     </div>
                     @error('shipping_date')
@@ -201,7 +201,7 @@
                     <label class="form-label">Tanggal Permintaan Kirim <span
                             class="text-red">*Perubahan</span></label>
                     <div class="input-group">
-                        <input type="date" wire:model.defer="shipping_date_change" id="shipping_date_change"
+                        <input type="date" wire:model="shipping_date_change" id="shipping_date_change"
                             class="form-control @error('shipping_date_change') is-invalid @enderror">
                     </div>
                     @error('shipping_date_change')
@@ -214,7 +214,7 @@
                 <div class="form-group">
                     <label class="form-label">No. Po Konsumen</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="customer_number" id="customer_number"
+                        <input type="text" wire:model="customer_number" id="customer_number"
                             class="form-control @error('customer_number') is-invalid @enderror" autocomplete="off"
                             placeholder="No. Po Konsumen" readonly>
                     </div>
@@ -228,7 +228,7 @@
                 <div class="form-group">
                     <label class="form-label">Nama Order <span class="text-red">*</span></label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="order_name" id="order_name"
+                        <input type="text" wire:model="order_name" id="order_name"
                             class="form-control @error('order_name') is-invalid @enderror" autocomplete="off"
                             placeholder="Nama Order">
                     </div>
@@ -242,7 +242,7 @@
                 <div class="form-group">
                     <label class="form-label">Code Style</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="code_style" id="code_style"
+                        <input type="text" wire:model="code_style" id="code_style"
                             class="form-control @error('code_style') is-invalid @enderror" autocomplete="off"
                             placeholder="Code Style">
                     </div>
@@ -307,7 +307,7 @@
                 <div class="form-group">
                     <label class="form-label">Follow Up</label>
                     <div class="input-group">
-                        <input type="text" wire:model.defer="follow_up" id="follow_up"
+                        <input type="text" wire:model="follow_up" id="follow_up"
                             class="form-control @error('follow_up') is-invalid @enderror" autocomplete="off"
                             placeholder="Follow Up">
                     </div>
@@ -337,7 +337,7 @@
                 <div class="form-group">
                     <label class="form-label">PPN</label>
                     <div class="input-group">
-                        <select wire:model.defer="type_ppn" id="type_ppn"
+                        <select wire:model="type_ppn" id="type_ppn"
                             class="form-control form-select @error('type_ppn') is-invalid @enderror"
                             data-bs-placeholder="Pilih Tipe PPN">
                             <option label="-- Pilih Tipe PPN --"></option>
@@ -357,7 +357,7 @@
                         <div class="form-group">
                             <label class="form-label">SPK Layout</label>
                             <select class="form-control" data-clear data-pharaonic="select2"
-                                data-component-id="{{ $this->id }}" wire:model.defer="spk_layout_number"
+                                data-component-id="{{ $this->id }}" wire:model="spk_layout_number"
                                 id="spk_layout_number" data-placeholder="Choose one">
                                 <option value="">Choose one</option>
                                 @foreach ($datalayouts as $datalayout)
@@ -376,7 +376,7 @@
                         <div class="form-group">
                             <label class="form-label">SPK Sample</label>
                             <select class="form-control" data-clear data-pharaonic="select2"
-                                data-component-id="{{ $this->id }}" wire:model.defer="spk_sample_number"
+                                data-component-id="{{ $this->id }}" wire:model="spk_sample_number"
                                 id="spk_sample_number" data-placeholder="Choose one">
                                 <option value="">Choose one</option>
                                 @foreach ($datasamples as $datasample)

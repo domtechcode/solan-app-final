@@ -104,7 +104,7 @@
                         <input type="text" wire:model="spk_number" id="spk_number"
                             class="form-control @error('spk_number') is-invalid @enderror" placeholder="No SPK"
                             readonly>
-                        <button class="btn btn-primary" type="button" wire:click="generateCode">Generate</button>
+                        <button class="btn btn-primary" type="button" wire:click="generateCode" wire:key="generateCode">Generate</button>
                     </div>
                     @error('spk_number')
                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -151,7 +151,7 @@
                         <input type="text" wire:model="spk_number_fsc" id="spk_number_fsc"
                             class="form-control @error('spk_number_fsc') is-invalid @enderror"
                             placeholder="No SPK FSC" readonly>
-                        <button class="btn btn-primary" type="button" wire:click="generateCodeFsc">Generate
+                        <button class="btn btn-primary" type="button" wire:click="generateCodeFsc" wire:key="generateCodeFsc">Generate
                             FSC</button>
                     </div>
                     @error('spk_number_fsc')
@@ -482,16 +482,3 @@
         <button type="submit" class="btn btn-primary mt-4 mb-0">Submit</button>
     </form>
 </div>
-
-@push('scripts')
-    <script>
-        document.addEventListener('livewire:load', function() {
-            Livewire.on('generated', function(data) {
-                document.getElementById('spk_number').value = data.spk_number;
-            });
-            Livewire.on('generatedfsc', function(data) {
-                document.getElementById('spk_number_fsc').value = data.spk_number_fsc;
-            });
-        });
-    </script>
-@endpush
