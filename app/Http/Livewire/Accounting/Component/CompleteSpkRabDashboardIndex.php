@@ -16,8 +16,8 @@ class CompleteSpkRabDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginateCompleteSpkRab = 10;
+    public $searchCompleteSpkRab = '';
     public $data;
 
     public $selectedInstruction;
@@ -43,9 +43,14 @@ class CompleteSpkRabDashboardIndex extends Component
     public $dataRab = [];
     public $catatanRab;
 
-    public $workStepHitungBahan;
+    public $workStepHitungBahanNew;
 
     protected $listeners = ['indexRender' => '$refresh'];
+
+    public function updatingSearchCompleteSpkRab()
+    {
+        $this->resetPage();
+    }
 
     public function renderIndex()
     {
@@ -54,7 +59,7 @@ class CompleteSpkRabDashboardIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchCompleteSpkRab = request()->query('search', $this->searchCompleteSpkRab);
     }
 
     public function sumGroup($groupId)
@@ -67,13 +72,11 @@ class CompleteSpkRabDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 3)
-            ->where('state_task', 'Complete Accounting')
-            ->where('status_task', 'Complete')
-            ->where('user_id', '!=', null)
+        $dataCompleteSpkRab = WorkStep::where('work_step_list_id', 3)
+            ->where('state_task', 'Complete')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+                $searchTerms = '%' . $this->searchCompleteSpkRab . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -89,20 +92,24 @@ class CompleteSpkRabDashboardIndex extends Component
                         $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
+            ->whereHas('instruction.formRab', function ($query) {
+                $query->where('real', '!=', null);
+            })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginateCompleteSpkRab);
 
-        return view('livewire.accounting.component.complete-spk-rab-dashboard-index', ['instructions' => $data])
+        return view('livewire.accounting.component.complete-spk-rab-dashboard-index', ['instructionsCompleteSpkRab' => $dataCompleteSpkRab])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsCompleteSpk($instructionId)
+    public function modalInstructionDetailsCompleteSpkRab($instructionId)
     {
+        $this->reset();
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
 
@@ -111,21 +118,13 @@ class CompleteSpkRabDashboardIndex extends Component
                 ->where('work_step_list_id', 5)
                 ->first();
 
-            $rabLast = FormRab::where('instruction_id', $instructionId)
-                ->orderBy('updated_count', 'desc')
-                ->first();
-
             if (isset($dataworkStepHitungBahanNew)) {
                 $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
             }
 
-            if (isset($rabLast)) {
-                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-                    ->where('updated_count', $rabLast->updated_count)
-                    ->get();
-            } else {
-                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)->get();
-            }
+            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                ->where('count', $this->selectedInstruction->count)
+                ->get();
         } else {
             $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)
                 ->where('group_priority', 'parent')
@@ -135,20 +134,12 @@ class CompleteSpkRabDashboardIndex extends Component
                 ->where('work_step_list_id', 5)
                 ->first();
 
-            $rabLast = FormRab::where('instruction_id', $instructionId)
-                ->orderBy('updated_count', 'desc')
-                ->first();
+            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+                ->where('count', $parentSpk->count)
+                ->get();
 
             if (isset($dataworkStepHitungBahanNew)) {
                 $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
-            }
-
-            if (isset($rabLast)) {
-                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
-                    ->where('updated_count', $rabLast->updated_count)
-                    ->get();
-            } else {
-                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)->get();
             }
         }
 
@@ -171,21 +162,13 @@ class CompleteSpkRabDashboardIndex extends Component
             ->where('type_file', 'sample')
             ->get();
 
-        $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 5)
-            ->first();
-
-        if (isset($dataworkStepHitungBahan)) {
-            $this->workStepHitungBahan = $dataworkStepHitungBahan->id;
-        }
-
         if (isset($dataInstructionRab)) {
             foreach ($dataInstructionRab as $item) {
                 $datarab = [
                     'id' => $item['id'],
                     'jenis_pengeluaran' => $item['jenis_pengeluaran'],
-                    'rab' => currency_convert_idr($item['rab']),
-                    'real' => currency_convert($item['real']),
+                    'rab' => $item['rab'],
+                    'real' => $item['real'],
                 ];
 
                 $this->dataRab[] = $datarab;
@@ -199,7 +182,7 @@ class CompleteSpkRabDashboardIndex extends Component
             ];
         }
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-complete-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-complete-spk-rab');
     }
 
     public function editRab()
@@ -216,8 +199,8 @@ class CompleteSpkRabDashboardIndex extends Component
                 $updateRab = FormRab::find($data['id']);
                 $updateRab->update([
                     'jenis_pengeluaran' => $data['jenis_pengeluaran'],
-                    'rab' => currency_convert($data['rab']),
-                    'real' => currency_convert($data['real']),
+                    'rab' => $data['rab'],
+                    'real' => $data['real'],
                 ]);
             }
         }
@@ -225,7 +208,7 @@ class CompleteSpkRabDashboardIndex extends Component
         $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('work_step_list_id', 3)
             ->update([
-                'state_task' => 'Complete Accounting',
+                'state_task' => 'Complete',
             ]);
 
         $this->dataRab = [];
@@ -236,12 +219,12 @@ class CompleteSpkRabDashboardIndex extends Component
             'message' => 'Berhasil menyimpan data RAB',
         ]);
 
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-complete-spk');
+        $this->dispatchBrowserEvent('close-modal-complete-spk-rab');
     }
 
-    public function modalInstructionDetailsGroupCompleteSpk($groupId)
+    public function modalInstructionDetailsGroupCompleteSpkRab($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')
@@ -274,7 +257,5 @@ class CompleteSpkRabDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-complete-spk');
     }
 }

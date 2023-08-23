@@ -39,11 +39,6 @@
                                     data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Last Data Training Program
                                 </button>
                             </li>
-                            <li>
-                                <button href="#tab7" class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">Complete RAB
-                                </button>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -56,14 +51,42 @@
                     <div class="tab-pane {{ $activeTab === 'tab1' ? 'active' : '' }}" id="tab1">
                         <!-- ROW-2-->
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-status bg-dark br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">New SPK RAB</h3>
+                            <div class="col-xl-12 col-md-12">
+                                <div class="card card-headpills">
+                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                                    <div class="card-header border-bottom">
+                                        <ul class="nav nav-pills card-header-pills">
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-dark mt-1 mb-1 me-3 {{ $activeTabRabSpk === 'tabRabSpk1' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabRabSpk('tabRabSpk1')"
+                                                    wire:key="tabRabSpk1" href="#tabRabSpk1">New -
+                                                    {{ $dataCountNewSpkRab }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-success mt-1 mb-1 me-3 {{ $activeTabRabSpk === 'tabRabSpk2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabRabSpk('tabRabSpk2')"
+                                                    wire:key="tabRabSpk2" href="#tabRabSpk2">Complete -
+                                                    {{ $dataCountCompleteSpkRab }}</button>
+                                            </li>
+                                        </ul>
                                     </div>
                                     <div class="card-body">
-                                        @livewire('accounting.component.new-spk-rab-dashboard-index')
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabRabSpk === 'tabRabSpk1' ? 'active' : '' }}"
+                                                id="tabRabSpk1">
+                                                <h5 class="card-title">New</h5>
+                                                @livewire('accounting.component.new-spk-rab-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabRabSpk === 'tabRabSpk2' ? 'active' : '' }}"
+                                                id="tabRabSpk2">
+                                                <h5 class="card-title">Complete</h5>
+                                                @livewire('accounting.component.complete-spk-rab-dashboard-index')
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -421,24 +444,6 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
-                        <!-- ROW-2-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
-                                    <div class="card-header">
-                                        <h3 class="card-title">Last Data Training Program</h3>
-                                    </div>
-                                    <div class="card-body">
-                                        @livewire('accounting.component.complete-spk-rab-dashboard-index')
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- ROW-2 END -->
-                    </div>
-
                 </div>
             </div>
             <!--End Row-->

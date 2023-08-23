@@ -2,7 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateNewSpkRab">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +10,7 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="search">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchNewSpkRab">
         </div>
     </div>
     <div class="row mt-3">
@@ -34,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($instructions as $key => $dataInstruction)
+                        @forelse ($instructionsNewSpkRab as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -46,9 +46,9 @@
 
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#detailInstructionModalGroupNewSpk"
-                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})"
-                                            wire:key="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            data-bs-target="#detailInstructionModalGroupNewSpkRab"
+                                            wire:click="modalInstructionDetailsGroupNewSpkRab({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupNewSpkRab({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -133,9 +133,9 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#detailInstructionModalNewSpk"
-                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
-                                            wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
+                                            data-bs-target="#detailInstructionModalNewSpkRab"
+                                            wire:click="modalInstructionDetailsNewSpkRab({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsNewSpkRab({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -154,12 +154,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructions->links() }}
+            {{ $instructionsNewSpkRab->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalNewSpkRab" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -530,7 +530,8 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpk" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupNewSpkRab" tabindex="-1"
+        role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1117,8 +1118,8 @@
 
 @push('scripts')
     <script>
-        window.addEventListener('close-modal-new-spk', event => {
-            $('#detailInstructionModalNewSpk').modal('hide');
+        window.addEventListener('close-modal-new-spk-rab', event => {
+            $('#detailInstructionModalNewSpkRab').modal('hide');
         });
     </script>
 @endpush

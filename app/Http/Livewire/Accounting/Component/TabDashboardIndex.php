@@ -76,6 +76,13 @@ class TabDashboardIndex extends Component
         $this->activeTabPengajuanMaklun = $tabPengajuanMaklun;
     }
 
+    public $activeTabRabSpk = 'tabRabSpk1';
+
+    public function changeTabRabSpk($tabRabSpk)
+    {
+        $this->activeTabRabSpk = $tabRabSpk;
+    }
+
     public function mount()
     {
         $this->dataCountNewSpkRab = WorkStep::where('work_step_list_id', 3)
@@ -84,10 +91,17 @@ class TabDashboardIndex extends Component
             ->whereHas('instruction.formRab', function ($query) {
                 $query->where('real', null);
             })
-
             ->count();
 
-        $this->dataCountTotalSpkRab = $this->dataCountNewSpkRab;
+        $this->dataCountCompleteSpkRab = WorkStep::where('work_step_list_id', 3)
+            ->where('state_task', 'Complete')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
+            ->whereHas('instruction.formRab', function ($query) {
+                $query->where('real', '!=', null);
+            })
+            ->count();
+
+        $this->dataCountTotalSpkRab = $this->dataCountNewSpkRab + $this->dataCountCompleteSpkRab;
 
         $this->dataCountNewPengajuanBarangSpk = PengajuanBarangSpk::where('status_id', 10)
             ->where('state', 'Accounting')
@@ -98,7 +112,7 @@ class TabDashboardIndex extends Component
         $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [17])
             ->where('state', 'Accounting')
             ->count();
-            
+
         $this->dataCountApprovedPengajuanBarangSpk = PengajuanBarangSpk::whereIn('status_id', [14])
             ->where('state', 'Accounting')
             ->count();
@@ -121,13 +135,12 @@ class TabDashboardIndex extends Component
             ->where('state', 'Accounting')
             ->count();
 
-        $this->dataCountProcessPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [11])
-            ->count();
+        $this->dataCountProcessPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [11])->count();
 
         $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [17])
             ->where('state', 'Accounting')
             ->count();
-            
+
         $this->dataCountApprovedPengajuanBarangPersonal = PengajuanBarangPersonal::whereIn('status_id', [14])
             ->where('state', 'Accounting')
             ->count();
@@ -150,8 +163,7 @@ class TabDashboardIndex extends Component
             ->where('pekerjaan', 'Accounting')
             ->count();
 
-        $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan RAB'])
-            ->count();
+        $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan RAB'])->count();
 
         $this->dataCountRejectPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Reject RAB'])
             ->where('pekerjaan', 'Accounting')

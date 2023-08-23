@@ -16,8 +16,8 @@ class NewSpkRabDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginateNewSpkRab = 10;
+    public $searchNewSpkRab = '';
     public $data;
 
     public $selectedInstruction;
@@ -46,6 +46,11 @@ class NewSpkRabDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchNewSpkRab()
+    {
+        $this->resetPage();
+    }
+
     public function renderIndex()
     {
         $this->reset();
@@ -53,7 +58,7 @@ class NewSpkRabDashboardIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchNewSpkRab = request()->query('search', $this->searchNewSpkRab);
     }
 
     public function sumGroup($groupId)
@@ -66,12 +71,11 @@ class NewSpkRabDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('work_step_list_id', 3)
+        $dataNewSpkRab = WorkStep::where('work_step_list_id', 3)
             ->where('state_task', 'Complete')
-            ->where('user_id', '!=', null)
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+                $searchTerms = '%' . $this->searchNewSpkRab . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -94,9 +98,9 @@ class NewSpkRabDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.created_at', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginateNewSpkRab);
 
-        return view('livewire.accounting.component.new-spk-rab-dashboard-index', ['instructions' => $data])
+        return view('livewire.accounting.component.new-spk-rab-dashboard-index', ['instructionsNewSpkRab' => $dataNewSpkRab])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -122,12 +126,6 @@ class NewSpkRabDashboardIndex extends Component
             }
         }
 
-        $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', 3)
-            ->update([
-                'state_task' => 'Complete Accounting',
-            ]);
-
         $this->dataRab = [];
 
         $this->emit('flashMessage', [
@@ -136,13 +134,14 @@ class NewSpkRabDashboardIndex extends Component
             'message' => 'Berhasil menyimpan data RAB',
         ]);
 
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->reset();
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-new-spk-rab');
     }
 
-    public function modalInstructionDetailsNewSpk($instructionId)
+    public function modalInstructionDetailsNewSpkRab($instructionId)
     {
+        $this->reset();
         $this->dataRab = [];
         $this->selectedInstruction = Instruction::find($instructionId);
 
@@ -151,26 +150,13 @@ class NewSpkRabDashboardIndex extends Component
                 ->where('work_step_list_id', 5)
                 ->first();
 
-            $rabLast = FormRab::where('instruction_id', $instructionId)
-                ->where('real', null)
-                ->orderBy('updated_count', 'desc')
-                ->first();
-
             if (isset($dataworkStepHitungBahanNew)) {
                 $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
             }
 
-            if (isset($rabLast)) {
-                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-                    ->where('count', $rabLast->count)
-                    ->where('updated_count', $rabLast->updated_count)
-                    ->get();
-            } else {
-                $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
-                    ->where('count', $rabLast->count)
-                    ->where('updated_count', $rabLast->updated_count)
-                    ->get();
-            }
+            $dataInstructionRab = FormRab::where('instruction_id', $instructionId)
+                ->where('count', $this->selectedInstruction->count)
+                ->get();
         } else {
             $parentSpk = Instruction::where('group_id', $this->selectedInstruction->group_id)
                 ->where('group_priority', 'parent')
@@ -180,20 +166,12 @@ class NewSpkRabDashboardIndex extends Component
                 ->where('work_step_list_id', 5)
                 ->first();
 
-            $rabLast = FormRab::where('instruction_id', $instructionId)
-                ->orderBy('updated_count', 'desc')
-                ->first();
+            $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
+                ->where('count', $parentSpk->count)
+                ->get();
 
             if (isset($dataworkStepHitungBahanNew)) {
                 $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
-            }
-
-            if (isset($rabLast)) {
-                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)
-                    ->where('updated_count', $rabLast->updated_count)
-                    ->get();
-            } else {
-                $dataInstructionRab = FormRab::where('instruction_id', $parentSpk->id)->get();
             }
         }
 
@@ -236,10 +214,10 @@ class NewSpkRabDashboardIndex extends Component
             ];
         }
 
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
+        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk-rab');
     }
 
-    public function modalInstructionDetailsGroupNewSpk($groupId)
+    public function modalInstructionDetailsGroupNewSpkRab($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')
@@ -272,7 +250,5 @@ class NewSpkRabDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }
 }
