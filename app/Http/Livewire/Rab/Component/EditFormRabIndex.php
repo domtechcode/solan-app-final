@@ -60,9 +60,9 @@ class EditFormRabIndex extends Component
         if (!$cekGroup) {
             $this->instructionData = Instruction::where('id', $instructionId)->get();
             foreach ($this->instructionData as $instruction) {
-                if($instruction->price == '0'){
+                if ($instruction->price == '0') {
                     $harga = null;
-                }else{
+                } else {
                     $harga = $instruction->price;
                 }
                 $this->instructionItems[] = [
@@ -90,14 +90,18 @@ class EditFormRabIndex extends Component
         $totalPrice = 0;
 
         $dataInstruction = Instruction::find($instructionId);
-        $formRab = FormRab::where('instruction_id', $instructionId)->where('count', $dataInstruction->count)->first();
+        $formRab = FormRab::where('instruction_id', $instructionId)
+            ->where('count', $dataInstruction->count)
+            ->first();
 
         $newHargaBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('harga_bahan');
         $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
         if ($formRab) {
-            $formRab = FormRab::where('instruction_id', $instructionId)->where('count', $dataInstruction->count)->get();
+            $formRab = FormRab::where('instruction_id', $instructionId)
+                ->where('count', $dataInstruction->count)
+                ->get();
             foreach ($formRab as $dataRab) {
                 if ($dataRab['jenis_pengeluaran'] == 'Bahan Baku') {
                     $rab = [
@@ -277,8 +281,12 @@ class EditFormRabIndex extends Component
         }
 
         $currentInstructionData = Instruction::find($this->currentInstructionId);
-        $lastRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->get();
-        $deleteRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->delete();
+        $lastRab = FormRab::where('instruction_id', $currentInstructionData->id)
+            ->where('count', $currentInstructionData->count)
+            ->get();
+        $deleteRab = FormRab::where('instruction_id', $currentInstructionData->id)
+            ->where('count', $currentInstructionData->count)
+            ->delete();
 
         foreach ($this->rabItems as $datarabItem) {
             $createRab = FormRab::create([
@@ -290,10 +298,10 @@ class EditFormRabIndex extends Component
             ]);
         }
 
-        if(isset($lastRab)){
+        if (isset($lastRab)) {
             foreach ($lastRab as $lastdata) {
-                $update = FormRab::find($lastdata->id);
-                $update->update([
+                $update = FormRab::where('instruction_id', $currentInstructionData->id)
+                ->where('count', $currentInstructionData->count)->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)->update([
                     'real' => $lastdata->real,
                 ]);
             }
@@ -315,7 +323,7 @@ class EditFormRabIndex extends Component
             ->where('work_step_list_id', 3)
             ->first();
 
-        if ($updateTask->status_task == 'Reject Requirements') {
+        if ($updateTask->reject_from_id != null) {
             if ($updateTask) {
                 $updateTask->update([
                     'state_task' => 'Complete',
@@ -457,7 +465,7 @@ class EditFormRabIndex extends Component
         $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
             ->where('work_step_list_id', 3)
             ->first();
-            
+
         if ($currentWorkStep) {
             $currentWorkStep->update([
                 'state_task' => 'Running',
@@ -472,17 +480,15 @@ class EditFormRabIndex extends Component
 
         $updateReject->update([
             'state_task' => 'Running',
-            'status_task' => 'Reject Requirements',
+            'status_task' => 'Reject',
+            'reject_from_id' => $currentWorkStep->id,
+            'reject_from_status' => $currentWorkStep->status_id,
+            'reject_from_job' => $currentWorkStep->work_step_list_id,
             'count_reject' => $updateReject->count_reject + 1,
-            'status_id' => 22,
-            'job_id' => 5,
-            'reject_from_id' => $currentWorkStep->reject_from_id,
-            'reject_from_status' => $currentWorkStep->reject_from_status,
-            'reject_from_job' => $currentWorkStep->reject_from_job,
         ]);
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-            'status_id' => 22,
+            'status_id' => 3,
             'job_id' => 5,
         ]);
 

@@ -264,10 +264,10 @@ class CreateFormRabIndex extends Component
             ]);
         }
 
-        if(isset($lastRab)){
+        if (isset($lastRab)) {
             foreach ($lastRab as $lastdata) {
-                $update = FormRab::find($lastdata->id);
-                $update->update([
+                $update = FormRab::where('instruction_id', $currentInstructionData->id)
+                ->where('count', $currentInstructionData->count)->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)->update([
                     'real' => $lastdata->real,
                 ]);
             }
