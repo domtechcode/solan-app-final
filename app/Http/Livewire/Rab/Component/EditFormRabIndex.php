@@ -89,14 +89,15 @@ class EditFormRabIndex extends Component
         $priceBahanBaku = LayoutBahan::where('instruction_id', $instructionId)->get();
         $totalPrice = 0;
 
-        $formRab = FormRab::where('instruction_id', $instructionId)->first();
+        $dataInstruction = Instruction::find($instructionId);
+        $formRab = FormRab::where('instruction_id', $instructionId)->where('count', $dataInstruction->count)->first();
 
         $newHargaBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('harga_bahan');
         $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
         $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
 
         if ($formRab) {
-            $formRab = FormRab::where('instruction_id', $instructionId)->get();
+            $formRab = FormRab::where('instruction_id', $instructionId)->where('count', $dataInstruction->count)->get();
             foreach ($formRab as $dataRab) {
                 if ($dataRab['jenis_pengeluaran'] == 'Bahan Baku') {
                     $rab = [
@@ -276,9 +277,8 @@ class EditFormRabIndex extends Component
         }
 
         $currentInstructionData = Instruction::find($this->currentInstructionId);
-        $dataRabCount = FormRab::where('instruction_id', $currentInstructionData->id)
-            ->whereNotNull('updated_count')
-            ->count();
+        $lastRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->get();
+        $deleteRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->delete();
 
         foreach ($this->rabItems as $datarabItem) {
             $createRab = FormRab::create([
@@ -287,8 +287,16 @@ class EditFormRabIndex extends Component
                 'jenis_pengeluaran' => $datarabItem['jenisPengeluaran'],
                 'rab' => currency_convert($datarabItem['rab']),
                 'count' => $currentInstructionData['count'],
-                'updated_count' => $dataRabCount + 1,
             ]);
+        }
+
+        if(isset($lastRab)){
+            foreach ($lastRab as $lastdata) {
+                $update = FormRab::find($lastdata->id);
+                $update->update([
+                    'real' => $lastdata->real,
+                ]);
+            }
         }
 
         if ($this->notes) {
@@ -449,6 +457,7 @@ class EditFormRabIndex extends Component
         $currentWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
             ->where('work_step_list_id', 3)
             ->first();
+            
         if ($currentWorkStep) {
             $currentWorkStep->update([
                 'state_task' => 'Running',

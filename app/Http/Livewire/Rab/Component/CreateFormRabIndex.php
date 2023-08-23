@@ -251,7 +251,9 @@ class CreateFormRabIndex extends Component
         }
 
         $currentInstructionData = Instruction::find($this->currentInstructionId);
-
+        $lastRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->get();
+        $deleteRab = FormRab::where('instruction_id', $currentInstructionData->id)->where('count', $currentInstructionData->count)->delete();
+        
         foreach ($this->rabItems as $datarabItem) {
             $createRab = FormRab::create([
                 'instruction_id' => $this->currentInstructionId,
@@ -260,6 +262,15 @@ class CreateFormRabIndex extends Component
                 'rab' => currency_convert($datarabItem['rab']),
                 'count' => $currentInstructionData['count'],
             ]);
+        }
+
+        if(isset($lastRab)){
+            foreach ($lastRab as $lastdata) {
+                $update = FormRab::find($lastdata->id);
+                $update->update([
+                    'real' => $lastdata->real,
+                ]);
+            }
         }
 
         if ($this->notes) {

@@ -191,7 +191,7 @@ class CreateInstructionIndex extends Component
             ->where('spk_type', $this->spk_type)
             ->first();
 
-        if ($this->spk_type == 'sample' || $this->spk_type == 'layout') {
+        if ($this->spk_type == 'sample' || $this->spk_type == 'layout' || $this->spk_type == 'production') {
             $countSample = 1;
         } else {
             $countSample = null;

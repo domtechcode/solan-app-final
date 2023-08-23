@@ -233,6 +233,12 @@ class CreateAccInstructionIndex extends Component
 
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
 
+        if ($this->spk_type == 'sample' || $this->spk_type == 'layout' || $this->spk_type == 'production') {
+            $countSample = 1;
+        } else {
+            $countSample = null;
+        }
+
         if ($dataInstruction != null) {
             $instruction = Instruction::create([
                 'spk_type' => $this->spk_type,
