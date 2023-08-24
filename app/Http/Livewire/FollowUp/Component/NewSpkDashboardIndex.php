@@ -76,6 +76,7 @@ class NewSpkDashboardIndex extends Component
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
                             ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
                     ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
