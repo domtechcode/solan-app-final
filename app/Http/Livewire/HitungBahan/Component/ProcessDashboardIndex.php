@@ -78,21 +78,26 @@ class ProcessDashboardIndex extends Component
                         $subQuery->whereIn('status_id', [2, 3])->where('user_id', Auth()->user()->id);
                     });
             })
-            ->whereHas('instruction', function ($query) {
+            ->where(function ($query) {
                 $searchTerms = '%' . $this->searchProcess . '%';
                 $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                            ->orWhere('spk_number', 'like', $searchTerms)
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms);
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
-                    ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_status', 'like', $searchTerms);
+                    })
+                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_job', 'like', $searchTerms);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
