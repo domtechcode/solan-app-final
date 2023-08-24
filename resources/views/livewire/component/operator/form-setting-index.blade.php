@@ -308,7 +308,7 @@
                                     </div>
                                 @endif
                             </div>
-                            @if (isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
+                            @if (isset($stateWorkStepPlate))
                                 <div class="row mt-3">
                                     <div class="col-lg-12">
                                         <div class="text-wrap">
@@ -437,7 +437,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
+                            @if (isset($stateWorkStepPlate))
                                 <div class="row mt-3">
                                     <div class="col-lg-12">
                                         <div class="text-wrap">
