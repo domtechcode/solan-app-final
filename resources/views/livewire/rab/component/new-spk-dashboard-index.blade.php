@@ -2,7 +2,6 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            {{-- <label class="form-label">Customize Select</label> --}}
             <select id="" name="" class="form-control form-select w-auto" wire:model="paginateNewSpk">
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -27,6 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
+                            <th class="border-bottom-0">Ukuran Barang</th>
                             <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
@@ -60,6 +60,7 @@
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
+                                <td>{{ $dataInstruction->instruction->ukuran_barang }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
                                 @if ($dataInstruction->instruction->group_id)
                                     <td>

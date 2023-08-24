@@ -63,18 +63,27 @@ class AllDashboardIndex extends Component
     {
         $dataAll = WorkStep::where('work_step_list_id', 1)
             ->whereNotIn('spk_status', ['Training Program'])
-            ->whereHas('instruction', function ($query) {
+            ->where(function ($query) {
                 $searchTerms = '%' . $this->searchAll . '%';
-                $query->where(function ($subQuery) use ($searchTerms) {
-                    $subQuery
-                        ->orWhere('spk_number', 'like', $searchTerms)
-                        ->orWhere('spk_type', 'like', $searchTerms)
-                        ->orWhere('customer_name', 'like', $searchTerms)
-                        ->orWhere('order_name', 'like', $searchTerms)
-                        ->orWhere('customer_number', 'like', $searchTerms)
-                        ->orWhere('code_style', 'like', $searchTerms)
-                        ->orWhere('shipping_date', 'like', $searchTerms);
-                });
+                $query
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                    })
+                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_status', 'like', $searchTerms);
+                    })
+                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
+                        $statusQuery->where('desc_job', 'like', $searchTerms);
+                    });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
