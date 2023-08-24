@@ -89,7 +89,7 @@ class CompleteSpkRabDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        $subQuery->whereIn('spk_type', ['production', 'sample']);
                     });
             })
             ->whereHas('instruction.formRab', function ($query) {
@@ -199,17 +199,11 @@ class CompleteSpkRabDashboardIndex extends Component
                 $updateRab = FormRab::find($data['id']);
                 $updateRab->update([
                     'jenis_pengeluaran' => $data['jenis_pengeluaran'],
-                    'rab' => $data['rab'],
-                    'real' => $data['real'],
+                    'rab' => currency_convert($data['rab']),
+                    'real' => currency_convert($data['real']),
                 ]);
             }
         }
-
-        $updateState = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', 3)
-            ->update([
-                'state_task' => 'Complete',
-            ]);
 
         $this->dataRab = [];
 
