@@ -803,7 +803,7 @@ class DijadwalkanDashboardIndex extends Component
         $this->keteranganReject = null;
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
     public function ajukanBarang()

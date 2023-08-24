@@ -188,7 +188,7 @@ class CreateInstructionIndex extends Component
 
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)
             ->whereNotNull('customer_number')
-            ->where('sub_spk', null)
+            ->where('sub_spk', '!=', $this->sub_spk)
             ->where('spk_type', $this->spk_type)
             ->first();
 

@@ -680,6 +680,7 @@
                                                     wire:model="tujuanReject">
                                                     <option label="Pilih Tujuan Reject"></option>
                                                     <option value="1">Follow Up</option>
+                                                    <option value="4">Cari Stock</option>
                                                     <option value="5">Hitung Bahan</option>
                                                 </select>
                                             </div>

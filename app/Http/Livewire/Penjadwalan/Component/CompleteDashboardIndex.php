@@ -803,7 +803,7 @@ class CompleteDashboardIndex extends Component
         $this->keteranganReject = null;
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function ajukanBarang()
@@ -846,7 +846,7 @@ class CompleteDashboardIndex extends Component
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang SPK', 'instruction_id' => $this->selectedInstruction->id]);
         }
 
-        $this->dispatchBrowserEvent('close-modal-new-spk');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function messageSent($arguments)
