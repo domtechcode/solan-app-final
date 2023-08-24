@@ -16,7 +16,7 @@
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab3"
+                                <button href="#tab2"
                                     class="{{ $activeTab === 'tab2' ? 'active' : '' }} btn btn-primary mt-1 mb-1 me-3"
                                     data-bs-toggle="tab" wire:click="changeTab('tab2')" wire:key="tab2">Reject -
                                     {{ $dataCountRejectSpk }}

@@ -26,6 +26,7 @@
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
                             <th class="border-bottom-0">Style</th>
+                            <th class="border-bottom-0">Ukuran Barang</th>
                             <th class="border-bottom-0">TGL Kirim</th>
                             <th class="border-bottom-0">Total Qty</th>
                             <th class="border-bottom-0">Status</th>
@@ -56,6 +57,7 @@
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
+                                <td>{{ $dataInstruction->instruction->ukuran_barang }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
                                 <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
                                 </td>
