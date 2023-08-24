@@ -13,8 +13,8 @@ class GroupIndex extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
-    public $paginate = 10;
-    public $search = '';
+    public $paginateGroup = 10;
+    public $searchGroup = '';
 
     public $inputsNewGroup = [];
     public $inputsCurrentGroup = [];
@@ -65,7 +65,7 @@ class GroupIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchGroup = request()->query('search', $this->searchGroup);
 
         $sortedUniqueGroupIds = Instruction::whereNotNull('group_id')
             ->select('group_id')
@@ -86,11 +86,11 @@ class GroupIndex extends Component
 
     public function render()
     {
-        $data = Instruction::where(function ($query) {
+        $dataGroup = Instruction::where(function ($query) {
             $query->whereNull('group_id')->whereNull('group_priority');
         })
             ->where(function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+                $searchTerms = '%' . $this->searchGroup . '%';
                 $query
                     ->where('spk_number', 'like', $searchTerms)
                     ->orWhere('spk_type', 'like', $searchTerms)
@@ -98,13 +98,15 @@ class GroupIndex extends Component
                     ->orWhere('order_name', 'like', $searchTerms)
                     ->orWhere('customer_number', 'like', $searchTerms)
                     ->orWhere('code_style', 'like', $searchTerms)
-                    ->orWhere('shipping_date', 'like', $searchTerms);
+                    ->orWhere('shipping_date', 'like', $searchTerms)
+                    ->orWhere('ukuran_barang', 'like', $searchTerms)
+                    ->orWhere('spk_number_fsc', 'like', $searchTerms);
             })
             ->orderBy('shipping_date', 'asc')
             ->with(['workStep', 'workStep.status', 'workStep.job'])
-            ->paginate($this->paginate);
+            ->paginate($this->paginateGroup);
 
-        return view('livewire.component.group-index', ['instructions' => $data])->extends('layouts.app');
+        return view('livewire.component.group-index', ['instructionsGroup' => $dataGroup])->extends('layouts.app');
     }
 
     public function newGroup()
