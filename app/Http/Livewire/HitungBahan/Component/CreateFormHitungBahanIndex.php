@@ -823,7 +823,7 @@ class CreateFormHitungBahanIndex extends Component
             }
         }
 
-        if (isset($this->stateWorkStepPlate) && !isset($this->stateWorkStepCetakLabel)) {
+        if (isset($this->stateWorkStepPlate)) {
             foreach ($this->keterangans as $index => $keterangan) {
                 $this->keterangans[$index]['plate'] = array_filter($keterangan['plate'], function ($plate) {
                     return $plate['state_plate'] !== null && $plate['state_plate'] !== 'false' && $plate['state_plate'] !== '' && $plate['jumlah_plate'] !== null && $plate['jumlah_plate'] !== 'false' && $plate['jumlah_plate'] !== '' && $plate['ukuran_plate'] !== null && $plate['ukuran_plate'] !== 'false' && $plate['ukuran_plate'] !== '';
@@ -1000,6 +1000,54 @@ class CreateFormHitungBahanIndex extends Component
                         'instruction_id' => $this->currentInstructionId,
                         'notes' => $keteranganData['notes'],
                     ]);
+
+                    if (isset($keteranganData['plate'])) {
+                        foreach ($keteranganData['plate'] as $plate) {
+                            // Buat instance model KeteranganPlate
+                            $keteranganPlate = $keterangan->keteranganPlate()->create([
+                                'instruction_id' => $this->currentInstructionId,
+                                'state_plate' => $plate['state_plate'],
+                                'jumlah_plate' => $plate['jumlah_plate'],
+                                'ukuran_plate' => $plate['ukuran_plate'],
+                            ]);
+                        }
+                    }
+
+                    if (isset($keteranganData['rincianPlate'])) {
+                        foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
+                            // Buat instance model RincianPlate
+                            $rincianPlate = $keterangan->rincianPlate()->create([
+                                'instruction_id' => $this->currentInstructionId,
+                                'state' => $rincianPlate['state'],
+                                'plate' => $rincianPlate['plate'],
+                                'jumlah_lembar_cetak' => $rincianPlate['jumlah_lembar_cetak'],
+                                'waste' => $rincianPlate['waste'],
+                                'name' => $rincianPlate['name'],
+                                'tempat_plate' => $rincianPlate['tempat_plate'],
+                                'tgl_pembuatan_plate' => !empty($rincianPlate['tgl_pembuatan_plate']) ? $rincianPlate['tgl_pembuatan_plate'] : null,
+                                'status' => $rincianPlate['status'],
+                                'de' => $rincianPlate['de'],
+                                'l' => $rincianPlate['l'],
+                                'a' => $rincianPlate['a'],
+                                'b' => $rincianPlate['b'],
+                            ]);
+
+                            if (isset($keteranganData['warnaPlate'])) {
+                                foreach ($keteranganData['warnaPlate'] as $dataWarna) {
+                                    $warnaPlate = $rincianPlate->warnaPlate()->create([
+                                        'instruction_id' => $this->currentInstructionId,
+                                        'rincian_plate_id' => $rincianPlate->id,
+                                        'warna' => $dataWarna['warna'],
+                                        'keterangan' => $dataWarna['keterangan'],
+                                        'de' => $dataWarna['de'],
+                                        'l' => $dataWarna['l'],
+                                        'a' => $dataWarna['a'],
+                                        'b' => $dataWarna['b'],
+                                    ]);
+                                }
+                            }
+                        }
+                    }
 
                     if ($keteranganData['label']) {
                         foreach ($keteranganData['label'] as $label) {

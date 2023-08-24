@@ -488,7 +488,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row mt-3">
-                                @if (isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
+                                @if (isset($stateWorkStepPlate))
                                     <div class="col-md-6 mb-3">
                                         <div class="text-wrap">
                                             <div class="example">
@@ -1074,7 +1074,7 @@
                                 </div>
                             </div>                            
 
-                            @if (isset($stateWorkStepPlate) && !isset($stateWorkStepCetakLabel))
+                            @if (isset($stateWorkStepPlate))
                                 <div class="row mt-3">
                                     <div class="col-lg-12">
                                         <div class="text-wrap">
