@@ -14,8 +14,8 @@ class IncomingDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginateIncoming = 10;
+    public $searchIncoming = '';
     public $data;
 
     public $selectedInstruction;
@@ -43,7 +43,7 @@ class IncomingDashboardIndex extends Component
 
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchIncoming = request()->query('search', $this->searchIncoming);
     }
 
     public function sumGroup($groupId)
@@ -56,22 +56,24 @@ class IncomingDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('user_id', Auth()->user()->id)
+        $dataIncoming = WorkStep::where('user_id', Auth()->user()->id)
             ->where('state_task', 'Not Running')
             ->whereIn('status_task', ['Waiting'])
             ->where('spk_status', 'Running')
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+            ->where(function ($query) {
+                $searchTerms = '%' . $this->searchIncoming . '%';
                 $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                            ->orWhere('spk_number', 'like', $searchTerms)
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms);
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
                         $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -81,9 +83,9 @@ class IncomingDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginateIncoming);
 
-        return view('livewire.operator.component.incoming-dashboard-index', ['instructions' => $data])
+        return view('livewire.operator.component.incoming-dashboard-index', ['instructionsIncoming' => $dataIncoming])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);

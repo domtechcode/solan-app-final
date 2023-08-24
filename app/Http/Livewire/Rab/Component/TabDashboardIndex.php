@@ -101,10 +101,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountAllSpk = WorkStep::where('work_step_list_id', 1)
-            ->whereNotIn('spk_status', ['Selesai', 'Training Program'])
-            ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-            })
+            ->whereNotIn('spk_status', ['Training Program'])
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();

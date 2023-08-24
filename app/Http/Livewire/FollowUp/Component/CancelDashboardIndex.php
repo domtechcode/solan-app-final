@@ -76,12 +76,6 @@ class CancelDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms)
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_status', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_job', 'like', $searchTerms);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')

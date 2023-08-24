@@ -73,9 +73,6 @@ class RejectDashboardIndex extends Component
                 $query
                     ->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [3, 22, 26]);
-                    })
-                    ->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
                     });
             })
             ->where(function ($query) {
@@ -93,11 +90,8 @@ class RejectDashboardIndex extends Component
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
-                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_status', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_job', 'like', $searchTerms);
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')

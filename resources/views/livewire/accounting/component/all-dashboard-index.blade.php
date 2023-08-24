@@ -2,7 +2,6 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-                {{-- <label class="form-label">Customize Select</label> --}}
                 <select id="" name="" class="form-control form-select w-auto" wire:model="paginate">
                     <option value="10">10</option>
                     <option value="25">25</option>

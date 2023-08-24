@@ -72,7 +72,7 @@ class NewSpkDashboardIndex extends Component
             ->where(function ($query) {
                 $query
                     ->where(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [1, 26]);
+                        $subQuery->whereIn('status_id', [1, 3, 26]);
                     })
                     ->orWhere(function ($subQuery) {
                         $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
@@ -93,11 +93,8 @@ class NewSpkDashboardIndex extends Component
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
-                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_status', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_job', 'like', $searchTerms);
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')

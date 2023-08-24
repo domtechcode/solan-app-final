@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HitungBahan\Index;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Events\IndexRenderEvent;
@@ -19,20 +20,20 @@ class IndexCreateFormHitungBahan extends Component
             ->where('work_step_list_id', 5)
             ->first();
 
-        if($updateUserWorkStep->status_task == 'Pending Approved'){
+        if ($updateUserWorkStep->status_task == 'Pending Approved') {
             $updateUserWorkStep->update([
                 'user_id' => Auth()->user()->id,
                 'dikerjakan' => Carbon::now()->toDateTimeString(),
                 'state_task' => 'Running',
                 'status_task' => 'Process',
-            ]);    
-        }else{
+            ]);
+        } else {
             $updateUserWorkStep->update([
                 'user_id' => Auth()->user()->id,
                 'dikerjakan' => Carbon::now()->toDateTimeString(),
                 'state_task' => 'Running',
                 'status_task' => 'Revisi Qty',
-            ]);    
+            ]);
         }
 
         if ($updateUserWorkStep->status_id == 1) {
@@ -41,7 +42,20 @@ class IndexCreateFormHitungBahan extends Component
             ]);
         }
 
-        event(new IndexRenderEvent('refresh'));
+        $userDestination = User::where('role', 'Hitung Bahan')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Dikerjakan', 'instruction_id' => $instructionId]);
+        }
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function render()
@@ -52,15 +66,5 @@ class IndexCreateFormHitungBahan extends Component
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Form Hitung Bahan']);
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = $arguments['createdMessage'];
-        $selectedConversation = $arguments['selectedConversation'];
-        $receiverUser = $arguments['receiverUser'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

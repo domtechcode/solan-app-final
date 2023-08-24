@@ -46,17 +46,17 @@ class TabDashboardIndex extends Component
             ->where(function ($query) {
                 $query
                     ->where(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [1]);
+                        $subQuery->whereIn('status_id', [1, 3, 26]);
                     })
                     ->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [2, 26])->where('user_id', Auth()->user()->id);
+                        $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
                     });
             })
             ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                $query->where(function ($instructionQuery) {
+                    $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                });
             })
-            ->orderBy('shipping_date', 'asc')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
 
         $this->dataCountProcessSpk = WorkStep::where('work_step_list_id', 5)
@@ -69,7 +69,7 @@ class TabDashboardIndex extends Component
                         $subQuery->whereIn('status_id', [1, 23]);
                     })
                     ->orWhere(function ($subQuery) {
-                        $subQuery->where('status_id', 2)->where('user_id', Auth()->user()->id);
+                        $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
                     });
             })
             ->whereHas('instruction', function ($query) {
@@ -87,9 +87,6 @@ class TabDashboardIndex extends Component
                 $query
                     ->where(function ($subQuery) {
                         $subQuery->whereIn('status_id', [3, 22, 26]);
-                    })
-                    ->orWhere(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
                     });
             })
             ->whereHas('instruction', function ($query) {
@@ -106,10 +103,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountAllSpk = WorkStep::where('work_step_list_id', 1)
-            ->whereNotIn('spk_status', ['Selesai', 'Training Program'])
-            ->whereHas('instruction', function ($query) {
-                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-            })
+            ->whereNotIn('spk_status', ['Training Program'])
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();

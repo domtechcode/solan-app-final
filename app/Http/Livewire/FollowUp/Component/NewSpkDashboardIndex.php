@@ -69,7 +69,7 @@ class NewSpkDashboardIndex extends Component
                 $query
                     ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
                         $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
+                            ->orwhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
@@ -78,19 +78,11 @@ class NewSpkDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms)
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_status', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_job', 'like', $searchTerms);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction' => function ($query) {
-                $query->orderBy('shipping_date', 'asc');
-            }])
+            ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateNewSpk);
 

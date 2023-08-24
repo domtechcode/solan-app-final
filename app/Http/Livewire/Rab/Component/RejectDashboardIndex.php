@@ -81,11 +81,8 @@ class RejectDashboardIndex extends Component
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
-                    ->orWhereHas('status', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_status', 'like', $searchTerms);
-                    })
-                    ->orWhereHas('job', function ($statusQuery) use ($searchTerms) {
-                        $statusQuery->where('desc_job', 'like', $searchTerms);
+                    ->where(function ($subQuery) {
+                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')

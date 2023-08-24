@@ -188,18 +188,20 @@ class RunningDashboardIndex extends Component
             ->where('job_id', '!=', 2)
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
-            ->whereHas('instruction', function ($query) {
+            ->where(function ($query) {
                 $searchTerms = '%' . $this->searchRunning . '%';
                 $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                            ->orWhere('spk_number', 'like', $searchTerms)
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms);
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
                         $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
