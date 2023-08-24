@@ -52,6 +52,9 @@ class CreateInstructionIndex extends Component
     public $spk_number_fsc;
     public $spk_fsc;
 
+    public $panjang_barang;
+    public $lebar_barang;
+
     public $spk_layout_number;
     public $spk_sample_number;
 
@@ -159,20 +162,18 @@ class CreateInstructionIndex extends Component
             ]);
         }
 
-        $this->validate(
-            [
-                'spk_type' => 'required',
-                'spk_number' => 'required',
-                'customer' => 'required',
-                'order_date' => 'required',
-                'shipping_date' => 'required',
-                'order_name' => 'required',
-                'quantity' => 'required',
-                'workSteps' => 'required',
-                'filecontoh' => 'required',
-                'price' => 'required',
-            ]
-        );
+        $this->validate([
+            'spk_type' => 'required',
+            'spk_number' => 'required',
+            'customer' => 'required',
+            'order_date' => 'required',
+            'shipping_date' => 'required',
+            'order_name' => 'required',
+            'quantity' => 'required',
+            'workSteps' => 'required',
+            'filecontoh' => 'required',
+            'price' => 'required',
+        ]);
 
         $customerList = Customer::find($this->customer);
 
@@ -191,13 +192,18 @@ class CreateInstructionIndex extends Component
             ->where('spk_type', $this->spk_type)
             ->first();
 
-        if ($this->spk_type == 'sample' || $this->spk_type == 'layout' || $this->spk_type == 'production') {
-            $countSample = 1;
-        } else {
-            $countSample = null;
-        }
-
         if ($dataInstruction == null) {
+            if ($this->spk_type != 'layout') {
+                $this->validate([
+                    'panjang_barang' => 'required',
+                    'lebar_barang' => 'required',
+                ]);
+
+                $ukuranBarang = $this->panjang_barang . 'x' . $this->lebar_barang;
+            } else {
+                $ukuranBarang = null;
+            }
+
             $instruction = Instruction::create([
                 'spk_type' => $this->spk_type,
                 'spk_number' => $this->spk_number,
@@ -218,12 +224,16 @@ class CreateInstructionIndex extends Component
                 'fsc_type' => $this->fsc_type,
                 'spk_number_fsc' => $this->spk_number_fsc,
                 'follow_up' => $this->follow_up,
+                'panjang_barang' => $this->panjang_barang,
+                'lebar_barang' => $this->lebar_barang,
+                'ukuran_barang' => $ukuranBarang,
+                'follow_up' => $this->follow_up,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
-                'count' => $countSample,
+                'count' => 1,
             ]);
 
             if (isset($this->notes)) {
@@ -454,9 +464,9 @@ class CreateInstructionIndex extends Component
             }
 
             $userDestination = User::where('role', 'Penjadwalan')->get();
-                foreach ($userDestination as $dataUser) {
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
-                }
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Baru', 'instruction_id' => $instruction->id]);
+            }
 
             $userDestination = User::where('role', 'Accounting')->get();
             foreach ($userDestination as $dataUser) {

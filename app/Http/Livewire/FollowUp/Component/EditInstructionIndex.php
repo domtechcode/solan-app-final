@@ -49,6 +49,8 @@ class EditInstructionIndex extends Component
     public $follow_up;
     public $type_ppn;
     public $ppn = 11.2 / 100;
+    public $panjang_barang;
+    public $lebar_barang;
     public $spk_layout_number;
     public $spk_sample_number;
 
@@ -142,6 +144,8 @@ class EditInstructionIndex extends Component
         $this->quantity = $this->instructions->quantity;
         $this->price = $this->instructions->price;
         $this->follow_up = $this->instructions->follow_up;
+        $this->panjang_barang = $this->instructions->panjang_barang;
+        $this->lebar_barang = $this->instructions->lebar_barang;
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
         $this->spk_sample_number = $this->instructions->spk_sample_number;
@@ -237,6 +241,17 @@ class EditInstructionIndex extends Component
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
 
         if ($dataInstruction != null) {
+            if ($this->spk_type != 'layout') {
+                $this->validate([
+                    'panjang_barang' => 'required',
+                    'lebar_barang' => 'required',
+                ]);
+
+                $ukuranBarang = $this->panjang_barang . 'x' . $this->lebar_barang;
+            } else {
+                $ukuranBarang = null;
+            }
+
             $instruction = Instruction::where('id', $this->currentInstructionId)->update([
                 'spk_type' => $this->spk_type,
                 'spk_number' => $this->spk_number,
@@ -257,6 +272,9 @@ class EditInstructionIndex extends Component
                 'fsc_type' => $this->fsc_type,
                 'spk_number_fsc' => $this->spk_number_fsc,
                 'follow_up' => $this->follow_up,
+                'panjang_barang' => $this->panjang_barang,
+                'lebar_barang' => $this->lebar_barang,
+                'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
                 'type_ppn' => $this->type_ppn,

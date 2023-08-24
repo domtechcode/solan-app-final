@@ -54,6 +54,9 @@ class CreateAccInstructionIndex extends Component
     public $spk_layout_number;
     public $spk_sample_number;
 
+    public $panjang_barang;
+    public $lebar_barang;
+
     //data
     public $datacustomers = [];
     public $dataparents = [];
@@ -240,6 +243,17 @@ class CreateAccInstructionIndex extends Component
         }
 
         if ($dataInstruction != null) {
+            if ($this->spk_type != 'layout') {
+                $this->validate([
+                    'panjang_barang' => 'required',
+                    'lebar_barang' => 'required',
+                ]);
+
+                $ukuranBarang = $this->panjang_barang . 'x' . $this->lebar_barang;
+            } else {
+                $ukuranBarang = null;
+            }
+
             $instruction = Instruction::create([
                 'spk_type' => $this->spk_type,
                 'spk_number' => $this->spk_number,
@@ -260,6 +274,9 @@ class CreateAccInstructionIndex extends Component
                 'fsc_type' => $this->fsc_type,
                 'spk_number_fsc' => $this->spk_number_fsc,
                 'follow_up' => $this->follow_up,
+                'panjang_barang' => $this->panjang_barang,
+                'lebar_barang' => $this->lebar_barang,
+                'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
                 'type_ppn' => $this->type_ppn,

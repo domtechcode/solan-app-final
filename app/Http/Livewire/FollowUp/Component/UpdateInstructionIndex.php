@@ -47,6 +47,8 @@ class UpdateInstructionIndex extends Component
     public $quantity;
     public $price;
     public $follow_up;
+    public $panjang_barang;
+    public $lebar_barang;
     public $type_ppn;
     public $ppn = 11.2 / 100;
     public $spk_layout_number;
@@ -191,6 +193,17 @@ class UpdateInstructionIndex extends Component
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
 
         if ($dataInstruction != null) {
+            if ($this->spk_type != 'layout') {
+                $this->validate([
+                    'panjang_barang' => 'required',
+                    'lebar_barang' => 'required',
+                ]);
+
+                $ukuranBarang = $this->panjang_barang . 'x' . $this->lebar_barang;
+            } else {
+                $ukuranBarang = null;
+            }
+
             $instruction = Instruction::where('id', $this->currentInstructionId)->update([
                 'spk_type' => $this->spk_type,
                 'spk_number' => $this->spk_number,
@@ -211,6 +224,9 @@ class UpdateInstructionIndex extends Component
                 'fsc_type' => $this->fsc_type,
                 'spk_number_fsc' => $this->spk_number_fsc,
                 'follow_up' => $this->follow_up,
+                'panjang_barang' => $this->panjang_barang,
+                'lebar_barang' => $this->lebar_barang,
+                'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
                 'type_ppn' => $this->type_ppn,

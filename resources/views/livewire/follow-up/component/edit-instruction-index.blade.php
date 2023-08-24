@@ -434,6 +434,35 @@
                                 </div>
                             </div>
 
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Panjang Barang</label>
+                                    <div class="input-group">
+                                        <input type="text" wire:model="panjang_barang" id="panjang_barang"
+                                            class="form-control @error('panjang_barang') is-invalid @enderror" autocomplete="off"
+                                            placeholder="Panjang Barang">
+                                    </div>
+                                    @error('panjang_barang')
+                                        <div><span class="text-danger">{{ $message }}</span></div>
+                                    @enderror
+                                </div>
+                            </div>
+                
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Lebar Barang</label>
+                                    <div class="input-group">
+                                        <input type="text" wire:model="lebar_barang" id="lebar_barang"
+                                            class="form-control @error('lebar_barang') is-invalid @enderror" autocomplete="off"
+                                            placeholder="Lebar Barang">
+                                    </div>
+                                    @error('lebar_barang')
+                                        <div><span class="text-danger">{{ $message }}</span></div>
+                                    @enderror
+                                </div>
+                            </div>
+                
+
                             <div class="row mb-5">
                                 <div class="col-sm-6 col-md-6">
                                     <label class="form-label">Hitung Ulang Estimator</label>
