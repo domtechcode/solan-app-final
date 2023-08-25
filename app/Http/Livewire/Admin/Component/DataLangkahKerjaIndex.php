@@ -82,8 +82,8 @@ class DataLangkahKerjaIndex extends Component
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Langkah Kerja',
+            'message' => 'Data Langkah Kerja berhasil disimpan',
         ]);
         
         $this->name = null;
@@ -114,8 +114,8 @@ class DataLangkahKerjaIndex extends Component
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Langkah Kerja',
+            'message' => 'Data Langkah Kerja berhasil disimpan',
         ]);
 
         $this->dispatchBrowserEvent('close-modal-langkah-kerja');

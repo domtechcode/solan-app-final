@@ -10,6 +10,6 @@ class IndexDataMachine extends Component
     {
         return view('livewire.admin.index.index-data-machine')
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Pengajuan Barang Personal']);
+            ->layoutData(['title' => 'Data Machine']);
     }
 }

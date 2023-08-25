@@ -10,6 +10,6 @@ class IndexDataDriver extends Component
     {
         return view('livewire.admin.index.index-data-driver')
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Pengajuan Barang Personal']);
+            ->layoutData(['title' => 'Data Driver']);
     }
 }

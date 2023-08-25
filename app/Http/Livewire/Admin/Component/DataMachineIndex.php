@@ -7,6 +7,7 @@ use App\Models\Job;
 use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
+use App\Models\Machine;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\WorkStep;
@@ -29,133 +30,98 @@ class DataMachineIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateUser = 10;
-    public $searchUser = '';
+    public $paginateMachine = 10;
+    public $searchMachine = '';
 
-    public $idUser;
+    public $idMachine;
 
-    public $name;
-    public $role;
-    public $jobdesk;
-    public $username;
-    public $password;
-    public $dataJobDesk;
+    public $machine;
+    public $type;
 
-    public $nameUpdate;
-    public $roleUpdate;
-    public $jobdeskUpdate;
-    public $usernameUpdate;
-    public $passwordUpdate;
-    public $currentUpdate;
+    public $machineUpdate;
+    public $typeUpdate;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchUser()
+    public function updatingSearchMachine()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->dataJobDesk = Job::whereNotIn('id', ['1', '2', '3', '4'])->get();
-        $this->searchUser = request()->query('search', $this->searchUser);
+        $this->searchMachine = request()->query('search', $this->searchMachine);
     }
 
     public function render()
     {
-        $dataUser = User::where(function ($query) {
-            $searchTerms = '%' . $this->searchUser . '%';
+        $dataMachine = Machine::where(function ($query) {
+            $searchTerms = '%' . $this->searchMachine . '%';
             $query
-                ->where('name', 'like', $searchTerms)
-                ->orWhere('username', 'like', $searchTerms)
-                ->orWhere('role', 'like', $searchTerms)
-                ->orWhere('jobdesk', 'like', $searchTerms);
-        })->paginate($this->paginateUser);
+                ->where('machine_identity', 'like', $searchTerms)
+                ->orWhere('type', 'like', $searchTerms);
+        })->paginate($this->paginateMachine);
 
-        return view('livewire.admin.component.data-machine-index', ['dataUser' => $dataUser])
+        return view('livewire.admin.component.data-machine-index', ['dataMachine' => $dataMachine])
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Data User']);
+            ->layoutData(['title' => 'Data Machine']);
     }
 
     public function save()
     {
         $this->validate([
-            'name' => 'required',
-            'role' => 'required',
-            'jobdesk' => 'required',
-            'username' => 'required|unique:users',
-            'password' => 'required',
+            'machine' => 'required',
+            'type' => 'required',
         ]);
 
-        $createUser = User::create([
-            'name' => $this->name,
-            'role' => $this->role,
-            'jobdesk' => $this->jobdesk,
-            'username' => $this->username,
-            'password' => bcrypt($this->password),
-            'current' => $this->password,
+        $createMachine = Machine::create([
+            'machine_identity' => $this->machine,
+            'type' => $this->type,
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Machine',
+            'message' => 'Data Machine berhasil disimpan',
         ]);
         
-        $this->name = null;
-        $this->role = null;
-        $this->jobdesk = null;
-        $this->username = null;
-        $this->password = null;
+        $this->machine = null;
+        $this->type = null;
 
         $this->emit('indexRender');
     }
 
-    public function modalDetailsUser($userId)
+    public function modalDetailsMachine($machineId)
     {
-        $this->idUser = $userId;
-        $dataUser = User::find($userId);
-        $this->nameUpdate = $dataUser->name;
-        $this->usernameUpdate = $dataUser->username;
-        $this->roleUpdate = $dataUser->role;
-        $this->jobdeskUpdate = $dataUser->jobdesk;
-        $this->passwordUpdate = $dataUser->current;
-        $this->currentUpdate = $dataUser->current;
+        $this->idMachine = $machineId;
+        $dataMachine = Machine::find($machineId);
+        $this->machineUpdate = $dataMachine->machine_identity;
+        $this->typeUpdate = $dataMachine->type;
     }
 
     public function update()
     {
         $this->validate([
-            'nameUpdate' => 'required',
-            'roleUpdate' => 'required',
-            'jobdeskUpdate' => 'required',
-            'usernameUpdate' => 'required',
-            'passwordUpdate' => 'required',
+            'machineUpdate' => 'required',
+            'typeUpdate' => 'required',
         ]);
 
-        $createUser = User::where('id', $this->idUser)->update([
-            'name' => $this->nameUpdate,
-            'role' => $this->roleUpdate,
-            'jobdesk' => $this->jobdeskUpdate,
-            'username' => $this->usernameUpdate,
-            'password' => bcrypt($this->passwordUpdate),
-            'current' => $this->passwordUpdate,
+        $createMachine = Machine::where('id', $this->idMachine)->update([
+            'machine_identity' => $this->machineUpdate,
+            'type' => $this->typeUpdate,
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Machine',
+            'message' => 'Data Machine berhasil disimpan',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-user');
+        $this->dispatchBrowserEvent('close-modal-machine');
         $this->emit('indexRender');
 
-        $this->nameUpdate = null;
-        $this->roleUpdate = null;
-        $this->jobdeskUpdate = null;
-        $this->usernameUpdate = null;
-        $this->passwordUpdate = null;
+        $this->machineUpdate = null;
+        $this->typeUpdate = null;
     }
 
     public function messageSent($arguments)

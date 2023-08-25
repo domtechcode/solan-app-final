@@ -10,6 +10,6 @@ class IndexDataLangkahKerja extends Component
     {
         return view('livewire.admin.index.index-data-langkah-kerja')
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Pengajuan Barang Personal']);
+            ->layoutData(['title' => 'Data Langkah Kerja']);
     }
 }

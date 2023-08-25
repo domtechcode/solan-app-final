@@ -10,6 +10,6 @@ class IndexDataUser extends Component
     {
         return view('livewire.admin.index.index-data-user')
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Pengajuan Barang Personal']);
+            ->layoutData(['title' => 'Data User']);
     }
 }
