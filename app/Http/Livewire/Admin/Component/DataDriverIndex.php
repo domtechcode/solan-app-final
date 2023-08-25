@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Job;
 use App\Models\User;
 use App\Models\Files;
+use App\Models\Driver;
 use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\Customer;
@@ -29,133 +30,88 @@ class DataDriverIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateUser = 10;
-    public $searchUser = '';
+    public $paginateDriver = 10;
+    public $searchDriver = '';
 
-    public $idUser;
+    public $idDriver;
 
     public $name;
-    public $role;
-    public $jobdesk;
-    public $username;
-    public $password;
-    public $dataJobDesk;
 
     public $nameUpdate;
-    public $roleUpdate;
-    public $jobdeskUpdate;
-    public $usernameUpdate;
-    public $passwordUpdate;
-    public $currentUpdate;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchUser()
+    public function updatingSearchDriver()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->dataJobDesk = Job::whereNotIn('id', ['1', '2', '3', '4'])->get();
-        $this->searchUser = request()->query('search', $this->searchUser);
+        $this->searchDriver = request()->query('search', $this->searchDriver);
     }
 
     public function render()
     {
-        $dataUser = User::where(function ($query) {
-            $searchTerms = '%' . $this->searchUser . '%';
+        $dataDriver = Driver::where(function ($query) {
+            $searchTerms = '%' . $this->searchDriver . '%';
             $query
-                ->where('name', 'like', $searchTerms)
-                ->orWhere('username', 'like', $searchTerms)
-                ->orWhere('role', 'like', $searchTerms)
-                ->orWhere('jobdesk', 'like', $searchTerms);
-        })->paginate($this->paginateUser);
+                ->where('name', 'like', $searchTerms);
+        })->paginate($this->paginateDriver);
 
-        return view('livewire.admin.component.data-driver-index', ['dataUser' => $dataUser])
+        return view('livewire.admin.component.data-driver-index', ['dataDriver' => $dataDriver])
             ->extends('layouts.app')
-            ->layoutData(['title' => 'Data User']);
+            ->layoutData(['title' => 'Data Driver']);
     }
 
     public function save()
     {
         $this->validate([
             'name' => 'required',
-            'role' => 'required',
-            'jobdesk' => 'required',
-            'username' => 'required|unique:users',
-            'password' => 'required',
         ]);
 
-        $createUser = User::create([
+        $createDriver = Driver::create([
             'name' => $this->name,
-            'role' => $this->role,
-            'jobdesk' => $this->jobdesk,
-            'username' => $this->username,
-            'password' => bcrypt($this->password),
-            'current' => $this->password,
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Driver',
+            'message' => 'Data Driver berhasil disimpan',
         ]);
         
         $this->name = null;
-        $this->role = null;
-        $this->jobdesk = null;
-        $this->username = null;
-        $this->password = null;
 
         $this->emit('indexRender');
     }
 
-    public function modalDetailsUser($userId)
+    public function modalDetailsDriver($driverId)
     {
-        $this->idUser = $userId;
-        $dataUser = User::find($userId);
+        $this->idDriver = $driverId;
+        $dataUser = Driver::find($driverId);
         $this->nameUpdate = $dataUser->name;
-        $this->usernameUpdate = $dataUser->username;
-        $this->roleUpdate = $dataUser->role;
-        $this->jobdeskUpdate = $dataUser->jobdesk;
-        $this->passwordUpdate = $dataUser->current;
-        $this->currentUpdate = $dataUser->current;
     }
 
     public function update()
     {
         $this->validate([
             'nameUpdate' => 'required',
-            'roleUpdate' => 'required',
-            'jobdeskUpdate' => 'required',
-            'usernameUpdate' => 'required',
-            'passwordUpdate' => 'required',
         ]);
 
-        $createUser = User::where('id', $this->idUser)->update([
+        $createDriver = Driver::where('id', $this->idDriver)->update([
             'name' => $this->nameUpdate,
-            'role' => $this->roleUpdate,
-            'jobdesk' => $this->jobdeskUpdate,
-            'username' => $this->usernameUpdate,
-            'password' => bcrypt($this->passwordUpdate),
-            'current' => $this->passwordUpdate,
         ]);
 
         $this->emit('flashMessage', [
             'type' => 'success',
-            'title' => 'Data User',
-            'message' => 'Data User berhasil disimpan',
+            'title' => 'Data Driver',
+            'message' => 'Data Driver berhasil disimpan',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-user');
+        $this->dispatchBrowserEvent('close-modal-driver');
         $this->emit('indexRender');
 
         $this->nameUpdate = null;
-        $this->roleUpdate = null;
-        $this->jobdeskUpdate = null;
-        $this->usernameUpdate = null;
-        $this->passwordUpdate = null;
     }
 
     public function messageSent($arguments)

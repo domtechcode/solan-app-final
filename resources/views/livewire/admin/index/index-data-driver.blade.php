@@ -9,17 +9,17 @@
 
                 <!-- PAGE-HEADER -->
                 <div class="page-header">
-                    <h1 class="page-title">Data User</h1>
+                    <h1 class="page-title">Data Driver/Pengiriman</h1>
                     <div>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Data User</li>
+                            <li class="breadcrumb-item active" aria-current="page">Data Driver/Pengiriman</li>
                         </ol>
                     </div>
                 </div>
                 <!-- PAGE-HEADER END -->
 
-                @livewire('admin.component.data-user-index')
+                @livewire('admin.component.data-driver-index')
 
             </div>
             <!-- CONTAINER CLOSED -->

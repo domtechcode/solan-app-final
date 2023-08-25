@@ -723,7 +723,7 @@
                     <h3>Data App</h3>
                 </li>
                 <li class="slide">
-                    <a class="side-menu__item {{ ($title === "Data App") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                    <a class="side-menu__item {{ ($title === "Data User" || $title === "Data Langkah Kerja" || $title === "Data Machine" || $title === "Data Driver") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
                             class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Data App</span><i
                             class="angle fe fe-chevron-right"></i>
                     </a>
