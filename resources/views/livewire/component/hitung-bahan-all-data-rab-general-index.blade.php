@@ -2062,8 +2062,8 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $rab->count }}</td>
                                                     <td>{{ $rab->jenis_pengeluaran }}</td>
-                                                    <td>{{ currency_idr($rab->rab) }}</td>
-                                                    <td>{{ currency_idr($rab->real) }}</td>
+                                                    <td>{{ $rab->rab }}</td>
+                                                    <td>{{ $rab->real }}</td>
                                                 </tr>
                                             @empty
                                                 <tr>
