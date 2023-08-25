@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\HitungBahan\Component;
+namespace App\Http\Livewire\Rab\Component;
 
 use App\Models\Files;
 use App\Models\Catatan;
@@ -11,7 +11,7 @@ use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 
-class DatabaseHitungBahanIndex extends Component
+class DatabaseRabIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
@@ -41,7 +41,6 @@ class DatabaseHitungBahanIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-
     public function mount()
     {
         $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
@@ -57,26 +56,24 @@ class DatabaseHitungBahanIndex extends Component
 
     public function render()
     {
-        $dataNewSpk = WorkStep::where('work_step_list_id', 5)
-            ->where('state_task', ['Complete', 'Running'])
-            ->whereNotIn('spk_status', ['Training Program'])
-            ->where(function ($query) {
+        $dataNewSpk = WorkStep::where('work_step_list_id', 3)
+            ->where('state_task', 'Complete')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Training Program'])
+            ->whereHas('instruction', function ($query) {
                 $searchTerms = '%' . $this->searchNewSpk . '%';
                 $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
+                    ->where(function ($subQuery) use ($searchTerms) {
+                        $subQuery
+                            ->orWhere('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)
                             ->orWhere('customer_number', 'like', $searchTerms)
                             ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                            ->orWhere('shipping_date', 'like', $searchTerms);
                     })
                     ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        $subQuery->whereIn('spk_type', ['production', 'sample']);
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
@@ -85,10 +82,10 @@ class DatabaseHitungBahanIndex extends Component
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateNewSpk);
 
-        return view('livewire.hitung-bahan.component.database-hitung-bahan-index', ['instructionsNewSpk' => $dataNewSpk])
+        return view('livewire.rab.component.database-rab-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')
             ->section('content')
-            ->layoutData(['title' => 'Dashboard']);
+            ->layoutData(['title' => 'Database Rab']);
     }
 
     public function modalInstructionDetailsNewSpk($instructionId)

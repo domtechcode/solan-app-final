@@ -322,7 +322,7 @@
                     <h3>Database</h3>
                 </li>
                 <li class="slide">
-                    <a class="side-menu__item {{ ($title === "Database Hitung Bahan" or $title === "Database Hitung Bahan Kekurangan") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                    <a class="side-menu__item {{ ($title === "Database Hitung Bahan" or $title === "Database Hitung Bahan") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
                             class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Database Hitung Bahan</span><i
                             class="angle fe fe-chevron-right"></i>
                     </a>
@@ -390,6 +390,28 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Pengajuan Barang Personal</a></li>
                                             <li><a href="{{ route('rab.pengajuanBarangPersonal') }}" class="slide-item {{ ($title === "Pengajuan Barang Personal") ? 'active' : ''}}">Pengajuan Barang Personal</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Database RAB" or $title === "Database RAB") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Database RAB</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Database RAB</a></li>
+                                            <li><a href="{{ route('rab.databaseRab') }}" class="slide-item {{ ($title === "Database RAB") ? 'active' : ''}}">Database RAB</a></li>
                                         </ul>
                                     </div>
                                 </div>

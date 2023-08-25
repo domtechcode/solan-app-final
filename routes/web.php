@@ -67,6 +67,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/create-form-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexCreateFormRab')->name('rab.createFormRab');
         Route::get('/edit-form-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexEditFormRab')->name('rab.editFormRab');
 
+        Route::get('/database-rab', 'App\Http\Livewire\Rab\Index\IndexDatabaseRab')->name('rab.databaseRab');
+
+        Route::get('/detail-database-rab/{instructionId}/{workStepId}', 'App\Http\Livewire\Rab\Index\IndexDetailDatabaseRab')->name('rab.detailDatabaseRab');
+
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Rab\Index\IndexPengajuanBarangPersonal')->name('rab.pengajuanBarangPersonal');
     });
 

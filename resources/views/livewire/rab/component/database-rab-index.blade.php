@@ -159,7 +159,7 @@
                                                             wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                                 class="fe fe-eye"></i></button>
                                                         <a class="btn btn-icon btn-sm btn-primary" target="blank"
-                                                            href="{{ route('hitungBahan.detailDatabaseHitungBahan', ['instructionId' => $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i
+                                                            href="{{ route('rab.detailDatabaseRab', ['instructionId' => $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i
                                                                 class="fe fe-edit"></i></a>
                                                     </div>
                                                 </td>

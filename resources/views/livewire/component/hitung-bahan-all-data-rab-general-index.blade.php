@@ -1065,6 +1065,9 @@
                                                         @endforelse
                                                     @endif
                                                 </tr>
+
+
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -1938,7 +1941,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                {{-- <div class="col-sm-6 col-md-6">
+                                                <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Harga Bahan</label>
                                                         <input type="text" autocomplete="off" class="form-control"
@@ -1949,7 +1952,7 @@
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                                 <div class="col-sm-6 col-md-6">
                                                     <div class="form-group">
                                                         <label class="form-label">Jumlah Bahan</label>
@@ -2023,6 +2026,56 @@
                                 @empty
                                     No Data !!!
                                 @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        @if(isset($dataRab))
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-status bg-info br-te-7 br-ts-7"></div>
+                    <div class="card-header">
+                        <h3 class="card-title">Data RAB</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">No</th>
+                                                <th class="border-bottom-0">No Urut SPK</th>
+                                                <th class="border-bottom-0">Jenis Pengeluaran</th>
+                                                <th class="border-bottom-0">RAB</th>
+                                                <th class="border-bottom-0">REAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($dataRab as $key => $rab)
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $rab->count }}</td>
+                                                    <td>{{ $rab->jenis_pengeluaran }}</td>
+                                                    <td>{{ currency_idr($rab->rab) }}</td>
+                                                    <td>{{ currency_idr($rab->real) }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="100%">
+                                                        No Data!
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+    
+                                </div>
                             </div>
                         </div>
                     </div>
