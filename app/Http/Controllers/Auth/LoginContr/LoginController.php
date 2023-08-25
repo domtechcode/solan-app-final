@@ -51,6 +51,10 @@ class LoginController extends Controller
                     return redirect()->route('purchase.dashboard');
                     break;
 
+                case 'Admin':
+                    return redirect()->route('admin.dashboard');
+                    break;
+
                 default:
                     return redirect()->route('login');
                     break;
@@ -106,6 +110,10 @@ class LoginController extends Controller
 
                 case 'Purchase':
                     return redirect()->route('purchase.dashboard');
+                    break;
+
+                case 'Admin':
+                    return redirect()->route('admin.dashboard');
                     break;
 
                 default:

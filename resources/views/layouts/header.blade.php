@@ -692,6 +692,60 @@
                 </li>
                 @endif
 
+                @if( auth()->user()->role == 'Admin' )
+                <li class="sub-category">
+                    <h3>Home</h3>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Dashboard") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-home"></i><span class="side-menu__label">Home</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Home</a></li>
+                                            <li><a href="{{ route('admin.dashboard') }}" class="slide-item {{ ($title === "Dashboard") ? 'active' : ''}}">Dashboard</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sub-category">
+                    <h3>Data App</h3>
+                </li>
+                <li class="slide">
+                    <a class="side-menu__item {{ ($title === "Data App") ? 'active' : ''}}" data-bs-toggle="slide" href="javascript:void(0)"><i
+                            class="side-menu__icon fe fe-file"></i><span class="side-menu__label">Data App</span><i
+                            class="angle fe fe-chevron-right"></i>
+                    </a>
+                    <ul class="slide-menu">
+                        <li class="panel sidetab-menu">
+                            <div class="tab-menu-heading p-0 pb-2 border-0">
+                            </div>
+                            <div class="panel-body tabs-menu-body p-0 border-0">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="side1">
+                                        <ul class="sidemenu-list">
+                                            <li class="side-menu-label1"><a href="javascript:void(0)">Data App</a></li>
+                                            <li><a href="{{ route('admin.dataUser') }}" class="slide-item {{ ($title === "Data User") ? 'active' : ''}}">Data User</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                @endif
+
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
                     width="24" height="24" viewBox="0 0 24 24">

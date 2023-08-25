@@ -104,5 +104,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/form-work-step/{instructionId}/{workStepId}', 'App\Http\Livewire\Purchase\Index\IndexWorkStep')->name('purchase.indexWorkStep');
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Purchase\Index\IndexPengajuanBarangPersonal')->name('purchase.pengajuanBarangPersonal');
     });
+
+    Route::group(['prefix' => 'admin', 'middleware' => ['role:Admin']], function () {
+        Route::get('/dashboard', 'App\Http\Livewire\Admin\Index\IndexDashboard')->name('admin.dashboard');
+        Route::get('/data-user', 'App\Http\Livewire\Admin\Index\IndexDataUser')->name('admin.dataUser');
+    });
     
 });
