@@ -737,6 +737,9 @@
                                         <ul class="sidemenu-list">
                                             <li class="side-menu-label1"><a href="javascript:void(0)">Data App</a></li>
                                             <li><a href="{{ route('admin.dataUser') }}" class="slide-item {{ ($title === "Data User") ? 'active' : ''}}">Data User</a></li>
+                                            <li><a href="{{ route('admin.dataUser') }}" class="slide-item {{ ($title === "Data Langkah Kerja") ? 'active' : ''}}">Data Langkah Kerja</a></li>
+                                            <li><a href="{{ route('admin.dataUser') }}" class="slide-item {{ ($title === "Data Machine") ? 'active' : ''}}">Data Machine</a></li>
+                                            <li><a href="{{ route('admin.dataUser') }}" class="slide-item {{ ($title === "Data Driver") ? 'active' : ''}}">Data Driver</a></li>
                                         </ul>
                                     </div>
                                 </div>
