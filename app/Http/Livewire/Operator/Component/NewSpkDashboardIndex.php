@@ -18,8 +18,8 @@ class NewSpkDashboardIndex extends Component
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginate = 10;
-    public $search = '';
+    public $paginateNewSpk = 10;
+    public $searchNewSpk = '';
     public $data;
 
     public $dataWorkSteps;
@@ -50,9 +50,14 @@ class NewSpkDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
+    public function updatingSearchNewSpk()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
-        $this->search = request()->query('search', $this->search);
+        $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
     }
 
     public function sumGroup($groupId)
@@ -65,12 +70,12 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        $data = WorkStep::where('user_id', Auth()->user()->id)
+        $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
             ->where('spk_status', 'Running')
             ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->search . '%';
+                $searchTerms = '%' . $this->searchNewSpk . '%';
                 $query
                     ->where(function ($subQuery) use ($searchTerms) {
                         $subQuery
@@ -99,9 +104,9 @@ class NewSpkDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginate);
+            ->paginate($this->paginateNewSpk);
 
-        return view('livewire.operator.component.new-spk-dashboard-index', ['instructions' => $data])
+        return view('livewire.operator.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
@@ -128,8 +133,6 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'sample')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-new-spk');
     }
 
     public function modalInstructionDetailsGroupNewSpk($groupId)
@@ -165,7 +168,5 @@ class NewSpkDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
-
-        $this->dispatchBrowserEvent('show-detail-instruction-modal-group-new-spk');
     }
 }

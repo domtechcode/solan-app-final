@@ -8,14 +8,14 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 
-class IncomingDashboardIndex extends Component
+class SelesaiDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateIncoming = 10;
-    public $searchIncoming = '';
+    public $paginateSelesai = 10;
+    public $searchSelesai = '';
     public $data;
 
     public $selectedInstruction;
@@ -41,14 +41,14 @@ class IncomingDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchIncoming()
+    public function updatingSearchSelesai()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->searchIncoming = request()->query('search', $this->searchIncoming);
+        $this->searchSelesai = request()->query('search', $this->searchSelesai);
     }
 
     public function sumGroup($groupId)
@@ -61,12 +61,12 @@ class IncomingDashboardIndex extends Component
 
     public function render()
     {
-        $dataIncoming = WorkStep::where('user_id', Auth()->user()->id)
-            ->where('state_task', 'Not Running')
-            ->whereIn('status_task', ['Waiting'])
-            ->where('spk_status', 'Running')
+        $dataSelesai = WorkStep::where('user_id', Auth()->user()->id)
+            ->where('state_task', 'Complete')
+            ->whereIn('status_task', ['Complete'])
+            ->whereNotIn('spk_status', ['Training Program'])
             ->where(function ($query) {
-                $searchTerms = '%' . $this->searchIncoming . '%';
+                $searchTerms = '%' . $this->searchSelesai . '%';
                 $query
                     ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
                         $instructionQuery
@@ -88,15 +88,15 @@ class IncomingDashboardIndex extends Component
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateIncoming);
+            ->paginate($this->paginateSelesai);
 
-        return view('livewire.operator.component.incoming-dashboard-index', ['instructionsIncoming' => $dataIncoming])
+        return view('livewire.operator.component.selesai-dashboard-index', ['instructionsSelesai' => $dataSelesai])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsIncoming($instructionId)
+    public function modalInstructionDetailsSelesai($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
@@ -119,7 +119,7 @@ class IncomingDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupIncoming($groupId)
+    public function modalInstructionDetailsGroupSelesai($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')

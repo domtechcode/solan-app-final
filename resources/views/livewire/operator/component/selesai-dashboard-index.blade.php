@@ -2,7 +2,7 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateIncoming">
+            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateSelesai">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +10,7 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchIncoming">
+            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchSelesai">
         </div>
     </div>
     <div class="row mt-3">
@@ -34,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($instructionsIncoming as $key => $dataInstruction)
+                        @forelse ($instructionsSelesai as $key => $dataInstruction)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -46,9 +46,9 @@
 
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#detailInstructionModalGroupIncoming"
-                                            wire:click="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})"
-                                            wire:key="modalInstructionDetailsGroupIncoming({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            data-bs-target="#detailInstructionModalGroupSelesai"
+                                            wire:click="modalInstructionDetailsGroupSelesai({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupSelesai({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -133,9 +133,9 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#detailInstructionModalIncoming"
-                                            wire:click="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})"
-                                            wire:key="modalInstructionDetailsIncoming({{ $dataInstruction->instruction->id }})"><i
+                                            data-bs-target="#detailInstructionModalSelesai"
+                                            wire:click="modalInstructionDetailsSelesai({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsSelesai({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -154,12 +154,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructionsIncoming->links() }}
+            {{ $instructionsSelesai->links() }}
         </div>
     </div>
 
     <!-- Modal General-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalIncoming" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalSelesai" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -416,7 +416,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupIncoming" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="detailInstructionModalGroupSelesai" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">

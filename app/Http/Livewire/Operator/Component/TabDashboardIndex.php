@@ -14,8 +14,9 @@ class TabDashboardIndex extends Component
     public $dataCountIncomingSpk;
     public $dataCountCompleteChecker;
     public $dataCountCompleteCustomerChecker;
+    public $dataCountSelesai;
 
-    protected $listeners = ['indexRender' => '$refresh'];
+    protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
 
@@ -24,7 +25,7 @@ class TabDashboardIndex extends Component
         $this->activeTab = $tab;
     }
 
-    public function render()
+    public function mount()
     {
         if (Auth()->user()->jobdesk == 'Pengiriman' || Auth()->user()->jobdesk == 'Team Qc Packing') {
             $this->dataCountNewSpk = WorkStep::where('user_id', Auth()->user()->id)
@@ -39,6 +40,14 @@ class TabDashboardIndex extends Component
                 ->where('state_task', 'Not Running')
                 ->whereIn('status_task', ['Waiting'])
                 ->where('spk_status', 'Running')
+                ->orderBy('shipping_date', 'asc')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->count();
+
+            $this->dataCountSelesai = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Complete')
+                ->where('status_task', 'Complete')
+                ->whereNotIn('spk_status', ['Training Program'])
                 ->orderBy('shipping_date', 'asc')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->count();
@@ -58,6 +67,17 @@ class TabDashboardIndex extends Component
                 ->where('state_task', 'Not Running')
                 ->whereIn('status_task', ['Waiting'])
                 ->where('spk_status', 'Running')
+                ->whereHas('instruction', function ($query) {
+                    $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                })
+                ->orderBy('shipping_date', 'asc')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->count();
+
+            $this->dataCountSelesai = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Complete')
+                ->where('status_task', 'Complete')
+                ->whereNotIn('spk_status', ['Training Program'])
                 ->whereHas('instruction', function ($query) {
                     $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                 })
@@ -86,8 +106,22 @@ class TabDashboardIndex extends Component
                 ->orderBy('shipping_date', 'asc')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->count();
-        }
 
+            $this->dataCountSelesai = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Complete')
+                ->where('status_task', 'Complete')
+                ->whereNotIn('spk_status', ['Training Program'])
+                ->whereHas('instruction', function ($query) {
+                    $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                })
+                ->orderBy('shipping_date', 'asc')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->count();
+        }
+    }
+
+    public function render()
+    {
         return view('livewire.operator.component.tab-dashboard-index')
             ->extends('layouts.app')
             ->section('content')

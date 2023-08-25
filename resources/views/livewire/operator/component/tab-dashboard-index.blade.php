@@ -30,6 +30,11 @@
                                 </button>
                             </li>
                             @endif
+                            <li>
+                                <button href="#tab5" class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-dark mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Selesai - {{ $dataCountSelesai }}
+                                </button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -112,6 +117,24 @@
                         <!-- ROW-2 END -->
                     </div>
                     @endif
+
+                    <div class="tab-pane {{ $activeTab === 'tab5' ? 'active' : '' }}" id="tab5">
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-status bg-dark br-te-7 br-ts-7"></div>
+                                    <div class="card-header">
+                                        <h3 class="card-title">Selesai</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        @livewire('operator.component.selesai-dashboard-index')
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                    </div>
                     
 
                 </div>
