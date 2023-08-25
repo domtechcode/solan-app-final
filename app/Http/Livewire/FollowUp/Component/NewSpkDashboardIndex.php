@@ -69,7 +69,7 @@ class NewSpkDashboardIndex extends Component
                 $query
                     ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
                         $instructionQuery
-                            ->orwhere('spk_number', 'like', $searchTerms)
+                            ->where('spk_number', 'like', $searchTerms)
                             ->orWhere('spk_type', 'like', $searchTerms)
                             ->orWhere('customer_name', 'like', $searchTerms)
                             ->orWhere('order_name', 'like', $searchTerms)

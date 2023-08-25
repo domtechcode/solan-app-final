@@ -234,7 +234,12 @@ class CreateAccInstructionIndex extends Component
             $this->type_order = $this->spk_type;
         }
 
-        $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
+        $dataInstruction = Instruction::where('customer_number', $this->customer_number)
+            ->whereNotNull('customer_number')
+            ->where('sub_spk', '!=', $this->sub_spk)
+            ->where('spk_type', $this->spk_type)
+            ->first();
+            
 
         if ($this->spk_type == 'sample' || $this->spk_type == 'layout' || $this->spk_type == 'production') {
             $countSample = 1;
@@ -242,7 +247,7 @@ class CreateAccInstructionIndex extends Component
             $countSample = null;
         }
 
-        if ($dataInstruction != null) {
+        if ($dataInstruction == null) {
             if ($this->spk_type != 'layout') {
                 $this->validate([
                     'panjang_barang' => 'required',
