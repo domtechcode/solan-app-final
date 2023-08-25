@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-status bg-primary br-te-7 br-ts-7"></div>
                 <div class="card-header">
-                    <h3 class="card-title">Database Hitung Bahan</h3>
+                    <h3 class="card-title">Database RAB</h3>
                 </div>
                 <div class="card-body">
                     <!-- ROW-2 END -->
