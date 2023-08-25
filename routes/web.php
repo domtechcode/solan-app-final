@@ -108,6 +108,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'admin', 'middleware' => ['role:Admin']], function () {
         Route::get('/dashboard', 'App\Http\Livewire\Admin\Index\IndexDashboard')->name('admin.dashboard');
         Route::get('/data-user', 'App\Http\Livewire\Admin\Index\IndexDataUser')->name('admin.dataUser');
+        Route::get('/data-langkah-kerja', 'App\Http\Livewire\Admin\Index\IndexDataLangkahKerja')->name('admin.dataLangkahKerja');
+        Route::get('/data-machine', 'App\Http\Livewire\Admin\Index\IndexDataMachine')->name('admin.dataMachine');
+        Route::get('/data-driver', 'App\Http\Livewire\Admin\Index\IndexDataDriver')->name('admin.dataDriver');
     });
     
 });
