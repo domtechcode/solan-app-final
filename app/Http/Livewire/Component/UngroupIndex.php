@@ -39,6 +39,7 @@ class UngroupIndex extends Component
     {
         $dataUngroup = Instruction::whereNotNull('group_id')
             ->whereNotNull('group_priority')
+            ->where('group_priority', '!=', 'parent')
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchUngroup . '%';
                 $query
