@@ -469,7 +469,7 @@ class FormSettingIndex extends Component
                     'tujuan' => $input['tujuan'],
                     'catatan' => $input['catatan'],
                     'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
+                    'instruction_id' => $this->instructionCurrentId,
                     'user_id' => Auth()->user()->id,
                 ]);
             }
