@@ -568,10 +568,10 @@ class UpdateInstructionIndex extends Component
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
             if ($datacustomerlist->taxes == 'nonpajak' && empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 145;
+                $nomor_urut = $nomor_spk + 150;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1);
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 145;
+                $nomor_urut = $nomor_spk + 150;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A';
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
@@ -579,10 +579,11 @@ class UpdateInstructionIndex extends Component
         } elseif ($this->spk_type == 'stock') {
             if (isset($this->spk_parent)) {
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
-                    ->where('spk_type', $this->spk_type)
+                    ->where('spk_type', 'production')
                     ->where('taxes_type', $datacustomerlist->taxes)
                     ->latest('spk_number')
                     ->first();
+
                 $nomor_parent = Str::between($this->spk_parent, '-', '-');
             } else {
                 $nomor_spk = Instruction::where('spk_type', 'production')
@@ -592,23 +593,24 @@ class UpdateInstructionIndex extends Component
             }
 
             if (isset($nomor_spk_parent)) {
-                $code_alphabet = substr($nomor_spk_parent['spk_number'], -1);
+                $split_parts = explode('-', $nomor_spk_parent['spk_number']);
+                $second_part = $split_parts[2];
+                $code_alphabet = substr($second_part, 0, 1);
             } else {
                 $code_alphabet = 'A';
             }
 
             if (empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 145;
+                $nomor_urut = $nomor_spk + 150;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '(STK)';
             } elseif (isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 145;
+                $nomor_urut = $nomor_spk + 150;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A(STK)';
             } elseif (isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet) . '(STK)';
             }
         }
 
-        // Perbarui nilai input text
         $this->dispatchBrowserEvent('generated', ['code' => $this->spk_number]);
     }
 
@@ -618,6 +620,7 @@ class UpdateInstructionIndex extends Component
             [
                 'fsc_type' => 'required',
                 'spk_fsc' => 'required',
+                'spk_number' => 'required',
             ],
             [
                 'fsc_type.required' => 'Tipe FSC harus dipilih.',
