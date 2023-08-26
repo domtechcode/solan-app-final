@@ -21,9 +21,12 @@ class IndexWorkStep extends Component
         $this->workStepSelectedId = $workStepId;
         $dataWorkStep = WorkStep::find($this->workStepSelectedId);
 
-        $dataWorkStep->update([
-            'dikerjakan' => Carbon::now()->toDateTimeString(),
-        ]);
+        if($dataWorkStep->dikerjakan == null){
+            $dataWorkStep->update([
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+            ]);
+    
+        }
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,

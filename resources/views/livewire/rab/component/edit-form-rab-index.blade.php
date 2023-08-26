@@ -174,6 +174,22 @@
                             </div>
 
                             <div class="col-md-12 mt-3">
+                                <div class="form-group control-group">
+                                    <label class="form-label">Tujuan Reject</label>
+                                    <select class="form-control form-select"
+                                        data-bs-placeholder="Pilih Tujuan Reject"
+                                        wire:model="tujuanReject">
+                                        <option label="Pilih Tujuan Reject"></option>
+                                        <option value="1">Follow Up</option>
+                                        <option value="5">Hitung Bahan</option>
+                                    </select>
+                                    @error('tujuanReject')
+                                    <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                                @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mt-3">
                                 <label class="form-label">Keterangan Reject</label>
                                 <div class="input-group control-group" style="padding-top: 5px;">
                                     <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>

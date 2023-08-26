@@ -19,6 +19,7 @@ class CreateFormRabIndex extends Component
     public $rabItems = [];
     public $instructionItems = [];
     public $workSteps;
+    public $tujuanReject;
     public $keteranganReject;
     public $currentInstructionId;
     public $notes = [];
@@ -381,6 +382,7 @@ class CreateFormRabIndex extends Component
     public function rejectRAB()
     {
         $this->validate([
+            'tujuanReject' => 'required',
             'keteranganReject' => 'required',
         ]);
 
@@ -397,7 +399,7 @@ class CreateFormRabIndex extends Component
         }
 
         $updateReject = WorkStep::where('instruction_id', $this->currentInstructionId)
-            ->where('work_step_list_id', 5)
+            ->where('work_step_list_id', $this->tujuanReject)
             ->first();
 
         $updateReject->update([
@@ -411,11 +413,11 @@ class CreateFormRabIndex extends Component
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
             'status_id' => 3,
-            'job_id' => 5,
+            'job_id' => $this->tujuanReject,
         ]);
 
         $createKeteranganReject = Catatan::create([
-            'tujuan' => 5,
+            'tujuan' => $this->tujuanReject,
             'catatan' => $this->keteranganReject,
             'kategori' => 'reject',
             'instruction_id' => $this->currentInstructionId,
