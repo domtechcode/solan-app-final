@@ -192,7 +192,10 @@ class CreateInstructionIndex extends Component
             ->where('spk_type', $this->spk_type)
             ->first();
 
-        if ($dataInstruction == null) {
+        $dataInstructionSpkNumber = Instruction::where('spk_number', $this->spk_number)
+            ->first();
+
+        if ($dataInstruction == null && $dataInstructionSpkNumber == null) {
             if ($this->spk_type != 'layout') {
                 $this->validate([
                     'panjang_barang' => 'required',
