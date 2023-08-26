@@ -65,11 +65,18 @@ class UngroupIndex extends Component
 
     public function deleteGroup($instructionId)
     {
-        $updateInstruction = Instruction::where('id', $instructionId)->update([
-            'group_id' => null,
-            'group_priority' => null,
-        ]);
-
+        $dataGroup = Instruction::find($instructionId);
+        if ($dataGroup->group_priority == 'parent'){
+            $updateInstruction = Instruction::where('group_id', $dataGroup->group_id)->update([
+                'group_id' => null,
+                'group_priority' => null,
+            ]);
+        }else{
+            $updateInstruction = Instruction::where('id', $instructionId)->update([
+                'group_id' => null,
+                'group_priority' => null,
+            ]);
+        }
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Success Ungroup',
