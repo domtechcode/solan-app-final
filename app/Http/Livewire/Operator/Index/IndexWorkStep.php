@@ -20,6 +20,7 @@ class IndexWorkStep extends Component
         $this->instructionSelectedId = $instructionId;
         $this->workStepSelectedId = $workStepId;
         $dataWorkStep = WorkStep::find($this->workStepSelectedId);
+
         $dataWorkStep->update([
             'dikerjakan' => Carbon::now()->toDateTimeString(),
         ]);
