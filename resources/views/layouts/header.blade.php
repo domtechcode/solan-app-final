@@ -660,7 +660,9 @@
                                                             class="slide-item {{ $title === 'Database File Film Setting' ? 'active' : '' }}">Database
                                                             File Film Setting</a></li>
                                                     @elseif(Auth()->user()->jobdesk == 'Plate')
-
+                                                    <li><a href="{{ route('operator.databasePlate') }}"
+                                                        class="slide-item {{ $title === 'Database Plate' ? 'active' : '' }}">Database
+                                                        Plate</a></li>
                                                     @endif
                                                 </ul>
                                             </div>
