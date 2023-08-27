@@ -7,6 +7,8 @@ use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangSpk;
+use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
 {
@@ -15,6 +17,9 @@ class TabDashboardIndex extends Component
     public $dataCountCompleteChecker;
     public $dataCountCompleteCustomerChecker;
     public $dataCountSelesai;
+    public $dataCountPengajuanBarangPersonal;
+    public $dataCountPengajuanBarangSpk;
+    public $dataCountTotalPengajuanBarang;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -23,6 +28,13 @@ class TabDashboardIndex extends Component
     public function changeTab($tab)
     {
         $this->activeTab = $tab;
+    }
+
+    public $activeTabPengajuanBarang = 'tabPengajuanBarangPersonal1';
+
+    public function changeTabPengajuanBarangPersonal($tabPengajuanBarang)
+    {
+        $this->activeTabPengajuanBarang = $tabPengajuanBarang;
     }
 
     public function mount()
@@ -118,6 +130,10 @@ class TabDashboardIndex extends Component
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->count();
         }
+
+        $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
     }
 
     public function render()
