@@ -25,6 +25,7 @@ class CreateWarnaPlatesTable extends Migration
             $table->string('l')->nullable();
             $table->string('a')->nullable();
             $table->string('b')->nullable();
+            $table->string('kondisi')->nullable();
             $table->timestamps();
         });
     }
