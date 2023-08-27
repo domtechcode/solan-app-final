@@ -89,6 +89,9 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Operator\Index\IndexPengajuanBarangPersonal')->name('operator.pengajuanBarangPersonal');
         Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\Operator\Index\IndexPengajuanBarangSpk')->name('operator.pengajuanBarangSpk');
+
+        Route::get('/database-file-layout-setting', 'App\Http\Livewire\Operator\Index\IndexDatabaseFileLayoutSetting')->name('operator.databaseFileLayoutSetting');
+        Route::get('/database-file-film-setting', 'App\Http\Livewire\Operator\Index\IndexDatabaseFileFilmSetting')->name('operator.databaseFileFilmSetting');
     });
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['role:Accounting']], function () {
