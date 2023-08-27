@@ -634,7 +634,7 @@
                         </ul>
                     </li>
 
-                    @if (Auth()->user()->jobdesk == 'Setting')
+                    @if (Auth()->user()->jobdesk == 'Setting' || Auth()->user()->jobdesk == 'Plate')
                         <li class="sub-category">
                             <h3>Database</h3>
                         </li>
@@ -652,12 +652,16 @@
                                             <div class="tab-pane active" id="side1">
                                                 <ul class="sidemenu-list">
                                                     <li class="side-menu-label1"><a href="javascript:void(0)">Database</a></li>
+                                                    @if(Auth()->user()->jobdesk == 'Setting')
                                                     <li><a href="{{ route('operator.databaseFileLayoutSetting') }}"
                                                             class="slide-item {{ $title === 'Database File Layout Setting' ? 'active' : '' }}">Database
                                                             File Layout Setting</a></li>
                                                     <li><a href="{{ route('operator.databaseFileFilmSetting') }}"
                                                             class="slide-item {{ $title === 'Database File Film Setting' ? 'active' : '' }}">Database
                                                             File Film Setting</a></li>
+                                                    @elseif(Auth()->user()->jobdesk == 'Plate')
+
+                                                    @endif
                                                 </ul>
                                             </div>
                                         </div>

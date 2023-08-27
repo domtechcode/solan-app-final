@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Operator\Component;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
+use App\Models\WarnaPlate;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Models\PengajuanBarangSpk;
@@ -21,6 +22,10 @@ class TabDashboardIndex extends Component
     public $dataCountPengajuanBarangSpk;
     public $dataCountTotalPengajuanBarang;
 
+    public $dataCountPengembalianPlate;
+    public $dataCountPengajuanPlate;
+    public $dataCountTotalPlate;
+
     protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
@@ -35,6 +40,13 @@ class TabDashboardIndex extends Component
     public function changeTabPengajuanBarangPersonal($tabPengajuanBarang)
     {
         $this->activeTabPengajuanBarang = $tabPengajuanBarang;
+    }
+
+    public $activeTabPlate = 'tabPlate1';
+
+    public function changeTabPlate($tabPlate)
+    {
+        $this->activeTabPlate = $tabPlate;
     }
 
     public function mount()
@@ -134,6 +146,12 @@ class TabDashboardIndex extends Component
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
+
+        $this->dataCountPengembalianPlate = WarnaPlate::whereHas('rincianPlate', function ($query){
+            $query->where('status', 'Pengembalian Plate');
+        })->count();
+
+        $this->dataCountTotalPlate = $this->dataCountPengembalianPlate + $this->dataCountPengajuanPlate;
     }
 
     public function render()
