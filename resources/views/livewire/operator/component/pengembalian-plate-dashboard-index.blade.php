@@ -24,6 +24,8 @@
                             <th class="border-bottom-0">Type SPK</th>
                             <th class="border-bottom-0">Nama Plate</th>
                             <th class="border-bottom-0">Warna Plate</th>
+                            <th class="border-bottom-0">Tempat Plate</th>
+                            <th class="border-bottom-0">Tgl Pembuatan Plate</th>
                             <th class="border-bottom-0">Pemesan</th>
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
@@ -56,6 +58,8 @@
                                 </td>
                                 <td>{{ $dataInstruction->rincianPlate->name }}</td>
                                 <td>{{ $dataInstruction->warna }}</td>
+                                <td>{{ $dataInstruction->rincianPlate->tempat_plate }}</td>
+                                <td>{{ $dataInstruction->rincianPlate->tgl_pembuatan_plate }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
