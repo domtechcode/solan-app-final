@@ -28,7 +28,7 @@
                     </thead>
                     <tbody>
                         @forelse ($customers as $key => $data)
-                            <tr>
+                        <tr wire:key="{{ $data->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $data->name }}</td>
                                 <td>{{ $data->taxes }}</td>

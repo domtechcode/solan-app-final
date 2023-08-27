@@ -70,7 +70,6 @@
                                                             @foreach ($groupCurrentId as $groupId)
                                                                 <option value="{{ $groupId }}">Group -
                                                                     {{ $groupId }}</option>
-                                                                
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -145,13 +144,12 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsGroup as $key => $instruction)
-                            <tr>
+                            <tr wire:key="{{ $instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $instruction->spk_number }}
                                     @if ($instruction->spk_number_fsc)
-                                        <span
-                                            class="tag tag-border">{{ $instruction->spk_number_fsc }}</span>
+                                        <span class="tag tag-border">{{ $instruction->spk_number_fsc }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $instruction->spk_type }}</td>

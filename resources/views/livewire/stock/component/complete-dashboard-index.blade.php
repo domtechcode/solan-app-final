@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsComplete as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
@@ -149,7 +149,7 @@
             {{ $instructionsComplete->links() }}
         </div>
     </div>
-    
+
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="openModalComplete" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">

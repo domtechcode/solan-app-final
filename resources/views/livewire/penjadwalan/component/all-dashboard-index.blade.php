@@ -2,7 +2,6 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            {{-- <label class="form-label">Customize Select</label> --}}
             <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAll">
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -36,7 +35,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsAll as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}

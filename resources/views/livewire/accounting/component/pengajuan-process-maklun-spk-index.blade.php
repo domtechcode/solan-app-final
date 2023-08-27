@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanProcessMaklunSpk as $key => $itemPengajuanProcessMaklunSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanProcessMaklunSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanProcessMaklunSpk->instruction->spk_number }}
@@ -343,7 +343,8 @@
                                                     <div class="input-group control-group" style="padding-top: 5px;">
                                                         <select class="form-control form-select"
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
-                                                            wire:model.defer="notes.{{ $index }}.tujuan" readonly>
+                                                            wire:model.defer="notes.{{ $index }}.tujuan"
+                                                            readonly>
                                                             <option label="Pilih Tujuan Catatan"></option>
                                                             <option value="RAB">RAB</option>
                                                             <option value="Accounting">Accounting</option>

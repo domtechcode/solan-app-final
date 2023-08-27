@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanNewMaklunSpk as $key => $itemPengajuanNewMaklunSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanNewMaklunSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanNewMaklunSpk->instruction->spk_number }}

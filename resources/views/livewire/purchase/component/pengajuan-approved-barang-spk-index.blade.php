@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanApprovedBarangSpk as $key => $itemPengajuanBarangSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanBarangSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanBarangSpk->instruction->spk_number }}
@@ -173,7 +173,7 @@
                             @endif
                         @endforeach
                     @endif
-                    
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -289,11 +289,10 @@
                                                     <td>{{ $data->keterangan }}</td>
                                                     <td>
                                                         @foreach ($data->filesPengajuanBarangSpk as $file)
-                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                            download>{{ $file->file_name }}</a> <br>
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a> <br>
                                                         @endforeach
                                                     </td>
-                                                    
                                                 @endforeach
                                             </tr>
                                         @endif
@@ -322,8 +321,8 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror" readonly>
                                 </div>
                                 @error('qty_purchase')
@@ -335,8 +334,8 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Stock" wire:model="stock"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror" readonly>
                                 </div>
                                 @error('stock')

@@ -69,13 +69,14 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($dataLangkahKerja as $key => $data)
-                                            <tr>
+                                            <tr wire:key="{{ $data->id }}">
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $data->name }}</td>
                                                 <td>
                                                     <div class="btn-list">
                                                         <button type="button" class="btn btn-icon btn-sm btn-dark"
-                                                            data-bs-toggle="modal" data-bs-target="#openModalLangkahKerja"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#openModalLangkahKerja"
                                                             wire:click="modalDetailsLangkahKerja({{ $data->id }})"
                                                             wire:key="modalDetailsLangkahKerja({{ $data->id }})"><i
                                                                 class="fe fe-eye"></i></button>
@@ -121,8 +122,8 @@
                                 <label class="form-label">Langkah Kerja</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="nameUpdate" id="nameUpdate"
-                                        class="form-control @error('nameUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Nama Langkah Kerja">
+                                        class="form-control @error('nameUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Nama Langkah Kerja">
                                 </div>
                                 @error('nameUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>

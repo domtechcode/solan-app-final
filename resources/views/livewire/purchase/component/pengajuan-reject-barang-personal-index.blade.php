@@ -2,7 +2,8 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginatePengajuanRejectBarangPersonal">
+            <select id="" name="" class="form-control form-select w-auto"
+                wire:model="paginatePengajuanRejectBarangPersonal">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +11,8 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchPengajuanRejectBarangPersonal">
+            <input type="text" class="form-control w-auto" placeholder="Search"
+                wire:model="searchPengajuanRejectBarangPersonal">
         </div>
     </div>
     <div class="row mt-3">
@@ -32,7 +34,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanRejectBarangPersonal as $key => $itemPengajuanBarangSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanBarangSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanBarangSpk->user->name }}
@@ -210,8 +212,8 @@
                             <div class="form-group">
                                 <label class="form-label">Qty Purchase</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Quantity Purchase" wire:model="qty_purchase"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Quantity Purchase" wire:model="qty_purchase"
                                         class="form-control @error('qty_purchase') is-invalid @enderror">
                                 </div>
                                 @error('qty_purchase')
@@ -223,8 +225,8 @@
                             <div class="form-group">
                                 <label class="form-label">Stock</label>
                                 <div class="input-group">
-                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
-                                        placeholder="Stock" wire:model="stock"
+                                    <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
+                                        type="text" placeholder="Stock" wire:model="stock"
                                         class="form-control @error('stock') is-invalid @enderror">
                                 </div>
                                 @error('stock')

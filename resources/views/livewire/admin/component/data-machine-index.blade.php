@@ -83,7 +83,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($dataMachine as $key => $machine)
-                                            <tr>
+                                            <tr wire:key="{{ $machine->id }}">
                                                 <td>{{ $key + 1 }}</td>
 
                                                 <td>{{ $machine->machine_identity }}</td>
@@ -137,8 +137,8 @@
                                 <label class="form-label">Nama Machine</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="machineUpdate" id="machineUpdate"
-                                        class="form-control @error('machineUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Nama Machine">
+                                        class="form-control @error('machineUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Nama Machine">
                                 </div>
                                 @error('machineUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -150,8 +150,8 @@
                                 <label class="form-label">Type Machine</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="typeUpdate" id="typeUpdate"
-                                        class="form-control @error('typeUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Type Machine">
+                                        class="form-control @error('typeUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Type Machine">
                                 </div>
                                 @error('typeUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>

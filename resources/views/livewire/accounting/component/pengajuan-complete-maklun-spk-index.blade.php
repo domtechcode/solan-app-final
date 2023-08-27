@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanCompleteMaklunSpk as $key => $itemPengajuanCompleteMaklunSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanCompleteMaklunSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanCompleteMaklunSpk->instruction->spk_number }}
@@ -292,7 +292,8 @@
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
                                         type="text" placeholder="Harga Satuan Maklun"
                                         wire:model="harga_satuan_maklun"
-                                        class="form-control @error('harga_satuan_maklun') is-invalid @enderror" readonly>
+                                        class="form-control @error('harga_satuan_maklun') is-invalid @enderror"
+                                        readonly>
                                 </div>
                                 @error('harga_satuan_maklun')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -306,7 +307,8 @@
                                     <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input"
                                         type="text" placeholder="Qty Purchase Maklun"
                                         wire:model="qty_purchase_maklun"
-                                        class="form-control @error('qty_purchase_maklun') is-invalid @enderror" readonly>
+                                        class="form-control @error('qty_purchase_maklun') is-invalid @enderror"
+                                        readonly>
                                 </div>
                                 @error('qty_purchase_maklun')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -365,7 +367,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

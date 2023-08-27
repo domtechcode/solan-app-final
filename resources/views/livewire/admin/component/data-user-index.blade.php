@@ -150,7 +150,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($dataUser as $key => $user)
-                                            <tr>
+                                            <tr wire:key="{{ $user->id }}">
                                                 <td>{{ $key + 1 }}</td>
 
                                                 <td>{{ $user->name }}</td>
@@ -206,8 +206,8 @@
                                 <label class="form-label">Nama User</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="nameUpdate" id="nameUpdate"
-                                        class="form-control @error('nameUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Nama User">
+                                        class="form-control @error('nameUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Nama User">
                                 </div>
                                 @error('nameUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -270,8 +270,8 @@
                                 <label class="form-label">Username</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="usernameUpdate" id="usernameUpdate"
-                                        class="form-control @error('usernameUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Username">
+                                        class="form-control @error('usernameUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Username">
                                 </div>
                                 @error('usernameUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -284,8 +284,8 @@
                                 <label class="form-label">Password</label>
                                 <div class="input-group">
                                     <input type="password" wire:model="passwordUpdate" id="passwordUpdate"
-                                        class="form-control @error('passwordUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Password">
+                                        class="form-control @error('passwordUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Password">
                                 </div>
                                 @error('passwordUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -298,8 +298,8 @@
                                 <label class="form-label">Current Password</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="currentUpdate" id="currentUpdate"
-                                        class="form-control @error('currentUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Password" readonly>
+                                        class="form-control @error('currentUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Password" readonly>
                                 </div>
                                 @error('currentUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>

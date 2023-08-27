@@ -34,7 +34,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanBarangPersonal as $key => $itemPengajuanBarangPersonal)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanBarangPersonal->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanBarangPersonal->user->name }}
@@ -294,10 +294,10 @@
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataBarang))
-                        <button class="btn btn-success"
-                            wire:click="approveBarang({{ $dataBarang->id }})" wire:key="approveBarang({{ $dataBarang->id }})">Approve</button>
-                        <button class="btn btn-primary"
-                            wire:click="rejectBarang({{ $dataBarang->id }})" wire:key="rejectBarang({{ $dataBarang->id }})">Reject</button>
+                        <button class="btn btn-success" wire:click="approveBarang({{ $dataBarang->id }})"
+                            wire:key="approveBarang({{ $dataBarang->id }})">Approve</button>
+                        <button class="btn btn-primary" wire:click="rejectBarang({{ $dataBarang->id }})"
+                            wire:key="rejectBarang({{ $dataBarang->id }})">Reject</button>
                     @endif
                 </div>
             </div>

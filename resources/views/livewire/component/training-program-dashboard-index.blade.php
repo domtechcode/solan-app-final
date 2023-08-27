@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsTraining as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
@@ -48,7 +48,8 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupTraining"
-                                            wire:click="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupTraining({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}</td>
@@ -125,7 +126,8 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#openModalTraining"
-                                            wire:click="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsTraining({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>

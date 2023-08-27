@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsReject as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
@@ -454,7 +454,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" wire:click="saveReject" wire:key="saveReject">Submit</button>
+                    <button type="button" class="btn btn-success" wire:click="saveReject"
+                        wire:key="saveReject">Submit</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

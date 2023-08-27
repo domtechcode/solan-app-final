@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanRejectBarangSpk as $key => $itemPengajuanBarangSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanBarangSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanBarangSpk->instruction->spk_number }}
@@ -173,7 +173,7 @@
                             @endif
                         @endforeach
                     @endif
-                    
+
                     <!-- Row -->
                     <div class="row mb-3">
                         <div class="col-xl-12">
@@ -289,11 +289,10 @@
                                                     <td>{{ $data->keterangan }}</td>
                                                     <td>
                                                         @foreach ($data->filesPengajuanBarangSpk as $file)
-                                                        <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                            download>{{ $file->file_name }}</a> <br>
+                                                            <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
+                                                                download>{{ $file->file_name }}</a> <br>
                                                         @endforeach
                                                     </td>
-                                                    
                                                 @endforeach
                                             </tr>
                                         @endif

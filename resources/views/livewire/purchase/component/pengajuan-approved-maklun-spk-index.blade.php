@@ -35,7 +35,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanApprovedMaklunSpk as $key => $itemPengajuanApprovedMaklunSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanApprovedMaklunSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanApprovedMaklunSpk->instruction->spk_number }}
@@ -367,7 +367,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataMaklun))

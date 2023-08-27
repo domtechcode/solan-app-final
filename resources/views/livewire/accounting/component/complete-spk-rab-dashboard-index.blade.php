@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsCompleteSpkRab as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
@@ -134,8 +134,9 @@
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                        data-bs-target="#detailInstructionModalCompleteSpkRab"
-                                            wire:click="modalInstructionDetailsCompleteSpkRab({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsCompleteSpkRab({{ $dataInstruction->instruction->id }})"><i
+                                            data-bs-target="#detailInstructionModalCompleteSpkRab"
+                                            wire:click="modalInstructionDetailsCompleteSpkRab({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsCompleteSpkRab({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                     </div>
                                 </td>
@@ -673,7 +674,8 @@
                                                         @if ($selectedWorkStepParent)
                                                             @foreach ($selectedWorkStepParent as $workstep)
                                                                 <tr>
-                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}</td>
+                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}
+                                                                    </td>
                                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->spk_parent ?? '-' }}</td>

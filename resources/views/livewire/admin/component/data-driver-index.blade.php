@@ -69,7 +69,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse ($dataDriver as $key => $driver)
-                                            <tr>
+                                            <tr wire:key="{{ $driver->id }}">
                                                 <td>{{ $key + 1 }}</td>
 
                                                 <td>{{ $driver->name }}</td>
@@ -122,8 +122,8 @@
                                 <label class="form-label">Nama Driver/Pengiriman</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="nameUpdate" id="nameUpdate"
-                                        class="form-control @error('nameUpdate') is-invalid @enderror" autocomplete="off"
-                                        placeholder="Nama Driver/Pengiriman">
+                                        class="form-control @error('nameUpdate') is-invalid @enderror"
+                                        autocomplete="off" placeholder="Nama Driver/Pengiriman">
                                 </div>
                                 @error('nameUpdate')
                                     <div><span class="text-danger">{{ $message }}</span></div>

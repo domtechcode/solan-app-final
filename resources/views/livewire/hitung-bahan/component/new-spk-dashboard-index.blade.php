@@ -35,9 +35,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- {{ dd($instructions) }} --}}
                         @forelse ($instructionsNewSpk as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
@@ -49,7 +48,8 @@
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
                                             data-bs-target="#openModalGroupNewSpk"
-                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})" wire:key="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                            wire:click="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupNewSpk({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->spk_type }}
@@ -136,7 +136,8 @@
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                             data-bs-target="#openModalNewSpk"
-                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})" wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
+                                            wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                         <a class="btn btn-icon btn-sm btn-primary"
                                             href="{{ route('hitungBahan.createFormHitungBahan', ['instructionId' => $dataInstruction->instruction->id]) }}"><i

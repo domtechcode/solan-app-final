@@ -34,7 +34,7 @@
                     </thead>
                     <tbody>
                         @forelse ($pengajuanRejectBarangPersonal as $key => $itemPengajuanBarangSpk)
-                            <tr>
+                            <tr wire:key="{{ $itemPengajuanBarangSpk->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $itemPengajuanBarangSpk->user->name }}

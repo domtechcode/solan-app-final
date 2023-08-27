@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsComplete as $key => $dataInstruction)
-                            <tr>
+                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
