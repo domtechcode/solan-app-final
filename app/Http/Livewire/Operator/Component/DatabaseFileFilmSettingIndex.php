@@ -42,6 +42,10 @@ class DatabaseFileFilmSettingIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public function updatingSearchNewSpk()
+    {
+        $this->resetPage();
+    }
 
     public function mount()
     {
@@ -58,8 +62,26 @@ class DatabaseFileFilmSettingIndex extends Component
 
     public function render()
     {
-        $dataNewSpk = FileSetting::
-            paginate($this->paginateNewSpk);
+        $dataNewSpk = FileSetting::where(function ($query) {
+            $searchTerms = '%' . $this->searchNewSpk . '%';
+            $query->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                $instructionQuery
+                    ->where('spk_number', 'like', $searchTerms)
+                    ->orWhere('spk_type', 'like', $searchTerms)
+                    ->orWhere('customer_name', 'like', $searchTerms)
+                    ->orWhere('order_name', 'like', $searchTerms)
+                    ->orWhere('customer_number', 'like', $searchTerms)
+                    ->orWhere('code_style', 'like', $searchTerms)
+                    ->orWhere('shipping_date', 'like', $searchTerms)
+                    ->orWhere('ukuran_barang', 'like', $searchTerms)
+                    ->orWhere('spk_number_fsc', 'like', $searchTerms);
+            })
+            ->orWhere('file_name', 'like', $searchTerms)
+            ->orWhere('keperluan', 'like', $searchTerms)
+            ->orWhere('ukuran_film', 'like', $searchTerms)
+            ->orWhere('jumlah_film', 'like', $searchTerms);
+        })->paginate($this->paginateNewSpk);
+        
 
         return view('livewire.operator.component.database-file-film-setting-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')
