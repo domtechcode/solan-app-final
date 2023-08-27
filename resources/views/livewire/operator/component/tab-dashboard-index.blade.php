@@ -237,7 +237,7 @@
                                                     wire:click="changeTabPlate('tabPlate2')"
                                                     wire:key="tabPlate2"
                                                     href="#tabPlate2">Pengajuan Plate Dari Operator -
-                                                    {{ $dataCountPengajuanBarangSpk }}</button>
+                                                    {{ $dataCountPengajuanPlate }}</button>
                                             </li>
                                         </ul>
                                     </div>
@@ -246,12 +246,12 @@
                                             <div class="tab-pane {{ $activeTabPlate === 'tabPlate1' ? 'active' : '' }}"
                                                 id="tabPlate1">
                                                 <h5 class="card-title">Pengembalian Plate</h5>
-                                                @livewire('component.riwayat-pengajuan-barang-personal-index')
+                                                @livewire('operator.component.pengembalian-plate-dashboard-index')
                                             </div>
                                             <div class="tab-pane {{ $activeTabPlate === 'tabPlate2' ? 'active' : '' }}"
                                                 id="tabPlate2">
                                                 <h5 class="card-title">Pengajuan Plate Dari Operator</h5>
-                                                @livewire('component.riwayat-pengajuan-barang-spk-index')
+                                                {{-- @livewire('component.riwayat-pengajuan-barang-spk-index') --}}
                                             </div>
                                         </div>
                                     </div>
