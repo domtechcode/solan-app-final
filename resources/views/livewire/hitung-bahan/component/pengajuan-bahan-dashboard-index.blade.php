@@ -28,6 +28,7 @@
                             <th class="border-bottom-0">Merk Bahan</th>
                             <th class="border-bottom-0">Supplier</th>
                             <th class="border-bottom-0">Jumlah Bahan</th>
+                            <th class="border-bottom-0">Target Datang</th>
                             <th class="border-bottom-0">Action</th>
                         </tr>
                     </thead>
@@ -60,6 +61,17 @@
                                 <td>{{ $dataLayoutBahan->merk_bahan }}</td>
                                 <td>{{ $dataLayoutBahan->supplier }}</td>
                                 <td>{{ $dataLayoutBahan->jumlah_bahan }}</td>
+                                <td>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="date" wire:model="target_datang.{{ $dataLayoutBahan->id }}" id="target_datang_{{ $dataLayoutBahan->id }}"
+                                                class="form-control @error('target_datang.' . $dataLayoutBahan->id) is-invalid @enderror">
+                                        </div>
+                                        @error('target_datang.' . $dataLayoutBahan->id)
+                                            <div><span class="text-danger">{{ $message }}</span></div>
+                                        @enderror
+                                    </div>                                    
+                                </td>
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"

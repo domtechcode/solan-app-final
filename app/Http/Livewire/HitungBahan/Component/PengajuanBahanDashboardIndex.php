@@ -2,12 +2,14 @@
 
 namespace App\Http\Livewire\HitungBahan\Component;
 
+use Carbon\Carbon;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use Livewire\WithPagination;
+use App\Models\PengajuanBarangSpk;
 
 class PengajuanBahanDashboardIndex extends Component
 {
@@ -38,6 +40,8 @@ class PengajuanBahanDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+
+    public $target_datang;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -74,21 +78,21 @@ class PengajuanBahanDashboardIndex extends Component
             ->pluck('instruction_id');
 
         $dataLayoutBahan = LayoutBahan::whereIn('instruction_id', $dataInstruction)
+            ->where('status_pengajuan', null)
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchLayoutBahan . '%';
-                $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    });
+                $query->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                    $instructionQuery
+                        ->where('spk_number', 'like', $searchTerms)
+                        ->orWhere('spk_type', 'like', $searchTerms)
+                        ->orWhere('customer_name', 'like', $searchTerms)
+                        ->orWhere('order_name', 'like', $searchTerms)
+                        ->orWhere('customer_number', 'like', $searchTerms)
+                        ->orWhere('code_style', 'like', $searchTerms)
+                        ->orWhere('shipping_date', 'like', $searchTerms)
+                        ->orWhere('ukuran_barang', 'like', $searchTerms)
+                        ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                });
             })
             ->with('instruction')
             ->paginate($this->paginateLayoutBahan);
@@ -97,6 +101,47 @@ class PengajuanBahanDashboardIndex extends Component
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
+    }
+
+    public function pengajuanBahan($idPengajuanBahan, $statePengajuanBahan)
+    {
+        if ($statePengajuanBahan == 'Ajukan') {
+            $this->validate([
+                'target_datang.' . $idPengajuanBahan => 'required'
+            ]);            
+
+            $updateLayoutBahan = LayoutBahan::find($idPengajuanBahan);
+            $updateLayoutBahan->update([
+                'status_pengajuan' => $statePengajuanBahan,
+            ]);
+
+            $keteranganBarang = 'Jenis Bahan : ' . $updateLayoutBahan->jenis_bahan . ' - Gramasi : ' . $updateLayoutBahan->gramasi . ' - Sumber Bahan : ' . $updateLayoutBahan->sumber_bahan . ' - Merk Bahan : ' . $updateLayoutBahan->merk_bahan . ' - Supplier : ' . $updateLayoutBahan->supplier . ' - Jumlah Bahan : ' . $updateLayoutBahan->jumlah_bahan;
+            
+            $pengajuanBahan = PengajuanBarangSpk::create([
+                'instruction_id' => $updateLayoutBahan->instruction_id,
+                'work_step_list_id' => 5,
+                'nama_barang' => $updateLayoutBahan->jenis_bahan,
+                'user_id' => Auth()->user()->id,
+                'tgl_pengajuan' => Carbon::now(),
+                'tgl_target_datang' => $this->target_datang[$idPengajuanBahan],
+                'qty_barang' => $updateLayoutBahan->jumlah_bahan,
+                'keterangan' => $keteranganBarang,
+                'status_id' => 8,
+                'state' => 'Purchase',
+            ]);
+        } else {
+            $updateLayoutBahan = LayoutBahan::where('id', $idPengajuanBahan)->update([
+                'status_pengajuan' => $statePengajuanBahan,
+            ]);
+        }
+
+        $this->target_datang = null;
+        $this->emit('indexRender');
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Pengajuan Bahan',
+            'message' => 'Berhasil data pengajuan bahan disimpan',
+        ]);
     }
 
     public function modalInstructionDetailsLayoutBahan($instructionId)
