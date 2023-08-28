@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Operator\Component;
 
+use Carbon\Carbon;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
@@ -51,11 +52,15 @@ class TabDashboardIndex extends Component
 
     public function mount()
     {
+        $today = Carbon::today();
+        $formattedToday = $today->format('Y-m-d');
+
         if (Auth()->user()->jobdesk == 'Pengiriman' || Auth()->user()->jobdesk == 'Team Qc Packing') {
             $this->dataCountNewSpk = WorkStep::where('user_id', Auth()->user()->id)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
                 ->where('spk_status', 'Running')
+                ->where('schedule_date', '<=', $formattedToday)
                 ->orderBy('shipping_date', 'asc')
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->count();

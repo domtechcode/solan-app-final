@@ -6,6 +6,7 @@ use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
+use App\Models\LayoutBahan;
 use Livewire\WithPagination;
 use App\Models\PengajuanBarangSpk;
 use App\Models\PengajuanBarangPersonal;
@@ -20,6 +21,8 @@ class TabDashboardIndex extends Component
     public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanBarangSpk;
     public $dataCountTotalPengajuanBarang;
+
+    public $dataPengajuanBahan;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -84,10 +87,9 @@ class TabDashboardIndex extends Component
             ->whereIn('status_task', ['Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
             ->where(function ($query) {
-                $query
-                    ->where(function ($subQuery) {
-                        $subQuery->whereIn('status_id', [3, 22, 26]);
-                    });
+                $query->where(function ($subQuery) {
+                    $subQuery->whereIn('status_id', [3, 22, 26]);
+                });
             })
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -107,6 +109,18 @@ class TabDashboardIndex extends Component
             ->orderBy('shipping_date', 'asc')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->count();
+
+        $dataWorkStepCompleteRab = WorkStep::where('work_step_list_id', 4)
+            ->where('state_task', 'Complete')
+            ->where('status_task', 'Complete')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program', 'Selesai'])
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->pluck('instruction_id');
+
+        $this->dataPengajuanBahan = LayoutBahan::whereIn('instruction_id', $dataWorkStepCompleteRab)->count();
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();

@@ -1,32 +1,22 @@
 <?php
 
-namespace App\Http\Livewire\Operator\Component;
+namespace App\Http\Livewire\HitungBahan\Component;
 
-use DB;
-use Carbon\Carbon;
-use App\Models\User;
 use App\Models\Files;
-use App\Models\Machine;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
-use App\Models\WorkStepList;
+use App\Models\LayoutBahan;
 use Livewire\WithPagination;
 
-class NewSpkDashboardIndex extends Component
+class PengajuanBahanDashboardIndex extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     protected $updatesQueryString = ['search'];
 
-    public $paginateNewSpk = 10;
-    public $searchNewSpk = '';
-    public $data;
-
-    public $dataWorkSteps;
-    public $dataUsers;
-    public $dataMachines;
-    public $workSteps = [];
+    public $paginateLayoutBahan = 10;
+    public $searchLayoutBahan = '';
 
     public $selectedInstruction;
     public $selectedWorkStep;
@@ -51,14 +41,14 @@ class NewSpkDashboardIndex extends Component
 
     protected $listeners = ['indexRender' => '$refresh'];
 
-    public function updatingSearchNewSpk()
+    public function updatingSearchLayoutBahan()
     {
         $this->resetPage();
     }
 
     public function mount()
     {
-        $this->searchNewSpk = request()->query('search', $this->searchNewSpk);
+        $this->searchLayoutBahan = request()->query('search', $this->searchLayoutBahan);
     }
 
     public function sumGroup($groupId)
@@ -71,51 +61,45 @@ class NewSpkDashboardIndex extends Component
 
     public function render()
     {
-        $today = Carbon::today();
-        $formattedToday = $today->format('Y-m-d');
+        $dataInstruction = WorkStep::where('work_step_list_id', 4)
+            ->where('state_task', 'Complete')
+            ->where('status_task', 'Complete')
+            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program', 'Selesai'])
+            ->where(function ($query) {
+                $query->whereHas('instruction', function ($instructionQuery) {
+                    $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                });
+            })
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->pluck('instruction_id');
 
-        $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
-            ->where('state_task', 'Running')
-            ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-            ->where('spk_status', 'Running')
-            ->where('schedule_date', '<=', $formattedToday)
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchNewSpk . '%';
+        $dataLayoutBahan = LayoutBahan::whereIn('instruction_id', $dataInstruction)
+            ->where(function ($query) {
+                $searchTerms = '%' . $this->searchLayoutBahan . '%';
                 $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                        ->orWhere('spk_number', 'like', $searchTerms)
-                        ->orWhere('spk_type', 'like', $searchTerms)
-                        ->orWhere('customer_name', 'like', $searchTerms)
-                        ->orWhere('order_name', 'like', $searchTerms)
-                        ->orWhere('customer_number', 'like', $searchTerms)
-                        ->orWhere('code_style', 'like', $searchTerms)
-                        ->orWhere('shipping_date', 'like', $searchTerms)
-                        ->orWhere('ukuran_barang', 'like', $searchTerms)
-                        ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->where(function ($subQuery) {
-                        // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
-                        $subQuery
-                            ->where(function ($nestedSubQuery) {
-                                $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
-                            })
-                            ->orWhere('group_priority', 'parent');
+                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', $searchTerms)
+                            ->orWhere('spk_type', 'like', $searchTerms)
+                            ->orWhere('customer_name', 'like', $searchTerms)
+                            ->orWhere('order_name', 'like', $searchTerms)
+                            ->orWhere('customer_number', 'like', $searchTerms)
+                            ->orWhere('code_style', 'like', $searchTerms)
+                            ->orWhere('shipping_date', 'like', $searchTerms)
+                            ->orWhere('ukuran_barang', 'like', $searchTerms)
+                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
                     });
             })
-            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-            ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
-            ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateNewSpk);
+            ->with('instruction')
+            ->paginate($this->paginateLayoutBahan);
 
-        return view('livewire.operator.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
+        return view('livewire.hitung-bahan.component.pengajuan-bahan-dashboard-index', ['instructionsLayoutBahan' => $dataLayoutBahan])
             ->extends('layouts.app')
             ->section('content')
             ->layoutData(['title' => 'Dashboard']);
     }
 
-    public function modalInstructionDetailsNewSpk($instructionId)
+    public function modalInstructionDetailsLayoutBahan($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
@@ -138,7 +122,7 @@ class NewSpkDashboardIndex extends Component
             ->get();
     }
 
-    public function modalInstructionDetailsGroupNewSpk($groupId)
+    public function modalInstructionDetailsGroupLayoutBahan($groupId)
     {
         $this->selectedGroupParent = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'parent')
@@ -146,7 +130,6 @@ class NewSpkDashboardIndex extends Component
         $this->selectedGroupChild = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'child')
             ->get();
-
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
             ->with('workStepList', 'user', 'machine')
@@ -166,7 +149,6 @@ class NewSpkDashboardIndex extends Component
         $this->selectedFileSampleParent = Files::where('instruction_id', $this->selectedGroupParent->id)
             ->where('type_file', 'sample')
             ->get();
-
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
