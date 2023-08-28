@@ -89,13 +89,10 @@ class PengajuanApprovedBarangPersonalIndex extends Component
     {
         $this->validate(
             [
-                'harga_satuan' => 'required|numeric|regex:/^\d*(\.\d{1,2})?$/',
+                'harga_satuan' => 'required',
                 'qty_purchase' => 'required',
                 'stock' => 'required',
                 'total_harga' => 'required',
-            ],
-            [
-                'harga_satuan.numeric' => 'Price harus berupa angka/tidak boleh ada tanda koma(,).',
             ],
         );
 
