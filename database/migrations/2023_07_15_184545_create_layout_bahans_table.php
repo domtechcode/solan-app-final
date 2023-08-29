@@ -41,6 +41,7 @@ class CreateLayoutBahansTable extends Migration
             $table->longText('dataJSON')->nullable();
             $table->string('layout_custom_file_name')->nullable();
             $table->string('layout_custom_path')->nullable();
+            $table->string('status_pengajuan')->nullable();
             $table->timestamps();
         });
     }

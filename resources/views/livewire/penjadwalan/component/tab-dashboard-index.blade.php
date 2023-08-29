@@ -122,7 +122,7 @@
                         <!-- ROW-2 END -->
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab3' ? 'active' : '' }}" id="tab3">
-                        <!-- ROW-2-->
+                        {{-- <!-- ROW-2-->
                         <div class="row">
                             <div class="col-xl-12 col-md-12">
                                 <div class="card card-headpills">
@@ -199,7 +199,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- ROW-2 END -->
+                        <!-- ROW-2 END --> --}}
                         
                     </div>
                     <div class="tab-pane {{ $activeTab === 'tab4' ? 'active' : '' }}" id="tab4">
