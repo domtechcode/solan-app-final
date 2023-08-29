@@ -80,7 +80,7 @@ class PengajuanProcessMaklunSpkIndex extends Component
     public function render()
     {
         $dataPengajuanProcessMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Pengajuan Accounting', 'Pengajuan RAB'])
-            ->where('pekerjaan', 'Purchase')
+            ->whereIn('pekerjaan', ['Purchase', 'Accounting', 'RAB'])
             ->where(function ($query) {
                 $query
                     ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanProcessMaklunSpk . '%')

@@ -132,7 +132,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountProcessPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Pengajuan Accounting', 'Pengajuan RAB'])
-            ->where('pekerjaan', 'Purchase')
+            ->whereIn('pekerjaan', ['Purchase', 'Accounting', 'RAB'])
             ->count();
 
         $this->dataCountRejectPengajuanMaklun = FormPengajuanMaklun::whereIn('status', ['Reject Accounting', 'Reject RAB'])
