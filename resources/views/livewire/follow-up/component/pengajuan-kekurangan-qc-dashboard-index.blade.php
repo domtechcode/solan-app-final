@@ -77,6 +77,9 @@
                                                 class="fe fe-eye"></i></button>
                                         <a class="btn btn-sm btn-info"
                                             href="{{ route('followUp.createPengajuanKekuranganQc', ['instructionId' => $dataInstruction->instruction->id]) }}">Create</a>
+                                        <button class="btn btn-icon btn-sm btn-primary"
+                                            wire:click="pengajuanKekuranganQc({{ $dataInstruction->id }}, 'Delete')"
+                                            wire:key="pengajuanKekuranganQc({{ $dataInstruction->id }}, 'Delete')">Delete</button>
                                     </div>
                                 </td>
                             </tr>

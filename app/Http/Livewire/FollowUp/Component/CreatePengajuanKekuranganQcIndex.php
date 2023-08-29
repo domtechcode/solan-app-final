@@ -17,6 +17,7 @@ use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\DB;
+use App\Models\PengajuanKekuranganQc;
 use Illuminate\Support\Facades\Storage;
 
 class CreatePengajuanKekuranganQcIndex extends Component
@@ -35,6 +36,7 @@ class CreatePengajuanKekuranganQcIndex extends Component
     public $quantity;
     public $type_order;
     public $order_date;
+    public $instructionsId;
 
     //data
     public $dataInstructions = [];
@@ -66,9 +68,13 @@ class CreatePengajuanKekuranganQcIndex extends Component
         $this->notes = array_values($this->notes);
     }
 
-    public function mount()
+    public function mount($instructionId)
     {
         $this->select2();
+        $dataInstruction = PengajuanKekuranganQc::where('instruction_id', $instructionId)->first();
+        $this->quantity = $dataInstruction->qty_kekurangan;
+        $this->requestKekurangan = 'QC';
+        $this->instructionsId = $dataInstruction;
     }
 
     public function render()
@@ -306,6 +312,10 @@ class CreatePengajuanKekuranganQcIndex extends Component
                 ]);
             }
         }
+
+        $updateKekurangan = PengajuanKekuranganQc::where('instruction_id', $this->instructionsId)->update([
+            'status' => 'Selesai',
+        ]);
 
         $this->workSteps = [];
 

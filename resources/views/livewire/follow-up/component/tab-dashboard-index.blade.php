@@ -138,7 +138,7 @@
                                         <div class="tab-content">
                                             <div class="tab-pane {{ $activeTabSpk === 'tabSpk5' ? 'active' : '' }}"
                                                 id="tabSpk5">
-                                                <h5 class="card-title">Cancel</h5>
+                                                <h5 class="card-title">Pengajuan Kekurangan Qc</h5>
                                                 @livewire('follow-up.component.pengajuan-kekurangan-qc-dashboard-index')
                                             </div>
                                         </div>

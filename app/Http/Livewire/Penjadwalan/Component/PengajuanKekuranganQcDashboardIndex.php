@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Penjadwalan\Component;
 
+use App\Models\User;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
+use App\Events\NotificationSent;
 use App\Models\PengajuanKekuranganQc;
 
 class PengajuanKekuranganQcDashboardIndex extends Component
@@ -64,19 +66,18 @@ class PengajuanKekuranganQcDashboardIndex extends Component
         $dataPengajuanKekuranganQc = PengajuanKekuranganQc::where('status', 'Pending')
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchPengajuanKekuranganQc . '%';
-                $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    });
+                $query->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
+                    $instructionQuery
+                        ->where('spk_number', 'like', $searchTerms)
+                        ->orWhere('spk_type', 'like', $searchTerms)
+                        ->orWhere('customer_name', 'like', $searchTerms)
+                        ->orWhere('order_name', 'like', $searchTerms)
+                        ->orWhere('customer_number', 'like', $searchTerms)
+                        ->orWhere('code_style', 'like', $searchTerms)
+                        ->orWhere('shipping_date', 'like', $searchTerms)
+                        ->orWhere('ukuran_barang', 'like', $searchTerms)
+                        ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                });
             })
             ->with(['instruction'])
             ->paginate($this->paginatePengajuanKekuranganQc);
@@ -100,6 +101,11 @@ class PengajuanKekuranganQcDashboardIndex extends Component
             'title' => 'Pengajuan Kekurangan Qc',
             'message' => 'Data Pengajuan Kekurangan Qc berhasil disimpan',
         ]);
+
+        $userDestination = User::where('role', 'Follow Up')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Kekurangan Qc', 'instruction_id' => $updatePengajuan->instruction_id]);
+        }
     }
 
     public function modalInstructionDetailsPengajuanKekuranganQc($instructionId)
@@ -156,5 +162,15 @@ class PengajuanKekuranganQcDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

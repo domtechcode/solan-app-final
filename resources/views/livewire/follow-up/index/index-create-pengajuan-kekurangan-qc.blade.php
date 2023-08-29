@@ -52,7 +52,7 @@
                                 <h3 class="card-title">{{ $title }}</h3>
                             </div>
                             <div class="card-body">
-                                @livewire('follow-up.component.create-instruction-kekurangan-index')
+                                @livewire('follow-up.component.create-pengajuan-kekurangan-qc-index', ['instructionId' => $instructions])
                             </div>
                         </div>
                     </div>
