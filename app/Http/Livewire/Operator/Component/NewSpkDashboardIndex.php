@@ -79,40 +79,86 @@ class NewSpkDashboardIndex extends Component
         $today = Carbon::today();
         $formattedToday = $today->format('Y-m-d');
 
-        $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
-            ->where('state_task', 'Running')
-            ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-            ->where('spk_status', 'Running')
-            ->where('schedule_date', '<=', $formattedToday)
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchNewSpk . '%';
-                $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                        ->orWhere('spk_number', 'like', $searchTerms)
-                        ->orWhere('spk_type', 'like', $searchTerms)
-                        ->orWhere('customer_name', 'like', $searchTerms)
-                        ->orWhere('order_name', 'like', $searchTerms)
-                        ->orWhere('customer_number', 'like', $searchTerms)
-                        ->orWhere('code_style', 'like', $searchTerms)
-                        ->orWhere('shipping_date', 'like', $searchTerms)
-                        ->orWhere('ukuran_barang', 'like', $searchTerms)
-                        ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->where(function ($subQuery) {
-                        // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
-                        $subQuery
-                            ->where(function ($nestedSubQuery) {
-                                $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
-                            })
-                            ->orWhere('group_priority', 'parent');
-                    });
-            })
-            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-            ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
-            ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateNewSpk);
+        if (Auth()->user()->jobdesk == 'Checker') {
+            $dataNewSpk = WorkStep::where('work_step_list_id', 37)
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                ->where('spk_status', 'Running')
+                ->where('schedule_date', '<=', $formattedToday)
+                ->where(function ($query) {
+                    $query
+                        ->where(function ($subQuery) {
+                            $subQuery->whereIn('status_id', [1, 3, 22]);
+                        })
+                        ->orWhere(function ($subQuery) {
+                            $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
+                        });
+                })
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->searchNewSpk . '%';
+                    $query
+                        ->where(function ($subQuery) use ($searchTerms) {
+                            $subQuery
+                                ->orWhere('spk_number', 'like', $searchTerms)
+                                ->orWhere('spk_type', 'like', $searchTerms)
+                                ->orWhere('customer_name', 'like', $searchTerms)
+                                ->orWhere('order_name', 'like', $searchTerms)
+                                ->orWhere('customer_number', 'like', $searchTerms)
+                                ->orWhere('code_style', 'like', $searchTerms)
+                                ->orWhere('shipping_date', 'like', $searchTerms)
+                                ->orWhere('ukuran_barang', 'like', $searchTerms)
+                                ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                        })
+                        ->where(function ($subQuery) {
+                            // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
+                        });
+                })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
+                ->paginate($this->paginateNewSpk);
+        } else {
+            $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                ->where('spk_status', 'Running')
+                ->where('schedule_date', '<=', $formattedToday)
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->searchNewSpk . '%';
+                    $query
+                        ->where(function ($subQuery) use ($searchTerms) {
+                            $subQuery
+                                ->orWhere('spk_number', 'like', $searchTerms)
+                                ->orWhere('spk_type', 'like', $searchTerms)
+                                ->orWhere('customer_name', 'like', $searchTerms)
+                                ->orWhere('order_name', 'like', $searchTerms)
+                                ->orWhere('customer_number', 'like', $searchTerms)
+                                ->orWhere('code_style', 'like', $searchTerms)
+                                ->orWhere('shipping_date', 'like', $searchTerms)
+                                ->orWhere('ukuran_barang', 'like', $searchTerms)
+                                ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                        })
+                        ->where(function ($subQuery) {
+                            // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
+                        });
+                })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
+                ->paginate($this->paginateNewSpk);
+        }
 
         return view('livewire.operator.component.new-spk-dashboard-index', ['instructionsNewSpk' => $dataNewSpk])
             ->extends('layouts.app')
@@ -184,11 +230,22 @@ class NewSpkDashboardIndex extends Component
         $this->workStepSelectedId = $workStepId;
         $dataWorkStep = WorkStep::find($this->workStepSelectedId);
 
-        if($dataWorkStep->dikerjakan == null){
+        if (Auth()->user()->jobdesk == 'Checker') {
+            $dataWorkStep->update([
+                'user_id' => Auth()->user()->id,
+            ]);
+
+            $userDestinationChecker = User::where('jobdesk', 'Checker')->get();
+            foreach ($userDestinationChecker as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' . $dataWorkStep->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
+            }
+        }
+
+        if ($dataWorkStep->dikerjakan == null) {
             $dataWorkStep->update([
                 'dikerjakan' => Carbon::now()->toDateTimeString(),
             ]);
-        }else{
+        } else {
             $dataDiKerjakan = WorkStep::find($workStepId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -212,14 +269,15 @@ class NewSpkDashboardIndex extends Component
         $workStepDataCurrent = WorkStep::find($this->workStepSelectedId);
 
         $userDestination = User::where('role', 'Penjadwalan')->get();
-        foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' .$workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' . $workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
         }
+
     }
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];
