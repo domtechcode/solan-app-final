@@ -19,37 +19,7 @@ class IndexWorkStep extends Component
     {
         $this->instructionSelectedId = $instructionId;
         $this->workStepSelectedId = $workStepId;
-        $dataWorkStep = WorkStep::find($this->workStepSelectedId);
-
-        if($dataWorkStep->dikerjakan == null){
-            $dataWorkStep->update([
-                'dikerjakan' => Carbon::now()->toDateTimeString(),
-            ]);
-    
-        }
-
-        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
-            'status_id' => 2,
-        ]);
-
         $this->workStepData = WorkStep::find($this->workStepSelectedId);
-        $workStepDataCurrent = WorkStep::find($this->workStepSelectedId);
-
-        $userDestination = User::where('role', 'Penjadwalan')->get();
-        foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' .$workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
-        }
-        event(new IndexRenderEvent('refresh'));
-    }
-
-    public function messageSent($arguments)
-    {
-        $createdMessage = "info";
-        $selectedConversation = $arguments['conversation'];
-        $receiverUser = $arguments['receiver'];
-        $instruction_id = $arguments['instruction_id'];
-
-        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 
     public function render()

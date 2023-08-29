@@ -142,7 +142,7 @@
                                             wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
                                             wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary"
+                                        <a class="btn btn-icon btn-sm btn-primary" wire:click="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})" wire:key="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})"
                                             href="{{ route('indexWorkStep', ['instructionId' => $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i
                                                 class="fe fe-edit"></i></a>
                                     </div>

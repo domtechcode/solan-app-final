@@ -12,6 +12,7 @@ use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
+use App\Events\NotificationSent;
 
 class NewSpkDashboardIndex extends Component
 {
@@ -48,6 +49,10 @@ class NewSpkDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+
+    public $instructionSelectedId;
+    public $workStepSelectedId;
+    public $workStepData;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -171,5 +176,54 @@ class NewSpkDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
+    }
+
+    public function operatorDikerjakan($instructionId, $workStepId)
+    {
+        $this->instructionSelectedId = $instructionId;
+        $this->workStepSelectedId = $workStepId;
+        $dataWorkStep = WorkStep::find($this->workStepSelectedId);
+
+        if($dataWorkStep->dikerjakan == null){
+            $dataWorkStep->update([
+                'dikerjakan' => Carbon::now()->toDateTimeString(),
+            ]);
+        }else{
+            $dataDiKerjakan = WorkStep::find($workStepId);
+
+            // Ambil alasan pause yang sudah ada dari database
+            $existingDiKerjakan = json_decode($dataDiKerjakan->dikerjakan, true);
+
+            // Tambahkan alasan pause yang baru ke dalam array existingDiKerjakan
+            $timestampedKeterangan = Carbon::now()->toDateTimeString();
+            $existingDiKerjakan[] = $timestampedKeterangan;
+
+            // Simpan data ke database sebagai JSON
+            $updateCatatanPengerjaan = WorkStep::where('id', $workStepId)->update([
+                'dikerjakan' => json_encode($existingDiKerjakan),
+            ]);
+        }
+
+        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
+            'status_id' => 2,
+        ]);
+
+        $this->workStepData = WorkStep::find($this->workStepSelectedId);
+        $workStepDataCurrent = WorkStep::find($this->workStepSelectedId);
+
+        $userDestination = User::where('role', 'Penjadwalan')->get();
+        foreach($userDestination as $dataUser){
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' .$workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
+        }
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = "info";
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
