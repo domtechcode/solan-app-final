@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
+use App\Models\Customer;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use Livewire\WithPagination;
@@ -14,6 +15,8 @@ use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CompleteDashboardIndex extends Component
 {
@@ -335,40 +338,6 @@ class CompleteDashboardIndex extends Component
         event(new IndexRenderEvent('refresh'));
     }
 
-    public function modalInstructionStockComplete($instructionId)
-    {
-        $updateStatusStock = WorkStep::where('instruction_id', $instructionId)
-            ->where('work_step_list_id', 4)
-            ->update([
-                'user_id' => Auth()->user()->id,
-                'status_id' => 2,
-                'status_task' => 'Process',
-            ]);
-        $this->catatan = Catatan::where('instruction_id', $instructionId)
-            ->where('kategori', 'catatan')
-            ->where('tujuan', 4)
-            ->get();
-        $this->selectedInstruction = Instruction::find($instructionId);
-        $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
-            ->with('workStepList', 'user', 'machine')
-            ->get();
-        $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'contoh')
-            ->get();
-        $this->selectedFileArsip = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'arsip')
-            ->get();
-        $this->selectedFileAccounting = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'accounting')
-            ->get();
-        $this->selectedFileLayout = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'layout')
-            ->get();
-        $this->selectedFileSample = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'sample')
-            ->get();
-    }
-
     public function modalInstructionDetailsComplete($instructionId)
     {
         $this->selectedInstruction = Instruction::find($instructionId);
@@ -433,5 +402,34 @@ class CompleteDashboardIndex extends Component
         $instruction_id = $arguments['instruction_id'];
 
         event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
+    }
+
+    public function sampleRecord()
+    {
+        $customer = Customer::find($this->selectedInstruction->customer);
+        $customer_name = $customer ? $customer->name : '';
+
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setLoadSheetsOnly('Sheet1');
+        $spreadsheet = $reader->load('samplerecord.xlsx');
+
+        $spreadsheet->getActiveSheet()->setCellValue('B4', $this->selectedInstruction->order_date);
+        $spreadsheet->getActiveSheet()->setCellValue('J4', $this->selectedInstruction->spk_number);
+        $spreadsheet->getActiveSheet()->setCellValue('C5', $this->selectedInstruction->order_name);
+        $spreadsheet->getActiveSheet()->setCellValue('I5', $customer_name);
+
+        // Generate the Excel file in memory
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        // Set the response headers for download
+        $response = new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="Sample-Record-' . $this->selectedInstruction->spk_number . '.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
     }
 }
