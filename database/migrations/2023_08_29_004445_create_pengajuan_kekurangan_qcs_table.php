@@ -15,6 +15,12 @@ class CreatePengajuanKekuranganQcsTable extends Migration
     {
         Schema::create('pengajuan_kekurangan_qcs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('instruction_id');
+            $table->foreign('instruction_id')->references('id')->on('instructions')->onDelete('cascade');
+            $table->string('qty_permintaan')->nullable();
+            $table->string('qty_kirim')->nullable();
+            $table->string('qty_kekurangan')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -148,19 +148,19 @@ class CreateAccInstructionIndex extends Component
             $this->spk_sample_number = $dataInstruction->spk_number;
         }
 
-        $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
-            ->whereNotIn('work_step_list_id', [1, 2, 3])
-            ->with('workStepList')
-            ->get();
+        // $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
+        //     ->whereNotIn('work_step_list_id', [1, 2, 3])
+        //     ->with('workStepList')
+        //     ->get();
 
-        $this->workSteps = [];
+        // $this->workSteps = [];
 
-        foreach ($dataWorkStep as $workStep) {
-            $this->workSteps[] = [
-                'name' => $workStep->workStepList->name,
-                'id' => $workStep->work_step_list_id,
-            ];
-        }
+        // foreach ($dataWorkStep as $workStep) {
+        //     $this->workSteps[] = [
+        //         'name' => $workStep->workStepList->name,
+        //         'id' => $workStep->work_step_list_id,
+        //     ];
+        // }
 
         $this->filecontohCurrent = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'contoh')

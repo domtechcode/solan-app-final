@@ -39,6 +39,7 @@ use App\Models\PengajuanBarangSpk;
 use App\Models\FormPengajuanMaklun;
 use App\Models\KeteranganPisauPond;
 use App\Models\FormPenerimaanMaklun;
+use App\Models\PengajuanKekuranganQc;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\KeteranganMatressEmbossDeboss;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -228,5 +229,10 @@ class Instruction extends Model
     public function pengajuanBarangSpk()
     {
         return $this->hasMany(PengajuanBarangSpk::class);
+    }
+
+    public function pengajuanKekuranganQc()
+    {
+        return $this->hasMany(PengajuanKekuranganQc::class);
     }
 }
