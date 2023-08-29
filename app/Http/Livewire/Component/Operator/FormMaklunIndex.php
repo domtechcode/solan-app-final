@@ -103,7 +103,7 @@ class FormMaklunIndex extends Component
             }
         }
 
-        $dataMaklunPengajuan = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)->get();
+        $dataMaklunPengajuan = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)->get();
         if (isset($dataMaklunPengajuan)) {
             foreach ($dataMaklunPengajuan as $item) {
                 $maklunPengajuan = [

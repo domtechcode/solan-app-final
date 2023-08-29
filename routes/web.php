@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/group', 'App\Http\Livewire\FollowUp\Index\IndexGroup')->name('followUp.group');
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\FollowUp\Index\IndexPengajuanBarangPersonal')->name('followUp.pengajuanBarangPersonal');
+        Route::get('/create-kekurangan-qc/{instructionId}', 'App\Http\Livewire\FollowUp\Index\IndexCreatePengajuanKekuranganQc')->name('followUp.createPengajuanKekuranganQc');
     });
 
     Route::group(['prefix' => 'stock', 'middleware' => ['role:Stock']], function () {

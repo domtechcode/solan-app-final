@@ -97,6 +97,13 @@
                                                     wire:key="tabSpk4" href="#tabSpk4">Cancel -
                                                     {{ $dataCountCancelSpk }}</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk5' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk5')"
+                                                    wire:key="tabSpk5" href="#tabSpk5">Pengajuan Kekurangan Qc -
+                                                    {{ $dataCountTotalPengajuanKekuranganQc }}</button>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="card-body">
@@ -126,6 +133,13 @@
                                                 id="tabSpk4">
                                                 <h5 class="card-title">Cancel</h5>
                                                 @livewire('follow-up.component.cancel-dashboard-index')
+                                            </div>
+                                        </div>
+                                        <div class="tab-content">
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk5' ? 'active' : '' }}"
+                                                id="tabSpk5">
+                                                <h5 class="card-title">Cancel</h5>
+                                                @livewire('follow-up.component.pengajuan-kekurangan-qc-dashboard-index')
                                             </div>
                                         </div>
                                     </div>

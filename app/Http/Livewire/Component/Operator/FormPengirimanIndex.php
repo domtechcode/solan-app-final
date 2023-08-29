@@ -19,6 +19,7 @@ use Livewire\WithFileUploads;
 use App\Models\FormPengiriman;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\PengajuanKekuranganQc;
 use Illuminate\Support\Facades\Storage;
 
 class FormPengirimanIndex extends Component
@@ -35,7 +36,6 @@ class FormPengirimanIndex extends Component
     public $catatanProsesPengerjaan;
     public $dataDriver;
     public $anggota = [];
-
 
     public function addAnggota()
     {
@@ -56,10 +56,10 @@ class FormPengirimanIndex extends Component
         $dataWorkStep = WorkStep::find($workStepId);
         $this->dataWorkSteps = WorkStep::find($workStepId);
         $this->dataDriver = Driver::all();
-        
+
         $dataAnggotaCurrent = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->get();
-        if(isset($dataAnggotaCurrent)){
-            foreach($dataAnggotaCurrent as $item){
+        if (isset($dataAnggotaCurrent)) {
+            foreach ($dataAnggotaCurrent as $item) {
                 $anggota = [
                     'driver' => $item['driver'],
                     'kernet' => $item['kernet'],
@@ -71,7 +71,7 @@ class FormPengirimanIndex extends Component
             }
         }
 
-        if(empty($this->anggota)){
+        if (empty($this->anggota)) {
             $this->anggota[] = [
                 'driver' => '',
                 'kernet' => '',
@@ -79,7 +79,6 @@ class FormPengirimanIndex extends Component
                 'status' => 'Kirim',
             ];
         }
-    
     }
 
     public function render()
@@ -91,14 +90,13 @@ class FormPengirimanIndex extends Component
     {
         $this->validate([
             'anggota.*.driver' => 'required',
-        //    'anggota.*.kernet' => 'required',
             'anggota.*.qty' => 'required',
             'anggota.*.status' => 'required',
         ]);
-        
+
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -115,10 +113,10 @@ class FormPengirimanIndex extends Component
         }
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
-        
-        if(isset($this->anggota)){
+
+        if (isset($this->anggota)) {
             $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
-            foreach($this->anggota as $dataAnggota){
+            foreach ($this->anggota as $dataAnggota) {
                 $createFormPengiriman = FormPengiriman::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'driver' => $dataAnggota['driver'],
@@ -138,11 +136,30 @@ class FormPengirimanIndex extends Component
         ]);
 
         $userDestination = User::where('role', 'Penjadwalan')->get();
-        foreach($userDestination as $dataUser){
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Pengiriman Selesai Oleh '. $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Pengiriman Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
         }
-        event(new IndexRenderEvent('refresh'));
         
+        $totalQty = 0;
+
+        foreach ($this->anggota as $item) {
+            $totalQty += intval($item["qty"]);
+        }
+
+        $totalPermintaan = $instructionData->quantity - $instructionData->stock;
+        
+        if($totalQty < $totalPermintaan){
+            $qtyKekurangan = $totalPermintaan - $totalQty;
+            $createPengajuanQc = PengajuanKekuranganQc::create([
+                'instruction_id' => $instructionData->id,
+                'qty_permintaan' => $totalPermintaan,
+                'qty_kirim' => $totalQty,
+                'qty_kekurangan' => $qtyKekurangan,
+                'status' => 'Pending',
+            ]);
+        }
+
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Pengiriman Instruksi Kerja',
@@ -156,14 +173,13 @@ class FormPengirimanIndex extends Component
     {
         $this->validate([
             'anggota.*.driver' => 'required',
-//            'anggota.*.kernet' => 'required',
             'anggota.*.qty' => 'required',
             'anggota.*.status' => 'required',
         ]);
-        
+
         $instructionData = Instruction::find($this->instructionCurrentId);
 
-        if($this->catatanProsesPengerjaan){
+        if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
             // Ambil alasan pause yang sudah ada dari database
@@ -178,10 +194,10 @@ class FormPengirimanIndex extends Component
                 'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
             ]);
         }
-        
-        if(isset($this->anggota)){
+
+        if (isset($this->anggota)) {
             $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
-            foreach($this->anggota as $dataAnggota){
+            foreach ($this->anggota as $dataAnggota) {
                 $createFormPengiriman = FormPengiriman::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'driver' => $dataAnggota['driver'],
@@ -191,7 +207,7 @@ class FormPengirimanIndex extends Component
                 ]);
             }
         }
-        
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Pengiriman Instruksi Kerja',
@@ -203,7 +219,7 @@ class FormPengirimanIndex extends Component
 
     public function messageSent($arguments)
     {
-        $createdMessage = "info";
+        $createdMessage = 'info';
         $selectedConversation = $arguments['conversation'];
         $receiverUser = $arguments['receiver'];
         $instruction_id = $arguments['instruction_id'];

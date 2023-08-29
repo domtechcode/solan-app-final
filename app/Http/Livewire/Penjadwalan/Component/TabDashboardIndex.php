@@ -9,6 +9,7 @@ use App\Models\Instruction;
 use App\Models\WorkStepList;
 use Livewire\WithPagination;
 use App\Models\PengajuanBarangSpk;
+use App\Models\PengajuanKekuranganQc;
 use App\Models\PengajuanBarangPersonal;
 
 class TabDashboardIndex extends Component
@@ -23,6 +24,7 @@ class TabDashboardIndex extends Component
     public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanBarangSpk;
     public $dataCountTotalPengajuanBarang;
+    public $dataCountTotalPengajuanKekuranganQc;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -131,6 +133,8 @@ class TabDashboardIndex extends Component
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
+
+        $this->dataCountTotalPengajuanKekuranganQc = PengajuanKekuranganQc::where('status', 'Pending')->count();
     }
 
     public function render()

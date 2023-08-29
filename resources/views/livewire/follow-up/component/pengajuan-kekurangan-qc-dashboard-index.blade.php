@@ -2,7 +2,8 @@
     {{-- In work, do what you enjoy. --}}
     <div class="row">
         <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateAcc">
+            <select id="" name="" class="form-control form-select w-auto"
+                wire:model="paginatePengajuanKekuranganQc">
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -10,7 +11,8 @@
             </select>
         </div>
         <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchAcc">
+            <input type="text" class="form-control w-auto" placeholder="Search"
+                wire:model="searchPengajuanKekuranganQc">
         </div>
     </div>
     <div class="row mt-3">
@@ -21,21 +23,18 @@
                         <tr>
                             <th class="border-bottom-0">No</th>
                             <th class="border-bottom-0">No SPK</th>
-                            <th class="border-bottom-0">Type SPK</th>
                             <th class="border-bottom-0">Pemesan</th>
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
-                            <th class="border-bottom-0">Style</th>
-                            <th class="border-bottom-0">Ukuran Barang</th>
-                            <th class="border-bottom-0">Permintaan Kirim</th>
-                            <th class="border-bottom-0">Total Qty</th>
+                            <th class="border-bottom-0">Permintaan Total Qty</th>
+                            <th class="border-bottom-0">Qty Pengiriman</th>
+                            <th class="border-bottom-0">Qty Kekurangan</th>
                             <th class="border-bottom-0">Status</th>
-                            <th class="border-bottom-0">Pekerjaan</th>
                             <th class="border-bottom-0">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($instructionsAcc as $key => $dataInstruction)
+                        @forelse ($instructionsPengajuanKekuranganQc as $key => $dataInstruction)
                             <tr wire:key="{{ $dataInstruction->instruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>
@@ -47,22 +46,14 @@
 
                                     @if ($dataInstruction->instruction->group_id)
                                         <button class="btn btn-icon btn-sm btn-info" data-bs-toggle="modal"
-                                            data-bs-target="#openModalGroupAcc"
-                                            wire:click="modalInstructionDetailsGroupAcc({{ $dataInstruction->instruction->group_id }})"
-                                            wire:key="modalInstructionDetailsGroupAcc({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
-                                    @endif
-                                </td>
-                                <td>{{ $dataInstruction->instruction->spk_type }}
-                                    @if ($dataInstruction->instruction->spk_type !== 'production' && $dataInstruction->instruction->count !== null)
-                                        - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
+                                            data-bs-target="#openModalGroupPengajuanKekuranganQc"
+                                            wire:click="modalInstructionDetailsGroupPengajuanKekuranganQc({{ $dataInstruction->instruction->group_id }})"
+                                            wire:key="modalInstructionDetailsGroupPengajuanKekuranganQc({{ $dataInstruction->instruction->group_id }})">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
-                                <td>{{ $dataInstruction->instruction->code_style }}</td>
-                                <td>{{ $dataInstruction->instruction->ukuran_barang }}</td>
-                                <td>{{ $dataInstruction->instruction->shipping_date }}</td>
                                 @if ($dataInstruction->instruction->group_id)
                                     <td>
                                         {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
@@ -71,76 +62,21 @@
                                     <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
                                     </td>
                                 @endif
-                                @if (in_array($dataInstruction->status_id, [1, 8]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
-                                @elseif(in_array($dataInstruction->status_id, [2, 9, 10, 11, 20, 23]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
-                                @elseif(in_array($dataInstruction->status_id, [3, 5, 17, 18, 19, 21, 22, 24, 25, 26, 27]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
-                                @elseif(in_array($dataInstruction->status_id, [7, 13, 14, 16]))
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
-                                    </td>
-                                    <td>
-                                        @if ($dataInstruction->spk_status != 'Running')
-                                            <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
-                                        @endif
-                                        <span
-                                            class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
-                                    </td>
-                                @endif
+                                <td>{{ $dataInstruction->qty_kirim }}</td>
+                                <td>{{ $dataInstruction->qty_kekurangan }}</td>
+                                <td>
+                                    <span
+                                        class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status }}</span>
+                                </td>
                                 <td>
                                     <div class="btn-list">
                                         <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
-                                            data-bs-target="#openModalAcc"
-                                            wire:click="modalInstructionDetailsAcc({{ $dataInstruction->instruction->id }})"
-                                            wire:key="modalInstructionDetailsAcc({{ $dataInstruction->instruction->id }})"><i
+                                            data-bs-target="#openModalPengajuanKekuranganQc"
+                                            wire:click="modalInstructionDetailsPengajuanKekuranganQc({{ $dataInstruction->instruction->id }})"
+                                            wire:key="modalInstructionDetailsPengajuanKekuranganQc({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
                                         <a class="btn btn-sm btn-info"
-                                            href="{{ route('followUp.createAccInstruction', ['instructionId' => $dataInstruction->instruction->id]) }}">Create</a>
+                                            href="{{ route('followUp.createPengajuanKekuranganQc', ['instructionId' => $dataInstruction->instruction->id]) }}">Create</a>
                                     </div>
                                 </td>
                             </tr>
@@ -158,12 +94,12 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $instructionsAcc->links() }}
+            {{ $instructionsPengajuanKekuranganQc->links() }}
         </div>
     </div>
 
-    <!-- Modal Acc SPK-->
-    <div wire:ignore.self class="modal fade" id="openModalAcc" tabindex="-1" role="dialog">
+    <!-- Modal General-->
+    <div wire:ignore.self class="modal fade" id="openModalPengajuanKekuranganQc" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -203,7 +139,7 @@
                                             <td>{{ $selectedInstruction->shipping_date ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->quantity ?? '-' }}</td>
                                             <td>{{ $selectedInstruction->stock ?? '-' }}</td>
-                                            <td>{{ $selectedInstruction->price ?? '-' }}</td>
+                                            <td>-</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -357,24 +293,6 @@
                             </div>
                         </div>
                         <div class="col-xl-4">
-                            <div class="expanel expanel-default">
-                                <div class="expanel-body">
-                                    File Accounting
-                                    <hr>
-                                    <ul class="list-group no-margin">
-                                        @if (isset($selectedFileAccounting))
-                                            @forelse ($selectedFileAccounting as $file)
-                                                <li class="list-group-item d-flex ps-3">
-                                                    <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                        download>{{ $file->file_name }}</a>
-                                                </li>
-                                            @empty
-                                                <p>No files found.</p>
-                                            @endforelse
-                                        @endif
-                                    </ul>
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="expanel expanel-default">
@@ -408,7 +326,7 @@
     </div>
 
     <!-- Modal Group-->
-    <div wire:ignore.self class="modal fade" id="openModalGroupAcc" tabindex="-1" role="dialog">
+    <div wire:ignore.self class="modal fade" id="openModalGroupPengajuanKekuranganQc" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -470,7 +388,7 @@
                                                             </td>
                                                             <td>{{ $selectedInstructionParent->quantity ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
-                                                            <td>{{ $selectedInstructionParent->price ?? '-' }}</td>
+                                                            <td>-</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -499,8 +417,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td>{{ $selectedInstructionParent->follow_up ?? '-' }}
-                                                            </td>
+                                                            <td>{{ $selectedInstructionParent->follow_up ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->spk_type ?? '-' }}</td>
                                                             <td>{{ $selectedInstructionParent->taxes_type ?? '-' }}
                                                             </td>
@@ -541,8 +458,7 @@
                                                         @if (isset($selectedWorkStepParent))
                                                             @foreach ($selectedWorkStepParent as $workstep)
                                                                 <tr>
-                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}
-                                                                    </td>
+                                                                    <td>{{ $workstep->workStepList->name ?? '-' }}</td>
                                                                     <td>{{ $workstep->target_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->schedule_date ?? '-' }}</td>
                                                                     <td>{{ $workstep->spk_parent ?? '-' }}</td>
@@ -632,24 +548,6 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4">
-                                            <div class="expanel expanel-default">
-                                                <div class="expanel-body">
-                                                    File Accounting
-                                                    <hr>
-                                                    <ul class="list-group no-margin">
-                                                        @if (isset($selectedFileAccountingParent))
-                                                            @forelse ($selectedFileAccountingParent as $file)
-                                                                <li class="list-group-item d-flex ps-3">
-                                                                    <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                                        download>{{ $file->file_name }}</a>
-                                                                </li>
-                                                            @empty
-                                                                <p>No files found.</p>
-                                                            @endforelse
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="expanel expanel-default">
@@ -727,7 +625,7 @@
                                                                     <td>{{ $data->shipping_date ?? '-' }}</td>
                                                                     <td>{{ $data->quantity ?? '-' }}</td>
                                                                     <td>{{ $data->stock ?? '-' }}</td>
-                                                                    <td>{{ $data->price ?? '-' }}</td>
+                                                                    <td>-</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -897,26 +795,6 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-xl-4">
-                                                    <div class="expanel expanel-default">
-                                                        <div class="expanel-body">
-                                                            File Accounting
-                                                            <hr>
-                                                            <ul class="list-group no-margin">
-                                                                @if (isset($data->fileArsip))
-                                                                    @forelse ($data->fileArsip as $file)
-                                                                        @if ($file->type_file == 'accounting')
-                                                                            <li class="list-group-item d-flex ps-3">
-                                                                                <a href="{{ asset(Storage::url($file->file_path . '/' . $file->file_name)) }}"
-                                                                                    download>{{ $file->file_name }}</a>
-                                                                            </li>
-                                                                        @endif
-                                                                    @empty
-                                                                        <p>No files found.</p>
-                                                                    @endforelse
-                                                                @endif
-                                                            </ul>
-                                                        </div>
-                                                    </div>
                                                     <div class="row">
                                                         <div class="col-lg-12">
                                                             <div class="expanel expanel-default">
@@ -961,11 +839,3 @@
     </div>
 
 </div>
-
-@push('scripts')
-    <script>
-        window.addEventListener('close-modal-revisi-sample', event => {
-            $('#openModalRevisiSample').modal('hide');
-        });
-    </script>
-@endpush
