@@ -30,17 +30,17 @@
 
 @push('styles')
     @once
-        <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
-        <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+        <link href="{{ asset('assets/plugins/filepond/unpkg.com_filepond@4.30.4_dist_filepond.css') }}" rel="stylesheet">
+        <link href="{{ asset('assets/plugins/filepond/unpkg.com_filepond-plugin-image-preview@4.6.11_dist_filepond-plugin-image-preview.css') }}" rel="stylesheet">
     @endonce
 @endpush
 
 @push('scripts')
     @once
-        <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
-        <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
-        <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-        <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+        <script src="{{ asset('assets/plugins/filepond/unpkg.com_filepond-plugin-file-validate-type@1.2.8_dist_filepond-plugin-file-validate-type.js') }}"></script>
+        <script src="{{ asset('assets/plugins/filepond/unpkg.com_filepond-plugin-file-validate-size@2.2.8_dist_filepond-plugin-file-validate-size.js') }}"></script>
+        <script src="{{ asset('assets/plugins/filepond/unpkg.com_filepond-plugin-image-preview@4.6.11_dist_filepond-plugin-image-preview.js') }}"></script>
+        <script src="{{ asset('assets/plugins/filepond/unpkg.com_filepond@4.30.4_dist_filepond.js') }}"></script>
         <script>
             FilePond.registerPlugin(FilePondPluginFileValidateType);
             FilePond.registerPlugin(FilePondPluginFileValidateSize);

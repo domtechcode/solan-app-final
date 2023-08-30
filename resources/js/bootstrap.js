@@ -30,3 +30,4 @@ window.Echo = new Echo({
     disableStats: true,
 });
 
+
