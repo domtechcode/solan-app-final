@@ -1501,35 +1501,86 @@ class EditFormHitungBahanIndex extends Component
                 event(new IndexRenderEvent('refresh'));
             }
         } else {
-            if ($updateTask) {
-                $updateTask->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                    'selesai' => Carbon::now()->toDateTimeString(),
-                ]);
-
-                $updateNextStep = WorkStep::find($updateTask->reject_from_id);
-
-                if ($updateNextStep) {
-                    $updateNextStep->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Reject',
+            if ($newPlateTotal > $currentTotalPlate || $newScreenTotal > $currentTotalScreen || $newTotalHargaBahan > $currentTotalHargaBahan) {
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
-                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                        'status_id' => 3,
-                        'job_id' => $updateNextStep->work_step_list_id,
+                    $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                        ->where('step', $updateTask->step + 1)
+                        ->first();
+
+                    if ($updateNextStep) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Reject Requirements',
+                        ]);
+
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'job_id' => $updateNextStep->work_step_list_id,
+                            'status_id' => 22,
+                        ]);
+                    }
+
+                    $updateNextStep->update([
+                        'reject_from_id' => $updateTask->reject_from_id,
+                        'reject_from_status' => $updateTask->reject_from_status,
+                        'reject_from_job' => $updateTask->reject_from_job,
+                    ]);
+
+                    $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                    event(new IndexRenderEvent('refresh'));
+
+                    $updateTask->update([
+                        'reject_from_id' => null,
+                        'reject_from_status' => null,
+                        'reject_from_job' => null,
                     ]);
                 }
-
-                $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
-                event(new IndexRenderEvent('refresh'));
-
-                $updateTask->update([
-                    'reject_from_id' => null,
-                    'reject_from_status' => null,
-                    'reject_from_job' => null,
-                ]);
+            }else{
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                    ]);
+    
+                    $updateNextStep = WorkStep::find($updateTask->reject_from_id);
+    
+                    if ($updateNextStep->work_step_list_id == 2) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+    
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 1,
+                            'job_id' => $updateNextStep->work_step_list_id,
+                        ]);
+                    }else{
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Reject',
+                        ]);
+    
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 3,
+                            'job_id' => $updateNextStep->work_step_list_id,
+                        ]);
+                    }
+    
+                    $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
+                    event(new IndexRenderEvent('refresh'));
+    
+                    $updateTask->update([
+                        'reject_from_id' => null,
+                        'reject_from_status' => null,
+                        'reject_from_job' => null,
+                    ]);   
+            }
             }
         }
 

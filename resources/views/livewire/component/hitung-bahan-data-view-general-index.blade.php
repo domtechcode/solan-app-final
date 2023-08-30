@@ -1168,11 +1168,8 @@
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Name"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.name"
-                                                                                disabled>
+                                                                            {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['name'] }}
+
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.rincianPlate.' . $rincianIndexPlate .
                                                                                 '.name')

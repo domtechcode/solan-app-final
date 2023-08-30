@@ -773,7 +773,7 @@ class RunningDashboardIndex extends Component
             'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
-            'reject_from_status' => $workStepCurrent->status_id,
+            'reject_from_status' => 1,
             'reject_from_job' => 2,
             'count_reject' => $workStepDestination->count_reject + 1,
         ]);
@@ -801,12 +801,10 @@ class RunningDashboardIndex extends Component
             'title' => 'Reject Instruksi Kerja',
             'message' => 'Berhasil reject instruksi kerja',
         ]);
-
+        $this->messageSent(['receiver' => $workStepDestination->user_id, 'conversation' => 'SPK Reject dari Penjadwalan', 'instruction_id' => $this->selectedInstruction->id]);
         $this->tujuanReject = null;
         $this->keteranganReject = null;
-        $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
-        $this->dispatchBrowserEvent('close-modal-running');
+        $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
     public function ajukanBarang()
