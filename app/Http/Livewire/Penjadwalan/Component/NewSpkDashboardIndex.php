@@ -70,12 +70,15 @@ class NewSpkDashboardIndex extends Component
     {
         array_splice($this->workSteps, $index + 1, 0, [
             [
+                'id' => null,
                 'work_step_list_id' => null,
                 'target_date' => null,
                 'schedule_date' => null,
                 'target_time' => null,
                 'user_id' => null,
                 'machine_id' => null,
+                'state_task' => 'Not Running',
+                'status_task' => 'Pending Start',
             ],
         ]);
 
@@ -191,10 +194,13 @@ class NewSpkDashboardIndex extends Component
             'workSteps.*.user_id' => 'required',
         ]);
 
+        $lastDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->get();
         $firstWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('work_step_list_id', 2)
             ->first();
-        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->orderBy('step', 'asc')
+            ->get();
 
         $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('step', '>', $firstWorkStep->step)
@@ -206,27 +212,80 @@ class NewSpkDashboardIndex extends Component
             }
         }
 
+        // Insert new work steps starting from firstWorkStep->step + 1
         $stepToAdd = $firstWorkStep->step + 1;
-        $newWorkSteps = [];
+        // $newWorkSteps = [];
+
+        // // Buat array dengan work_step_list_id yang ingin dihapus
+        $workStepListIdsToRemove = [1, 2, 3, 4, 5];
+
+        // // Gunakan array_filter untuk menyaring array dan hanya menyimpan elemen-elemen yang tidak memiliki work_step_list_id dalam $workStepListIdsToRemove
+        $this->workSteps = array_filter($this->workSteps, function ($item) use ($workStepListIdsToRemove) {
+            return !in_array($item['work_step_list_id'], $workStepListIdsToRemove);
+        });
+
 
         foreach ($this->workSteps as $index => $workStepData) {
-            $newWorkSteps[] = [
-                'instruction_id' => $this->selectedInstruction->id,
-                'work_step_list_id' => $workStepData['work_step_list_id'],
-                'target_date' => $workStepData['target_date'],
-                'schedule_date' => $workStepData['schedule_date'],
-                'target_time' => $workStepData['target_time'],
-                'user_id' => $workStepData['user_id'],
-                'machine_id' => $workStepData['machine_id'],
-                'step' => $stepToAdd++,
-                'state_task' => 'Not Running',
-                'status_task' => 'Waiting',
-                'task_priority' => 'Normal',
-                'spk_status' => 'Running',
-            ];
+            $stepCount = $stepToAdd++;
+            if ($workStepData['id'] != null) {
+                $inserWorkStep = WorkStep::create([
+                    'id' => $workStepData['id'],
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'work_step_list_id' => $workStepData['work_step_list_id'],
+                    'target_date' => $workStepData['target_date'],
+                    'schedule_date' => $workStepData['schedule_date'],
+                    'target_time' => $workStepData['target_time'],
+                    'user_id' => $workStepData['user_id'],
+                    'machine_id' => $workStepData['machine_id'],
+                    'step' => $stepCount,
+                    'state_task' => $workStepData['state_task'],
+                    'status_task' => $workStepData['status_task'],
+                    'spk_status' => 'Running',
+                ]);
+            } else {
+                $inserWorkStep = WorkStep::create([
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'work_step_list_id' => $workStepData['work_step_list_id'],
+                    'target_date' => $workStepData['target_date'],
+                    'schedule_date' => $workStepData['schedule_date'],
+                    'target_time' => $workStepData['target_time'],
+                    'user_id' => $workStepData['user_id'],
+                    'machine_id' => $workStepData['machine_id'],
+                    'step' => $stepCount,
+                    'state_task' => $workStepData['state_task'],
+                    'status_task' => $workStepData['status_task'],
+                    'spk_status' => 'Running',
+                ]);
+            }
         }
 
-        $inserWorkStep = WorkStep::insert($newWorkSteps);
+        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+            ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
+            ->get();
+            
+        foreach ($lastDataWorkStep as $lastData) {
+            $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                ->where('work_step_list_id', $lastData->work_step_list_id)
+                ->where('status_task', $lastData->status_task)
+                ->where('state_task', $lastData->state_task)
+                ->update([
+                    'flag' => $lastData['flag'],
+                    'timer' => $lastData['timer'],
+                    'auto_save_timer' => $lastData['auto_save_timer'],
+                    'alasan_pause' => $lastData['alasan_pause'],
+                    'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
+                    'reject_from_id' => $lastData['reject_from_id'],
+                    'reject_from_status' => $lastData['reject_from_status'],
+                    'reject_from_job' => $lastData['reject_from_job'],
+                    'count_reject' => $lastData['count_reject'],
+                    'count_revisi' => $lastData['count_revisi'],
+                    'task_priority' => $lastData['task_priority'],
+                    'dikerjakan' => $lastData['dikerjakan'],
+                    'selesai' => $lastData['selesai'],
+                    'keterangan_reject' => $lastData['keterangan_reject'],
+                    'keterangan_reschedule' => $lastData['keterangan_reschedule'],
+                ]);
+        }
 
         $nextWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('step', $firstWorkStep->step + 1)
@@ -261,15 +320,13 @@ class NewSpkDashboardIndex extends Component
             }
         }
 
-        event(new IndexRenderEvent('refresh'));
-
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
             'message' => 'Data jadwal berhasil disimpan',
         ]);
-
-        $this->workSteps = null;
+        $this->workSteps = [];
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
@@ -326,9 +383,8 @@ class NewSpkDashboardIndex extends Component
         $this->selectedInstruction = Instruction::find($instructionId);
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->whereNotIn('work_step_list_id', [1, 2, 3])
-            ->where('status_task', '!=', 'Complete')
-            ->where('state_task', '!=', 'Complete')
             ->with('workStepList', 'user', 'machine')
+            ->orderBy('step', 'asc')
             ->get();
 
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
@@ -367,14 +423,17 @@ class NewSpkDashboardIndex extends Component
 
         foreach ($this->selectedWorkStep as $key => $dataSelected) {
             $workSteps = [
+                'id' => $dataSelected['id'],
                 'work_step_list_id' => $dataSelected['work_step_list_id'],
                 'target_date' => $dataSelected['target_date'],
                 'schedule_date' => $dataSelected['schedule_date'],
                 'target_time' => $dataSelected['target_time'],
                 'user_id' => $dataSelected['user_id'],
                 'machine_id' => $dataSelected['machine_id'],
+                'status_task' => $dataSelected['status_task'],
+                'state_task' => $dataSelected['state_task'],
+                'keterangan_reject' => $dataSelected['keterangan_reject'],
             ];
-
             $this->workSteps[] = $workSteps;
 
             // Load Event

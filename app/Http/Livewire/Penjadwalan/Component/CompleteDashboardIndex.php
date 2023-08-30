@@ -257,7 +257,9 @@ class CompleteDashboardIndex extends Component
             ]);
         }
 
-        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)->max(DB::raw('CAST(step AS SIGNED)'));
+        $lastWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+        ->orderBy('step', 'asc')
+        ->get();
 
         $deleteWorkSteps = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->where('step', '>', $firstWorkStep->step)
@@ -271,39 +273,59 @@ class CompleteDashboardIndex extends Component
 
         // Insert new work steps starting from firstWorkStep->step + 1
         $stepToAdd = $firstWorkStep->step + 1;
-        $newWorkSteps = [];
+        // $newWorkSteps = [];
 
-        // Buat array dengan work_step_list_id yang ingin dihapus
+        // // Buat array dengan work_step_list_id yang ingin dihapus
         $workStepListIdsToRemove = [1, 2, 3, 4, 5];
 
-        // Gunakan array_filter untuk menyaring array dan hanya menyimpan elemen-elemen yang tidak memiliki work_step_list_id dalam $workStepListIdsToRemove
+        // // Gunakan array_filter untuk menyaring array dan hanya menyimpan elemen-elemen yang tidak memiliki work_step_list_id dalam $workStepListIdsToRemove
         $this->workSteps = array_filter($this->workSteps, function ($item) use ($workStepListIdsToRemove) {
             return !in_array($item['work_step_list_id'], $workStepListIdsToRemove);
         });
 
         foreach ($this->workSteps as $index => $workStepData) {
-            $newWorkSteps[] = [
-                'instruction_id' => $this->selectedInstruction->id,
-                'work_step_list_id' => $workStepData['work_step_list_id'],
-                'target_date' => $workStepData['target_date'],
-                'schedule_date' => $workStepData['schedule_date'],
-                'target_time' => $workStepData['target_time'],
-                'user_id' => $workStepData['user_id'],
-                'machine_id' => $workStepData['machine_id'],
-                'step' => $stepToAdd++,
-                'state_task' => $workStepData['state_task'],
-                'status_task' => $workStepData['status_task'],
-                'spk_status' => 'Running',
-            ];
+            $stepCount = $stepToAdd++;
+            if($workStepData['id'] != null){
+                $inserWorkStep = WorkStep::create([
+                    'id' => $workStepData['id'],
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'work_step_list_id' => $workStepData['work_step_list_id'],
+                    'target_date' => $workStepData['target_date'],
+                    'schedule_date' => $workStepData['schedule_date'],
+                    'target_time' => $workStepData['target_time'],
+                    'user_id' => $workStepData['user_id'],
+                    'machine_id' => $workStepData['machine_id'],
+                    'step' => $stepCount,
+                    'state_task' => $workStepData['state_task'],
+                    'status_task' => $workStepData['status_task'],
+                    'spk_status' => 'Running',
+                ]);
+            } else {
+                $inserWorkStep = WorkStep::create([
+                    'instruction_id' => $this->selectedInstruction->id,
+                    'work_step_list_id' => $workStepData['work_step_list_id'],
+                    'target_date' => $workStepData['target_date'],
+                    'schedule_date' => $workStepData['schedule_date'],
+                    'target_time' => $workStepData['target_time'],
+                    'user_id' => $workStepData['user_id'],
+                    'machine_id' => $workStepData['machine_id'],
+                    'step' => $stepCount,
+                    'state_task' => $workStepData['state_task'],
+                    'status_task' => $workStepData['status_task'],
+                    'spk_status' => 'Running',
+                ]);
+            }
+            
         }
 
-        if (isset($newWorkSteps)) {
-            $inserWorkStep = WorkStep::insert($newWorkSteps);
-        }
+        // if (isset($newWorkSteps)) {
+        //     $inserWorkStep = WorkStep::insert($newWorkSteps);
+        // }
 
         $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
             ->get();
+            
         foreach ($lastDataWorkStep as $lastData) {
             $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
                 ->where('work_step_list_id', $lastData->work_step_list_id)
@@ -312,6 +334,7 @@ class CompleteDashboardIndex extends Component
                 ->update([
                     'flag' => $lastData['flag'],
                     'timer' => $lastData['timer'],
+                    'auto_save_timer' => $lastData['auto_save_timer'],
                     'alasan_pause' => $lastData['alasan_pause'],
                     'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
                     'reject_from_id' => $lastData['reject_from_id'],
@@ -336,17 +359,15 @@ class CompleteDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
-        $this->dispatchBrowserEvent('close-modal-complete');
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
             'message' => 'Data jadwal berhasil disimpan',
         ]);
-
-        event(new IndexRenderEvent('refresh'));
-
         $this->workSteps = [];
         $this->keteranganReschedule = '';
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-complete');
     }
 
     public function modalInstructionDetailsComplete($instructionId)
@@ -372,6 +393,7 @@ class CompleteDashboardIndex extends Component
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->whereNotIn('work_step_list_id', [1, 2, 3])
             ->with('workStepList', 'user', 'machine')
+            ->orderBy('step', 'asc')
             ->get();
         $dataworkStepHitungBahan = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)

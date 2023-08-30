@@ -322,7 +322,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Langkah Kerja"
-                                                                            wire:model="workSteps.{{ $key }}.work_step_list_id"
+                                                                            wire:model.defer="workSteps.{{ $key }}.work_step_list_id"
                                                                             id="work_step_list_id-{{ $key }}">
                                                                             <option label="Select Langkah Kerja">
                                                                             </option>
@@ -392,7 +392,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select User"
-                                                                            wire:model="workSteps.{{ $key }}.user_id"
+                                                                            wire:model.defer="workSteps.{{ $key }}.user_id"
                                                                             id="user_id-{{ $key }}">
                                                                             <option label="Select User"></option>
                                                                             @forelse ($dataUsers as $dataUser)
@@ -423,7 +423,7 @@
                                                                             data-parent="#openModalNewSpk"
                                                                             data-component-id="{{ $this->id }}"
                                                                             data-placeholder="Select Machine"
-                                                                            wire:model="workSteps.{{ $key }}.machine_id"
+                                                                            wire:model.defer="workSteps.{{ $key }}.machine_id"
                                                                             id="machine_id-{{ $key }}">
                                                                             <option label="Select Machine">
                                                                             </option>

@@ -401,7 +401,7 @@
                                                                         data-parent="#openModalRunning"
                                                                         data-component-id="{{ $this->id }}"
                                                                         data-placeholder="Select Langkah Kerja"
-                                                                        wire:model="workSteps.{{ $key }}.work_step_list_id"
+                                                                        wire:model.defer="workSteps.{{ $key }}.work_step_list_id"
                                                                         id="work_step_list_id-{{ $key }}">
                                                                         <option label="Select Langkah Kerja"></option>
                                                                         @forelse ($dataWorkSteps as $dataWorkStep)
@@ -498,7 +498,7 @@
                                                                         data-parent="#openModalRunning"
                                                                         data-component-id="{{ $this->id }}"
                                                                         data-placeholder="Select Machine"
-                                                                        wire:model="workSteps.{{ $key }}.machine_id"
+                                                                        wire:model.defer="workSteps.{{ $key }}.machine_id"
                                                                         id="machine_id-{{ $key }}">
                                                                         <option label="Select Machine"></option>
                                                                         @forelse ($dataMachines as $dataMachine)
