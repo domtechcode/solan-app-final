@@ -185,8 +185,15 @@
 
         window.addEventListener('beforeunload', function(event) {
             // Panggil method 'save' pada komponen Livewire untuk menyimpan data timer
-            
             saveTimer();
         });
+
+        function runEveryFiveMinutes() {
+            const TimerState = document.getElementById("display").textContent;
+            Livewire.emit('handleAutoSaveDataTimer', TimerState);
+        }
+
+        runEveryFiveMinutes();
+        setInterval(runEveryFiveMinutes, 5 * 60 * 1000);
     </script>
 @endpush

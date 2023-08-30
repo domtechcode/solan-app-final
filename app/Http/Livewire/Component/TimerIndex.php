@@ -16,7 +16,7 @@ class TimerIndex extends Component
     public $currentInstructionId;
     public $currentWorkStepId;
 
-    protected $listeners = ['handleSaveDataTimer' => 'saveDataTimer', 'handleSaveDataTimerPause' => 'saveDataTimerPause'];
+    protected $listeners = ['handleSaveDataTimer' => 'saveDataTimer', 'handleSaveDataTimerPause' => 'saveDataTimerPause', 'handleAutoSaveDataTimer' => 'autoSaveDataTimer'];
 
     public function mount($instructionId, $workStepId)
     {
@@ -24,7 +24,19 @@ class TimerIndex extends Component
         $this->currentWorkStepId = $workStepId;
 
         $workStepData = WorkStep::find($this->currentWorkStepId);
-        $this->timerDataWorkStep = $workStepData->timer ?? '00:00:00';
+
+        if ($workStepData->timer == null) {
+            $this->timerDataWorkStep = '00:00:00';
+        } elseif ($workStepData->timer == 'aN:aN:aN') {
+            if ($workStepData->auto_save_timer == null) {
+                $this->timerDataWorkStep = '00:00:00';
+            } else {
+                $this->timerDataWorkStep = $workStepData->auto_save_timer;
+            }
+        } else {
+            $this->timerDataWorkStep = $workStepData->timer;
+        }
+
         $this->alasanPauseData = $workStepData->alasan_pause;
     }
 
@@ -32,7 +44,15 @@ class TimerIndex extends Component
     {
         $this->timer = $formattedTime;
         $updateTimer = WorkStep::where('id', $this->currentWorkStepId)->update([
-            'timer' => $this->timer,
+            'timer' => $formattedTime,
+        ]);
+    }
+
+    public function autoSaveDataTimer($formattedTime)
+    {
+        $this->timer = $formattedTime;
+        $updateTimer = WorkStep::where('id', $this->currentWorkStepId)->update([
+            'auto_save_timer' => $formattedTime,
         ]);
     }
 
@@ -51,7 +71,7 @@ class TimerIndex extends Component
 
         // Simpan data ke database sebagai JSON
         $updatePause = WorkStep::where('id', $this->currentWorkStepId)->update([
-            'timer' => $this->timer,
+            'timer' => $formattedTime,
             'alasan_pause' => json_encode($existingAlasanPause),
         ]);
 
@@ -86,17 +106,14 @@ class TimerIndex extends Component
             'message' => 'Split SPK Berhasil',
         ]);
 
-        if(isset($workStepSplit->user_id)){
+        if (isset($workStepSplit->user_id)) {
             $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->currentInstructionId, 'receiver' => $workStepSplit->user_id]);
             event(new IndexRenderEvent('refresh'));
         }
-
     }
 
     public function render()
     {
-        
-
         return view('livewire.component.timer-index');
     }
 
