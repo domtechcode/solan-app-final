@@ -16,5 +16,9 @@
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
         "pusher-js": "^8.2.0"
+    },
+    "dependencies": {
+        "@alpinejs/mask": "^3.13.0",
+        "alpinejs": "^3.13.0"
     }
 }

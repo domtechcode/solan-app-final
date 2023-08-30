@@ -9,21 +9,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Sash – Bootstrap 5  Admin & Dashboard Template">
     <meta name="author" content="Spruko Technologies Private Limited">
-    <meta name="keywords" content="admin,admin dashboard,admin panel,admin template,bootstrap,clean,dashboard,flat,jquery,modern,responsive,premium admin templates,responsive admin,ui,ui kit.">
+    <meta name="keywords"
+        content="admin,admin dashboard,admin panel,admin template,bootstrap,clean,dashboard,flat,jquery,modern,responsive,premium admin templates,responsive admin,ui,ui kit.">
 
     <!-- FAVICON -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/images/brand/favicon.ico') }}">
 
     <!-- TITLE -->
-    <title>CV. Solan - {{ $title }} </title>
+    <title>DOMDOM CV. Solan - {{ $title }} </title>
 
     <!-- BOOTSTRAP CSS -->
     <link id="style" href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- STYLE CSS -->
-     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 
-	<!-- Plugins CSS -->
+    <!-- Plugins CSS -->
     <link href="{{ asset('assets/css/plugins.css') }}" rel="stylesheet">
 
     <!--- FONT-ICONS CSS -->
@@ -39,14 +40,10 @@
             display: none;
         }
     </style>
-    <!-- Alpine Plugins -->
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
- 
-<!-- Alpine Core -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     @livewireStyles
     @stack('styles')
-    
+
 </head>
 
 <body class="app sidebar-mini ltr light-mode">
@@ -74,7 +71,11 @@
 
     <!-- JQUERY JS -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <!-- Alpine Plugins -->
+    {{-- <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Alpine Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
     <!-- INTERNAL SELECT2 JS -->
     <script src="{{ asset('assets/plugins/select2/select2.full.min.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
@@ -82,16 +83,13 @@
     <!-- BOOTSTRAP JS -->
     <script src="{{ asset('assets/plugins/bootstrap/js/popper.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-    
+
     <!-- ACCORDION JS -->
     <script src="{{ asset('assets/plugins/accordion/accordion.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/accordion/accordion.js') }}"></script>
 
     <!-- Perfect SCROLLBAR JS-->
     <script src="{{ asset('assets/plugins/p-scroll/perfect-scrollbar.js') }}"></script>
-    {{-- <script src="{{ asset('assets/plugins/p-scroll/pscroll.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/plugins/p-scroll/pscroll-1.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/plugins/p-scroll/pscroll-2.js') }}"></script> --}}
 
     <!-- SIDE-MENU JS -->
     <script src="{{ asset('assets/plugins/sidemenu/sidemenu.js') }}"></script>
@@ -110,9 +108,8 @@
 
     <!-- Custom-switcher -->
     <script src="{{ asset('assets/js/custom-swicher.js') }}"></script>
-    
-    <script src="{{ asset('js/app.js') }}"></script>
-    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+
+    <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Switcher js -->
     <script src="{{ asset('assets/switcher/js/switcher.js') }}"></script>
@@ -125,23 +122,23 @@
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('input[type-currency="IDR"]').forEach((element) => {
                 element.addEventListener('keyup', function(e) {
-                let cursorPostion = this.selectionStart;
+                    let cursorPostion = this.selectionStart;
                     let value = parseInt(this.value.replace(/[^,\d]/g, ''));
                     let originalLenght = this.value.length;
                     if (isNaN(value)) {
-                    this.value = "";
-                    } else {    
-                    this.value = value.toLocaleString('id-ID', {
-                        // currency: 'IDR',
-                        // style: 'currency',
-                        minimumFractionDigits: 0
-                    });
-                    cursorPostion = this.value.length - originalLenght + cursorPostion;
-                    this.setSelectionRange(cursorPostion, cursorPostion);
+                        this.value = "";
+                    } else {
+                        this.value = value.toLocaleString('id-ID', {
+                            // currency: 'IDR',
+                            // style: 'currency',
+                            minimumFractionDigits: 0
+                        });
+                        cursorPostion = this.value.length - originalLenght + cursorPostion;
+                        this.setSelectionRange(cursorPostion, cursorPostion);
                     }
                 });
             });
-            
+
             Livewire.on('flashMessage', (param) => {
                 toastr.options = {
                     "closeButton": true,
@@ -164,31 +161,30 @@
                 toastr[param['type']](param['message'], param['title']);
             });
         });
-        
     </script>
 
-<script>
-    Echo.channel('notif.' + {{ Auth::user()->id }})
-            .listen('NotificationSent', function (data) {
+    <script type="module">
+        Echo.channel('notif.' + {{ Auth::user()->id }})
+            .listen('NotificationSent', function(data) {
                 // console.log(data);
                 Livewire.emit('indexRender');
             });
-</script>
+    </script>
 
-{{-- <script>
+    {{-- <script>
     Echo.channel('refresh')
             .listen('IndexRenderEvent', function (e) {
                 Livewire.emit('indexRender');
             });
 </script> --}}
 
-{{-- <script>
+    {{-- <script>
     window.livewire.onError(statusCode => {
         return false
     });
 </script> --}}
 
-{{-- <script>
+    {{-- <script>
     document.addEventListener('livewire:load', function () {
             Livewire.on('renderIndex', function () {
                 Livewire.emit('indexRender');
