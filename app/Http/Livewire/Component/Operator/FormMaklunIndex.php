@@ -112,6 +112,7 @@ class FormMaklunIndex extends Component
                     'tgl_keluar' => $item['tgl_keluar'],
                     'qty_keluar' => $item['qty_keluar'],
                     'satuan_keluar' => $item['satuan_keluar'],
+                    'catatan' => $item['catatan'],
                     'status' => $item['status'],
                     'pekerjaan' => $item['pekerjaan'],
                 ];
@@ -484,6 +485,24 @@ class FormMaklunIndex extends Component
                     'catatan' => $dataMaklunPenerimaan['catatan'],
                 ]);
             }
+        }
+
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
+        $currentStep->update([
+            'flag' => 'Split',
+        ]);
+
+        $nextStep->update([
+            'state_task' => 'Running',
+            'status_task' => 'Pending Approved',
+        ]);
+
+        if(isset($nextStep->user_id)){
+            $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
         }
 
         $this->emit('flashMessage', [

@@ -239,7 +239,7 @@
                                     <tr>
                                         <td colspan="8">
                                             <div class="text-center">
-                                                <button type="button" class="btn btn-success mb-0" wire:click="addMaklunPenerimaan">Tambah Maklun</button>
+                                                <button type="button" class="btn btn-success mb-0" wire:click="addMaklunPenerimaan">Tambah Penerimaan</button>
                                             </div>
                                         </td>
                                     </tr>

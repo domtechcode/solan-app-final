@@ -16,13 +16,14 @@ class TimerIndex extends Component
     public $currentInstructionId;
     public $currentWorkStepId;
 
-    protected $listeners = ['saveDataTimer', 'saveDataTimerPause'];
+    protected $listeners = ['handleSaveDataTimer' => 'saveDataTimer', 'handleSaveDataTimerPause' => 'saveDataTimerPause'];
 
     public function mount($instructionId, $workStepId)
     {
         $this->currentInstructionId = $instructionId;
         $this->currentWorkStepId = $workStepId;
-        $workStepData = WorkStep::find($workStepId);
+
+        $workStepData = WorkStep::find($this->currentWorkStepId);
         $this->timerDataWorkStep = $workStepData->timer ?? '00:00:00';
         $this->alasanPauseData = $workStepData->alasan_pause;
     }
@@ -94,6 +95,8 @@ class TimerIndex extends Component
 
     public function render()
     {
+        
+
         return view('livewire.component.timer-index');
     }
 

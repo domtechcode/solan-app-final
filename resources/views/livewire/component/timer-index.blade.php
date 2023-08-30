@@ -136,9 +136,6 @@
 
         function finishTimer() {
             clearInterval(timerInterval);
-            timerInterval = null;
-            elapsedTime = 0;
-            isPaused = false;
             //   displayTime(0);
             saveTimer();
         }
@@ -178,12 +175,12 @@
 
         function saveTimer() {
             const TimerState = document.getElementById("display").textContent;
-            Livewire.emit('saveDataTimer', TimerState);
+            Livewire.emit('handleSaveDataTimer', TimerState);
         }
 
         function savePause() {
             const TimerState = document.getElementById("display").textContent;
-            Livewire.emit('saveDataTimerPause', TimerState);
+            Livewire.emit('handleSaveDataTimerPause', TimerState);
         }
 
         window.addEventListener('beforeunload', function(event) {

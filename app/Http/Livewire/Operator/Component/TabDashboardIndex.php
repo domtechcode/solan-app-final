@@ -81,16 +81,50 @@ class TabDashboardIndex extends Component
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->count();
         } else {
-            $this->dataCountNewSpk = WorkStep::where('user_id', Auth()->user()->id)
-                ->where('state_task', 'Running')
-                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-                ->where('spk_status', 'Running')
-                ->whereHas('instruction', function ($query) {
-                    $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
-                })
-                ->orderBy('shipping_date', 'asc')
-                ->with(['status', 'job', 'workStepList', 'instruction'])
-                ->count();
+            if (Auth()->user()->jobdesk == 'Checker') {
+                $this->dataCountNewSpk = $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
+                    ->where('state_task', 'Running')
+                    ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                    ->where('spk_status', 'Running')
+                    ->where('schedule_date', '<=', $formattedToday)
+                    ->where(function ($query) {
+                        $query
+                            ->where(function ($subQuery) {
+                                $subQuery->whereIn('status_id', [1, 3, 22]);
+                            })
+                            ->orWhere(function ($subQuery) {
+                                $subQuery->whereIn('status_id', [2])->where('user_id', Auth()->user()->id);
+                            });
+                    })
+                    ->whereHas('instruction', function ($query) {
+                        $query->where(function ($subQuery) {
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
+                        });
+                    })
+                    ->with(['status', 'job', 'workStepList', 'instruction'])
+                    ->count();
+            } else {
+                $this->dataCountNewSpk = $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
+                    ->where('state_task', 'Running')
+                    ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                    ->where('spk_status', 'Running')
+                    ->where('schedule_date', '<=', $formattedToday)
+                    ->whereHas('instruction', function ($query) {
+                        $query->where(function ($subQuery) {
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
+                        });
+                    })
+                    ->with(['status', 'job', 'workStepList', 'instruction'])
+                    ->count();
+            }
 
             $this->dataCountIncomingSpk = WorkStep::where('user_id', Auth()->user()->id)
                 ->where('state_task', 'Not Running')
@@ -152,7 +186,7 @@ class TabDashboardIndex extends Component
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
 
-        $this->dataCountPengembalianPlate = WarnaPlate::whereHas('rincianPlate', function ($query){
+        $this->dataCountPengembalianPlate = WarnaPlate::whereHas('rincianPlate', function ($query) {
             $query->where('status', 'Pengembalian Plate');
         })->count();
 
