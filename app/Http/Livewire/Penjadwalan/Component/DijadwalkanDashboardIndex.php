@@ -360,6 +360,23 @@ class DijadwalkanDashboardIndex extends Component
             'status_task' => 'Process',
         ]);
 
+        $dataGroup = Instruction::find($this->selectedInstruction->id);
+        if (isset($dataGroup->group_id) && isset($dataGroup->group_priority)) {
+            $datachild = Instruction::where('group_id', $dataGroup->group_id)
+                ->where('group_priority', 'child')
+                ->get();
+            foreach ($datachild as $datachild) {
+                $deleteWorkStep = WorkStep::where('instruction_id', $datachild['id'])->delete();
+
+                $parentWorkStep = WorkStep::where('instruction_id', $dataGroup->id)->get();
+                foreach ($parentWorkStep as $key => $item) {
+                    $childWorkStep = $item->replicate();
+                    $childWorkStep->instruction_id = $datachild['id'];
+                    $childWorkStep->save();
+                }
+            }
+        }
+
         $this->emit('flashMessage', [
             'type' => 'success',
             'title' => 'Jadwal Instruksi Kerja',
@@ -491,6 +508,7 @@ class DijadwalkanDashboardIndex extends Component
         $this->selectedInstructionParent = Instruction::find($this->selectedGroupParent->id);
         $this->selectedWorkStepParent = WorkStep::where('instruction_id', $this->selectedGroupParent->id)
             ->with('workStepList', 'user', 'machine')
+            ->orderBy('step', 'asc')
             ->get();
         $this->selectedFileContohParent = Files::where('instruction_id', $this->selectedGroupParent->id)
             ->where('type_file', 'contoh')
@@ -509,7 +527,7 @@ class DijadwalkanDashboardIndex extends Component
             ->get();
         $this->selectedInstructionChild = Instruction::where('group_id', $groupId)
             ->where('group_priority', 'child')
-            ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
+            ->with('workStep', 'workStep.workStepList', 'workStep.user', 'workStep.machine', 'fileArsip')
             ->get();
     }
 
