@@ -36,7 +36,7 @@
                     </thead>
                     <tbody>
                         @forelse ($instructionsNewSpk as $key => $dataInstruction)
-                            <tr wire:key="{{ $dataInstruction->instruction->id }}">
+                            <tr wire:key="{{ $dataInstruction->id }}">
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $dataInstruction->workStepList->name }}</td>
                                 <td>
@@ -63,16 +63,20 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if (
-                                    $dataInstruction->instruction->group_id &&
-                                        Auth()->user()->jobdesk != 'Qc Packing' &&
-                                        Auth()->user()->jobdesk != 'Pengiriman')
-                                    <td>
-                                        {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
-                                    </td>
-                                @else
+                                @if (Auth()->user()->jobdesk == 'Maklun' ||
+                                        Auth()->user()->jobdesk == 'Qc Packing' ||
+                                        Auth()->user()->jobdesk == 'Pengiriman')
                                     <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
                                     </td>
+                                @else
+                                    @if ($dataInstruction->instruction->group_id)
+                                        <td>
+                                            {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
+                                        </td>
+                                    @else
+                                        <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
+                                        </td>
+                                    @endif
                                 @endif
                                 @if (in_array($dataInstruction->status_id, [1, 8]))
                                     <td>
@@ -142,7 +146,9 @@
                                             wire:click="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"
                                             wire:key="modalInstructionDetailsNewSpk({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
-                                        <a class="btn btn-icon btn-sm btn-primary" wire:click="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})" wire:key="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})"
+                                        <a class="btn btn-icon btn-sm btn-primary"
+                                            wire:click="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})"
+                                            wire:key="operatorDikerjakan({{ $dataInstruction->instruction->id }},{{ $dataInstruction->id }})"
                                             href="{{ route('indexWorkStep', ['instructionId' => $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i
                                                 class="fe fe-edit"></i></a>
                                     </div>

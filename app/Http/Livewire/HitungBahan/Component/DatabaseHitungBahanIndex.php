@@ -58,7 +58,7 @@ class DatabaseHitungBahanIndex extends Component
     public function render()
     {
         $dataNewSpk = WorkStep::where('work_step_list_id', 5)
-            ->where('state_task', ['Complete', 'Running'])
+            ->where('state_task', ['Complete', 'Running', 'Selesai'])
             ->whereNotIn('spk_status', ['Training Program'])
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchNewSpk . '%';
