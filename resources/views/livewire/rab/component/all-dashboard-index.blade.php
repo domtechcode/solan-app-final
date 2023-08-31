@@ -252,39 +252,76 @@
                     </div>
 
                     <!-- Row -->
-                    <div class="row mb-3">
+                    <div class="row">
                         <div class="col-xl-12">
-                            <div class="table-responsive">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>LANGKAH KERJA</th>
-                                            <th>TARGET SELESAI</th>
-                                            <th>SUBMIT</th>
-                                            <th>STATUS</th>
-                                            <th>TARGET JAM</th>
-                                            <th>OPERATOR/REKANAN</th>
-                                            <th>MACHINE</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <ul class="notification">
                                         @if (isset($selectedWorkStep))
                                             @forelse ($selectedWorkStep as $workstep)
-                                                <tr>
-                                                    <td>{{ $workstep->workStepList->name ?? '-' }}</td>
-                                                    <td>{{ $workstep->target_date ?? '-' }}</td>
-                                                    <td>{{ $workstep->selesai ?? '-' }}</td>
-                                                    <td>{{ $workstep->status_task ?? '-' }}</td>
-                                                    <td>{{ $workstep->target_time ?? '-' }}</td>
-                                                    <td>{{ $workstep->user->name ?? '-' }}</td>
-                                                    <td>{{ $workstep->machine->machine_identity ?? '-' }}</td>
-                                                </tr>
+                                                @if ($workstep->status_task == 'Pending Approved')
+                                                    <?php
+                                                    $border = 'border-secondary';
+                                                    $bg_badge = 'bg-secondary';
+                                                    ?>
+                                                @elseif($workstep->status_task == 'Process')
+                                                    <?php
+                                                    $border = 'border-info';
+                                                    $bg_badge = 'bg-info';
+                                                    ?>
+                                                @elseif($workstep->status_task == 'Complete' || $workstep->status_task == 'Selesai')
+                                                    <?php
+                                                    $border = 'border-success';
+                                                    $bg_badge = 'bg-success';
+                                                    ?>
+                                                @elseif($workstep->status_task == 'Reject' || $workstep->status_task == 'Reject Requirements')
+                                                    <?php
+                                                    $border = 'border-primary';
+                                                    $bg_badge = 'bg-primary';
+                                                    ?>
+                                                @else
+                                                    <?php
+                                                    $border = '';
+                                                    $bg_badge = '';
+                                                    ?>
+                                                @endif
+                                                <li>
+                                                    <div class="notification-time">
+                                                        <span class="ms-2">{{ $workstep->selesai ?? '-' }}</span>
+                                                    </div>
+                                                    <div class="notification-icon">
+                                                        <a href="javascript:void(0);"></a>
+                                                    </div>
+                                                    <div
+                                                        class="notification-body border {{ $border }} p-5 br-5">
+                                                        <div class="media mt-0">
+                                                            <div class="main-avatar avatar-md online">
+                                                                <img alt="avatar" class="br-7"
+                                                                    src="{{ asset('assets/images/users/1.jpg') }}">
+                                                            </div>
+                                                            <div class="media-body ms-3 d-flex">
+                                                                <div class="">
+                                                                    <p class="fs-15 text-dark fw-bold mb-0">
+                                                                        {{ $workstep->workStepList->name ?? '-' }}</p>
+                                                                    <p class="mb-0 fs-13 text-dark">
+                                                                        {{ $workstep->user->name ?? '-' }}</p>
+                                                                    <p class="mb-0 fs-13 text-dark">Dijadwalkan :
+                                                                        {{ $workstep->schedule_date ?? '-' }}</p>
+                                                                </div>
+                                                                <div class="notify-time">
+                                                                    <span
+                                                                        class="badge {{ $bg_badge }} rounded-pill text-white p-2 px-3">{{ $workstep->status_task }}</span></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
                                             @empty
                                                 <p>No files found.</p>
                                             @endforelse
                                         @endif
-                                    </tbody>
-                                </table>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -415,12 +452,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-icon btn-primary"
-                        wire:click.prevent="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i>
-                        Delete</button>
-                    <button class="btn btn-danger" wire:click="holdSpk({{ $instructionSelectedId }})">Hold</button>
-                    <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i
-                            class="fe fe-warning"></i> Cancel</button>
+                    @if (Auth()->user()->role == 'Follow Up')
+                        <button type="submit" class="btn btn-icon btn-primary"
+                            wire:click.prevent="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i>
+                            Delete</button>
+                        <button class="btn btn-danger"
+                            wire:click="holdSpk({{ $instructionSelectedId }})">Hold</button>
+                        <button class="btn btn-warning" wire:click="cancelSpk({{ $instructionSelectedId }})"><i
+                                class="fe fe-warning"></i> Cancel</button>
+                    @endif
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

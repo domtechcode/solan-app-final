@@ -96,6 +96,7 @@ class AllDashboardIndex extends Component
         $this->instructionSelectedId = $instructionId;
         $this->selectedWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList', 'user', 'machine')
+            ->orderBy('step', 'asc')
             ->get();
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'contoh')
