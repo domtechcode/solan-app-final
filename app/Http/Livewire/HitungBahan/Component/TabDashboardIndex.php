@@ -18,6 +18,7 @@ class TabDashboardIndex extends Component
     public $dataCountRejectSpk;
     public $dataCountIncomingSpk;
     public $dataCountAllSpk;
+    public $dataCountAccRabSpk;
     public $dataCountPengajuanBarangPersonal;
     public $dataCountPengajuanBarangSpk;
     public $dataCountTotalPengajuanBarang;
@@ -60,6 +61,28 @@ class TabDashboardIndex extends Component
                     $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                 });
             })
+            ->count();
+
+        $this->dataCountAccRabSpk = WorkStep::whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Training Program'])
+            ->where(function ($query) {
+                $query
+                    ->where('user_id', Auth()->user()->id)
+                    ->where('state_task', 'Complete')
+                    ->where('status_task', 'Complete')
+                    ->where(function ($innerQuery) {
+                        $innerQuery->where('work_step_list_id', 5)->orWhere(function ($nestedQuery) {
+                            $nestedQuery
+                                ->where('work_step_list_id', 3)
+                                ->where('state_task', 'Complete')
+                                ->where('status_task', 'Complete');
+                        });
+                    });
+            })
+            // ->whereHas('instruction', function ($query) {
+            //     $query->where(function ($instructionQuery) {
+            //         $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            //     });
+            // })
             ->count();
 
         $this->dataCountProcessSpk = WorkStep::where('work_step_list_id', 5)

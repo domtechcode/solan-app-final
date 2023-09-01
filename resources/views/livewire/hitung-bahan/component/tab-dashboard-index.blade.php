@@ -39,29 +39,37 @@
                             <li>
                                 <button href="#tab5"
                                     class="{{ $activeTab === 'tab5' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Pengajuan Bahan -
-                                    {{ $dataPengajuanBahan }}
+                                    data-bs-toggle="tab" wire:click="changeTab('tab5')" wire:key="tab5">Acc Rab -
+                                    {{ $dataCountAccRabSpk }}
                                 </button>
                             </li>
                             <li>
                                 <button href="#tab6"
-                                    class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-purple mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Riwayat
+                                    class="{{ $activeTab === 'tab6' ? 'active' : '' }} btn btn-success mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab6')" wire:key="tab6">Pengajuan Bahan
+                                    -
+                                    {{ $dataPengajuanBahan }}
+                                </button>
+                            </li>
+                            <li>
+                                <button href="#tab7"
+                                    class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-purple mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">Riwayat
                                     Pengajuan Barang
                                     - {{ $dataCountTotalPengajuanBarang }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab7"
-                                    class="{{ $activeTab === 'tab7' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab7')" wire:key="tab7">All -
+                                <button href="#tab8"
+                                    class="{{ $activeTab === 'tab8' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab8')" wire:key="tab8">All -
                                     {{ $dataCountAllSpk }}
                                 </button>
                             </li>
                             <li>
-                                <button href="#tab8"
-                                    class="{{ $activeTab === 'tab8' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
-                                    data-bs-toggle="tab" wire:click="changeTab('tab8')" wire:key="tab8">Last Data
+                                <button href="#tab9"
+                                    class="{{ $activeTab === 'tab9' ? 'active' : '' }} btn btn-info mt-1 mb-1 me-3"
+                                    data-bs-toggle="tab" wire:click="changeTab('tab9')" wire:key="tab9">Last Data
                                     Training Program
                                 </button>
                             </li>
@@ -149,6 +157,23 @@
                                 <div class="card">
                                     <div class="card-status bg-success br-te-7 br-ts-7"></div>
                                     <div class="card-header">
+                                        <h3 class="card-title">Acc RAB</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        @livewire('hitung-bahan.component.acc-rab-dashboard-index')
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ROW-2 END -->
+                    </div>
+                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
+                        <!-- ROW-2-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-status bg-success br-te-7 br-ts-7"></div>
+                                    <div class="card-header">
                                         <h3 class="card-title">Pengajuan Bahan</h3>
                                     </div>
                                     <div class="card-body">
@@ -159,7 +184,7 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab6' ? 'active' : '' }}" id="tab6">
+                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-xl-12 col-md-12">
@@ -170,15 +195,19 @@
                                             <li class="nav-item">
                                                 <button
                                                     class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal1' ? 'active' : '' }}"
-                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal1')"
-                                                    wire:key="tabPengajuanBarangPersonal1" href="#tabPengajuanBarangPersonal1">Pengajuan Barang Personal -
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal1')"
+                                                    wire:key="tabPengajuanBarangPersonal1"
+                                                    href="#tabPengajuanBarangPersonal1">Pengajuan Barang Personal -
                                                     {{ $dataCountPengajuanBarangPersonal }}</button>
                                             </li>
                                             <li class="nav-item">
                                                 <button
                                                     class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
-                                                    data-bs-toggle="tab" wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk1')"
-                                                    wire:key="tabPengajuanBarangSpk1" href="#tabPengajuanBarangSpk1">Pengajuan Barang SPK -
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk1')"
+                                                    wire:key="tabPengajuanBarangSpk1"
+                                                    href="#tabPengajuanBarangSpk1">Pengajuan Barang SPK -
                                                     {{ $dataCountPengajuanBarangSpk }}</button>
                                             </li>
                                         </ul>
@@ -202,7 +231,7 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab7' ? 'active' : '' }}" id="tab7">
+                    <div class="tab-pane {{ $activeTab === 'tab8' ? 'active' : '' }}" id="tab8">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">
@@ -219,7 +248,7 @@
                         </div>
                         <!-- ROW-2 END -->
                     </div>
-                    <div class="tab-pane {{ $activeTab === 'tab8' ? 'active' : '' }}" id="tab8">
+                    <div class="tab-pane {{ $activeTab === 'tab9' ? 'active' : '' }}" id="tab9">
                         <!-- ROW-2-->
                         <div class="row">
                             <div class="col-md-12">

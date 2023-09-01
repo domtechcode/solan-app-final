@@ -438,8 +438,8 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
                 @if (Auth()->user()->role == 'Follow Up')
-                    <div class="modal-footer">
                         <button class="btn btn-icon btn-primary" wire:click="deleteSpk({{ $instructionSelectedId }})"
                             wire:key="deleteSpk({{ $instructionSelectedId }})"><i class="fe fe-trash"></i>
                             Delete</button>

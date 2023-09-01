@@ -117,6 +117,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/data-langkah-kerja', 'App\Http\Livewire\Admin\Index\IndexDataLangkahKerja')->name('admin.dataLangkahKerja');
         Route::get('/data-machine', 'App\Http\Livewire\Admin\Index\IndexDataMachine')->name('admin.dataMachine');
         Route::get('/data-driver', 'App\Http\Livewire\Admin\Index\IndexDataDriver')->name('admin.dataDriver');
+
+        Route::get('/details-workstep/{instructionId}/{workStepId}', 'App\Http\Livewire\Admin\Index\IndexDetailWorkStep')->name('admin.indexDetailWorkStep');
     });
     
 });

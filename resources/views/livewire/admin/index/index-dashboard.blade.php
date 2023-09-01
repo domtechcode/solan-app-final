@@ -21,6 +21,8 @@
                 <!-- PAGE-HEADER END -->
 
                 @livewire('component.statistik')
+                @livewire('admin.component.all-spk-dashboard-index')
+                
                 
             </div>
             <!-- CONTAINER CLOSED -->
