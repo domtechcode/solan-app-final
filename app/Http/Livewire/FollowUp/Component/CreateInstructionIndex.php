@@ -192,8 +192,7 @@ class CreateInstructionIndex extends Component
             ->where('spk_type', $this->spk_type)
             ->first();
 
-        $dataInstructionSpkNumber = Instruction::where('spk_number', $this->spk_number)
-            ->first();
+        $dataInstructionSpkNumber = Instruction::where('spk_number', $this->spk_number)->first();
 
         if ($dataInstruction == null && $dataInstructionSpkNumber == null) {
             if ($this->spk_type != 'layout') {
@@ -205,6 +204,10 @@ class CreateInstructionIndex extends Component
                 $ukuranBarang = $this->panjang_barang . 'x' . $this->lebar_barang;
             } else {
                 $ukuranBarang = null;
+            }
+
+            if ($this->sub_spk == false) {
+                $this->sub_spk = null;
             }
 
             $instruction = Instruction::create([

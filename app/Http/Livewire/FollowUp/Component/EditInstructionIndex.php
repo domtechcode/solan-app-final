@@ -252,6 +252,10 @@ class EditInstructionIndex extends Component
                 $ukuranBarang = null;
             }
 
+            if ($this->sub_spk == false) {
+                $this->sub_spk = null;
+            }
+
             $instruction = Instruction::where('id', $this->currentInstructionId)->update([
                 'spk_type' => $this->spk_type,
                 'spk_number' => $this->spk_number,
