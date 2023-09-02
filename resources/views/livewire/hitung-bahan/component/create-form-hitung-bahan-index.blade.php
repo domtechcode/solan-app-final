@@ -61,6 +61,13 @@
         @endif
     @endforeach
 
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-dark" wire:click="backBtn" wire:loading.attr="disabled"><i
+                    class="fe fe-arrow-left"></i> Kembali</button>
+        </div>
+    </div>
+
     <!-- ROW-1 Data Order-->
     <div class="row row-sm">
         <div class="col-lg-12">
@@ -1744,7 +1751,8 @@
                                                                         <input type="text" autocomplete="off"
                                                                             class="form-control" placeholder="Lebar"
                                                                             wire:model="layoutBahans.{{ $indexBahan }}.ukuran_bahan_cetak_bahan.{{ $ukuranBahanCetakIndex }}.lebar_bahan_cetak">
-                                                                        <button class="btn btn-primary" type="button"
+                                                                        <button class="btn btn-primary"
+                                                                            type="button"
                                                                             wire:click="removeUkuranBahanCetakBahan({{ $indexBahan }}, {{ $ukuranBahanCetakIndex }})"><i
                                                                                 class="fe fe-x"></i></button>
                                                                     </div>

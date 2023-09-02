@@ -1514,6 +1514,15 @@ class CreateFormHitungBahanIndex extends Component
         $this->dispatchBrowserEvent('show-detail-instruction-modal-group');
     }
 
+    public function backBtn()
+    {
+        $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+            'status_id' => 1,
+        ]);
+
+        return redirect()->route('hitungBahan.dashboard');
+    }
+
     public function messageSent($arguments)
     {
         $createdMessage = 'info';
