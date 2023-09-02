@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Component\Details;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -58,38 +59,19 @@ class FormSettingIndex extends Component
 
     public $notes = [];
     public $workSteps;
+    public $workStepData;
+    public $catatanData;
 
-    public function addEmptyNote()
-    {
-        $this->notes[] = '';
-    }
-
-    public function removeNote($index)
-    {
-        unset($this->notes[$index]);
-        $this->notes = array_values($this->notes);
-    }
-
-    public function addWarnaField($keteranganIndex, $rincianIndexPlate)
-    {
-        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][] = [
-            'warna' => null,
-            'keterangan' => null,
-        ];
-    }
-
-    public function removeWarnaField($keteranganIndex, $rincianIndexPlate, $indexwarna)
-    {
-        unset($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]);
-        // Reindex the array after removal to maintain consecutive numeric keys
-        $this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'] = array_values($this->keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna']);
-    }
 
     public function mount($instructionId, $workStepId)
     {
         $this->instructionCurrentId = $instructionId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
         $this->workStepCurrentId = $workStepId;
+
+        $this->workStepData = WorkStep::find($workStepId);
+        
+        $this->catatanData = Catatan::where('instruction_id', $instructionId)->where('user_id', $this->workStepData->user_id)->where('kategori', 'catatan')->get();
 
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList')

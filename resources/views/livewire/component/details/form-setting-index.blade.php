@@ -12,106 +12,96 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-sm-12 col-md-12 mb-3">
-                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">File</th>
-                                            <th class="border-bottom-0">Type</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($fileLayoutData as $file)
+                                <div class="table-responsive">
+                                    <table
+                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
-                                                        download>{{ $file['file_name'] }}</a>
-                                                </td>
-                                                <td>
-                                                    {{ $file['type_file'] }}
-                                                </td>
+                                                <th class="border-bottom-0">File</th>
+                                                <th class="border-bottom-0">Type</th>
                                             </tr>
-                                        @empty
-                                            No Data !!
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="form-group">
-                                    <label class="form-label">File Layout</label>
-                                    <x-forms.filepond wire:model="fileLayout" multiple allowImagePreview
-                                        imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                        maxFileSize="1024mb" />
-
-                                    @error('fileLayout')
-                                        <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <label class="form-label">Catatan Proses Pengerjaan</label>
-                                <div class="input-group control-group" style="padding-top: 5px;">
-                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanProsesPengerjaan"></textarea>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($fileLayoutData as $file)
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ asset(Storage::url($file['file_path'] . '/' . $file['file_name'])) }}"
+                                                            download>{{ $file['file_name'] }}</a>
+                                                    </td>
+                                                    <td>
+                                                        {{ $file['type_file'] }}
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                No Data !!
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
-                            <div class="col-sm-12 col-md-12">
-                                <div class="expanel expanel-default">
-                                    <div class="expanel-body">
-                                        <div class="form-group">
-                                            <label class="form-label mb-3">Catatan</label>
-                                            <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
-                                                    class="fe fe-plus"></i>Tambah
-                                                Catatan</button>
-                                        </div>
+                            <div class="col-sm-12 col-md-12 mb-3">
+                                <div class="table-responsive">
+                                    <table
+                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">Catatan Proses Pengerjaan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @php
+                                                        $catatan_proses_pengerjaan_Data = json_decode($workStepData->catatan_proses_pengerjaan);
+                                                    @endphp
 
-                                        @foreach ($notes as $index => $note)
-                                            <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
-                                                <div class="expanel expanel-default">
-                                                    <div class="expanel-body">
-                                                        <div class="input-group control-group"
-                                                            style="padding-top: 5px;">
-                                                            <select class="form-control form-select"
-                                                                data-bs-placeholder="Pilih Tujuan Catatan"
-                                                                wire:model="notes.{{ $index }}.tujuan">
-                                                                <option label="Pilih Tujuan Catatan"></option>
-                                                                @foreach ($workSteps as $key)
-                                                                    <option value="{{ $key['work_step_list_id'] }}">
-                                                                        {{ $key['workStepList']['name'] }}</option>
-                                                                @endforeach
-
-                                                            </select>
-                                                            <button class="btn btn-danger" type="button"
-                                                                wire:click="removeNote({{ $index }})"><i
-                                                                    class="fe fe-x"></i></button>
-                                                        </div>
-                                                        @error('notes.' . $index . '.tujuan')
-                                                            <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                            </p>
-                                                        @enderror
-
-                                                        <div class="input-group control-group"
-                                                            style="padding-top: 5px;">
-                                                            <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                                wire:model="notes.{{ $index }}.catatan" required></textarea>
-                                                        </div>
-                                                        @error('notes.' . $index . '.catatan')
-                                                            <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                            </p>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-
-                                    </div>
+                                                    @if (is_array($catatan_proses_pengerjaan_Data))
+                                                        <ul>
+                                                            @foreach ($catatan_proses_pengerjaan_Data as $item)
+                                                                <li>-> {{ $item }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
-                            wire:click="saveLayout" wire:ignore.self>Submit</button>
+                        <div class="row mb-3">
+                            <div class="col-sm-12 col-md-12 mb-3">
+                                <div class="table-responsive">
+                                    <table
+                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="border-bottom-0">Catatan</th>
+                                                <th class="border-bottom-0">Tujuan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($catatanData as $item)
+                                                <tr>
+                                                    <td>
+                                                        {{ $item->catatan }}
+                                                        {{ $item->tujuan }}
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    -
+                                                </tr>
+                                            @endforelse
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -336,97 +326,20 @@
                                                             @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <select
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.state"
-                                                                                class="form-control form-select"
-                                                                                data-bs-placeholder="Pilih View"
-                                                                                readonly>
-                                                                                <option label="-- Pilih View --">
-                                                                                </option>
-                                                                                <option value="depan/belakang">
-                                                                                    Depan/Belakang</option>
-                                                                                <option value="depan">Depan</option>
-                                                                                <option value="tengah">Tengah</option>
-                                                                                <option value="belakang">Belakang
-                                                                                </option>
-                                                                            </select>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.state')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['state'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Plate"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.plate"
-                                                                                readonly>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.plate')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['plate'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Jumlah Lembar Cetak"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.jumlah_lembar_cetak"
-                                                                                readonly>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.jumlah_lembar_cetak')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Waste"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.waste"
-                                                                                readonly>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.waste')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Nama Plate"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.name">
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.name')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['name'] }}
                                                                     </td>
-                                                                    {{-- <td>
-                                                                        <div
-                                                                            class="form-group input-group control-group">
-                                                                            <button class="btn btn-primary"
-                                                                                type="button"
-                                                                                wire:click="removeRincianPlate({{ $keteranganIndex }}, {{ $rincianIndexPlate }})"><i
-                                                                                    class="fe fe-x"></i></button>
-                                                                        </div>
-                                                                    </td> --}}
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>
@@ -456,63 +369,28 @@
                                                                 <th>Plate</th>
                                                                 <th>Warna</th>
                                                                 <th>Keterangan</th>
-                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Plate"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.plate"
-                                                                                readonly>
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['plate'] }}
                                                                     </td>
+                                                                    
                                                                     <td>
                                                                         @if (is_array($rincian) && isset($rincian['rincianWarna']))
                                                                             @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
-                                                                                <div class="form-group">
-                                                                                    <div class="input-group mb-2">
-                                                                                        <input type="text"
-                                                                                            wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.warna"
-                                                                                            class="form-control"
-                                                                                            placeholder="Warna">
-                                                                                        <button class="btn btn-danger"
-                                                                                            type="button"
-                                                                                            wire:click="removeWarnaField({{ $keteranganIndex }}, {{ $rincianIndexPlate }}, {{ $indexwarna }})"><i
-                                                                                                class="fe fe-trash-2"></i></button>
-                                                                                    </div>
-                                                                                    @error('keterangans.' .
-                                                                                        $keteranganIndex . '.rincianPlate.'
-                                                                                        . $rincianIndexPlate .
-                                                                                        '.rincianWarna.' . $indexwarna .
-                                                                                        '.warna')
-                                                                                        <p
-                                                                                            class="mt-2 text-sm text-danger">
-                                                                                            {{ $message }}</p>
-                                                                                    @enderror
-                                                                                </div>
+                                                                            {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]['warna'] }}
                                                                             @endforeach
                                                                         @endif
                                                                     </td>
                                                                     <td>
                                                                         @if (is_array($rincian) && isset($rincian['rincianWarna']))
                                                                             @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
-                                                                                <div class="form-group">
-                                                                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="1"
-                                                                                        wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.keterangan"></textarea>
-                                                                                </div>
+                                                                            {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]['keterangan'] }}
                                                                             @endforeach
                                                                         @endif
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <button class="btn btn-success" type="button"
-                                                                            wire:click="addWarnaField({{ $keteranganIndex }}, {{ $rincianIndexPlate }})"><i
-                                                                                class="fe fe-plus"></i></button>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
@@ -547,7 +425,7 @@
                                         class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="border-bottom-0">Form Untuk Upload File Film</th>
+                                                <th class="border-bottom-0">File</th>
                                                 <th class="border-bottom-0">Keperluan</th>
                                                 <th class="border-bottom-0">Ukuran Film</th>
                                                 <th class="border-bottom-0">Jumlah Film</th>
@@ -600,448 +478,68 @@
 
                             <div class="row mb-3">
                                 <div class="col-sm-12 col-md-12 mb-3">
-                                    <table
-                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th class="border-bottom-0">Form Untuk Upload File Film</th>
-                                                <th class="border-bottom-0">Keperluan</th>
-                                                <th class="border-bottom-0">Ukuran Film</th>
-                                                <th class="border-bottom-0">Jumlah Film</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (isset($stateWorkStepPond))
+                                    <div class="table-responsive">
+                                        <table
+                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-bottom-0">Catatan Proses Pengerjaan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                                 <tr>
                                                     <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="filePisauPond" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
+                                                        @php
+                                                            $catatan_proses_pengerjaan_Data = json_decode($workStepData->catatan_proses_pengerjaan);
+                                                        @endphp
 
-                                                            @error('filePisauPond')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataPisauPond.keperluan" disabled>
-                                                            @error('dataPisauPond.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataPisauPond.ukuran_film">
-                                                            @error('dataPisauPond.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataPisauPond.jumlah_film">
-                                                            @error('dataPisauPond.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
+                                                        @if (is_array($catatan_proses_pengerjaan_Data))
+                                                            <ul>
+                                                                @foreach ($catatan_proses_pengerjaan_Data as $item)
+                                                                    <li>-> {{ $item }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @endif
                                                     </td>
                                                 </tr>
-                                            @endif
-                                            @if (isset($stateWorkStepFoil))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileFoil" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileFoil')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataFoil.keperluan" disabled>
-                                                            @error('dataFoil.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataFoil.ukuran_film">
-                                                            @error('dataFoil.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataFoil.jumlah_film">
-                                                            @error('dataFoil.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (isset($stateWorkStepSablon))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileSablon" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileSablon')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataSablon.keperluan" disabled>
-                                                            @error('dataSablon.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataSablon.ukuran_film">
-                                                            @error('dataSablon.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataSablon.jumlah_film">
-                                                            @error('dataSablon.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (isset($stateWorkStepEmbossDeboss))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileEmbossDeboss" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileEmbossDeboss')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataEmbossDeboss.keperluan" disabled>
-                                                            @error('fileEmbossDeboss.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataEmbossDeboss.ukuran_film">
-                                                            @error('fileEmbossDeboss.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataEmbossDeboss.jumlah_film">
-                                                            @error('fileEmbossDeboss.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (isset($stateWorkStepSpotUV))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileSpotUV" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileSpotUV')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataSpotUV.keperluan" disabled>
-                                                            @error('dataSpotUV.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataSpotUV.ukuran_film">
-                                                            @error('dataSpotUV.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataSpotUV.jumlah_film">
-                                                            @error('dataSpotUV.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (isset($stateWorkUV))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileUV" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileUV')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataUV.keperluan" disabled>
-                                                            @error('dataUV.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataUV.ukuran_film">
-                                                            @error('dataUV.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataUV.jumlah_film">
-                                                            @error('dataUV.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            @if (isset($stateWorkCetakLabel))
-                                                <tr>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <x-forms.filepond wire:model="fileCetakLabel" multiple
-                                                                allowImagePreview imagePreviewMaxHeight="200"
-                                                                allowFileTypeValidation allowFileSizeValidation
-                                                                maxFileSize="1024mb" />
-
-                                                            @error('fileCetakLabel')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Keperluan"
-                                                                wire:model="dataCetakLabel.keperluan" disabled>
-                                                            @error('dataCetakLabel.keperluan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Ukuran Film"
-                                                                wire:model="dataCetakLabel.ukuran_film">
-                                                            @error('dataCetakLabel.ukuran_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="form-group">
-                                                            <input type="text" autocomplete="off"
-                                                                class="form-control" placeholder="Jumlah Film"
-                                                                wire:model="dataCetakLabel.jumlah_film">
-                                                            @error('dataCetakLabel.jumlah_film')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-sm-12 col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">File Layout</label>
-                                        <x-forms.filepond wire:model="fileLayout" multiple allowImagePreview
-                                            imagePreviewMaxHeight="200" allowFileTypeValidation allowFileSizeValidation
-                                            maxFileSize="1024mb" />
-
-                                        @error('fileLayout')
-                                            <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-12">
-                                    <label class="form-label">Catatan Proses Pengerjaan</label>
-                                    <div class="input-group control-group" style="padding-top: 5px;">
-                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4" wire:model="catatanProsesPengerjaan"></textarea>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-sm-12 col-md-12">
-                                    <div class="expanel expanel-default">
-                                        <div class="expanel-body">
-                                            <div class="form-group">
-                                                <label class="form-label mb-3">Catatan</label>
-                                                <button class="btn btn-info" type="button" wire:click="addEmptyNote"><i
-                                                        class="fe fe-plus"></i>Tambah
-                                                    Catatan</button>
-                                            </div>
-    
-                                            @foreach ($notes as $index => $note)
-                                                <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
-                                                    <div class="expanel expanel-default">
-                                                        <div class="expanel-body">
-                                                            <div class="input-group control-group"
-                                                                style="padding-top: 5px;">
-                                                                <select class="form-control form-select"
-                                                                    data-bs-placeholder="Pilih Tujuan Catatan"
-                                                                    wire:model="notes.{{ $index }}.tujuan">
-                                                                    <option label="Pilih Tujuan Catatan"></option>
-                                                                    @foreach ($workSteps as $key)
-                                                                        <option value="{{ $key['work_step_list_id'] }}">
-                                                                            {{ $key['workStepList']['name'] }}</option>
-                                                                    @endforeach
-    
-                                                                </select>
-                                                                <button class="btn btn-danger" type="button"
-                                                                    wire:click="removeNote({{ $index }})"><i
-                                                                        class="fe fe-x"></i></button>
-                                                            </div>
-                                                            @error('notes.' . $index . '.tujuan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-    
-                                                            <div class="input-group control-group"
-                                                                style="padding-top: 5px;">
-                                                                <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
-                                                                    wire:model="notes.{{ $index }}.catatan" required></textarea>
-                                                            </div>
-                                                            @error('notes.' . $index . '.catatan')
-                                                                <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                </p>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-    
-                                        </div>
+                                <div class="col-sm-12 col-md-12 mb-3">
+                                    <div class="table-responsive">
+                                        <table
+                                            class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-bottom-0">Catatan</th>
+                                                    <th class="border-bottom-0">Tujuan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($catatanData as $item)
+                                                    <tr>
+                                                        <td>
+                                                            {{ $item->catatan }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $item->tujuan }}
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <td>
+                                                        -
+                                                    </td>
+                                                @endforelse
+
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-
-                            <button type="submit" style="display: none;" class="btn btn-success mt-4 mb-0 submitBtn"
-                                wire:click="saveSampleAndProduction" wire:ignore.self>Submit</button>
                         </div>
                     </div>
                 </div>
