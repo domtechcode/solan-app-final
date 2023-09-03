@@ -61,7 +61,7 @@
                                                     @livewire('component.details.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @elseif($workStepData->work_step_list_id == 37)
                                                     <!-- Checker -->
-                                                    @livewire('component.operator.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @livewire('component.details.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @elseif($workStepData->work_step_list_id == 7)
                                                     <!-- Plate -->
                                                     @livewire('component.operator.form-plate-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
