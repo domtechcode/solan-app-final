@@ -123,34 +123,42 @@ class NewSpkDashboardIndex extends Component
                 ->with(['status', 'job', 'workStepList', 'instruction'])
                 ->orderBy('instructions.shipping_date', 'asc')
                 ->paginate($this->paginateNewSpk);
-        } else if (Auth()->user()->jobdesk == 'Maklun') { 
+        } elseif (Auth()->user()->jobdesk == 'Maklun') {
             $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
-            ->where('state_task', 'Running')
-            ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
-            ->where('spk_status', 'Running')
-            ->where('schedule_date', '<=', $formattedToday)
-            ->whereHas('instruction', function ($query) {
-                $searchTerms = '%' . $this->searchNewSpk . '%';
-                $query
-                    ->where(function ($subQuery) use ($searchTerms) {
-                        $subQuery
-                            ->orWhere('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    });
-            })
-            ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
-            ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction'])
-            ->orderBy('instructions.shipping_date', 'asc')
-            ->paginate($this->paginateNewSpk);
-        }else{
+                ->where('state_task', 'Running')
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
+                ->where('spk_status', 'Running')
+                ->where('schedule_date', '<=', $formattedToday)
+                ->whereHas('instruction', function ($query) {
+                    $searchTerms = '%' . $this->searchNewSpk . '%';
+                    $query
+                        ->where(function ($subQuery) use ($searchTerms) {
+                            $subQuery
+                                ->orWhere('spk_number', 'like', $searchTerms)
+                                ->orWhere('spk_type', 'like', $searchTerms)
+                                ->orWhere('customer_name', 'like', $searchTerms)
+                                ->orWhere('order_name', 'like', $searchTerms)
+                                ->orWhere('customer_number', 'like', $searchTerms)
+                                ->orWhere('code_style', 'like', $searchTerms)
+                                ->orWhere('shipping_date', 'like', $searchTerms)
+                                ->orWhere('ukuran_barang', 'like', $searchTerms)
+                                ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                        })
+                        ->where(function ($subQuery) {
+                            // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
+                        });
+                })
+                ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
+                ->select('work_steps.*')
+                ->with(['status', 'job', 'workStepList', 'instruction'])
+                ->orderBy('instructions.shipping_date', 'asc')
+                ->paginate($this->paginateNewSpk);
+        } else {
             $dataNewSpk = WorkStep::where('user_id', Auth()->user()->id)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
@@ -299,7 +307,6 @@ class NewSpkDashboardIndex extends Component
         foreach ($userDestination as $dataUser) {
             $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Sedang dikerjakan ' . $workStepDataCurrent->workStepList->name, 'instruction_id' => $this->instructionSelectedId]);
         }
-
     }
 
     public function messageSent($arguments)
