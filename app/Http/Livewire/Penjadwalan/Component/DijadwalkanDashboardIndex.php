@@ -105,7 +105,7 @@ class DijadwalkanDashboardIndex extends Component
             'message' => 'Urgent instruksi kerja berhasil disimpan',
         ]);
 
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
     }
 
     public function normal($instructionSelectedIdNormal)
@@ -120,7 +120,7 @@ class DijadwalkanDashboardIndex extends Component
             'message' => 'Normal instruksi kerja berhasil disimpan',
         ]);
 
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
     }
 
     public function addField($index)
@@ -134,6 +134,7 @@ class DijadwalkanDashboardIndex extends Component
                 'target_time' => null,
                 'user_id' => null,
                 'machine_id' => null,
+                'flag' => null,
                 'state_task' => 'Not Running',
                 'status_task' => 'Pending Start',
             ],
@@ -299,6 +300,7 @@ class DijadwalkanDashboardIndex extends Component
                     'step' => $stepCount,
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
+                    'flag' => $workStepData['flag'],
                     'spk_status' => 'Running',
                 ]);
             } else {
@@ -313,6 +315,7 @@ class DijadwalkanDashboardIndex extends Component
                     'step' => $stepCount,
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
+                    'flag' => $workStepData['flag'],
                     'spk_status' => 'Running',
                 ]);
             }
@@ -392,6 +395,7 @@ class DijadwalkanDashboardIndex extends Component
     {
         $this->workSteps = null;
         $this->pengajuanBarang = null;
+        $this->historyPengajuanBarang = null;
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
@@ -456,6 +460,7 @@ class DijadwalkanDashboardIndex extends Component
                 'machine_id' => $dataSelected['machine_id'],
                 'status_task' => $dataSelected['status_task'],
                 'state_task' => $dataSelected['state_task'],
+                'flag' => $dataSelected['flag'],
                 'keterangan_reject' => $dataSelected['keterangan_reject'],
             ];
             $this->workSteps[] = $workSteps;
@@ -555,7 +560,21 @@ class DijadwalkanDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -584,7 +603,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
@@ -622,7 +641,21 @@ class DijadwalkanDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -631,16 +664,6 @@ class DijadwalkanDashboardIndex extends Component
                     $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                         ->where('work_step_list_id', $updateStart->work_step_list_id)
                         ->where('user_id', $updateStart->user_id)
-                        ->update([
-                            'state_task' => 'Running',
-                            'status_task' => 'Pending Approved',
-                            'flag' => 'Duet',
-                        ]);
-
-                    $updateNextChildWorkStep = WorkStep::where('instruction_id', $item['id'])
-                        ->where('work_step_list_id', $updateStart->work_step_list_id)
-                        ->where('user_id', $updateStart->user_id)
-                        ->where('step', $$updateChildWorkStep->step + 1)
                         ->update([
                             'state_task' => 'Running',
                             'status_task' => 'Pending Approved',
@@ -661,7 +684,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
@@ -689,7 +712,21 @@ class DijadwalkanDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -699,12 +736,12 @@ class DijadwalkanDashboardIndex extends Component
                         ->where('work_step_list_id', $updateStart->work_step_list_id)
                         ->where('user_id', $updateStart->user_id)
                         ->update([
-                            'state_task' => 'Not Running',
-                            'status_task' => 'Pause',
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
                         ]);
 
                     $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
-                        'status_id' => 27,
+                        'status_id' => 1,
                         'job_id' => $updateStart->work_step_list_id,
                     ]);
                 }
@@ -718,7 +755,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
@@ -747,7 +784,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
@@ -789,7 +826,7 @@ class DijadwalkanDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateReject->user_id, 'conversation' => 'SPK Reject', 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 
@@ -844,7 +881,7 @@ class DijadwalkanDashboardIndex extends Component
         $this->tujuanReject = null;
         $this->keteranganReject = null;
         $this->messageSent(['conversation' => 'SPK Reject dari Penjadwalan', 'receiver' => $workStepDestination->user_id, 'instruction_id' => $this->selectedInstruction->id]);
-        event(new IndexRenderEvent('refresh'));
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-dijadwalkan');
     }
 

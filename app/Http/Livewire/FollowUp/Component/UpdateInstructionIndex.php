@@ -538,6 +538,7 @@ class UpdateInstructionIndex extends Component
             if ($this->spk_parent != null || $this->spk_parent != false) {
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
                     ->where('spk_type', $this->spk_type)
+                    ->where('request_kekurangan', null)
                     ->where('taxes_type', $datacustomerlist->taxes)
                     ->latest('spk_number')
                     ->first();
@@ -546,11 +547,13 @@ class UpdateInstructionIndex extends Component
                 if ($datacustomerlist->taxes == 'pajak') {
                     $nomor_spk = Instruction::where('spk_type', $this->spk_type)
                         ->where('spk_parent', null)
+                        ->where('request_kekurangan', null)
                         ->where('taxes_type', 'pajak')
                         ->count();
                 } else {
                     $nomor_spk = Instruction::where('spk_type', $this->spk_type)
                         ->where('spk_parent', null)
+                        ->where('request_kekurangan', null)
                         ->where('taxes_type', 'nonpajak')
                         ->count();
                 }
@@ -563,19 +566,19 @@ class UpdateInstructionIndex extends Component
             }
 
             if ($datacustomerlist->taxes == 'pajak' && empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 542;
+                $nomor_urut = $nomor_spk + 634;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf('1%04d', $nomor_urut + 1);
             } elseif ($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 542;
+                $nomor_urut = $nomor_spk + 634;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A';
             } elseif ($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
             if ($datacustomerlist->taxes == 'nonpajak' && empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 152;
+                $nomor_urut = $nomor_spk + 166;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1);
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 152;
+                $nomor_urut = $nomor_spk + 166;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A';
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
@@ -584,6 +587,7 @@ class UpdateInstructionIndex extends Component
             if ($this->spk_parent != null || $this->spk_parent != false) {
                 $nomor_spk_parent = Instruction::where('spk_parent', $this->spk_parent)
                     ->where('spk_type', 'production')
+                    ->where('request_kekurangan', null)
                     ->where('taxes_type', $datacustomerlist->taxes)
                     ->latest('spk_number')
                     ->first();
@@ -592,6 +596,7 @@ class UpdateInstructionIndex extends Component
             } else {
                 $nomor_spk = Instruction::where('spk_type', 'production')
                     ->where('spk_parent', null)
+                    ->where('request_kekurangan', null)
                     ->where('taxes_type', 'nonpajak')
                     ->count();
             }
@@ -605,10 +610,10 @@ class UpdateInstructionIndex extends Component
             }
 
             if (empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 152;
+                $nomor_urut = $nomor_spk + 166;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '(STK)';
             } elseif (isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 152;
+                $nomor_urut = $nomor_spk + 166;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A(STK)';
             } elseif (isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet) . '(STK)';

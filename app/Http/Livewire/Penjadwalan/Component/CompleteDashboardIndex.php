@@ -134,6 +134,7 @@ class CompleteDashboardIndex extends Component
                 'target_time' => null,
                 'user_id' => null,
                 'machine_id' => null,
+                'flag' => null,
                 'state_task' => 'Not Running',
                 'status_task' => 'Pending Start',
             ],
@@ -298,6 +299,7 @@ class CompleteDashboardIndex extends Component
                     'step' => $stepCount,
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
+                    'flag' => $workStepData['flag'],
                     'spk_status' => 'Running',
                 ]);
             } else {
@@ -312,6 +314,7 @@ class CompleteDashboardIndex extends Component
                     'step' => $stepCount,
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
+                    'flag' => $workStepData['flag'],
                     'spk_status' => 'Running',
                 ]);
             }
@@ -391,6 +394,7 @@ class CompleteDashboardIndex extends Component
     {
         $this->workSteps = null;
         $this->pengajuanBarang = null;
+        $this->historyPengajuanBarang = null;
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB'])->get();
         $this->dataMachines = Machine::all();
@@ -456,6 +460,7 @@ class CompleteDashboardIndex extends Component
                 'machine_id' => $dataSelected['machine_id'],
                 'status_task' => $dataSelected['status_task'],
                 'state_task' => $dataSelected['state_task'],
+                'flag' => $dataSelected['flag'],
                 'keterangan_reject' => $dataSelected['keterangan_reject'],
             ];
             $this->workSteps[] = $workSteps;
@@ -555,7 +560,21 @@ class CompleteDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -584,6 +603,72 @@ class CompleteDashboardIndex extends Component
         ]);
 
         $this->messageSent(['receiver' => $updateStart->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
+        event(new IndexRenderEvent('refresh'));
+        $this->dispatchBrowserEvent('close-modal-complete');
+    }
+
+    public function startSplitButton($workStepId)
+    {
+        $updateStartSplit = WorkStep::find($workStepId);
+
+        if ($updateStartSplit) {
+            // Update the record
+            $updateStartSplit->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+                'flag' => 'Split',
+            ]);
+        }
+
+        $dataInstruction = Instruction::find($updateStartSplit->instruction_id);
+        if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
+            $datachild = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'child')
+                ->get();
+
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
+            foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
+                $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                    ->where('work_step_list_id', $updateStartSplit->work_step_list_id)
+                    ->where('user_id', $updateStartSplit->user_id)
+                    ->first();
+                if (isset($updateChildWorkStep)) {
+                    $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
+                        ->where('work_step_list_id', $updateStartSplit->work_step_list_id)
+                        ->where('user_id', $updateStartSplit->user_id)
+                        ->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+
+                    $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
+                        'status_id' => 1,
+                        'job_id' => $updateStartSplit->work_step_list_id,
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Instruksi Kerja',
+            'message' => 'Instruksi kerja berhasil dikirim ke Operator Tujuan',
+        ]);
+
+        $this->messageSent(['receiver' => $updateStartSplit->user_id, 'conversation' => 'SPK Baru', 'instruction_id' => $this->selectedInstruction->id]);
         event(new IndexRenderEvent('refresh'));
         $this->dispatchBrowserEvent('close-modal-complete');
     }
@@ -622,7 +707,21 @@ class CompleteDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -631,16 +730,6 @@ class CompleteDashboardIndex extends Component
                     $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                         ->where('work_step_list_id', $updateStart->work_step_list_id)
                         ->where('user_id', $updateStart->user_id)
-                        ->update([
-                            'state_task' => 'Running',
-                            'status_task' => 'Pending Approved',
-                            'flag' => 'Duet',
-                        ]);
-
-                    $updateNextChildWorkStep = WorkStep::where('instruction_id', $item['id'])
-                        ->where('work_step_list_id', $updateStart->work_step_list_id)
-                        ->where('user_id', $updateStart->user_id)
-                        ->where('step', $$updateChildWorkStep->step + 1)
                         ->update([
                             'state_task' => 'Running',
                             'status_task' => 'Pending Approved',
@@ -689,7 +778,21 @@ class CompleteDashboardIndex extends Component
                 ->where('group_priority', 'child')
                 ->get();
 
+            $dataparent = Instruction::where('group_id', $dataInstruction->group_id)
+                ->where('group_priority', 'parent')
+                ->first();
+
             foreach ($datachild as $key => $item) {
+                //delete workStep child
+                $deleteWorkStep = WorkStep::where('instruction_id', $item['id'])->delete();
+                $parentSteps = WorkStep::where('instruction_id', $dataparent->id)->get();
+
+                foreach ($parentSteps as $parentStep) {
+                    $childWorkStep = $parentStep->replicate();
+                    $childWorkStep->instruction_id = $item['id'];
+                    $childWorkStep->save();
+                }
+
                 $updateChildWorkStep = WorkStep::where('instruction_id', $item['id'])
                     ->where('work_step_list_id', $updateStart->work_step_list_id)
                     ->where('user_id', $updateStart->user_id)
@@ -699,12 +802,12 @@ class CompleteDashboardIndex extends Component
                         ->where('work_step_list_id', $updateStart->work_step_list_id)
                         ->where('user_id', $updateStart->user_id)
                         ->update([
-                            'state_task' => 'Not Running',
-                            'status_task' => 'Pause',
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
                         ]);
 
                     $updateChildStatus = WorkStep::where('instruction_id', $item['id'])->update([
-                        'status_id' => 27,
+                        'status_id' => 1,
                         'job_id' => $updateStart->work_step_list_id,
                     ]);
                 }
