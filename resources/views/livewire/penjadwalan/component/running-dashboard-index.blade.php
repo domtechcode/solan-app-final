@@ -111,12 +111,18 @@
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
                                         @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
                                         @endif
                                         <span
                                             class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
@@ -126,12 +132,18 @@
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
                                         @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
                                         @endif
                                         <span
                                             class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
@@ -141,12 +153,18 @@
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
                                         @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
                                         @endif
                                         <span
                                             class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
@@ -156,12 +174,18 @@
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
                                         @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->task_priority != 'Normal')
                                             <span class="tag tag-border">{{ $dataInstruction->task_priority }}</span>
+                                        @endif
+                                        @if ($dataInstruction->spk_status_target == 'Late')
+                                            <span class="tag tag-border">{{ $dataInstruction->spk_status_target }}</span>
                                         @endif
                                         <span
                                             class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
