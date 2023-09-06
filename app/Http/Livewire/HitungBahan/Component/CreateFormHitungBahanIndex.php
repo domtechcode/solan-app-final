@@ -1518,6 +1518,7 @@ class CreateFormHitungBahanIndex extends Component
     {
         $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
             'status_id' => 1,
+            'user_id' => NULL,
         ]);
 
         return redirect()->route('hitungBahan.dashboard');

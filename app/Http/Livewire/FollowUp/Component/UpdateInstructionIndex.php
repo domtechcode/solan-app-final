@@ -53,6 +53,7 @@ class UpdateInstructionIndex extends Component
     public $ppn = 11.2 / 100;
     public $spk_layout_number;
     public $spk_sample_number;
+    public $po_foc;
 
     //data
     public $datacustomers = [];
@@ -188,6 +189,10 @@ class UpdateInstructionIndex extends Component
         } else {
             $this->taxes_type = $customerList->taxes;
             $this->type_order = $this->spk_type;
+        }
+
+        if ($this->po_foc == 'foc') {
+            $this->taxes_type = 'nonpajak';
         }
 
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
@@ -527,8 +532,11 @@ class UpdateInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-
+        
         $datacustomerlist = Customer::find($this->customer);
+        if ($this->po_foc != null || $this->po_foc != false) {
+            $datacustomerlist->taxes = 'nonpajak';
+        }
 
         if ($this->spk_type == 'layout' || $this->spk_type == 'sample') {
             $count_spk = Instruction::whereIn('spk_type', ['layout', 'sample'])->count();

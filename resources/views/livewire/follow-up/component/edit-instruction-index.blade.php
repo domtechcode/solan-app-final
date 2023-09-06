@@ -157,8 +157,7 @@
                                                     <select class="form-control" id="spk_parent" data-clear
                                                         data-pharaonic="select2"
                                                         data-component-id="{{ $this->id }}"
-                                                        data-placeholder="Select SPK Parent"
-                                                        wire:model="spk_parent">
+                                                        data-placeholder="Select SPK Parent" wire:model="spk_parent">
                                                         <option value="">Select Parent</option>
                                                         @foreach ($dataparents as $spkparent)
                                                             <option value="{{ $spkparent->spk_number }}">[
@@ -183,8 +182,8 @@
                                         <input type="text" wire:model="spk_number" id="spk_number"
                                             class="form-control @error('spk_number') is-invalid @enderror"
                                             placeholder="No SPK" autocomplete="off">
-                                        <button class="btn btn-primary" type="button"
-                                            wire:click="generateCode" wire:key="generateCode">Generate</button>
+                                        <button class="btn btn-primary" type="button" wire:click="generateCode"
+                                            wire:key="generateCode">Generate</button>
                                     </div>
                                     @error('spk_number')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -235,8 +234,8 @@
                                         <input type="text" wire:model="spk_number_fsc" id="spk_number_fsc"
                                             class="form-control @error('spk_number_fsc') is-invalid @enderror"
                                             placeholder="No SPK FSC" autocomplete="off">
-                                        <button class="btn btn-primary" type="button"
-                                            wire:click="generateCodeFsc" wire:key="generateCodeFsc">Generate FSC</button>
+                                        <button class="btn btn-primary" type="button" wire:click="generateCodeFsc"
+                                            wire:key="generateCodeFsc">Generate FSC</button>
                                     </div>
                                     @error('spk_number_fsc')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -288,16 +287,34 @@
                             </div>
 
                             <div class="col-sm-6 col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">No. Po Konsumen</label>
-                                    <div class="input-group">
-                                        <input type="text" wire:model="customer_number" id="customer_number"
-                                            class="form-control @error('customer_number') is-invalid @enderror"
-                                            autocomplete="off" placeholder="No. Po Konsumen" readonly>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="form-label">FOC</label>
+                                            <label class="custom-switch form-switch me-5">
+                                                <input type="checkbox" wire:model="po_foc"
+                                                    class="custom-switch-input @error('po_foc') is-invalid @enderror"
+                                                    value="foc">
+                                                <span
+                                                    class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                                <span class="custom-switch-description">FOC</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    @error('customer_number')
-                                        <div><span class="text-danger">{{ $message }}</span></div>
-                                    @enderror
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label class="form-label">No. Po Konsumen</label>
+                                            <div class="input-group">
+                                                <input type="text" wire:model="customer_number"
+                                                    id="customer_number"
+                                                    class="form-control @error('customer_number') is-invalid @enderror"
+                                                    autocomplete="off" placeholder="No. Po Konsumen">
+                                            </div>
+                                            @error('customer_number')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -333,12 +350,9 @@
                                 <div class="form-group">
                                     <label class="form-label">Quantity</label>
                                     <div class="input-group">
-                                        <input x-data
-                                        x-mask:dynamic="$money($input)"
-                                        x-ref="input"
-                                        type="text"
-                                        placeholder="Quantity"
-                                        wire:model="quantity"  class="form-control @error('quantity') is-invalid @enderror">
+                                        <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                                            placeholder="Quantity" wire:model="quantity"
+                                            class="form-control @error('quantity') is-invalid @enderror">
                                     </div>
                                     @error('quantity')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -439,29 +453,29 @@
                                     <label class="form-label">Panjang Barang</label>
                                     <div class="input-group">
                                         <input type="text" wire:model="panjang_barang" id="panjang_barang"
-                                            class="form-control @error('panjang_barang') is-invalid @enderror" autocomplete="off"
-                                            placeholder="Panjang Barang">
+                                            class="form-control @error('panjang_barang') is-invalid @enderror"
+                                            autocomplete="off" placeholder="Panjang Barang">
                                     </div>
                                     @error('panjang_barang')
                                         <div><span class="text-danger">{{ $message }}</span></div>
                                     @enderror
                                 </div>
                             </div>
-                
+
                             <div class="col-sm-6 col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Lebar Barang</label>
                                     <div class="input-group">
                                         <input type="text" wire:model="lebar_barang" id="lebar_barang"
-                                            class="form-control @error('lebar_barang') is-invalid @enderror" autocomplete="off"
-                                            placeholder="Lebar Barang">
+                                            class="form-control @error('lebar_barang') is-invalid @enderror"
+                                            autocomplete="off" placeholder="Lebar Barang">
                                     </div>
                                     @error('lebar_barang')
                                         <div><span class="text-danger">{{ $message }}</span></div>
                                     @enderror
                                 </div>
                             </div>
-                
+
 
                             <div class="row mb-5">
                                 <div class="col-sm-6 col-md-6">

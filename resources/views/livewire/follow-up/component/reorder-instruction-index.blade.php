@@ -211,16 +211,31 @@
             </div>
 
             <div class="col-sm-6 col-md-6">
-                <div class="form-group">
-                    <label class="form-label">No. Po Konsumen</label>
-                    <div class="input-group">
-                        <input type="text" wire:model.defer="customer_number" id="customer_number"
-                            class="form-control @error('customer_number') is-invalid @enderror" autocomplete="off"
-                            placeholder="No. Po Konsumen">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">FOC</label>
+                            <label class="custom-switch form-switch me-5">
+                                <input type="checkbox" wire:model="po_foc"
+                                    class="custom-switch-input @error('po_foc') is-invalid @enderror" value="foc">
+                                <span class="custom-switch-indicator custom-switch-indicator-md"></span>
+                                <span class="custom-switch-description">FOC</span>
+                            </label>
+                        </div>
                     </div>
-                    @error('customer_number')
-                        <div><span class="text-danger">{{ $message }}</span></div>
-                    @enderror
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label class="form-label">No. Po Konsumen</label>
+                            <div class="input-group">
+                                <input type="text" wire:model="customer_number" id="customer_number"
+                                    class="form-control @error('customer_number') is-invalid @enderror"
+                                    autocomplete="off" placeholder="No. Po Konsumen">
+                            </div>
+                            @error('customer_number')
+                                <div><span class="text-danger">{{ $message }}</span></div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -256,12 +271,9 @@
                 <div class="form-group">
                     <label class="form-label">Quantity</label>
                     <div class="input-group">
-                        <input x-data
-                        x-mask:dynamic="$money($input)"
-                        x-ref="input"
-                        type="text"
-                        placeholder="Quantity"
-                        wire:model="quantity"  class="form-control @error('quantity') is-invalid @enderror">
+                        <input x-data x-mask:dynamic="$money($input)" x-ref="input" type="text"
+                            placeholder="Quantity" wire:model="quantity"
+                            class="form-control @error('quantity') is-invalid @enderror">
                     </div>
                     @error('quantity')
                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -287,12 +299,9 @@
                 <div class="form-group">
                     <label class="form-label">Harga</label>
                     <div class="input-group">
-                        <input x-data
-                        x-mask:dynamic="$money($input, '.', ',', 4)"
-                        x-ref="input"
-                        type="text"
-                        placeholder="Harga"
-                        wire:model="price"  class="form-control @error('price') is-invalid @enderror">
+                        <input x-data x-mask:dynamic="$money($input, '.', ',', 4)" x-ref="input" type="text"
+                            placeholder="Harga" wire:model="price"
+                            class="form-control @error('price') is-invalid @enderror">
                     </div>
                     @error('price')
                         <div><span class="text-danger">{{ $message }}</span></div>
