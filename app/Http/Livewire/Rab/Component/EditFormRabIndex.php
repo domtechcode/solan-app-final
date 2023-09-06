@@ -258,6 +258,8 @@ class EditFormRabIndex extends Component
                 'jenisPengeluaran' => 'Biaya Lainnya',
                 'rab' => '',
             ];
+
+            
         }
     }
 
@@ -304,11 +306,9 @@ class EditFormRabIndex extends Component
         if (isset($lastRab)) {
             foreach ($lastRab as $lastdata) {
                 $update = FormRab::where('instruction_id', $currentInstructionData->id)
-                    ->where('count', $currentInstructionData->count)
-                    ->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)
-                    ->update([
-                        'real' => $lastdata->real,
-                    ]);
+                ->where('count', $currentInstructionData->count)->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)->update([
+                    'real' => $lastdata->real,
+                ]);
             }
         }
 
