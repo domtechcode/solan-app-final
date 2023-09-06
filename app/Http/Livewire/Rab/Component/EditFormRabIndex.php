@@ -95,9 +95,12 @@ class EditFormRabIndex extends Component
             ->where('count', $dataInstruction->count)
             ->first();
 
-        $newHargaBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('harga_bahan');
-        $newJumlahBahan = LayoutBahan::where('instruction_id', $instructionId)->sum('jumlah_bahan');
-        $newTotalHargaBahan = $newHargaBahan * $newJumlahBahan;
+        $priceBahanBaku = LayoutBahan::where('instruction_id', $instructionId)->get();
+        $newTotalHargaBahan = 0;
+
+        foreach ($priceBahanBaku as $layoutBahan) {
+            $newTotalHargaBahan += $layoutBahan->jumlah_bahan * $layoutBahan->harga_bahan;
+        }
 
         if ($formRab) {
             $formRab = FormRab::where('instruction_id', $instructionId)
@@ -127,7 +130,6 @@ class EditFormRabIndex extends Component
                 'jenisPengeluaran' => 'Bahan Baku',
                 'rab' => currency_convert($totalPrice),
             ];
-
             $plateTotal = KeteranganPlate::where('instruction_id', $instructionId)->get();
             $totalPlate = 0;
 
@@ -302,9 +304,11 @@ class EditFormRabIndex extends Component
         if (isset($lastRab)) {
             foreach ($lastRab as $lastdata) {
                 $update = FormRab::where('instruction_id', $currentInstructionData->id)
-                ->where('count', $currentInstructionData->count)->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)->update([
-                    'real' => $lastdata->real,
-                ]);
+                    ->where('count', $currentInstructionData->count)
+                    ->where('jenis_pengeluaran', $lastdata->jenis_pengeluaran)
+                    ->update([
+                        'real' => $lastdata->real,
+                    ]);
             }
         }
 
