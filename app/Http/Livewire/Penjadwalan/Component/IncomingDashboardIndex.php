@@ -62,7 +62,7 @@ class IncomingDashboardIndex extends Component
     {
         $dataIncoming = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Not Running')
-            ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+            ->where('spk_status', 'Running')
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchIncoming . '%';
                 $query
@@ -77,6 +77,9 @@ class IncomingDashboardIndex extends Component
                             ->orWhere('shipping_date', 'like', $searchTerms)
                             ->orWhere('ukuran_barang', 'like', $searchTerms)
                             ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                    })
+                    ->whereHas('instruction', function ($query) {
+                        $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
