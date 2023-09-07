@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
+use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormPotongJadi;
 use App\Models\CatatanPengajuan;
@@ -98,5 +99,10 @@ class User extends Authenticatable
     public function formPotongJadi()
     {
         return $this->hasMany(FormPotongJadi::class);
+    }
+
+    public function formPond()
+    {
+        return $this->hasMany(FormPond::class);
     }
 }

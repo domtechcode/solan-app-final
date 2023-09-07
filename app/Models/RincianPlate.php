@@ -44,13 +44,13 @@ class RincianPlate extends Model
         return $this->hasMany(FormFoil::class);
     }
 
-    public function formPond()
-    {
-        return $this->hasMany(FormPond::class);
-    }
+    // public function formPond()
+    // {
+    //     return $this->hasMany(FormPond::class);
+    // }
 
-    public function formPotongJadi()
-    {
-        return $this->hasMany(FormPotongJadi::class);
-    }
+    // public function formPotongJadi()
+    // {
+    //     return $this->hasMany(FormPotongJadi::class);
+    // }
 }

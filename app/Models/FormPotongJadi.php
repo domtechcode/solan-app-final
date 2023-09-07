@@ -20,10 +20,10 @@ class FormPotongJadi extends Model
         return $this->belongsTo(Instruction::class);
     }
 
-    public function rincianPlate()
-    {
-        return $this->belongsTo(RincianPlate::class);
-    }
+    // public function rincianPlate()
+    // {
+    //     return $this->belongsTo(RincianPlate::class);
+    // }
 
     public function user()
     {

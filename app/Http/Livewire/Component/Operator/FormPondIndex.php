@@ -64,6 +64,8 @@ class FormPondIndex extends Component
 
         $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)
             ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+            ->where('user_id', Auth()->user()->id)
+            ->where('step', $dataWorkStep->step)
             ->first();
 
         if (isset($dataPond)) {
@@ -75,49 +77,47 @@ class FormPondIndex extends Component
             $this->nama_matress = $dataPond['nama_matress'];
             $this->lokasi_matress = $dataPond['lokasi_matress'];
             $this->status_matress = $dataPond['status_matress'];
+
+            $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)
+            ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+            ->where('user_id', Auth()->user()->id)
+            ->where('step', $dataWorkStep->step)
+            ->get();
+            foreach ($dataPond as $dataHasilAkhirPond) {
+                $rincianPlateDataHasilAkhir = [
+                    'state' => $dataHasilAkhirPond['state'],
+                    'plate' => $dataHasilAkhirPond['plate'],
+                    'jumlah_lembar_cetak' => $dataHasilAkhirPond['jumlah_lembar_cetak'],
+                    'waste' => $dataHasilAkhirPond['waste'],
+                    'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirPond['hasil_akhir_lembar_cetak_plate'],
+                ];
+    
+                $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+            }
+            
+
         } else {
             $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
-            $this->hasil_akhir = '';
-            $this->nama_pisau = '';
-            $this->lokasi_pisau = '';
-            $this->status_pisau = '';
-            $this->nama_matress = '';
-            $this->lokasi_matress = '';
-            $this->status_matress = '';
-        }
+            $this->hasil_akhir = null;
+            $this->nama_pisau = null;
+            $this->lokasi_pisau = null;
+            $this->status_pisau = null;
+            $this->nama_matress = null;
+            $this->lokasi_matress = null;
+            $this->status_matress = null;
 
-        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-            })
-            ->with('formPond')
-            ->get();
+            $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)->get();
 
-        if (isset($dataRincianPlateHasilAkhir)) {
-            $this->dataHasilAkhir = [];
+            if (isset($dataRincianPlateHasilAkhir)) {
+                $this->dataHasilAkhir = [];
 
-            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
-                if (isset($dataHasilAkhirPlate->formPond) && count($dataHasilAkhirPlate->formPond) > 0) {
-                    foreach ($dataHasilAkhirPlate['formPond'] as $item) {
-                        $rincianPlateDataHasilAkhir = [
-                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                            'state' => $dataHasilAkhirPlate->state,
-                            'plate' => $dataHasilAkhirPlate->plate,
-                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                            'waste' => $dataHasilAkhirPlate->waste,
-                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
-                        ];
-
-                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
-                    }
-                } else {
+                foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPond) {
                     $rincianPlateDataHasilAkhir = [
-                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                        'state' => $dataHasilAkhirPlate->state,
-                        'plate' => $dataHasilAkhirPlate->plate,
-                        'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                        'waste' => $dataHasilAkhirPlate->waste,
-                        'hasil_akhir_lembar_cetak_plate' => '',
+                        'state' => $dataHasilAkhirPond->state,
+                        'plate' => $dataHasilAkhirPond->plate,
+                        'jumlah_lembar_cetak' => $dataHasilAkhirPond->jumlah_lembar_cetak,
+                        'waste' => $dataHasilAkhirPond->waste,
+                        'hasil_akhir_lembar_cetak_plate' => null,
                     ];
 
                     $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
@@ -197,27 +197,22 @@ class FormPondIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
-        $deleteFormPond = FormPond::where('instruction_id', $this->instructionCurrentId)
-            ->where('jenis_pekerjaan', $currentStep->workStepList->name)
-            ->delete();
-        // $createFormPond = FormPond::create([
-        //     'instruction_id' => $this->instructionCurrentId,
-        //     'jenis_pekerjaan' => $this->jenis_pekerjaan,
-        //     'hasil_akhir' => $this->hasil_akhir,
-        //     'nama_pisau' => $this->nama_pisau,
-        //     'lokasi_pisau' => $this->lokasi_pisau,
-        //     'status_pisau' => $this->status_pisau,
-        //     'nama_matress' => $this->nama_matress,
-        //     'lokasi_matress' => $this->lokasi_matress,
-        //     'status_matress' => $this->status_matress,
-        // ]);
-
         if (isset($this->dataHasilAkhir)) {
-            $deleteCetak = FormPond::where('instruction_id', $this->instructionCurrentId)->delete();
+            $deleteCetak = FormPond::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $currentStep->workStepList->name)
+                ->where('user_id', Auth()->user()->id)
+                ->where('step', $currentStep->step)
+                ->delete();
+
             foreach ($this->dataHasilAkhir as $item) {
                 $createCetak = FormPond::create([
                     'instruction_id' => $this->instructionCurrentId,
-                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'user_id' => Auth()->user()->id,
+                    'step' => $currentStep->step,
+                    'state' => $item['state'],
+                    'plate' => $item['plate'],
+                    'jumlah_lembar_cetak' => $item['jumlah_lembar_cetak'],
+                    'waste' => $item['waste'],
                     'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
                     'jenis_pekerjaan' => $this->jenis_pekerjaan,
                     'hasil_akhir' => $this->hasil_akhir,

@@ -157,8 +157,6 @@ class FormPotongIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
-        $dataWorkStep = WorkStep::find($this->workStepCurrentId);
-
         if ($dataWorkStep->work_step_list_id == 9) {
             $this->validate([
                 'hasil_akhir' => 'required',
@@ -166,7 +164,7 @@ class FormPotongIndex extends Component
             ]);
 
             if (isset($this->dataHasilAkhir)) {
-                $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->delete();
+                $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->where('step', $currentStep->step)->where('user_id', Auth()->user()->id)->delete();
                 foreach ($this->dataHasilAkhir as $item) {
                     $createPotongJadi = FormPotongJadi::create([
                         'instruction_id' => $this->instructionCurrentId,
