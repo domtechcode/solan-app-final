@@ -39,10 +39,10 @@ class RincianPlate extends Model
         return $this->hasMany(FormCetak::class);
     }
 
-    public function formFoil()
-    {
-        return $this->hasMany(FormFoil::class);
-    }
+    // public function formFoil()
+    // {
+    //     return $this->hasMany(FormFoil::class);
+    // }
 
     // public function formPond()
     // {

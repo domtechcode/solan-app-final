@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
+use App\Models\FormFoil;
 use App\Models\FormPond;
 use App\Models\WorkStep;
 use App\Models\FormPotongJadi;
@@ -104,5 +105,10 @@ class User extends Authenticatable
     public function formPond()
     {
         return $this->hasMany(FormPond::class);
+    }
+
+    public function formFoil()
+    {
+        return $this->hasMany(FormFoil::class);
     }
 }

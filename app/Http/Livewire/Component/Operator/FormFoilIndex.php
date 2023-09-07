@@ -52,7 +52,13 @@ class FormFoilIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
-        $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->first();
+        $dataWorkStep = WorkStep::find($workStepId);
+        $this->dataWorkSteps = WorkStep::find($workStepId);
+
+        $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)
+            ->where('user_id', Auth()->user()->id)
+            ->where('step', $dataWorkStep->step)
+            ->first();
 
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList')
@@ -63,45 +69,40 @@ class FormFoilIndex extends Component
             $this->nama_matress = $dataFoil['nama_matress'];
             $this->lokasi_matress = $dataFoil['lokasi_matress'];
             $this->status_matress = $dataFoil['status_matress'];
+
+            $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)
+                ->where('user_id', Auth()->user()->id)
+                ->where('step', $dataWorkStep->step)
+                ->get();
+            foreach ($dataFoil as $dataHasilAkhirFoil) {
+                $rincianPlateDataHasilAkhir = [
+                    'state' => $dataHasilAkhirFoil['state'],
+                    'plate' => $dataHasilAkhirFoil['plate'],
+                    'jumlah_lembar_cetak' => $dataHasilAkhirFoil['jumlah_lembar_cetak'],
+                    'waste' => $dataHasilAkhirFoil['waste'],
+                    'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirFoil['hasil_akhir_lembar_cetak_plate'],
+                ];
+
+                $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+            }
         } else {
-            $this->hasil_akhir = '';
-            $this->nama_matress = '';
-            $this->lokasi_matress = '';
-            $this->status_matress = '';
-        }
+            $this->hasil_akhir = null;
+            $this->nama_matress = null;
+            $this->lokasi_matress = null;
+            $this->status_matress = null;
 
-        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-            })
-            ->with('formFoil')
-            ->get();
+            $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)->get();
 
-        if (isset($dataRincianPlateHasilAkhir)) {
-            $this->dataHasilAkhir = [];
+            if (isset($dataRincianPlateHasilAkhir)) {
+                $this->dataHasilAkhir = [];
 
-            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
-                if (isset($dataHasilAkhirPlate->formFoil) && count($dataHasilAkhirPlate->formFoil) > 0) {
-                    foreach ($dataHasilAkhirPlate['formFoil'] as $item) {
-                        $rincianPlateDataHasilAkhir = [
-                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                            'state' => $dataHasilAkhirPlate->state,
-                            'plate' => $dataHasilAkhirPlate->plate,
-                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                            'waste' => $dataHasilAkhirPlate->waste,
-                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
-                        ];
-
-                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
-                    }
-                } else {
+                foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
                     $rincianPlateDataHasilAkhir = [
-                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
                         'state' => $dataHasilAkhirPlate->state,
                         'plate' => $dataHasilAkhirPlate->plate,
                         'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
                         'waste' => $dataHasilAkhirPlate->waste,
-                        'hasil_akhir_lembar_cetak_plate' => '',
+                        'hasil_akhir_lembar_cetak_plate' => null,
                     ];
 
                     $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
@@ -168,22 +169,21 @@ class FormFoilIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
-        $deleteFormFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
-
-        // $createFormFoil = FormFoil::create([
-        //     'instruction_id' => $this->instructionCurrentId,
-        //     'hasil_akhir' => $this->hasil_akhir,
-        //     'nama_matress' => $this->nama_matress,
-        //     'lokasi_matress' => $this->lokasi_matress,
-        //     'status_matress' => $this->status_matress,
-        // ]);
-
         if (isset($this->dataHasilAkhir)) {
-            $deleteCetak = FormFoil::where('instruction_id', $this->instructionCurrentId)->delete();
+            $deleteCetak = FormFoil::where('instruction_id', $this->instructionCurrentId)
+                ->where('user_id', Auth()->user()->id)
+                ->where('step', $currentStep->step)
+                ->delete();
+
             foreach ($this->dataHasilAkhir as $item) {
                 $createCetak = FormFoil::create([
                     'instruction_id' => $this->instructionCurrentId,
-                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'user_id' => Auth()->user()->id,
+                    'step' => $currentStep->step,
+                    'state' => $item['state'],
+                    'plate' => $item['plate'],
+                    'jumlah_lembar_cetak' => $item['jumlah_lembar_cetak'],
+                    'waste' => $item['waste'],
                     'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
                     'hasil_akhir' => $this->hasil_akhir,
                     'nama_matress' => $this->nama_matress,

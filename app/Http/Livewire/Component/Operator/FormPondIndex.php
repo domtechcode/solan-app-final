@@ -94,8 +94,6 @@ class FormPondIndex extends Component
     
                 $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
             }
-            
-
         } else {
             $this->jenis_pekerjaan = $dataWorkStep->workStepList->name;
             $this->hasil_akhir = null;
