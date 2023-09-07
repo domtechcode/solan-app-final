@@ -191,6 +191,10 @@ class CreateInstructionIndex extends Component
             $this->taxes_type = 'nonpajak';
         }
 
+        if ($this->spk_parent == '') {
+            $this->spk_parent = NULL;
+        }
+
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)
             ->whereNotNull('customer_number')
             ->where('sub_spk', '!=', $this->sub_spk)

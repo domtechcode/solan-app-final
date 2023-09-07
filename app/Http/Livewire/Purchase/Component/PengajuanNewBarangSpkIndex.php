@@ -71,10 +71,24 @@ class PengajuanNewBarangSpkIndex extends Component
             ->where('state', 'Purchase')
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('ukuran_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('spk_number_fsc', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%');
+                    })
+                    ->OrWhere(function ($sub) {
+                        $sub->where('qty_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%')
+                            ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanNewBarangSpk . '%');
+                    });
             })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')
@@ -434,7 +448,9 @@ class PengajuanNewBarangSpkIndex extends Component
             ->with('user')
             ->get();
 
-        $this->dataPengajuanBarangSpk = PengajuanBarangSpk::where('id', $PengajuanBarangId)->with('workStepList','filesPengajuanBarangSpk')->get();
+        $this->dataPengajuanBarangSpk = PengajuanBarangSpk::where('id', $PengajuanBarangId)
+            ->with('workStepList', 'filesPengajuanBarangSpk')
+            ->get();
     }
 
     public function messageSent($arguments)

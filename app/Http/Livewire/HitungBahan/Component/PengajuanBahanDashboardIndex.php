@@ -3,12 +3,14 @@
 namespace App\Http\Livewire\HitungBahan\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use Livewire\WithPagination;
+use App\Events\NotificationSent;
 use App\Models\PengajuanBarangSpk;
 
 class PengajuanBahanDashboardIndex extends Component
@@ -42,6 +44,7 @@ class PengajuanBahanDashboardIndex extends Component
     public $selectedGroupChild;
 
     public $target_datang;
+    public $stock;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -107,7 +110,8 @@ class PengajuanBahanDashboardIndex extends Component
     {
         if ($statePengajuanBahan == 'Ajukan') {
             $this->validate([
-                'target_datang.' . $idPengajuanBahan => 'required'
+                'target_datang.' . $idPengajuanBahan => 'required',
+                'stock.' . $idPengajuanBahan => 'required',
             ]);            
 
             $updateLayoutBahan = LayoutBahan::find($idPengajuanBahan);
@@ -115,7 +119,7 @@ class PengajuanBahanDashboardIndex extends Component
                 'status_pengajuan' => $statePengajuanBahan,
             ]);
 
-            $keteranganBarang = 'Jenis Bahan : ' . $updateLayoutBahan->jenis_bahan . ' - Gramasi : ' . $updateLayoutBahan->gramasi . ' - Sumber Bahan : ' . $updateLayoutBahan->sumber_bahan . ' - Merk Bahan : ' . $updateLayoutBahan->merk_bahan . ' - Supplier : ' . $updateLayoutBahan->supplier . ' - Jumlah Bahan : ' . $updateLayoutBahan->jumlah_bahan;
+            $keteranganBarang = 'Jenis Bahan : ' . $updateLayoutBahan->jenis_bahan . ' - Gramasi : ' . $updateLayoutBahan->gramasi . ' - Sumber Bahan : ' . $updateLayoutBahan->sumber_bahan . ' - Merk Bahan : ' . $updateLayoutBahan->merk_bahan . ' - Supplier : ' . $updateLayoutBahan->supplier . ' - Jumlah Bahan : ' . $updateLayoutBahan->jumlah_bahan . ' - Ukuran Bahan : ' . $updateLayoutBahan->panjang_plano . 'X' . $updateLayoutBahan->lebar_plano . ' - Stock : ' . $this->stock[$idPengajuanBahan];
             
             $pengajuanBahan = PengajuanBarangSpk::create([
                 'instruction_id' => $updateLayoutBahan->instruction_id,
@@ -133,6 +137,11 @@ class PengajuanBahanDashboardIndex extends Component
             $updateLayoutBahan = LayoutBahan::where('id', $idPengajuanBahan)->update([
                 'status_pengajuan' => $statePengajuanBahan,
             ]);
+        }
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Bahan', 'instruction_id' => $updateLayoutBahan->instruction_id]);
         }
 
         $this->target_datang = null;
@@ -198,5 +207,15 @@ class PengajuanBahanDashboardIndex extends Component
             ->where('group_priority', 'child')
             ->with('workstep', 'workstep.workStepList', 'workstep.user', 'workstep.machine', 'fileArsip')
             ->get();
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }

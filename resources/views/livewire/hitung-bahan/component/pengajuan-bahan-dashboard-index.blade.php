@@ -28,7 +28,9 @@
                             <th class="border-bottom-0">Merk Bahan</th>
                             <th class="border-bottom-0">Supplier</th>
                             <th class="border-bottom-0">Jumlah Bahan</th>
+                            <th class="border-bottom-0">Ukuran Bahan</th>
                             <th class="border-bottom-0">Target Datang</th>
+                            <th class="border-bottom-0">Stock</th>
                             <th class="border-bottom-0">Action</th>
                         </tr>
                     </thead>
@@ -61,6 +63,7 @@
                                 <td>{{ $dataLayoutBahan->merk_bahan }}</td>
                                 <td>{{ $dataLayoutBahan->supplier }}</td>
                                 <td>{{ $dataLayoutBahan->jumlah_bahan }}</td>
+                                <td>{{ $dataLayoutBahan->panjang_plano }} X {{ $dataLayoutBahan->lebar_plano }}</td>
                                 <td>
                                     <div class="form-group">
                                         <div class="input-group">
@@ -68,6 +71,17 @@
                                                 class="form-control @error('target_datang.' . $dataLayoutBahan->id) is-invalid @enderror">
                                         </div>
                                         @error('target_datang.' . $dataLayoutBahan->id)
+                                            <div><span class="text-danger">{{ $message }}</span></div>
+                                        @enderror
+                                    </div>                                    
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" wire:model="stock.{{ $dataLayoutBahan->id }}" id="stock{{ $dataLayoutBahan->id }}" placeholder="Stock"
+                                                class="form-control @error('stock.' . $dataLayoutBahan->id) is-invalid @enderror">
+                                        </div>
+                                        @error('stock.' . $dataLayoutBahan->id)
                                             <div><span class="text-danger">{{ $message }}</span></div>
                                         @enderror
                                     </div>                                    

@@ -231,6 +231,10 @@ class ReorderInstructionIndex extends Component
             $this->taxes_type = 'nonpajak';
         }
 
+        if ($this->spk_parent == '') {
+            $this->spk_parent = NULL;
+        }
+
         if ($dataInstruction != null) {
             if ($this->spk_type != 'layout') {
                 $this->validate([
@@ -523,13 +527,14 @@ class ReorderInstructionIndex extends Component
 
             $keterangan = Keterangan::where('instruction_id', $this->currentInstructionId)->get();
             if ($keterangan) {
-                $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)->get();
-                foreach ($layoutSettingData as $dataLayoutSetting) {
+                $layoutSettingData = LayoutSetting::where('instruction_id', $this->currentInstructionId)
+                    ->with('ukuranBahanCetakSetting')
+                    ->get();
+
+                foreach ($layoutSettingData as $key => $dataLayoutSetting) {
                     $this->layoutSettings[] = [
                         'panjang_barang_jadi' => $dataLayoutSetting['panjang_barang_jadi'],
                         'lebar_barang_jadi' => $dataLayoutSetting['lebar_barang_jadi'],
-                        'panjang_bahan_cetak' => $dataLayoutSetting['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $dataLayoutSetting['lebar_bahan_cetak'],
                         'dataURL' => $dataLayoutSetting['dataURL'],
                         'dataJSON' => $dataLayoutSetting['dataJSON'],
                         'state' => $dataLayoutSetting['state'],
@@ -544,61 +549,169 @@ class ReorderInstructionIndex extends Component
                         'jarak_tambahan_vertical' => $dataLayoutSetting['jarak_tambahan_vertical'],
                         'jarak_tambahan_horizontal' => $dataLayoutSetting['jarak_tambahan_horizontal'],
                     ];
+
+                    if (isset($dataLayoutSetting['ukuranBahanCetakSetting'])) {
+                        foreach ($dataLayoutSetting['ukuranBahanCetakSetting'] as $index => $dataUkuranBahanCetakSetting) {
+                            $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'][$index] = [
+                                'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                                'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                            ];
+                        }
+                    } else {
+                        $this->layoutSettings[$key]['ukuran_bahan_cetak_setting'] = [];
+                    }
                 }
 
                 $keteranganData = Keterangan::where('instruction_id', $this->currentInstructionId)
-                    ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'keteranganFoil', 'keteranganMatress', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
+                    ->with('keteranganPlate', 'keteranganPisauPond', 'keteranganScreen', 'rincianPlate', 'rincianPlate.warnaPlate', 'rincianScreen', 'fileRincian')
                     ->get();
+
                 foreach ($keteranganData as $dataKeterangan) {
                     $keterangan = [
                         'fileRincian' => [],
                         'notes' => $dataKeterangan['notes'],
+                        'plate' => [
+                            [
+                                'state_plate' => 'baru',
+                                'jumlah_plate' => null,
+                                'ukuran_plate' => null,
+                            ],
+                            [
+                                'state_plate' => 'repeat',
+                                'jumlah_plate' => null,
+                                'ukuran_plate' => null,
+                            ],
+                            [
+                                'state_plate' => 'sample',
+                                'jumlah_plate' => null,
+                                'ukuran_plate' => null,
+                            ],
+                        ],
+                        'pond' => [
+                            [
+                                'state_pisau' => 'baru',
+                                'jumlah_pisau' => null,
+                            ],
+                            [
+                                'state_pisau' => 'repeat',
+                                'jumlah_pisau' => null,
+                            ],
+                            [
+                                'state_pisau' => 'sample',
+                                'jumlah_pisau' => null,
+                            ],
+                        ],
+                        'screen' => [
+                            [
+                                'state_screen' => 'baru',
+                                'jumlah_screen' => null,
+                                'ukuran_screen' => null,
+                            ],
+                            [
+                                'state_screen' => 'repeat',
+                                'jumlah_screen' => null,
+                                'ukuran_screen' => null,
+                            ],
+                            [
+                                'state_screen' => 'sample',
+                                'jumlah_screen' => null,
+                                'ukuran_screen' => null,
+                            ],
+                        ],
+                        'rincianPlate' => [],
+                        'warnaPlate' => [],
+                        'rincianScreen' => [],
+                        'fileRincianLast' => [],
                     ];
 
                     if (isset($dataKeterangan['keteranganPlate'])) {
-                        foreach ($dataKeterangan['keteranganPlate'] as $dataPlate) {
-                            $keterangan['plate'][] = [
-                                'state_plate' => $dataPlate['state_plate'],
-                                'jumlah_plate' => $dataPlate['jumlah_plate'],
-                                'ukuran_plate' => $dataPlate['ukuran_plate'],
-                            ];
+                        // Convert object to array
+                        $dataPlateArray = json_decode(json_encode($dataKeterangan['keteranganPlate']), true);
+
+                        // Populate the Screen array with the actual data
+                        foreach ($dataPlateArray as $dataPlate) {
+                            $statePlate = $dataPlate['state_plate'];
+
+                            // Check if the state_screen is one of the expected states
+                            if ($statePlate == 'baru' || $statePlate == 'repeat' || $statePlate == 'sample') {
+                                // Find the index of the current state_screen in the $keterangan['foil'] array
+                                $index = array_search($statePlate, array_column($keterangan['plate'], 'state_plate'));
+
+                                // Set jumlah_plate based on the state
+                                if ($index !== false) {
+                                    $keterangan['plate'][$index]['jumlah_plate'] = $dataPlate['jumlah_plate'];
+                                    $keterangan['plate'][$index]['ukuran_plate'] = $dataPlate['ukuran_plate'];
+                                }
+                            }
+                        }
+
+                        // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                        foreach ($keterangan['plate'] as &$plateData) {
+                            if (!in_array($plateData['state_plate'], array_column($dataPlateArray, 'state_plate'))) {
+                                $plateData['state_plate'] = null;
+                                $plateData['jumlah_plate'] = null;
+                                $plateData['ukuran_plate'] = null;
+                            }
                         }
                     }
 
                     if (isset($dataKeterangan['keteranganScreen'])) {
-                        foreach ($dataKeterangan['keteranganScreen'] as $dataScreen) {
-                            $keterangan['screen'][] = [
-                                'state_screen' => $dataScreen['state_screen'],
-                                'jumlah_screen' => $dataScreen['jumlah_screen'],
-                                'ukuran_screen' => $dataScreen['ukuran_screen'],
-                            ];
+                        // Convert object to array
+                        $dataScreenArray = json_decode(json_encode($dataKeterangan['keteranganScreen']), true);
+
+                        // Populate the Screen array with the actual data
+                        foreach ($dataScreenArray as $dataScreen) {
+                            $stateScreen = $dataScreen['state_screen'];
+
+                            // Check if the state_screen is one of the expected states
+                            if ($stateScreen == 'baru' || $stateScreen == 'repeat' || $stateScreen == 'sample') {
+                                // Find the index of the current state_screen in the $keterangan['foil'] array
+                                $index = array_search($stateScreen, array_column($keterangan['screen'], 'state_screen'));
+
+                                // Set jumlah_screen based on the state
+                                if ($index !== false) {
+                                    $keterangan['screen'][$index]['jumlah_screen'] = $dataScreen['jumlah_screen'];
+                                    $keterangan['screen'][$index]['ukuran_screen'] = $dataScreen['ukuran_screen'];
+                                }
+                            }
+                        }
+
+                        // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                        foreach ($keterangan['screen'] as &$screenData) {
+                            if (!in_array($screenData['state_screen'], array_column($dataScreenArray, 'state_screen'))) {
+                                $screenData['state_screen'] = null;
+                                $screenData['jumlah_screen'] = null;
+                                $screenData['ukuran_screen'] = null;
+                            }
                         }
                     }
 
                     if (isset($dataKeterangan['keteranganPisauPond'])) {
-                        foreach ($dataKeterangan['keteranganPisauPond'] as $dataPisau) {
-                            $keterangan['pond'][] = [
-                                'state_pisau' => $dataPisau['state_pisau'],
-                                'jumlah_pisau' => $dataPisau['jumlah_pisau'],
-                            ];
-                        }
-                    }
+                        // Convert object to array
+                        $dataPisauPondArray = json_decode(json_encode($dataKeterangan['keteranganPisauPond']), true);
 
-                    if (isset($dataKeterangan['keteranganFoil'])) {
-                        foreach ($dataKeterangan['keteranganFoil'] as $dataFoil) {
-                            $keterangan['foil'][] = [
-                                'state_foil' => $dataFoil['state_foil'],
-                                'jumlah_foil' => $dataFoil['jumlah_foil'],
-                            ];
-                        }
-                    }
+                        // Populate the PisauPond array with the actual data
+                        foreach ($dataPisauPondArray as $dataPisauPond) {
+                            $statePisauPond = $dataPisauPond['state_pisau'];
 
-                    if (isset($dataKeterangan['keteranganMatress'])) {
-                        foreach ($dataKeterangan['keteranganMatress'] as $dataMatress) {
-                            $keterangan['matress'][] = [
-                                'state_matress' => $dataMatress['state_matress'],
-                                'jumlah_matress' => $dataMatress['jumlah_matress'],
-                            ];
+                            // Check if the state_pisau is one of the expected states
+                            if ($statePisauPond == 'baru' || $statePisauPond == 'repeat' || $statePisauPond == 'sample') {
+                                // Find the index of the current state_pisau in the $keterangan['foil'] array
+                                $index = array_search($statePisauPond, array_column($keterangan['pond'], 'state_pisau'));
+
+                                // Set jumlah_pisau based on the state
+                                if ($index !== false) {
+                                    $keterangan['pond'][$index]['jumlah_pisau'] = $dataPisauPond['jumlah_pisau'];
+                                }
+                            }
+                        }
+
+                        // Set to null if any of 'baru', 'repeat', or 'sample' is missing in dataFoil
+                        foreach ($keterangan['pond'] as &$pondData) {
+                            if (!in_array($pondData['state_pisau'], array_column($dataPisauPondArray, 'state_pisau'))) {
+                                $pondData['state_pisau'] = null;
+                                $pondData['jumlah_pisau'] = null;
+                            }
                         }
                     }
 
@@ -646,9 +759,21 @@ class ReorderInstructionIndex extends Component
 
                     if (isset($dataKeterangan['fileRincian'])) {
                         foreach ($dataKeterangan['fileRincian'] as $dataFileRincian) {
-                            $keterangan['fileRincian'][] = [
+                            $keterangan['fileRincianLast'][] = [
                                 'file_name' => $dataFileRincian['file_name'],
                                 'file_path' => $dataFileRincian['file_path'],
+                            ];
+                        }
+                    }
+
+                    if (isset($dataKeterangan['keteranganLabel'])) {
+                        foreach ($dataKeterangan['keteranganLabel'] as $dataketeranganLabel) {
+                            $keterangan['label'][] = [
+                                'alat_bahan' => $dataketeranganLabel['alat_bahan'],
+                                'jenis_ukuran' => $dataketeranganLabel['jenis_ukuran'],
+                                'jumlah' => $dataketeranganLabel['jumlah'],
+                                'ketersediaan' => $dataketeranganLabel['ketersediaan'],
+                                'catatan_label' => $dataketeranganLabel['catatan_label'],
                             ];
                         }
                     }
@@ -656,16 +781,16 @@ class ReorderInstructionIndex extends Component
                     $this->keterangans[] = $keterangan;
                 }
 
-                $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)->get();
-                foreach ($layoutBahanData as $dataLayoutBahan) {
+                $layoutBahanData = LayoutBahan::where('instruction_id', $this->currentInstructionId)
+                    ->with('ukuranBahanCetakBahan')
+                    ->get();
+                foreach ($layoutBahanData as $key => $dataLayoutBahan) {
                     $this->layoutBahans[] = [
                         'dataURL' => $dataLayoutBahan['dataURL'],
                         'dataJSON' => $dataLayoutBahan['dataJSON'],
                         'state' => $dataLayoutBahan['state'],
                         'panjang_plano' => $dataLayoutBahan['panjang_plano'],
                         'lebar_plano' => $dataLayoutBahan['lebar_plano'],
-                        'panjang_bahan_cetak' => $dataLayoutBahan['panjang_bahan_cetak'],
-                        'lebar_bahan_cetak' => $dataLayoutBahan['lebar_bahan_cetak'],
                         'jenis_bahan' => $dataLayoutBahan['jenis_bahan'],
                         'gramasi' => $dataLayoutBahan['gramasi'],
                         'one_plano' => $dataLayoutBahan['one_plano'],
@@ -684,6 +809,17 @@ class ReorderInstructionIndex extends Component
                         'include_belakang' => $dataLayoutBahan['include_belakang'],
                         'fileLayoutCustom' => '',
                     ];
+
+                    if (isset($dataLayoutBahan['ukuranBahanCetakBahan'])) {
+                        foreach ($dataLayoutBahan['ukuranBahanCetakBahan'] as $index => $dataUkuranBahanCetakBahan) {
+                            $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'][$index] = [
+                                'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                                'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
+                            ];
+                        }
+                    } else {
+                        $this->layoutBahans[$key]['ukuran_bahan_cetak_bahan'] = [];
+                    }
                 }
 
                 $stateWorkStepCetakLabel = WorkStep::where('instruction_id', $instruction->id)
@@ -691,7 +827,7 @@ class ReorderInstructionIndex extends Component
                     ->first();
 
                 if (isset($this->stateWorkStepCetakLabel)) {
-                    if ($this->layoutSettings) {
+                    if (isset($this->layoutSettings)) {
                         foreach ($this->layoutSettings as $key => $layoutSettingData) {
                             // Buat instance model LayoutSetting
                             $layoutSetting = LayoutSetting::create([
@@ -700,8 +836,6 @@ class ReorderInstructionIndex extends Component
                                 'state' => $layoutSettingData['state'],
                                 'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
                                 'lebar_barang_jadi' => $layoutSettingData['lebar_barang_jadi'],
-                                'panjang_bahan_cetak' => $layoutSettingData['panjang_bahan_cetak'],
-                                'lebar_bahan_cetak' => $layoutSettingData['lebar_bahan_cetak'],
                                 'panjang_naik' => $layoutSettingData['panjang_naik'],
                                 'lebar_naik' => $layoutSettingData['lebar_naik'],
                                 'lebar_naik' => $layoutSettingData['lebar_naik'],
@@ -717,16 +851,72 @@ class ReorderInstructionIndex extends Component
                                 'dataURL' => $layoutSettingData['dataURL'],
                                 'dataJSON' => $layoutSettingData['dataJSON'],
                             ]);
+
+                            foreach ($layoutSettingData['ukuran_bahan_cetak_setting'] as $dataUkuranBahanCetakSetting) {
+                                $layoutSetting->ukuranBahanCetakSetting()->create([
+                                    'layout_setting_id' => $layoutSetting->id,
+                                    'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                                    'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                                ]);
+                            }
                         }
                     }
 
-                    if ($this->keterangans) {
+                    if (isset($this->keterangans)) {
                         foreach ($this->keterangans as $index => $keteranganData) {
                             $keterangan = Keterangan::create([
                                 'form_id' => $index,
                                 'instruction_id' => $instruction->id,
                                 'notes' => $keteranganData['notes'],
                             ]);
+
+                            if (isset($keteranganData['plate'])) {
+                                foreach ($keteranganData['plate'] as $plate) {
+                                    // Buat instance model KeteranganPlate
+                                    $keteranganPlate = $keterangan->keteranganPlate()->create([
+                                        'instruction_id' => $instruction->id,
+                                        'state_plate' => $plate['state_plate'],
+                                        'jumlah_plate' => $plate['jumlah_plate'],
+                                        'ukuran_plate' => $plate['ukuran_plate'],
+                                    ]);
+                                }
+                            }
+
+                            if (isset($keteranganData['rincianPlate'])) {
+                                foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
+                                    // Buat instance model RincianPlate
+                                    $rincianPlate = $keterangan->rincianPlate()->create([
+                                        'instruction_id' => $instruction->id,
+                                        'state' => $rincianPlate['state'],
+                                        'plate' => $rincianPlate['plate'],
+                                        'jumlah_lembar_cetak' => $rincianPlate['jumlah_lembar_cetak'],
+                                        'waste' => $rincianPlate['waste'],
+                                        'name' => $rincianPlate['name'],
+                                        'tempat_plate' => $rincianPlate['tempat_plate'],
+                                        'tgl_pembuatan_plate' => !empty($rincianPlate['tgl_pembuatan_plate']) ? $rincianPlate['tgl_pembuatan_plate'] : null,
+                                        'status' => $rincianPlate['status'],
+                                        'de' => $rincianPlate['de'],
+                                        'l' => $rincianPlate['l'],
+                                        'a' => $rincianPlate['a'],
+                                        'b' => $rincianPlate['b'],
+                                    ]);
+
+                                    if (isset($keteranganData['warnaPlate'])) {
+                                        foreach ($keteranganData['warnaPlate'] as $dataWarna) {
+                                            $warnaPlate = $rincianPlate->warnaPlate()->create([
+                                                'instruction_id' => $instruction->id,
+                                                'rincian_plate_id' => $rincianPlate->id,
+                                                'warna' => $dataWarna['warna'],
+                                                'keterangan' => $dataWarna['keterangan'],
+                                                'de' => $dataWarna['de'],
+                                                'l' => $dataWarna['l'],
+                                                'a' => $dataWarna['a'],
+                                                'b' => $dataWarna['b'],
+                                            ]);
+                                        }
+                                    }
+                                }
+                            }
 
                             if ($keteranganData['label']) {
                                 foreach ($keteranganData['label'] as $label) {
@@ -742,35 +932,27 @@ class ReorderInstructionIndex extends Component
                                 }
                             }
 
-                            if (isset($keteranganData['fileRincian'])) {
-                                $instruction = Instruction::find($instruction->id);
-                                foreach ($keteranganData['fileRincian'] as $fileInfo) {
-                                    $newfolder = 'public/' . $instruction->spk_number . '/hitung-bahan';
+                            if ($keteranganData['fileRincian']) {
+                                $InstructionCurrentDataFile = Instruction::find($instruction->id);
+                                $norincian = 1;
+                                foreach ($keteranganData['fileRincian'] as $file) {
+                                    $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/hitung-bahan';
 
-                                    // Generate a unique identifier (e.g., timestamp or unique ID) to append to the file name
-                                    $uniqueIdentifier = time(); // You can use any other unique identifier as well
+                                    $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-' . $norincian . '.' . $file->getClientOriginalExtension();
+                                    Storage::putFileAs($folder, $file, $fileName);
+                                    $norincian++;
 
-                                    // Extract the file extension from the original file name
-                                    $fileExtension = pathinfo($fileInfo['file_name'], PATHINFO_EXTENSION);
-
-                                    // Generate the new file name with the unique identifier
-                                    $newFileName = $instruction->spk_number . '-file-rincian-' . $uniqueIdentifier . '.' . $fileExtension;
-
-                                    // Copy the file to the desired location with the new unique file name
-                                    Storage::copy($fileInfo['file_path'] . '/' . $fileInfo['file_name'], $newfolder . '/' . $newFileName);
-
-                                    // Create the file record in the database
                                     $keteranganFileRincian = $keterangan->fileRincian()->create([
                                         'instruction_id' => $instruction->id,
-                                        'file_name' => $newFileName,
-                                        'file_path' => $newfolder,
+                                        'file_name' => $fileName,
+                                        'file_path' => $folder,
                                     ]);
                                 }
                             }
                         }
                     }
 
-                    if ($this->layoutBahans) {
+                    if (isset($this->layoutBahans)) {
                         foreach ($this->layoutBahans as $key => $layoutBahanData) {
                             // Buat instance model layoutBahan
                             $layoutBahan = LayoutBahan::create([
@@ -780,8 +962,6 @@ class ReorderInstructionIndex extends Component
                                 'include_belakang' => $layoutBahanData['include_belakang'],
                                 'panjang_plano' => $layoutBahanData['panjang_plano'],
                                 'lebar_plano' => $layoutBahanData['lebar_plano'],
-                                'panjang_bahan_cetak' => $layoutBahanData['panjang_bahan_cetak'],
-                                'lebar_bahan_cetak' => $layoutBahanData['lebar_bahan_cetak'],
                                 'jenis_bahan' => $layoutBahanData['jenis_bahan'],
                                 'gramasi' => $layoutBahanData['gramasi'],
                                 'one_plano' => $layoutBahanData['one_plano'],
@@ -790,8 +970,8 @@ class ReorderInstructionIndex extends Component
                                 'supplier' => $layoutBahanData['supplier'],
                                 'jumlah_lembar_cetak' => $layoutBahanData['jumlah_lembar_cetak'],
                                 'jumlah_incit' => $layoutBahanData['jumlah_incit'],
-                                'total_lembar_cetak' => currency_convert($layoutBahanData['total_lembar_cetak']),
-                                'harga_bahan' => currency_convert($layoutBahanData['harga_bahan']),
+                                'total_lembar_cetak' => currency_convert_idr($layoutBahanData['total_lembar_cetak']),
+                                'harga_bahan' => currency_convert_idr($layoutBahanData['harga_bahan']),
                                 'jumlah_bahan' => $layoutBahanData['jumlah_bahan'],
                                 'panjang_sisa_bahan' => $layoutBahanData['panjang_sisa_bahan'],
                                 'lebar_sisa_bahan' => $layoutBahanData['lebar_sisa_bahan'],
@@ -799,7 +979,7 @@ class ReorderInstructionIndex extends Component
                                 'dataJSON' => $layoutBahanData['dataJSON'],
                             ]);
 
-                            if ($layoutBahanData['fileLayoutCustom']) {
+                            if (!empty($layoutBahanData['fileLayoutCustom'])) {
                                 $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                 $file = $layoutBahanData['fileLayoutCustom'];
 
@@ -812,10 +992,18 @@ class ReorderInstructionIndex extends Component
                                     'layout_custom_path' => $folder,
                                 ]);
                             }
+
+                            foreach ($layoutBahanData['ukuran_bahan_cetak_bahan'] as $dataUkuranBahanCetakBahan) {
+                                $layoutBahan->ukuranBahanCetakBahan()->create([
+                                    'layout_bahan_id' => $layoutBahan->id,
+                                    'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                                    'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
+                                ]);
+                            }
                         }
                     }
                 } else {
-                    if ($this->layoutSettings) {
+                    if (isset($this->layoutSettings)) {
                         foreach ($this->layoutSettings as $key => $layoutSettingData) {
                             // Buat instance model LayoutSetting
                             $layoutSetting = LayoutSetting::create([
@@ -824,8 +1012,6 @@ class ReorderInstructionIndex extends Component
                                 'state' => $layoutSettingData['state'],
                                 'panjang_barang_jadi' => $layoutSettingData['panjang_barang_jadi'],
                                 'lebar_barang_jadi' => $layoutSettingData['lebar_barang_jadi'],
-                                'panjang_bahan_cetak' => $layoutSettingData['panjang_bahan_cetak'],
-                                'lebar_bahan_cetak' => $layoutSettingData['lebar_bahan_cetak'],
                                 'panjang_naik' => $layoutSettingData['panjang_naik'],
                                 'lebar_naik' => $layoutSettingData['lebar_naik'],
                                 'lebar_naik' => $layoutSettingData['lebar_naik'],
@@ -841,10 +1027,18 @@ class ReorderInstructionIndex extends Component
                                 'dataURL' => $layoutSettingData['dataURL'],
                                 'dataJSON' => $layoutSettingData['dataJSON'],
                             ]);
+
+                            foreach ($layoutSettingData['ukuran_bahan_cetak_setting'] as $dataUkuranBahanCetakSetting) {
+                                $layoutSetting->ukuranBahanCetakSetting()->create([
+                                    'layout_setting_id' => $layoutSetting->id,
+                                    'panjang_bahan_cetak' => $dataUkuranBahanCetakSetting['panjang_bahan_cetak'],
+                                    'lebar_bahan_cetak' => $dataUkuranBahanCetakSetting['lebar_bahan_cetak'],
+                                ]);
+                            }
                         }
                     }
 
-                    if ($this->keterangans) {
+                    if (isset($this->keterangans)) {
                         foreach ($this->keterangans as $index => $keteranganData) {
                             $keterangan = Keterangan::create([
                                 'form_id' => $index,
@@ -887,28 +1081,6 @@ class ReorderInstructionIndex extends Component
                                 }
                             }
 
-                            if (isset($keteranganData['foil'])) {
-                                foreach ($keteranganData['foil'] as $foil) {
-                                    // Buat instance model KeteranganPisauPond
-                                    $keteranganFoil = $keterangan->keteranganFoil()->create([
-                                        'instruction_id' => $instruction->id,
-                                        'state_foil' => $foil['state_foil'],
-                                        'jumlah_foil' => $foil['jumlah_foil'],
-                                    ]);
-                                }
-                            }
-
-                            if (isset($keteranganData['matress'])) {
-                                foreach ($keteranganData['matress'] as $matress) {
-                                    // Buat instance model KeteranganPisauPond
-                                    $keteranganMatress = $keterangan->keteranganMatress()->create([
-                                        'instruction_id' => $instruction->id,
-                                        'state_matress' => $matress['state_matress'],
-                                        'jumlah_matress' => $matress['jumlah_matress'],
-                                    ]);
-                                }
-                            }
-
                             if (isset($keteranganData['rincianPlate'])) {
                                 foreach ($keteranganData['rincianPlate'] as $rincianPlate) {
                                     // Buat instance model RincianPlate
@@ -927,9 +1099,8 @@ class ReorderInstructionIndex extends Component
                                         'a' => $rincianPlate['a'],
                                         'b' => $rincianPlate['b'],
                                     ]);
-        
-                                    
-                                    if(isset($keteranganData['warnaPlate'])) {
+
+                                    if (isset($keteranganData['warnaPlate'])) {
                                         foreach ($keteranganData['warnaPlate'] as $dataWarna) {
                                             $warnaPlate = $rincianPlate->warnaPlate()->create([
                                                 'instruction_id' => $instruction->id,
@@ -960,34 +1131,26 @@ class ReorderInstructionIndex extends Component
                             }
 
                             if (isset($keteranganData['fileRincian'])) {
-                                $instruction = Instruction::find($instruction->id);
-                                foreach ($keteranganData['fileRincian'] as $fileInfo) {
-                                    $newfolder = 'public/' . $instruction->spk_number . '/hitung-bahan';
+                                $InstructionCurrentDataFile = Instruction::find($instruction->id);
+                                $norincian = 1;
+                                foreach ($keteranganData['fileRincian'] as $file) {
+                                    $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/hitung-bahan';
 
-                                    // Generate a unique identifier (e.g., timestamp or unique ID) to append to the file name
-                                    $uniqueIdentifier = time(); // You can use any other unique identifier as well
+                                    $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-' . $norincian . '.' . $file->getClientOriginalExtension();
+                                    Storage::putFileAs($folder, $file, $fileName);
+                                    $norincian++;
 
-                                    // Extract the file extension from the original file name
-                                    $fileExtension = pathinfo($fileInfo['file_name'], PATHINFO_EXTENSION);
-
-                                    // Generate the new file name with the unique identifier
-                                    $newFileName = $instruction->spk_number . '-file-rincian-' . $uniqueIdentifier . '.' . $fileExtension;
-
-                                    // Copy the file to the desired location with the new unique file name
-                                    Storage::copy($fileInfo['file_path'] . '/' . $fileInfo['file_name'], $newfolder . '/' . $newFileName);
-
-                                    // Create the file record in the database
                                     $keteranganFileRincian = $keterangan->fileRincian()->create([
                                         'instruction_id' => $instruction->id,
-                                        'file_name' => $newFileName,
-                                        'file_path' => $newfolder,
+                                        'file_name' => $fileName,
+                                        'file_path' => $folder,
                                     ]);
                                 }
                             }
                         }
                     }
 
-                    if ($this->layoutBahans) {
+                    if (isset($this->layoutBahans)) {
                         foreach ($this->layoutBahans as $key => $layoutBahanData) {
                             // Buat instance model layoutBahan
                             $layoutBahan = LayoutBahan::create([
@@ -997,8 +1160,6 @@ class ReorderInstructionIndex extends Component
                                 'include_belakang' => $layoutBahanData['include_belakang'],
                                 'panjang_plano' => $layoutBahanData['panjang_plano'],
                                 'lebar_plano' => $layoutBahanData['lebar_plano'],
-                                'panjang_bahan_cetak' => $layoutBahanData['panjang_bahan_cetak'],
-                                'lebar_bahan_cetak' => $layoutBahanData['lebar_bahan_cetak'],
                                 'jenis_bahan' => $layoutBahanData['jenis_bahan'],
                                 'gramasi' => $layoutBahanData['gramasi'],
                                 'one_plano' => $layoutBahanData['one_plano'],
@@ -1007,8 +1168,8 @@ class ReorderInstructionIndex extends Component
                                 'supplier' => $layoutBahanData['supplier'],
                                 'jumlah_lembar_cetak' => $layoutBahanData['jumlah_lembar_cetak'],
                                 'jumlah_incit' => $layoutBahanData['jumlah_incit'],
-                                'total_lembar_cetak' => currency_convert($layoutBahanData['total_lembar_cetak']),
-                                'harga_bahan' => currency_convert($layoutBahanData['harga_bahan']),
+                                'total_lembar_cetak' => currency_convert_idr($layoutBahanData['total_lembar_cetak']),
+                                'harga_bahan' => currency_convert_idr($layoutBahanData['harga_bahan']),
                                 'jumlah_bahan' => $layoutBahanData['jumlah_bahan'],
                                 'panjang_sisa_bahan' => $layoutBahanData['panjang_sisa_bahan'],
                                 'lebar_sisa_bahan' => $layoutBahanData['lebar_sisa_bahan'],
@@ -1016,7 +1177,7 @@ class ReorderInstructionIndex extends Component
                                 'dataJSON' => $layoutBahanData['dataJSON'],
                             ]);
 
-                            if ($layoutBahanData['fileLayoutCustom']) {
+                            if (!empty($layoutBahanData['fileLayoutCustom'])) {
                                 $InstructionCurrentDataFile = Instruction::find($instruction->id);
                                 $file = $layoutBahanData['fileLayoutCustom'];
 
@@ -1027,8 +1188,14 @@ class ReorderInstructionIndex extends Component
                                 $keteranganFileRincian = LayoutBahan::where('id', $layoutBahan->id)->update([
                                     'layout_custom_file_name' => $fileName,
                                     'layout_custom_path' => $folder,
-                                    'dataURL' => null,
-                                    'dataJSON' => null,
+                                ]);
+                            }
+
+                            foreach ($layoutBahanData['ukuran_bahan_cetak_bahan'] as $dataUkuranBahanCetakBahan) {
+                                $layoutBahan->ukuranBahanCetakBahan()->create([
+                                    'layout_bahan_id' => $layoutBahan->id,
+                                    'panjang_bahan_cetak' => $dataUkuranBahanCetakBahan['panjang_bahan_cetak'],
+                                    'lebar_bahan_cetak' => $dataUkuranBahanCetakBahan['lebar_bahan_cetak'],
                                 ]);
                             }
                         }
@@ -1238,7 +1405,7 @@ class ReorderInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';
