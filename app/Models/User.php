@@ -6,6 +6,7 @@ use App\Models\Files;
 use App\Models\Catatan;
 use App\Models\FormRab;
 use App\Models\WorkStep;
+use App\Models\FormPotongJadi;
 use App\Models\CatatanPengajuan;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\PengajuanBarangSpk;
@@ -92,5 +93,10 @@ class User extends Authenticatable
     public function pengajuanBarangPersonal()
     {
         return $this->hasMany(PengajuanBarangPersonal::class);
+    }
+
+    public function formPotongJadi()
+    {
+        return $this->hasMany(FormPotongJadi::class);
     }
 }

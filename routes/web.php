@@ -22,6 +22,8 @@ Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('loginProcess');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logoutProcess');
 
+Route::get('/dom', 'App\Http\Livewire\Dom\IndexDataRepair')->name('dom');
+
 Route::get('/sender', function () {
     // Logic untuk route ini (jika diperlukan)
     // event(new IndexRenderEvent("refresh"));

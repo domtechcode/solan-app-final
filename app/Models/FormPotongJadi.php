@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Instruction;
 use App\Models\RincianPlate;
 use Illuminate\Database\Eloquent\Model;
@@ -22,5 +23,10 @@ class FormPotongJadi extends Model
     public function rincianPlate()
     {
         return $this->belongsTo(RincianPlate::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

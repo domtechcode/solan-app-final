@@ -56,41 +56,41 @@ class FormPotongIndex extends Component
             ->get();
 
         if ($dataWorkStep->work_step_list_id == 9) {
-            $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->first();
+            $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->where('step', $dataWorkStep->step)->where('user_id', Auth()->user()->id)->first();
 
             if (isset($currentPotongJadi)) {
                 $this->hasil_akhir = $currentPotongJadi->hasil_akhir;
-            } else {
-                $this->hasil_akhir = '';
-            }
 
-            $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
-                ->where(function ($query) {
-                    $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-                })
-                ->with('formPotongJadi')
+                $dataRincianPlateHasilAkhir = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)->where('step', $dataWorkStep->step)->where('user_id', Auth()->user()->id)
                 ->get();
 
-            if (isset($dataRincianPlateHasilAkhir)) {
-                $this->dataHasilAkhir = [];
-
-                foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
-                    if (isset($dataHasilAkhirPlate->formPotongJadi) && count($dataHasilAkhirPlate->formPotongJadi) > 0) {
-                        foreach ($dataHasilAkhirPlate['formPotongJadi'] as $item) {
-                            $rincianPlateDataHasilAkhir = [
-                                'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                                'state' => $dataHasilAkhirPlate->state,
-                                'plate' => $dataHasilAkhirPlate->plate,
-                                'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                                'waste' => $dataHasilAkhirPlate->waste,
-                                'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
-                            ];
-
-                            $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
-                        }
-                    } else {
+                if (isset($dataRincianPlateHasilAkhir)) {
+                    $this->dataHasilAkhir = [];
+                    foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
                         $rincianPlateDataHasilAkhir = [
-                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
+                            'rincian_plate_id' => $dataHasilAkhirPlate->rincian_plate_id,
+                            'state' => $dataHasilAkhirPlate->state,
+                            'plate' => $dataHasilAkhirPlate->plate,
+                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
+                            'waste' => $dataHasilAkhirPlate->waste,
+                            'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirPlate->hasil_akhir_lembar_cetak_plate,
+                        ];
+
+                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+                    }
+                }
+                
+            } else {
+                $this->hasil_akhir = null;
+
+                $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
+                ->get();
+
+                if (isset($dataRincianPlateHasilAkhir)) {
+                    $this->dataHasilAkhir = [];
+    
+                    foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
+                        $rincianPlateDataHasilAkhir = [
                             'state' => $dataHasilAkhirPlate->state,
                             'plate' => $dataHasilAkhirPlate->plate,
                             'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
@@ -148,14 +148,17 @@ class FormPotongIndex extends Component
         }
 
         $currentStep = WorkStep::find($this->workStepCurrentId);
+
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
             ->where('work_step_list_id', 2)
             ->first();
+
         $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
             ->where('step', $currentStep->step + 1)
             ->first();
 
         $dataWorkStep = WorkStep::find($this->workStepCurrentId);
+
         if ($dataWorkStep->work_step_list_id == 9) {
             $this->validate([
                 'hasil_akhir' => 'required',
@@ -167,8 +170,13 @@ class FormPotongIndex extends Component
                 foreach ($this->dataHasilAkhir as $item) {
                     $createPotongJadi = FormPotongJadi::create([
                         'instruction_id' => $this->instructionCurrentId,
+                        'user_id' => Auth()->user()->id,
+                        'step' => $currentStep->step,
+                        'state' => $item['state'],
+                        'plate' => $item['plate'],
+                        'jumlah_lembar_cetak' => $item['jumlah_lembar_cetak'],
+                        'waste' => $item['waste'],
                         'hasil_akhir' => $this->hasil_akhir,
-                        'rincian_plate_id' => $item['rincian_plate_id'],
                         'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
                     ]);
                 }
