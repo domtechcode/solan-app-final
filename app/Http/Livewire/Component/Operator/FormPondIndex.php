@@ -83,6 +83,7 @@ class FormPondIndex extends Component
             ->where('user_id', Auth()->user()->id)
             ->where('step', $dataWorkStep->step)
             ->get();
+            
             foreach ($dataPond as $dataHasilAkhirPond) {
                 $rincianPlateDataHasilAkhir = [
                     'state' => $dataHasilAkhirPond['state'],

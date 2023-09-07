@@ -34,10 +34,10 @@ class RincianPlate extends Model
         return $this->hasMany(WarnaPlate::class);
     }
 
-    public function formCetak()
-    {
-        return $this->hasMany(FormCetak::class);
-    }
+    // public function formCetak()
+    // {
+    //     return $this->hasMany(FormCetak::class);
+    // }
 
     // public function formFoil()
     // {

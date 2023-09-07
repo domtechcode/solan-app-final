@@ -8,6 +8,7 @@ use App\Models\FormRab;
 use App\Models\FormFoil;
 use App\Models\FormPond;
 use App\Models\WorkStep;
+use App\Models\FormCetak;
 use App\Models\FormPotongJadi;
 use App\Models\CatatanPengajuan;
 use Laravel\Sanctum\HasApiTokens;
@@ -110,5 +111,10 @@ class User extends Authenticatable
     public function formFoil()
     {
         return $this->hasMany(FormFoil::class);
+    }
+
+    public function formCetak()
+    {
+        return $this->hasMany(FormCetak::class);
     }
 }

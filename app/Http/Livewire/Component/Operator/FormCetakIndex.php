@@ -53,45 +53,47 @@ class FormCetakIndex extends Component
         $this->instructionCurrentId = $instructionId;
         $this->workStepCurrentId = $workStepId;
         $this->dataInstruction = Instruction::find($this->instructionCurrentId);
+        $dataWorkStep = WorkStep::find($workStepId);
+        $this->dataWorkSteps = WorkStep::find($workStepId);
+        $dataRincianPlate = RincianPlate::where('instruction_id', $instructionId)->first();
 
-        $dataRincianPlate = RincianPlate::where('instruction_id', $instructionId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-            })
+        $dataFormCetak = FormCetak::where('instruction_id', $instructionId)
+            ->where('user_id', Auth()->user()->id)
+            ->where('step', $dataWorkStep->step)
             ->first();
 
-        $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-            })
-            ->with('formCetak')
-            ->get();
+        if (isset($dataFormCetak)) {
+            $this->hasil_akhir_lembar_cetak = $dataFormCetak['hasil_akhir_lembar_cetak'];
 
-        if (isset($dataRincianPlateHasilAkhir)) {
-            $this->dataHasilAkhir = [];
+            $dataCetak = FormCetak::where('instruction_id', $instructionId)
+                ->where('user_id', Auth()->user()->id)
+                ->where('step', $dataWorkStep->step)
+                ->get();
 
-            foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPlate) {
-                if (isset($dataHasilAkhirPlate->formCetak) && count($dataHasilAkhirPlate->formCetak) > 0) {
-                    foreach ($dataHasilAkhirPlate['formCetak'] as $item) {
-                        $rincianPlateDataHasilAkhir = [
-                            'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                            'state' => $dataHasilAkhirPlate->state,
-                            'plate' => $dataHasilAkhirPlate->plate,
-                            'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                            'waste' => $dataHasilAkhirPlate->waste,
-                            'hasil_akhir_lembar_cetak_plate' => $item->hasil_akhir_lembar_cetak_plate,
-                        ];
+            foreach ($dataCetak as $dataHasilAkhirCetak) {
+                $rincianPlateDataHasilAkhir = [
+                    'state' => $dataHasilAkhirCetak['state'],
+                    'plate' => $dataHasilAkhirCetak['plate'],
+                    'jumlah_lembar_cetak' => $dataHasilAkhirCetak['jumlah_lembar_cetak'],
+                    'waste' => $dataHasilAkhirCetak['waste'],
+                    'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirCetak['hasil_akhir_lembar_cetak_plate'],
+                ];
 
-                        $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
-                    }
-                } else {
+                $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
+            }
+        } else {
+            $dataRincianPlateHasilAkhir = RincianPlate::where('instruction_id', $instructionId)->get();
+
+            if (isset($dataRincianPlateHasilAkhir)) {
+                $this->dataHasilAkhir = [];
+
+                foreach ($dataRincianPlateHasilAkhir as $dataHasilAkhirPond) {
                     $rincianPlateDataHasilAkhir = [
-                        'rincian_plate_id' => $dataHasilAkhirPlate->id,
-                        'state' => $dataHasilAkhirPlate->state,
-                        'plate' => $dataHasilAkhirPlate->plate,
-                        'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
-                        'waste' => $dataHasilAkhirPlate->waste,
-                        'hasil_akhir_lembar_cetak_plate' => '',
+                        'state' => $dataHasilAkhirPond->state,
+                        'plate' => $dataHasilAkhirPond->plate,
+                        'jumlah_lembar_cetak' => $dataHasilAkhirPond->jumlah_lembar_cetak,
+                        'waste' => $dataHasilAkhirPond->waste,
+                        'hasil_akhir_lembar_cetak_plate' => null,
                     ];
 
                     $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
@@ -109,16 +111,13 @@ class FormCetakIndex extends Component
             $this->a = $dataRincianPlate['a'];
             $this->b = $dataRincianPlate['b'];
         } else {
-            $this->de = '';
-            $this->l = '';
-            $this->a = '';
-            $this->b = '';
+            $this->de = null;
+            $this->l = null;
+            $this->a = null;
+            $this->b = null;
         }
 
         $dataWarnaPlate = RincianPlate::where('instruction_id', $instructionId)
-            ->where(function ($query) {
-                $query->where('status', '!=', 'Deleted by Setting')->orWhereNull('status');
-            })
             ->with('warnaPlate')
             ->get();
 
@@ -151,26 +150,21 @@ class FormCetakIndex extends Component
             }
         } else {
             $this->dataWarna['rincianPlate'][] = [
-                'id' => '',
-                'plate' => '',
-                'name' => '',
+                'id' => null,
+                'plate' => null,
+                'name' => null,
                 'warnaCetak' => [
                     [
-                        'id' => '',
-                        'warna' => '',
-                        'keterangan' => '',
-                        'de' => '',
-                        'l' => '',
-                        'a' => '',
-                        'b' => '',
+                        'id' => null,
+                        'warna' => null,
+                        'keterangan' => null,
+                        'de' => null,
+                        'l' => null,
+                        'a' => null,
+                        'b' => null,
                     ],
                 ],
             ];
-        }
-
-        $dataFormCetak = FormCetak::where('instruction_id', $instructionId)->first();
-        if (isset($dataFormCetak)) {
-            $this->hasil_akhir_lembar_cetak = $dataFormCetak['hasil_akhir_lembar_cetak'];
         }
     }
 
@@ -229,12 +223,28 @@ class FormCetakIndex extends Component
         //     ]);
         // }
 
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+        $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('work_step_list_id', 2)
+            ->first();
+        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
         if (isset($this->dataHasilAkhir)) {
-            $deleteCetak = FormCetak::where('instruction_id', $this->instructionCurrentId)->delete();
+            $deleteCetak = FormCetak::where('instruction_id', $this->instructionCurrentId)
+                ->where('user_id', Auth()->user()->id)
+                ->where('step', $currentStep->step)
+                ->delete();
             foreach ($this->dataHasilAkhir as $item) {
                 $createCetak = FormCetak::create([
                     'instruction_id' => $this->instructionCurrentId,
-                    'rincian_plate_id' => $item['rincian_plate_id'],
+                    'user_id' => Auth()->user()->id,
+                    'step' => $currentStep->step,
+                    'state' => $item['state'],
+                    'plate' => $item['plate'],
+                    'jumlah_lembar_cetak' => $item['jumlah_lembar_cetak'],
+                    'waste' => $item['waste'],
                     'hasil_akhir_lembar_cetak_plate' => $item['hasil_akhir_lembar_cetak_plate'],
                     'hasil_akhir_lembar_cetak' => $this->hasil_akhir_lembar_cetak,
                 ]);
@@ -275,14 +285,6 @@ class FormCetakIndex extends Component
                     'status' => 'Pengembalian Plate',
                 ]);
         }
-
-        $currentStep = WorkStep::find($this->workStepCurrentId);
-        $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-            ->where('work_step_list_id', 2)
-            ->first();
-        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-            ->where('step', $currentStep->step + 1)
-            ->first();
 
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
