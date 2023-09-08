@@ -804,8 +804,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject</button>
-                    <button class="btn btn-success" wire:click="save" wire:key="save">Submit</button>
+                    <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk-new">Reject</button>
+                    <button class="btn btn-success" wire:click="save" wire:key="save-new">Submit</button>
                 </div>
             </div>
         </div>

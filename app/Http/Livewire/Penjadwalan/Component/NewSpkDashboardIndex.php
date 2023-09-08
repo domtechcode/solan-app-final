@@ -70,7 +70,6 @@ class NewSpkDashboardIndex extends Component
     {
         array_splice($this->workSteps, $index + 1, 0, [
             [
-                'id' => null,
                 'work_step_list_id' => null,
                 'target_date' => null,
                 'schedule_date' => null,
@@ -227,36 +226,19 @@ class NewSpkDashboardIndex extends Component
 
         foreach ($this->workSteps as $index => $workStepData) {
             $stepCount = $stepToAdd++;
-            if ($workStepData['id'] != null) {
-                $inserWorkStep = WorkStep::create([
-                    'id' => $workStepData['id'],
-                    'instruction_id' => $this->selectedInstruction->id,
-                    'work_step_list_id' => $workStepData['work_step_list_id'],
-                    'target_date' => $workStepData['target_date'],
-                    'schedule_date' => $workStepData['schedule_date'],
-                    'target_time' => $workStepData['target_time'],
-                    'user_id' => $workStepData['user_id'],
-                    'machine_id' => $workStepData['machine_id'],
-                    'step' => $stepCount,
-                    'state_task' => $workStepData['state_task'],
-                    'status_task' => $workStepData['status_task'],
-                    'spk_status' => 'Running',
-                ]);
-            } else {
-                $inserWorkStep = WorkStep::create([
-                    'instruction_id' => $this->selectedInstruction->id,
-                    'work_step_list_id' => $workStepData['work_step_list_id'],
-                    'target_date' => $workStepData['target_date'],
-                    'schedule_date' => $workStepData['schedule_date'],
-                    'target_time' => $workStepData['target_time'],
-                    'user_id' => $workStepData['user_id'],
-                    'machine_id' => $workStepData['machine_id'],
-                    'step' => $stepCount,
-                    'state_task' => $workStepData['state_task'],
-                    'status_task' => $workStepData['status_task'],
-                    'spk_status' => 'Running',
-                ]);
-            }
+            $inserWorkStep = WorkStep::create([
+                'instruction_id' => $this->selectedInstruction->id,
+                'work_step_list_id' => $workStepData['work_step_list_id'],
+                'target_date' => $workStepData['target_date'],
+                'schedule_date' => $workStepData['schedule_date'],
+                'target_time' => $workStepData['target_time'],
+                'user_id' => $workStepData['user_id'],
+                'machine_id' => $workStepData['machine_id'],
+                'step' => $stepCount,
+                'state_task' => $workStepData['state_task'],
+                'status_task' => $workStepData['status_task'],
+                'spk_status' => 'Running',
+            ]);
         }
 
         $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
@@ -424,7 +406,6 @@ class NewSpkDashboardIndex extends Component
 
         foreach ($this->selectedWorkStep as $key => $dataSelected) {
             $workSteps = [
-                'id' => $dataSelected['id'],
                 'work_step_list_id' => $dataSelected['work_step_list_id'],
                 'target_date' => $dataSelected['target_date'],
                 'schedule_date' => $dataSelected['schedule_date'],
