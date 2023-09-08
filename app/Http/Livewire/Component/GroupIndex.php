@@ -112,32 +112,23 @@ class GroupIndex extends Component
     public function newGroup()
     {
         $this->validate([
-            'inputsNewGroup.*.type' => [
-                'required', // The "type" field must be present
-                function ($attribute, $value) {
-                    // Count the number of "parent" types in the inputsNewGroup array
-                    $parentCount = count(
-                        array_filter($this->inputsNewGroup, function ($item) {
-                            return $item['type'] === 'parent';
-                        }),
-                    );
-
-                    if ($value === 'parent' && $parentCount > 1) {
-                        $this->emit('flashMessage', [
-                            'type' => 'error',
-                            'title' => 'Error Group',
-                            'message' => 'Parent Group hanya boleh 1 Parent',
-                        ]);
-                    }
-                },
-            ],
+            'inputsNewGroup' => 'required|array',
             'inputsNewGroup.*.id' => [
                 'required',
-                'distinct', // Ensure that the "id" values in inputsNewGroup array are unique
+                'distinct', // Pastikan nilai "id" dalam array "inputsNewGroup" unik
             ],
         ]);
-
-        $sortedGroupIds = Instruction::whereNotNull('group_id')
+        
+        $parentCount = collect($this->inputsNewGroup)->where('type', 'parent')->count();
+        
+        if ($parentCount === 0 || $parentCount > 1) {
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Group',
+                'message' => 'Parent Group setidaknya min 1 dan maksimal 1 Parent.',
+            ]);
+        }else{
+            $sortedGroupIds = Instruction::whereNotNull('group_id')
             ->pluck('group_id')
             ->sort()
             ->values();
@@ -178,6 +169,9 @@ class GroupIndex extends Component
 
         $previous = URL::previous();
         return redirect($previous);
+        }
+
+        
     }
 
     public function currentGroup()
