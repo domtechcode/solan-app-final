@@ -157,7 +157,7 @@ class FormPotongIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
-        if ($dataWorkStep->work_step_list_id == 9) {
+        if ($currentStep->work_step_list_id == 9) {
             $this->validate([
                 'hasil_akhir' => 'required',
                 'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
