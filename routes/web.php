@@ -97,6 +97,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/database-file-film-setting', 'App\Http\Livewire\Operator\Index\IndexDatabaseFileFilmSetting')->name('operator.databaseFileFilmSetting');
 
         Route::get('/database-plate', 'App\Http\Livewire\Operator\Index\IndexDatabasePlate')->name('operator.databasePlate');
+
+        Route::get('/details-workstep/{instructionId}/{workStepId}', 'App\Http\Livewire\Operator\Index\IndexDetailWorkStep')->name('operator.indexDetailWorkStep');
     });
 
     Route::group(['prefix' => 'accounting', 'middleware' => ['role:Accounting']], function () {

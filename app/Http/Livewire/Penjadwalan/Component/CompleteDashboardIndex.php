@@ -935,7 +935,7 @@ class CompleteDashboardIndex extends Component
 
         $workStepCurrent->update([
             'user_id' => Auth()->user()->id,
-            'status_task' => 'Waiting For Repair',
+            // 'status_task' => 'Waiting For Repair',
         ]);
 
         $this->emit('flashMessage', [

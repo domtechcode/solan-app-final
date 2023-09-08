@@ -137,9 +137,9 @@
                                             wire:click="modalInstructionDetailsSelesai({{ $dataInstruction->instruction->id }})"
                                             wire:key="modalInstructionDetailsSelesai({{ $dataInstruction->instruction->id }})"><i
                                                 class="fe fe-eye"></i></button>
-                                        {{-- <a target="blank" class="btn btn-icon btn-sm btn-dark"
+                                        <a target="blank" class="btn btn-icon btn-sm btn-dark"
                                             href="{{ route('operator.indexDetailWorkStep', ['instructionId' => $dataInstruction->instruction->id, 'workStepId' => $dataInstruction->id]) }}"><i
-                                                class="fe fe-link"></i> Details</a> --}}
+                                                class="fe fe-link"></i> Details</a>
                                     </div>
                                 </td>
                             </tr>
