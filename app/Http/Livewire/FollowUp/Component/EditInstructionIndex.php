@@ -468,7 +468,7 @@ class EditInstructionIndex extends Component
                             'target_date' => $lastwork->target_date,
                             'schedule_date' => $lastwork->schedule_date,
                             'target_time' => $lastwork->target_time,
-                            'step' => $lastwork->step,
+                            // 'step' => $lastwork->step,
                             'state_task' => $lastwork->state_task,
                             'status_task' => $lastwork->status_task,
                             'flag' => $lastwork->flag,
