@@ -84,6 +84,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\Penjadwalan\Index\IndexPengajuanBarangPersonal')->name('jadwal.pengajuanBarangPersonal');
         Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\Penjadwalan\Index\IndexPengajuanBarangSpk')->name('jadwal.pengajuanBarangSpk');
+
+        Route::get('/details-workstep/{instructionId}/{workStepId}', 'App\Http\Livewire\Penjadwalan\Index\IndexDetailWorkStep')->name('jadwal.indexDetailWorkStep');
     });
 
     Route::group(['prefix' => 'operator', 'middleware' => ['role:Operator']], function () {

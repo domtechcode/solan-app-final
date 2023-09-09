@@ -594,7 +594,7 @@
                                                     @if ($dataWork['status_task'] == 'Complete')
                                                         <div class="btn-list">
                                                             <a target="blank" class="btn btn-icon btn-sm btn-dark"
-                                                                href="{{ route('jadwal.indexWorkStep', ['instructionId' => $this->selectedInstruction->id, 'workStepId' => $dataWork['id']]) }}"><i
+                                                                href="{{ route('jadwal.indexDetailWorkStep', ['instructionId' => $this->selectedInstruction->id, 'workStepId' => $dataWork['id']]) }}"><i
                                                                     class="fe fe-link"></i></a>
                                                         </div>
                                                     @else

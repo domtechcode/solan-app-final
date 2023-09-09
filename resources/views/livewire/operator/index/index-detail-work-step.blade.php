@@ -55,7 +55,7 @@
                                             @elseif ($workStepData->work_step_list_id == 3)
                                                 @livewire('component.hitung-bahan-all-data-rab-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                             @else
-                                                @livewire('component.hitung-bahan-data-view-rab-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @if ($workStepData->work_step_list_id == 6)
                                                     <!-- Setting -->
                                                     @livewire('component.details.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
