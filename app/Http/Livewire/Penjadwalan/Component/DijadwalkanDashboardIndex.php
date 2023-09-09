@@ -134,9 +134,24 @@ class DijadwalkanDashboardIndex extends Component
                 'target_time' => null,
                 'user_id' => null,
                 'machine_id' => null,
-                'flag' => null,
                 'state_task' => 'Not Running',
                 'status_task' => 'Pending Start',
+
+                'flag' => null,
+                'timer' => null,
+                'auto_save_timer' => null,
+                'alasan_pause' => null,
+                'catatan_proses_pengerjaan' => null,
+                'reject_from_id' => null,
+                'reject_from_status' => null,
+                'reject_from_job' => null,
+                'count_reject' => null,
+                'count_revisi' => null,
+                'task_priority' => null,
+                'dikerjakan' => null,
+                'selesai' => null,
+                'keterangan_reject' => null,
+                'keterangan_reschedule' => null,
             ],
         ]);
 
@@ -287,7 +302,7 @@ class DijadwalkanDashboardIndex extends Component
 
         foreach ($this->workSteps as $index => $workStepData) {
             $stepCount = $stepToAdd++;
-            if($workStepData['id'] != null){
+            if ($workStepData['id'] != null) {
                 $inserWorkStep = WorkStep::create([
                     'id' => $workStepData['id'],
                     'instruction_id' => $this->selectedInstruction->id,
@@ -301,6 +316,20 @@ class DijadwalkanDashboardIndex extends Component
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
                     'flag' => $workStepData['flag'],
+                    'timer' => $workStepData['timer'],
+                    'auto_save_timer' => $workStepData['auto_save_timer'],
+                    'alasan_pause' => $workStepData['alasan_pause'],
+                    'catatan_proses_pengerjaan' => $workStepData['catatan_proses_pengerjaan'],
+                    'reject_from_id' => $workStepData['reject_from_id'],
+                    'reject_from_status' => $workStepData['reject_from_status'],
+                    'reject_from_job' => $workStepData['reject_from_job'],
+                    'count_reject' => $workStepData['count_reject'],
+                    'count_revisi' => $workStepData['count_revisi'],
+                    'task_priority' => $workStepData['task_priority'],
+                    'dikerjakan' => $workStepData['dikerjakan'],
+                    'selesai' => $workStepData['selesai'],
+                    'keterangan_reject' => $workStepData['keterangan_reject'],
+                    'keterangan_reschedule' => $workStepData['keterangan_reschedule'],
                     'spk_status' => 'Running',
                 ]);
             } else {
@@ -316,43 +345,56 @@ class DijadwalkanDashboardIndex extends Component
                     'state_task' => $workStepData['state_task'],
                     'status_task' => $workStepData['status_task'],
                     'flag' => $workStepData['flag'],
+                    'timer' => $workStepData['timer'],
+                    'auto_save_timer' => $workStepData['auto_save_timer'],
+                    'alasan_pause' => $workStepData['alasan_pause'],
+                    'catatan_proses_pengerjaan' => $workStepData['catatan_proses_pengerjaan'],
+                    'reject_from_id' => $workStepData['reject_from_id'],
+                    'reject_from_status' => $workStepData['reject_from_status'],
+                    'reject_from_job' => $workStepData['reject_from_job'],
+                    'count_reject' => $workStepData['count_reject'],
+                    'count_revisi' => $workStepData['count_revisi'],
+                    'task_priority' => $workStepData['task_priority'],
+                    'dikerjakan' => $workStepData['dikerjakan'],
+                    'selesai' => $workStepData['selesai'],
+                    'keterangan_reject' => $workStepData['keterangan_reject'],
+                    'keterangan_reschedule' => $workStepData['keterangan_reschedule'],
                     'spk_status' => 'Running',
                 ]);
             }
-            
         }
 
         // if (isset($newWorkSteps)) {
         //     $inserWorkStep = WorkStep::insert($newWorkSteps);
         // }
 
-        $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
-            ->get();
+        // $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+        //     ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
+        //     ->get();
             
-        foreach ($lastDataWorkStep as $lastData) {
-            $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->where('work_step_list_id', $lastData->work_step_list_id)
-                ->where('status_task', $lastData->status_task)
-                ->where('state_task', $lastData->state_task)
-                ->update([
-                    'flag' => $lastData['flag'],
-                    'timer' => $lastData['timer'],
-                    'auto_save_timer' => $lastData['auto_save_timer'],
-                    'alasan_pause' => $lastData['alasan_pause'],
-                    'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
-                    'reject_from_id' => $lastData['reject_from_id'],
-                    'reject_from_status' => $lastData['reject_from_status'],
-                    'reject_from_job' => $lastData['reject_from_job'],
-                    'count_reject' => $lastData['count_reject'],
-                    'count_revisi' => $lastData['count_revisi'],
-                    'task_priority' => $lastData['task_priority'],
-                    'dikerjakan' => $lastData['dikerjakan'],
-                    'selesai' => $lastData['selesai'],
-                    'keterangan_reject' => $lastData['keterangan_reject'],
-                    'keterangan_reschedule' => $lastData['keterangan_reschedule'],
-                ]);
-        }
+        // foreach ($lastDataWorkStep as $lastData) {
+        //     $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+        //         ->where('work_step_list_id', $lastData->work_step_list_id)
+        //         ->where('status_task', $lastData->status_task)
+        //         ->where('state_task', $lastData->state_task)
+        //         ->update([
+        //             'flag' => $lastData['flag'],
+        //             'timer' => $lastData['timer'],
+        //             'auto_save_timer' => $lastData['auto_save_timer'],
+        //             'alasan_pause' => $lastData['alasan_pause'],
+        //             'catatan_proses_pengerjaan' => $lastData['catatan_proses_pengerjaan'],
+        //             'reject_from_id' => $lastData['reject_from_id'],
+        //             'reject_from_status' => $lastData['reject_from_status'],
+        //             'reject_from_job' => $lastData['reject_from_job'],
+        //             'count_reject' => $lastData['count_reject'],
+        //             'count_revisi' => $lastData['count_revisi'],
+        //             'task_priority' => $lastData['task_priority'],
+        //             'dikerjakan' => $lastData['dikerjakan'],
+        //             'selesai' => $lastData['selesai'],
+        //             'keterangan_reject' => $lastData['keterangan_reject'],
+        //             'keterangan_reschedule' => $lastData['keterangan_reschedule'],
+        //         ]);
+        // }
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
             'status_id' => $firstWorkStep->status_id,
@@ -461,6 +503,20 @@ class DijadwalkanDashboardIndex extends Component
                 'status_task' => $dataSelected['status_task'],
                 'state_task' => $dataSelected['state_task'],
                 'flag' => $dataSelected['flag'],
+                'timer' => $dataSelected['timer'],
+                'auto_save_timer' => $dataSelected['auto_save_timer'],
+                'alasan_pause' => $dataSelected['alasan_pause'],
+                'catatan_proses_pengerjaan' => $dataSelected['catatan_proses_pengerjaan'],
+                'reject_from_id' => $dataSelected['reject_from_id'],
+                'reject_from_status' => $dataSelected['reject_from_status'],
+                'reject_from_job' => $dataSelected['reject_from_job'],
+                'count_reject' => $dataSelected['count_reject'],
+                'count_revisi' => $dataSelected['count_revisi'],
+                'task_priority' => $dataSelected['task_priority'],
+                'dikerjakan' => $dataSelected['dikerjakan'],
+                'selesai' => $dataSelected['selesai'],
+                'keterangan_reject' => $dataSelected['keterangan_reject'],
+                'keterangan_reschedule' => $dataSelected['keterangan_reschedule'],
                 'keterangan_reject' => $dataSelected['keterangan_reject'],
             ];
             $this->workSteps[] = $workSteps;
