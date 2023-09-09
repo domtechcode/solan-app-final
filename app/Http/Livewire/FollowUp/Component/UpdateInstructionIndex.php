@@ -195,7 +195,7 @@ class UpdateInstructionIndex extends Component
             $this->taxes_type = 'nonpajak';
         }
 
-        if ($this->spk_parent == '') {
+        if ($this->spk_parent == '' || $this->spk_parent == false) {
             $this->spk_parent = NULL;
         }
 
@@ -578,10 +578,10 @@ class UpdateInstructionIndex extends Component
             }
 
             if ($datacustomerlist->taxes == 'pajak' && empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 634;
+                $nomor_urut = $nomor_spk + 636;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf('1%04d', $nomor_urut + 1);
             } elseif ($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 634;
+                $nomor_urut = $nomor_spk + 636;
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A';
             } elseif ($datacustomerlist->taxes == 'pajak' && isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);

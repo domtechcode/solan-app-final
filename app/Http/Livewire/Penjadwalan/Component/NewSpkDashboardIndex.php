@@ -357,9 +357,9 @@ class NewSpkDashboardIndex extends Component
 
     public function modalInstructionDetailsNewSpk($instructionId)
     {
-        $this->workSteps = null;
-        $this->pengajuanBarang = null;
-        $this->historyPengajuanBarang = null;
+        $this->workSteps = [];
+        $this->pengajuanBarang = [];
+        $this->historyPengajuanBarang = [];
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
         $this->dataMachines = Machine::all();
