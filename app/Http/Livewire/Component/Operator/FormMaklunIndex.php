@@ -47,6 +47,7 @@ class FormMaklunIndex extends Component
     public function addMaklunPengajuan()
     {
         $this->maklunPengajuan[] = [
+            'id' => '',
             'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
             'rekanan' => '',
             'tgl_keluar' => '',
@@ -66,6 +67,7 @@ class FormMaklunIndex extends Component
     public function addMaklunPengajuanGroup()
     {
         $this->maklunPengajuan[] = [
+            'id' => '',
             'instruction_id' => '',
             'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
             'rekanan' => '',
@@ -86,12 +88,14 @@ class FormMaklunIndex extends Component
     public function addMaklunPenerimaan()
     {
         $this->maklunPenerimaan[] = [
+            'id' => '',
             'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
             'rekanan' => '',
             'tgl_keluar' => '',
             'qty_keluar' => '',
             'satuan_keluar' => '',
             'status' => 'Barang Diterima',
+            'catatan' => '',
         ];
     }
 
@@ -119,9 +123,11 @@ class FormMaklunIndex extends Component
             $dataMaklunPengajuan = FormPengajuanMaklun::whereIn('instruction_id', $dataAnggota)
                 ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
                 ->get();
+
             if (isset($dataMaklunPengajuan)) {
                 foreach ($dataMaklunPengajuan as $item) {
                     $maklunPengajuan = [
+                        'id' => $item['id'],
                         'instruction_id' => $item['instruction_id'],
                         'bentuk_maklun' => $item['bentuk_maklun'],
                         'rekanan' => $item['rekanan'],
@@ -139,6 +145,7 @@ class FormMaklunIndex extends Component
 
             if (empty($this->maklunPengajuan)) {
                 $this->maklunPengajuan[] = [
+                    'id' => '',
                     'instruction_id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
@@ -150,10 +157,13 @@ class FormMaklunIndex extends Component
                 ];
             }
 
-            $datamaklunPenerimaan = FormPenerimaanMaklun::whereIn('instruction_id', $dataAnggota)->get();
+            $datamaklunPenerimaan = FormPenerimaanMaklun::whereIn('instruction_id', $dataAnggota)
+                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
+                ->get();
             if (isset($datamaklunPenerimaan)) {
                 foreach ($datamaklunPenerimaan as $item) {
                     $maklunPenerimaan = [
+                        'id' => $item['id'],
                         'instruction_id' => $item['instruction_id'],
                         'bentuk_maklun' => $item['bentuk_maklun'],
                         'rekanan' => $item['rekanan'],
@@ -161,6 +171,7 @@ class FormMaklunIndex extends Component
                         'qty_kembali' => $item['qty_kembali'],
                         'satuan_kembali' => $item['satuan_kembali'],
                         'status' => $item['status'],
+                        'catatan' => $item['catatan'],
                     ];
 
                     $this->maklunPenerimaan[] = $maklunPenerimaan;
@@ -169,6 +180,7 @@ class FormMaklunIndex extends Component
 
             if (empty($this->maklunPenerimaan)) {
                 $this->maklunPenerimaan[] = [
+                    'id' => '',
                     'instruction_id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
@@ -176,6 +188,7 @@ class FormMaklunIndex extends Component
                     'qty_keluar' => '',
                     'satuan_keluar' => '',
                     'status' => 'Barang Diterima',
+                    'catatan' => 'Barang Diterima',
                 ];
             }
         } else {
@@ -185,6 +198,7 @@ class FormMaklunIndex extends Component
             if (isset($dataMaklunPengajuan)) {
                 foreach ($dataMaklunPengajuan as $item) {
                     $maklunPengajuan = [
+                        'id' => $item['id'],
                         'bentuk_maklun' => $item['bentuk_maklun'],
                         'rekanan' => $item['rekanan'],
                         'tgl_keluar' => $item['tgl_keluar'],
@@ -201,6 +215,7 @@ class FormMaklunIndex extends Component
 
             if (empty($this->maklunPengajuan)) {
                 $this->maklunPengajuan[] = [
+                    'id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
                     'tgl_keluar' => '',
@@ -211,16 +226,20 @@ class FormMaklunIndex extends Component
                 ];
             }
 
-            $datamaklunPenerimaan = FormPenerimaanMaklun::where('instruction_id', $this->instructionCurrentId)->get();
+            $datamaklunPenerimaan = FormPenerimaanMaklun::where('instruction_id', $this->instructionCurrentId)
+                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
+                ->get();
             if (isset($datamaklunPenerimaan)) {
                 foreach ($datamaklunPenerimaan as $item) {
                     $maklunPenerimaan = [
+                        'id' => $item['id'],
                         'bentuk_maklun' => $item['bentuk_maklun'],
                         'rekanan' => $item['rekanan'],
                         'tgl_kembali' => $item['tgl_kembali'],
                         'qty_kembali' => $item['qty_kembali'],
                         'satuan_kembali' => $item['satuan_kembali'],
                         'status' => $item['status'],
+                        'catatan' => $item['catatan'],
                     ];
 
                     $this->maklunPenerimaan[] = $maklunPenerimaan;
@@ -229,12 +248,14 @@ class FormMaklunIndex extends Component
 
             if (empty($this->maklunPenerimaan)) {
                 $this->maklunPenerimaan[] = [
+                    'id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
                     'tgl_keluar' => '',
                     'qty_keluar' => '',
                     'satuan_keluar' => '',
                     'status' => 'Barang Diterima',
+                    'catatan' => '',
                 ];
             }
         }
@@ -272,8 +293,8 @@ class FormMaklunIndex extends Component
         $instructionData = Instruction::find($this->instructionCurrentId);
 
         if (isset($this->maklunPengajuan)) {
-            $deleteFormPengajuanMaklun = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)->delete();
             foreach ($this->maklunPengajuan as $dataMaklunPengajuan) {
+                $deleteFormPengajuanMaklun = FormPengajuanMaklun::where('id', $dataMaklunPengajuan['id'])->delete();
                 $createFormPengajuanMaklun = FormPengajuanMaklun::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'bentuk_maklun' => $dataMaklunPengajuan['bentuk_maklun'],
@@ -293,6 +314,11 @@ class FormMaklunIndex extends Component
             'title' => 'Maklun Instruksi Kerja',
             'message' => 'Data Maklun berhasil diajukan',
         ]);
+
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Maklun', 'instruction_id' => $this->instructionCurrentId]);
+        }
     }
 
     public function save()
@@ -565,8 +591,8 @@ class FormMaklunIndex extends Component
         $instructionData = Instruction::find($this->instructionCurrentId);
 
         if (isset($this->maklunPenerimaan)) {
-            $deleteFormPenerimaanMaklun = FormPenerimaanMaklun::where('instruction_id', $this->instructionCurrentId)->delete();
             foreach ($this->maklunPenerimaan as $dataMaklunPenerimaan) {
+                $deleteFormPenerimaanMaklun = FormPenerimaanMaklun::where('id', $dataMaklunPenerimaan['id'])->delete();
                 $createFormPenerimaanMaklun = FormPenerimaanMaklun::create([
                     'instruction_id' => $this->instructionCurrentId,
                     'bentuk_maklun' => $dataMaklunPenerimaan['bentuk_maklun'],
@@ -616,9 +642,10 @@ class FormMaklunIndex extends Component
             'maklunPengajuan.*.satuan_keluar' => 'required',
             'maklunPengajuan.*.catatan' => 'required',
         ]);
+
         if (isset($this->maklunPengajuan)) {
             foreach ($this->maklunPengajuan as $dataMaklunPengajuan) {
-                $deleteFormPengajuanMaklun = FormPengajuanMaklun::where('instruction_id', $dataMaklunPengajuan['instruction_id'])->delete();
+                $deleteFormPengajuanMaklun = FormPengajuanMaklun::where('id', $dataMaklunPengajuan['id'])->delete();
                 $createFormPengajuanMaklun = FormPengajuanMaklun::create([
                     'instruction_id' => $dataMaklunPengajuan['instruction_id'],
                     'bentuk_maklun' => $dataMaklunPengajuan['bentuk_maklun'],
@@ -641,7 +668,7 @@ class FormMaklunIndex extends Component
     }
 
     public function saveGroup()
-    {   
+    {
         $this->updateGroup();
         $instructionData = Instruction::find($this->instructionCurrentId);
 
@@ -910,7 +937,7 @@ class FormMaklunIndex extends Component
 
         if (isset($this->maklunPenerimaan)) {
             foreach ($this->maklunPenerimaan as $dataMaklunPenerimaan) {
-                $deleteFormPenerimaanMaklun = FormPenerimaanMaklun::where('instruction_id', $dataMaklunPenerimaan['instruction_id'])->delete();
+                $deleteFormPenerimaanMaklun = FormPenerimaanMaklun::where('id', $dataMaklunPenerimaan['id'])->delete();
                 $createFormPenerimaanMaklun = FormPenerimaanMaklun::create([
                     'instruction_id' => $dataMaklunPenerimaan['instruction_id'],
                     'bentuk_maklun' => $dataMaklunPenerimaan['bentuk_maklun'],
@@ -923,7 +950,7 @@ class FormMaklunIndex extends Component
                 ]);
 
                 $currentStep = WorkStep::find($this->workStepCurrentId);
-                $nextStep = WorkStep::where('instruction_id',$dataMaklunPenerimaan['instruction_id'])
+                $nextStep = WorkStep::where('instruction_id', $dataMaklunPenerimaan['instruction_id'])
                     ->where('step', $currentStep->step + 1)
                     ->first();
 
