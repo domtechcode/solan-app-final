@@ -555,6 +555,12 @@
                                                                     wire:click="startButton({{ $dataWork['id'] }})"
                                                                     wire:loading.attr="disabled"><i
                                                                         class="fe fe-play"></i></button>
+                                                            @elseif($dataWork['status_task'] === 'Complete' && $dataWork['flag'] === 'Split')
+                                                                <button type="button"
+                                                                    class="btn btn-icon btn-sm btn-info"
+                                                                    wire:click="startSplitButton({{ $dataWork['id'] }})"
+                                                                    wire:loading.attr="disabled"><i
+                                                                        class="fe fe-play"></i> Re-Running</button>
                                                             @endif
                                                         @else
                                                             <button type="button"
