@@ -61,14 +61,8 @@
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
                                 <td>{{ $dataInstruction->instruction->code_style }}</td>
                                 <td>{{ $dataInstruction->instruction->shipping_date }}</td>
-                                @if ($dataInstruction->instruction->group_id)
-                                    <td>
-                                        {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
-                                    </td>
-                                @else
-                                    <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
-                                    </td>
-                                @endif
+                                <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
+                                </td>
                                 @if (in_array($dataInstruction->status_id, [1, 8]))
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
