@@ -63,6 +63,8 @@
                                         <option value="Stock">Stock</option>
                                         <option value="Purchase">Purchase</option>
                                         <option value="Accounting">Accounting</option>
+                                        <option value="Team Finishing">Team Finishing</option>
+                                        <option value="Team Qc Packing">Team Qc Packing</option>
                                         @foreach ($dataJobDesk as $data)
                                             <option value="{{ $data->desc_job }}">{{ $data->desc_job }}</option>
                                         @endforeach
@@ -254,6 +256,8 @@
                                         <option value="Stock">Stock</option>
                                         <option value="Purchase">Purchase</option>
                                         <option value="Accounting">Accounting</option>
+                                        <option value="Team Finishing">Team Finishing</option>
+                                        <option value="Team Qc Packing">Team Qc Packing</option>
                                         @foreach ($dataJobDesk as $data)
                                             <option value="{{ $data->desc_job }}">{{ $data->desc_job }}</option>
                                         @endforeach
