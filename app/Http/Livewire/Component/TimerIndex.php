@@ -15,6 +15,7 @@ class TimerIndex extends Component
     public $alasanPauseData;
     public $currentInstructionId;
     public $currentWorkStepId;
+    public $targetTime;
 
     protected $listeners = ['handleSaveDataTimer' => 'saveDataTimer', 'handleSaveDataTimerPause' => 'saveDataTimerPause', 'handleAutoSaveDataTimer' => 'autoSaveDataTimer'];
 
@@ -24,6 +25,8 @@ class TimerIndex extends Component
         $this->currentWorkStepId = $workStepId;
 
         $workStepData = WorkStep::find($this->currentWorkStepId);
+
+        $this->targetTime = $workStepData->target_time ?? '-';
 
         if ($workStepData->timer == null) {
             $this->timerDataWorkStep = '00:00:00';
