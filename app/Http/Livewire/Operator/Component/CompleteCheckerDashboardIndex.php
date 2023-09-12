@@ -234,9 +234,9 @@ class CompleteCheckerDashboardIndex extends Component
             'job_id' => $workStepNext->work_step_list_id,
         ]);
 
-        $dataUserDefault = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('work_step_list_id', 6)->update([
-            'user_id' => 10,
-        ]);
+        // $dataUserDefault = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->where('work_step_list_id', 6)->update([
+        //     'user_id' => 10,
+        // ]);
 
         $userDestination = User::where('role', 'Penjadwalan')->get();
         foreach ($userDestination as $dataUser) {
