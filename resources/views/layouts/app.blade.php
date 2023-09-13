@@ -95,6 +95,10 @@
     <!-- SIDE-MENU JS -->
     <script src="{{ asset('assets/plugins/sidemenu/sidemenu.js') }}"></script>
 
+    <!--- TABS JS -->
+    <script src="{{ asset('assets/plugins/tabs/jquery.multipurpose_tabcontent.js') }}"></script>
+    <script src="{{ asset('assets/plugins/tabs/tab-content.js') }}"></script>
+
     <!-- SIDEBAR JS -->
     <script src="{{ asset('assets/plugins/sidebar/sidebar.js') }}"></script>
 

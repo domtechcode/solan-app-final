@@ -26,6 +26,8 @@ class TabDashboardIndex extends Component
     public $dataCountTotalPengajuanBarang;
     public $dataCountTotalPengajuanKekuranganQc;
 
+    public $workStepList;
+
     protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
@@ -138,6 +140,8 @@ class TabDashboardIndex extends Component
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
 
         $this->dataCountTotalPengajuanKekuranganQc = PengajuanKekuranganQc::where('status', 'Pending')->count();
+
+        $this->workStepList = WorkStepList::whereNotIn('id', [1,2,3,4,5])->orderBy('no_urut', 'asc')->get();
     }
 
     public function render()
