@@ -78,7 +78,7 @@
                                         <span
                                             class="badge bg-warning rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangPersonal->state }}</span>
                                     </td>
-                                @elseif(in_array($itemPengajuanBarangPersonal->status_id, [17, 18]))
+                                @elseif(in_array($itemPengajuanBarangPersonal->status_id, [3, 17, 18]))
                                     <td>
                                         <span
                                             class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $itemPengajuanBarangPersonal->status->desc_status }}</span>

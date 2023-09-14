@@ -258,6 +258,15 @@
                                                     href="#tabPengajuanBarangSpk1">Pengajuan Barang SPK -
                                                     {{ $dataCountPengajuanBarangSpk }}</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk2')"
+                                                    wire:key="tabPengajuanBarangSpk2"
+                                                    href="#tabPengajuanBarangSpk2">Reject Pengajuan Barang SPK -
+                                                    {{ $dataCountRejectPengajuanBarangSpk }}</button>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="card-body">
@@ -271,6 +280,11 @@
                                                 id="tabPengajuanBarangSpk1">
                                                 <h5 class="card-title">Pengajuan Barang SPK</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-spk-index')
+                                            </div>
+                                            <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk2' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangSpk2">
+                                                <h5 class="card-title">Reject Pengajuan Barang SPK</h5>
+                                                @livewire('component.riwayat-reject-pengajuan-barang-spk-index')
                                             </div>
                                         </div>
                                     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Purchase\Component;
 
 use App\Models\User;
 use App\Models\Files;
+use App\Models\Catatan;
 use App\Models\FormRab;
 use Livewire\Component;
 use App\Models\WorkStep;
@@ -41,6 +42,8 @@ class PengajuanNewBarangSpkIndex extends Component
     public $total_harga;
     public $stock;
     public $dataPengajuanBarangSpk;
+
+    public $keteranganReject;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -397,6 +400,32 @@ class PengajuanNewBarangSpkIndex extends Component
         $this->emit('indexRender');
         $this->reset();
 
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
+    }
+
+    public function rejectPurchaseBarang($PengajuanBarangSelectedRejectId)
+    {
+        $this->validate([
+            'keteranganReject' => 'required',
+        ]);
+
+        $updateReject = PengajuanBarangSpk::find($PengajuanBarangSelectedRejectId);
+        $user = User::find($updateReject->user_id);
+        $updateReject->update([
+            'status_id' => 3,
+            'state' => 'Purchase',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $updateKeterangan = Catatan::create([
+            'tujuan' => $user->id,
+            'catatan' => $this->keteranganReject,
+            'kategori' => 'reject barang spk',
+            'instruction_id' => null,
+            'user_id' => Auth()->user()->id,
+        ]);
+
+        $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
     }
 
