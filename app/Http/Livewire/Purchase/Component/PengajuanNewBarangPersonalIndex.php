@@ -42,6 +42,8 @@ class PengajuanNewBarangPersonalIndex extends Component
     public $total_harga;
     public $stock;
 
+    public $keteranganReject;
+
     protected $listeners = ['indexRender' => '$refresh'];
 
     public function updatingSearchPengajuanNewBarangPersonal()
@@ -400,6 +402,32 @@ class PengajuanNewBarangPersonalIndex extends Component
 
         $this->total_harga = $hargaSatuanSelected * ($qtyPurchaseSelected - $stockSelected);
         $this->total_harga = $this->total_harga;
+    }
+
+    public function rejectPurchaseBarangPersonal($PengajuanBarangSelectedRejectId)
+    {
+        $this->validate([
+            'keteranganReject' => 'required',
+        ]);
+
+        $updateReject = PengajuanBarangPersonal::find($PengajuanBarangSelectedRejectId);
+        $user = User::find($updateReject->user_id);
+        $updateReject->update([
+            'status_id' => 3,
+            'state' => 'Purchase',
+            'previous_state' => 'Purchase',
+        ]);
+
+        $updateKeterangan = CatatanPengajuan::create([
+            'user_id' => Auth()->user()->id,
+            'catatan' => $this->keteranganReject,
+            'tujuan' => $user->id,
+            'kategori' => 'reject barang personal',
+            'form_pengajuan_barang_personal_id' => $updateReject->id,
+        ]);
+
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-personal');
     }
 
     public function modalPengajuanNewBarangPersonal($PengajuanBarangId)

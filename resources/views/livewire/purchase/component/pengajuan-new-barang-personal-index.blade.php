@@ -295,10 +295,32 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">Keterangan Reject</label>
+                                            <div class="input-group control-group" style="padding-top: 5px;">
+                                                <textarea class="form-control mb-4" placeholder="Keterangan Reject" rows="4" wire:model="keteranganReject"></textarea>
+                                            </div>
+                                            @error('keteranganReject')
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataBarang))
+                    <button class="btn btn-primary" wire:click="rejectPurchaseBarangPersonal({{ $dataBarang->id }})"
+                        wire:key="rejectPurchaseBarangPersonal({{ $dataBarang->id }})">Reject Purchase</button>
                         <button class="btn btn-info" wire:click="ajukanAccountingBarang({{ $dataBarang->id }})"
                             wire:key="ajukanAccountingBarang({{ $dataBarang->id }})">Ajukan <i
                                 class="fe fe-arrow-right"></i> Accounting</button>
