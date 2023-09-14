@@ -403,7 +403,7 @@ class PengajuanNewBarangSpkIndex extends Component
         $this->dispatchBrowserEvent('close-modal-pengajuan-new-barang-spk');
     }
 
-    public function rejectPurchaseBarang($PengajuanBarangSelectedRejectId)
+    public function rejectPurchaseBarangSpk($PengajuanBarangSelectedRejectId)
     {
         $this->validate([
             'keteranganReject' => 'required',
@@ -417,12 +417,12 @@ class PengajuanNewBarangSpkIndex extends Component
             'previous_state' => 'Purchase',
         ]);
 
-        $updateKeterangan = Catatan::create([
-            'tujuan' => $user->id,
-            'catatan' => $this->keteranganReject,
-            'kategori' => 'reject barang spk',
-            'instruction_id' => null,
+        $updateKeterangan = CatatanPengajuan::create([
             'user_id' => Auth()->user()->id,
+            'catatan' => $this->keteranganReject,
+            'tujuan' => $user->id,
+            'kategori' => 'reject barang spk',
+            'form_pengajuan_barang_spk_id' => $updateReject->id,
         ]);
 
         $this->emit('indexRender');

@@ -12,6 +12,7 @@ use App\Models\WorkStepList;
 use Livewire\WithPagination;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
+use App\Models\CatatanPengajuan;
 use App\Models\PengajuanBarangSpk;
 
 class RiwayatRejectPengajuanBarangSpkIndex extends Component
@@ -52,6 +53,7 @@ class RiwayatRejectPengajuanBarangSpkIndex extends Component
     public $stock;
 
     public $workStepList;
+    public $catatanRejectBarangSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -110,6 +112,11 @@ class RiwayatRejectPengajuanBarangSpkIndex extends Component
             }
         }
 
+        $userDestination = User::where('role', 'Purchase')->get();
+        foreach ($userDestination as $dataUser) {
+            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'Pengajuan Barang SPK', 'instruction_id' => null]);
+        }
+
         $this->emit('indexRender');
         $this->dispatchBrowserEvent('close-modal-pengajuan-reject-barang-spk');
     }
@@ -125,6 +132,11 @@ class RiwayatRejectPengajuanBarangSpkIndex extends Component
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
+
+        $this->catatanRejectBarangSpk = CatatanPengajuan::where('form_pengajuan_barang_spk_id', $PengajuanBarangId)
+            ->where('kategori', 'reject barang spk')
+            ->where('tujuan', Auth()->user()->id)
+            ->get();
 
         $dataBarang = PengajuanBarangSpk::where('id', $PengajuanBarangId)->get();
 
@@ -150,5 +162,15 @@ class RiwayatRejectPengajuanBarangSpkIndex extends Component
         } else {
             $this->dataBarangSpk = [];
         }
+    }
+
+    public function messageSent($arguments)
+    {
+        $createdMessage = 'info';
+        $selectedConversation = $arguments['conversation'];
+        $receiverUser = $arguments['receiver'];
+        $instruction_id = $arguments['instruction_id'];
+
+        event(new NotificationSent(Auth()->user()->id, $createdMessage, $selectedConversation, $instruction_id, $receiverUser));
     }
 }
