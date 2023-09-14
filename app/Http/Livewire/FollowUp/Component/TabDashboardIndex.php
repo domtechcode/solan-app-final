@@ -21,6 +21,7 @@ class TabDashboardIndex extends Component
     public $dataCountAccSpk;
     public $dataCountAllSpk;
     public $dataCountPengajuanBarangPersonal;
+    public $dataCountRejectPengajuanBarangPersonal;
     public $dataCountTotalPengajuanKekuranganQc;
     
 
@@ -84,7 +85,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
-
+        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
         $this->dataCountSpk = $this->dataCountNewSpk + $this->dataCountCompleteSpk + $this->dataCountAccSpk;
         $this->dataCountTotalPengajuanKekuranganQc = PengajuanKekuranganQc::where('status', 'Approved')->count();
     }

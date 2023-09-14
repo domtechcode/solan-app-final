@@ -20,7 +20,9 @@ class TabDashboardIndex extends Component
     public $dataCountCompleteCustomerChecker;
     public $dataCountSelesai;
     public $dataCountPengajuanBarangPersonal;
+    public $dataCountRejectPengajuanBarangPersonal;
     public $dataCountPengajuanBarangSpk;
+    public $dataCountRejectPengajuanBarangSpk;
     public $dataCountTotalPengajuanBarang;
 
     public $dataCountPengembalianPlate;
@@ -183,7 +185,9 @@ class TabDashboardIndex extends Component
         }
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
 
         $this->dataCountPengembalianPlate = WarnaPlate::whereHas('rincianPlate', function ($query) {

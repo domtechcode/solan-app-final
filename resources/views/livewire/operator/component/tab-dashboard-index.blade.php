@@ -180,6 +180,16 @@
                                                     href="#tabPengajuanBarangPersonal1">Pengajuan Barang Personal -
                                                     {{ $dataCountPengajuanBarangPersonal }}</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal2')"
+                                                    wire:key="tabPengajuanBarangPersonal2"
+                                                    href="#tabPengajuanBarangPersonal2">Reject Pengajuan Barang
+                                                    Personal -
+                                                    {{ $dataCountRejectPengajuanBarangPersonal }}</button>
+                                            </li>
                                             @if (Auth()->user()->jobdesk == 'Setting' || Auth()->user()->jobdesk == 'Plate')
                                                 <li class="nav-item">
                                                     <button
@@ -189,6 +199,16 @@
                                                         wire:key="tabPengajuanBarangSpk1"
                                                         href="#tabPengajuanBarangSpk1">Pengajuan Barang SPK -
                                                         {{ $dataCountPengajuanBarangSpk }}</button>
+                                                </li>
+
+                                                <li class="nav-item">
+                                                    <button
+                                                        class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk2' ? 'active' : '' }}"
+                                                        data-bs-toggle="tab"
+                                                        wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk2')"
+                                                        wire:key="tabPengajuanBarangSpk2"
+                                                        href="#tabPengajuanBarangSpk2">Reject Pengajuan Barang SPK -
+                                                        {{ $dataCountRejectPengajuanBarangSpk }}</button>
                                                 </li>
                                             @endif
                                         </ul>
@@ -200,11 +220,21 @@
                                                 <h5 class="card-title">Pengajuan Barang Personal</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-personal-index')
                                             </div>
+                                            <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal2">
+                                                <h5 class="card-title">Reject Pengajuan Barang Personal</h5>
+                                                @livewire('component.riwayat-reject-pengajuan-barang-personal-index')
+                                            </div>
                                             @if (Auth()->user()->jobdesk == 'Setting' || Auth()->user()->jobdesk == 'Plate')
                                                 <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
                                                     id="tabPengajuanBarangSpk1">
                                                     <h5 class="card-title">Pengajuan Barang SPK</h5>
                                                     @livewire('component.riwayat-pengajuan-barang-spk-index')
+                                                </div>
+                                                <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk2' ? 'active' : '' }}"
+                                                    id="tabPengajuanBarangSpk2">
+                                                    <h5 class="card-title">Reject Pengajuan Barang SPK</h5>
+                                                    @livewire('component.riwayat-reject-pengajuan-barang-spk-index')
                                                 </div>
                                             @endif
                                         </div>
@@ -233,10 +263,9 @@
                                             <li class="nav-item">
                                                 <button
                                                     class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPlate === 'tabPlate2' ? 'active' : '' }}"
-                                                    data-bs-toggle="tab"
-                                                    wire:click="changeTabPlate('tabPlate2')"
-                                                    wire:key="tabPlate2"
-                                                    href="#tabPlate2">Pengajuan Plate Dari Operator -
+                                                    data-bs-toggle="tab" wire:click="changeTabPlate('tabPlate2')"
+                                                    wire:key="tabPlate2" href="#tabPlate2">Pengajuan Plate Dari
+                                                    Operator -
                                                     {{ $dataCountPengajuanPlate }}</button>
                                             </li>
                                         </ul>

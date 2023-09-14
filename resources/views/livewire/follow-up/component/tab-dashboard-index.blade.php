@@ -197,6 +197,15 @@
                                                     wire:key="tabPengajuanBarangPersonal1" href="#tabPengajuanBarangPersonal1">Pengajuan Barang Personal -
                                                     {{ $dataCountPengajuanBarangPersonal }}</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal2')"
+                                                    wire:key="tabPengajuanBarangPersonal2"
+                                                    href="#tabPengajuanBarangPersonal2">Reject Pengajuan Barang Personal -
+                                                    {{ $dataCountRejectPengajuanBarangPersonal }}</button>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="card-body">
@@ -205,6 +214,12 @@
                                                 id="tabPengajuanBarangPersonal1">
                                                 <h5 class="card-title">Pengajuan Barang Personal</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-personal-index')
+                                            </div>
+
+                                            <div class="tab-pane {{ $activeTabPengajuanBarangPersonal === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal2">
+                                                <h5 class="card-title">Reject Pengajuan Barang Personal</h5>
+                                                @livewire('component.riwayat-reject-pengajuan-barang-personal-index')
                                             </div>
                                         </div>
                                     </div>

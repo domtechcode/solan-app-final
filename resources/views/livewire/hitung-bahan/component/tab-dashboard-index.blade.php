@@ -203,6 +203,15 @@
                                             </li>
                                             <li class="nav-item">
                                                 <button
+                                                    class="btn btn-primary mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab"
+                                                    wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal2')"
+                                                    wire:key="tabPengajuanBarangPersonal2"
+                                                    href="#tabPengajuanBarangPersonal2">Reject Pengajuan Barang Personal -
+                                                    {{ $dataCountRejectPengajuanBarangPersonal }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
                                                     class="btn btn-info mt-1 mb-1 me-3 {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
                                                     data-bs-toggle="tab"
                                                     wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangSpk1')"
@@ -227,6 +236,11 @@
                                                 id="tabPengajuanBarangPersonal1">
                                                 <h5 class="card-title">Pengajuan Barang Personal</h5>
                                                 @livewire('component.riwayat-pengajuan-barang-personal-index')
+                                            </div>
+                                            <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangPersonal2' ? 'active' : '' }}"
+                                                id="tabPengajuanBarangPersonal2">
+                                                <h5 class="card-title">Reject Pengajuan Barang Personal</h5>
+                                                @livewire('component.riwayat-reject-pengajuan-barang-personal-index')
                                             </div>
                                             <div class="tab-pane {{ $activeTabPengajuanBarang === 'tabPengajuanBarangSpk1' ? 'active' : '' }}"
                                                 id="tabPengajuanBarangSpk1">

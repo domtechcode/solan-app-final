@@ -15,6 +15,7 @@ class TabDashboardIndex extends Component
     public $dataCountRejectSpk;
     public $dataCountCompleteSpk;
     public $dataCountPengajuanBarangPersonal;
+    public $dataCountRejectPengajuanBarangPersonal;
 
     protected $listeners = ['indexRender' => 'mount'];
 
@@ -66,6 +67,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
+        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
     }
 
     public function render()
