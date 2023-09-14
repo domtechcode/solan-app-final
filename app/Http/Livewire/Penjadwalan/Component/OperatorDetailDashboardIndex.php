@@ -17,6 +17,9 @@ class OperatorDetailDashboardIndex extends Component
     public $paginateOperator = 10;
     public $searchOperator = '';
 
+    public $dijadwalkanSelected = '';
+    public $targetSelesaiSelected = '';
+
     public $userSelected;
     public $worksteplistSelected;
 
@@ -35,11 +38,19 @@ class OperatorDetailDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public function updatingDijadwalkanSelected()
+    {
+        $this->render();
+    }
+    public function updatingTargetSelesaiSelected()
+    {
+        $this->render();
+    }
+
     public function mount($dataUserOperator, $dataWorkStepList)
     {
         $this->userSelected = $dataUserOperator;
         $this->worksteplistSelected = $dataWorkStepList;
-        $this->searchOperator = request()->query('search', $this->searchOperator);
     }
 
     public function render()
@@ -49,19 +60,11 @@ class OperatorDetailDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->where(function ($query) {
-                $searchTerms = '%' . $this->searchOperator . '%';
+                $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
                 $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                    ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                        $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
                     })
                     ->whereHas('instruction', function ($subQuery) {
                         $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');

@@ -1,18 +1,38 @@
 <div>
     {{-- The Master doesn't talk, he acts. --}}
-    {{-- <div class="row">
-        <div class="col">
-            <select id="" name="" class="form-control form-select w-auto" wire:model="paginateNewSpk">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="expanel expanel-default">
+                <div class="expanel-body">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <label class="form-label mb-3">Dijadwalkan</label>
+                            <div class="form_group">
+                                <div class="input-group">
+                                    <input type="date"
+                                        wire:model="dijadwalkanSelected"
+                                        id="dijadwalkanSelected"
+                                        class="form-control @error('dijadwalkanSelected') is-invalid @enderror">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <label class="form-label mb-3">Target
+                                Selesai</label>
+                            <div class="form_group">
+                                <div class="input-group">
+                                    <input type="date"
+                                        wire:model="targetSelesaiSelected"
+                                        id="targetSelesaiSelected"
+                                        class="form-control @error('targetSelesaiSelected') is-invalid @enderror">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col d-flex justify-content-end">
-            <input type="text" class="form-control w-auto" placeholder="Search" wire:model="searchNewSpk">
-        </div>
-    </div> --}}
+    </div>
     <div class="row mt-3">
         <div class="col-md-12">
             <div class="table-responsive">
@@ -24,6 +44,8 @@
                             <th class="border-bottom-0">Type SPK</th>
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
+                            <th class="border-bottom-0">Dijadwalkan</th>
+                            <th class="border-bottom-0">Target</th>
                             <th class="border-bottom-0">Total Lembar Cetak</th>
                             <th class="border-bottom-0">Machine</th>
                         </tr>
@@ -50,6 +72,8 @@
                                 </td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
+                                <td>{{ $dataInstruction->schedule_date }}</td>
+                                <td>{{ $dataInstruction->target_date }}</td>
                                 <?php
                                 $totalLembarCetak = 0;
                                 ?>
