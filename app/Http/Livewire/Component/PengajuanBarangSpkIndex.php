@@ -86,8 +86,8 @@ class PengajuanBarangSpkIndex extends Component
                 'keterangan' => null,
                 'file_barang' => [],
                 'status_id' => '8',
-                // 'status' => 'Pending',
-                // 'state_pengajuan' => 'New',
+                'status' => 'Pending',
+                'state_pengajuan' => 'New',
             ];
         }
     }
