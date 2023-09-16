@@ -1466,10 +1466,10 @@ class CreateAccInstructionIndex extends Component
                 $this->spk_number = 'SLN' . date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
             }
             if ($datacustomerlist->taxes == 'nonpajak' && empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 167;
+                $nomor_urut = $nomor_spk + 168;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1);
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 167;
+                $nomor_urut = $nomor_spk + 168;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A';
             } elseif ($datacustomerlist->taxes == 'nonpajak' && isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet);
@@ -1501,10 +1501,10 @@ class CreateAccInstructionIndex extends Component
             }
 
             if (empty($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 167;
+                $nomor_urut = $nomor_spk + 168;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '(STK)';
             } elseif (isset($this->sub_spk) && empty($this->spk_parent)) {
-                $nomor_urut = $nomor_spk + 167;
+                $nomor_urut = $nomor_spk + 168;
                 $this->spk_number = date('y') . '-' . sprintf('1%04d', $nomor_urut + 1) . '-A(STK)';
             } elseif (isset($this->sub_spk) && isset($this->spk_parent)) {
                 $this->spk_number = date('y') . '-' . sprintf($nomor_parent) . '-' . sprintf(++$code_alphabet) . '(STK)';
