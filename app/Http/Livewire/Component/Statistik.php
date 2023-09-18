@@ -80,6 +80,13 @@ class Statistik extends Component
         //             'status_id' => '7',
         //             'spk_status' => 'Selesai',
         //         ]);
+                
+        //         $dataInstruction = Instruction::find($data['instruction_id']);
+        //         if($dataInstruction->type_order == 'layout'){
+        //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //                 'job_id' => '37',
+        //             ]);
+        //         }
         //     }else{
         //         $create = WorkStep::create([
         //             'instruction_id' => $data['instruction_id'],
@@ -166,13 +173,13 @@ class Statistik extends Component
 
         $this->spkCompleteLayout = Instruction::where('type_order', 'layout')
             ->whereHas('workstep', function ($query) {
-                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+                $query->where('work_step_list_id', 1)->whereIn('spk_status', ['Selesai', 'Acc']);
             })
             ->count();
 
         $this->spkCompleteSample = Instruction::where('type_order', 'sample')
             ->whereHas('workstep', function ($query) {
-                $query->where('work_step_list_id', 1)->where('spk_status', 'Selesai');
+                $query->where('work_step_list_id', 1)->whereIn('spk_status', ['Selesai', 'Acc']);
             })
             ->count();
 
