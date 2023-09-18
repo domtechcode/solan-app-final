@@ -69,7 +69,26 @@ class FormSablonIndex extends Component
             'hasil_akhir_sablon' => 'required',
         ]);
 
-        $instructionData = Instruction::find($this->instructionCurrentId);
+        $currentStep = WorkStep::find($this->workStepCurrentId);
+        $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('work_step_list_id', 2)
+            ->first();
+        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('step', $currentStep->step + 1)
+            ->first();
+
+        $previousStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('step', $currentStep->step - 1)
+            ->first();
+        
+        if($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete'){
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Submit',
+                'message' => 'Data tidak bisa di submit, karena langkah kerja sebelumnya tidak/belum complete',
+            ]);
+        }else{
+            $instructionData = Instruction::find($this->instructionCurrentId);
 
         if ($this->catatanProsesPengerjaan) {
             $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
@@ -108,15 +127,7 @@ class FormSablonIndex extends Component
         $createFormSablon = FormSablon::create([
             'instruction_id' => $this->instructionCurrentId,
             'hasil_akhir_sablon' => $this->hasil_akhir_sablon,
-        ]);
-
-        $currentStep = WorkStep::find($this->workStepCurrentId);
-        $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
-            ->where('work_step_list_id', 2)
-            ->first();
-        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-            ->where('step', $currentStep->step + 1)
-            ->first();
+        ]);        
 
         if ($currentStep->status_task == 'Reject Requirements') {
             $currentStep->update([
@@ -343,6 +354,7 @@ class FormSablonIndex extends Component
         ]);
 
         return redirect()->route('operator.dashboard');
+        }
     }
 
     public function messageSent($arguments)

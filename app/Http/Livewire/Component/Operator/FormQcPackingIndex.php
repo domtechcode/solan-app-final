@@ -102,24 +102,6 @@ class FormQcPackingIndex extends Component
             'anggota.*.hasil' => 'required',
         ]);
 
-        $instructionData = Instruction::find($this->instructionCurrentId);
-
-        if ($this->catatanProsesPengerjaan) {
-            $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
-
-            // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
-
-            // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
-            $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
-            $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
-
-            // Simpan data ke database sebagai JSON
-            $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
-                'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
-            ]);
-        }
-
         $currentStep = WorkStep::find($this->workStepCurrentId);
         $backtojadwal = WorkStep::where('instruction_id', $this->instructionCurrentId)
             ->where('work_step_list_id', 2)
@@ -128,109 +110,139 @@ class FormQcPackingIndex extends Component
             ->where('step', $currentStep->step + 1)
             ->first();
 
-        if (isset($this->anggota)) {
-            $deleteFormQcPacking = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->delete();
-            foreach ($this->anggota as $dataAnggota) {
-                $createFormQcPacking = FormQcPacking::create([
-                    'instruction_id' => $this->instructionCurrentId,
-                    'hasil_akhir' => $this->hasil_akhir,
-                    'jumlah_barang_gagal' => $this->jumlah_barang_gagal,
-                    'jumlah_stock' => $this->jumlah_stock,
-                    'lokasi_stock' => $this->lokasi_stock,
-                    'nama_anggota' => $dataAnggota['nama'],
-                    'hasil_per_anggota' => $dataAnggota['hasil'],
+        $previousStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+            ->where('step', $currentStep->step - 1)
+            ->first();
+
+        if ($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete') {
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Submit',
+                'message' => 'Data tidak bisa di submit, karena langkah kerja sebelumnya tidak/belum complete',
+            ]);
+        } else {
+            $instructionData = Instruction::find($this->instructionCurrentId);
+
+            if ($this->catatanProsesPengerjaan) {
+                $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
+
+                // Ambil alasan pause yang sudah ada dari database
+                $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
+
+                // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
+                $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
+                $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
+
+                // Simpan data ke database sebagai JSON
+                $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
+                    'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
                 ]);
             }
-        }
 
-        if ($currentStep->status_task == 'Reject Requirements') {
-            $currentStep->update([
-                'state_task' => 'Complete',
-                'status_task' => 'Complete',
-                'selesai' => Carbon::now()->toDateTimeString(),
-            ]);
+            if (isset($this->anggota)) {
+                $deleteFormQcPacking = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->delete();
+                foreach ($this->anggota as $dataAnggota) {
+                    $createFormQcPacking = FormQcPacking::create([
+                        'instruction_id' => $this->instructionCurrentId,
+                        'hasil_akhir' => $this->hasil_akhir,
+                        'jumlah_barang_gagal' => $this->jumlah_barang_gagal,
+                        'jumlah_stock' => $this->jumlah_stock,
+                        'lokasi_stock' => $this->lokasi_stock,
+                        'nama_anggota' => $dataAnggota['nama'],
+                        'hasil_per_anggota' => $dataAnggota['hasil'],
+                    ]);
+                }
+            }
 
-            $findSourceReject = WorkStep::find($currentStep->reject_from_id);
-
-            $findSourceReject->update([
-                'state_task' => 'Running',
-                'status_task' => 'Pending Approved',
-            ]);
-
-            $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                'status_id' => 1,
-                'job_id' => $findSourceReject->work_step_list_id,
-            ]);
-
-            $currentStep->update([
-                'reject_from_id' => null,
-                'reject_from_status' => null,
-                'reject_from_job' => null,
-                'selesai' => Carbon::now()->toDateTimeString(),
-            ]);
-
-            $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
-            event(new IndexRenderEvent('refresh'));
-        } else {
-            // Cek apakah $currentStep ada dan step berikutnya ada
-            if ($currentStep) {
+            if ($currentStep->status_task == 'Reject Requirements') {
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                     'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
 
-                // Cek apakah step berikutnya ada sebelum melanjutkan
-                if ($nextStep) {
-                    $nextStep->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
-                    ]);
+                $findSourceReject = WorkStep::find($currentStep->reject_from_id);
 
-                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'job_id' => $nextStep->work_step_list_id,
-                        'status_id' => 1,
-                    ]);
+                $findSourceReject->update([
+                    'state_task' => 'Running',
+                    'status_task' => 'Pending Approved',
+                ]);
 
-                    $userDestination = User::where('role', 'Penjadwalan')->get();
-                    foreach ($userDestination as $dataUser) {
-                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
-                    }
-                    $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
-                    event(new IndexRenderEvent('refresh'));
-                } else {
-                    $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'spk_status' => 'Selesai',
+                $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'status_id' => 1,
+                    'job_id' => $findSourceReject->work_step_list_id,
+                ]);
+
+                $currentStep->update([
+                    'reject_from_id' => null,
+                    'reject_from_status' => null,
+                    'reject_from_job' => null,
+                    'selesai' => Carbon::now()->toDateTimeString(),
+                ]);
+
+                $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
+                event(new IndexRenderEvent('refresh'));
+            } else {
+                // Cek apakah $currentStep ada dan step berikutnya ada
+                if ($currentStep) {
+                    $currentStep->update([
                         'state_task' => 'Complete',
                         'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
                     ]);
 
-                    $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                        'job_id' => $currentStep->work_step_list_id,
-                        'status_id' => 7,
+                    // Cek apakah step berikutnya ada sebelum melanjutkan
+                    if ($nextStep) {
+                        $nextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
+
+                        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'job_id' => $nextStep->work_step_list_id,
+                            'status_id' => 1,
+                        ]);
+
+                        $userDestination = User::where('role', 'Penjadwalan')->get();
+                        foreach ($userDestination as $dataUser) {
+                            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                        }
+                        $this->messageSent(['receiver' => $nextStep->user_id, 'conversation' => 'SPK Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                        event(new IndexRenderEvent('refresh'));
+                    } else {
+                        $updateSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'spk_status' => 'Selesai',
+                            'state_task' => 'Complete',
+                            'status_task' => 'Complete',
+                        ]);
+
+                        $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                            'job_id' => $currentStep->work_step_list_id,
+                            'status_id' => 7,
+                        ]);
+                    }
+                }
+
+                $searchWaitingSpkQc = Instruction::where('waiting_spk_qc', $instructionData->spk_number)->first();
+                $jumlahStock = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->first();
+
+                if ($searchWaitingSpkQc) {
+                    $newSpkStatus = $jumlahStock->jumlah_stock >= $searchWaitingSpkQc->quantity ? 'Qty QC Tersedia' : 'Failed Waiting Qty QC';
+
+                    $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
+                        'spk_status' => $newSpkStatus,
                     ]);
                 }
             }
 
-            $searchWaitingSpkQc = Instruction::where('waiting_spk_qc', $instructionData->spk_number)->first();
-            $jumlahStock = FormQcPacking::where('instruction_id', $this->instructionCurrentId)->first();
+            $this->emit('flashMessage', [
+                'type' => 'success',
+                'title' => 'Plate Instruksi Kerja',
+                'message' => 'Data Plate berhasil disimpan',
+            ]);
 
-            if ($searchWaitingSpkQc) {
-                $newSpkStatus = $jumlahStock->jumlah_stock >= $searchWaitingSpkQc->quantity ? 'Qty QC Tersedia' : 'Failed Waiting Qty QC';
-
-                $updateSpkHold = WorkStep::where('instruction_id', $searchWaitingSpkQc->id)->update([
-                    'spk_status' => $newSpkStatus,
-                ]);
-            }
+            return redirect()->route('operator.dashboard');
         }
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Plate Instruksi Kerja',
-            'message' => 'Data Plate berhasil disimpan',
-        ]);
-
-        return redirect()->route('operator.dashboard');
     }
 
     public function messageSent($arguments)
