@@ -86,6 +86,10 @@ class Statistik extends Component
         //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
         //                 'job_id' => '37',
         //             ]);
+        //         }else{
+        //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //                 'job_id' => '36',
+        //             ]);
         //         }
         //     }else{
         //         $create = WorkStep::create([
@@ -101,6 +105,17 @@ class Statistik extends Component
         //             'job_id' => $data['job_id'],
         //             'spk_status' => 'Selesai',
         //         ]);
+
+        //         $dataInstruction = Instruction::find($data['instruction_id']);
+        //         if($dataInstruction->type_order == 'layout'){
+        //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //                 'job_id' => '37',
+        //             ]);
+        //         }else{
+        //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //                 'job_id' => '36',
+        //             ]);
+        //         }
         //     }
         // }
 
