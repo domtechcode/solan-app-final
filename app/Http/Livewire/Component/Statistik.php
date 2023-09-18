@@ -70,6 +70,40 @@ class Statistik extends Component
 
     public function mount()
     {
+        // $dataCollect = WorkStep::where('spk_status', 'Training Program')->get();
+        // foreach ($dataCollect as $key => $data) {
+        //     $current = WorkStep::where('instruction_id', $data['instruction_id'])->where('work_step_list_id', 1)->first();
+        //     if(isset($current)){
+        //         WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //             'status_task' => 'Selesai',
+        //             'state_task' => 'Selesai',
+        //             'status_id' => '7',
+        //             'spk_status' => 'Selesai',
+        //         ]);
+                
+        //         $dataInstruction = Instruction::find($data['instruction_id']);
+        //         if($dataInstruction->type_order == 'layout'){
+        //             WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //                 'job_id' => '37',
+        //             ]);
+        //         }
+        //     }else{
+        //         $create = WorkStep::create([
+        //             'instruction_id' => $data['instruction_id'],
+        //             'work_step_list_id' => 1,
+        //             'user_id' => 2,
+        //         ]);
+
+        //         WorkStep::where('instruction_id', $data['instruction_id'])->update([
+        //             'status_task' => 'Selesai',
+        //             'state_task' => 'Selesai',
+        //             'status_id' => '7',
+        //             'job_id' => $data['job_id'],
+        //             'spk_status' => 'Selesai',
+        //         ]);
+        //     }
+        // }
+
         $this->totalOrder = Instruction::count();
 
         $this->prosesOrder = Instruction::whereHas('workstep', function ($query) {
