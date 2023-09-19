@@ -71,7 +71,7 @@
                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                     <thead>
                         <tr>
-                            <th class="border-bottom-0">No</th>
+                            <th class="border-bottom-0">User</th>
                             <th class="border-bottom-0">No SPK</th>
                             <th class="border-bottom-0">Order</th>
                             <th class="border-bottom-0">No Po</th>
@@ -83,24 +83,28 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $currentUserId = null;
+                        @endphp
                         @forelse ($dataDetailWorkStep as $key => $dataInstruction)
+                            @if ($currentUserId !== $dataInstruction->user->id)
+                                @php
+                                    $currentUserId = $dataInstruction->user->id;
+                                @endphp
+                                <tr class="user-group table-info">
+                                    <td colspan="9"><strong>{{ $dataInstruction->user->name }}</strong></td>
+                                </tr>
+                            @endif
                             <tr wire:key="{{ $dataInstruction->instruction->id }}">
-                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $dataInstruction->user->name }}</td>
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
                                     @if ($dataInstruction->instruction->spk_number_fsc)
-                                        <span
-                                            class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
-
+                
                                     @if ($dataInstruction->instruction->group_id)
-                                        <button
-                                            class="btn btn-icon btn-sm btn-info">Group-{{ $dataInstruction->instruction->group_id }}</button>
-                                    @endif
-                                </td>
-                                <td>{{ $dataInstruction->instruction->spk_type }}
-                                    @if ($dataInstruction->instruction->spk_type !== 'production' && $dataInstruction->instruction->count !== null)
-                                        - <span class="tag tag-border">{{ $dataInstruction->instruction->count }}</span>
+                                        <button class="btn btn-icon btn-sm btn-info">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
@@ -115,6 +119,9 @@
                                     @endif
                                 </td>
                                 <td>
+                                    {{ $dataInstruction->status_task }}
+                                </td>
+                                <td>
                                     -
                                 </td>
                             </tr>
@@ -127,12 +134,13 @@
                         @endforelse
                     </tbody>
                 </table>
+                
 
             </div>
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{ $dataDetailWorkStep->links() }}
+            {{-- {{ $dataDetailWorkStep->links() }} --}}
         </div>
     </div>
 </div>
