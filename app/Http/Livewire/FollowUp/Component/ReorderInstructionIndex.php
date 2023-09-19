@@ -217,7 +217,7 @@ class ReorderInstructionIndex extends Component
         ]);
 
         $customerList = Customer::find($this->customer);
-        $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
+        $dataInstruction = Instruction::where('customer_number', '!=', $this->customer_number)->first();
 
         if ($this->spk_type == 'stock') {
             $this->spk_type = 'production';
@@ -236,7 +236,7 @@ class ReorderInstructionIndex extends Component
             $this->spk_parent = NULL;
         }
 
-        if ($dataInstruction != null) {
+        if ($dataInstruction == null) {
             if ($this->spk_type != 'layout') {
                 $this->validate([
                     'panjang_barang' => 'required',
