@@ -161,46 +161,13 @@
                             <div class="col-xl-12 col-md-12">
                                 <div class="card card-headpills">
                                     <div class="card-status bg-info br-te-7 br-ts-7"></div>
-                                    <div class="card-header border-bottom">
-                                        <ul class="nav nav-pills card-header-pills">
-                                            <?php
-                                            $noWorkStep = 1;
-                                            ?>
-
-                                            @foreach ($workStepList as $data)
-                                                <li class="nav-item">
-                                                    <button
-                                                        class="btn btn-sm btn-info mt-1 mb-1 me-3 {{ $activeTabOperator === 'tabOperator' . $noWorkStep ? 'active' : '' }}"
-                                                        data-bs-toggle="tab"
-                                                        wire:click="changeTabOperator('tabOperator{{ $noWorkStep }}')"
-                                                        wire:key="tabOperator{{ $noWorkStep }}"
-                                                        href="#tabOperator{{ $noWorkStep }}">
-                                                        {{ $data->name }}
-                                                    </button>
-                                                </li>
-                                                <?php
-                                                $noWorkStep++;
-                                                ?>
-                                            @endforeach
-                                        </ul>
-                                    </div>
                                     <div class="card-body">
                                         <div class="tab-content">
-                                            <?php
-                                            $noWorkStepSelected = 1;
-                                            ?>
-
-                                            @foreach ($workStepList as $data)
-                                                <div class="tab-pane {{ $activeTabOperator === 'tabOperator' . $noWorkStepSelected ? 'active' : '' }}"
-                                                    id="tabOperator{{ $noWorkStepSelected }}">
-                                                    <h5 class="card-title">{{ $data->name }}</h5>
-                                                        @livewire('penjadwalan.component.operator-dashboard-index' , ['dataWorkStepList' => $data->id], key($data->id))
-                                                </div>
-                                                <?php
-                                                $noWorkStepSelected++;
-                                                ?>
-                                            @endforeach
-
+                                            <div class="tab-pane {{ $activeTabOperator === 'tabOperator1' ? 'active' : '' }}"
+                                                id="tabOperator1">
+                                                <h5 class="card-title">Operator</h5>
+                                                @livewire('penjadwalan.component.operator-dashboard-index')
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -248,7 +215,8 @@
                                                     data-bs-toggle="tab"
                                                     wire:click="changeTabPengajuanBarangPersonal('tabPengajuanBarangPersonal2')"
                                                     wire:key="tabPengajuanBarangPersonal2"
-                                                    href="#tabPengajuanBarangPersonal2">Reject Pengajuan Barang Personal -
+                                                    href="#tabPengajuanBarangPersonal2">Reject Pengajuan Barang
+                                                    Personal -
                                                     {{ $dataCountRejectPengajuanBarangPersonal }}</button>
                                             </li>
                                             <li class="nav-item">
