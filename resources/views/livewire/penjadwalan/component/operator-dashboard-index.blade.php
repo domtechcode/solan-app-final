@@ -11,8 +11,9 @@
                                 <div wire:ignore>
                                     <select class="form-control" data-clear data-pharaonic="select2"
                                         data-component-id="{{ $this->id }}" data-placeholder="Select Langkah Kerja"
-                                        wire:model="worksteplistSelected" id="worksteplistSelected" style="width: 100%;">
-                                        <option label>Select Langkah Kerja</option>
+                                        wire:model="worksteplistSelected" id="worksteplistSelected"
+                                        style="width: 100%;">
+                                        <option label="Select Langkah Kerja"></option>
                                         @foreach ($dataWorkStepList as $dataworksteplist)
                                             <option value="{{ $dataworksteplist->id }}">{{ $dataworksteplist->name }}
                                             </option>
@@ -48,7 +49,7 @@
                                     <select class="form-control" data-clear data-pharaonic="select2"
                                         data-component-id="{{ $this->id }}" data-placeholder="Select User/Operator"
                                         wire:model="userSelected" id="userSelected" style="width: 100%;">
-                                        <option label>Select User/Operator</option>
+                                        <option label="Select User/Operator"></option>
                                         <option value="all">All
                                         </option>
                                         @foreach ($dataUser as $datauser)
@@ -79,7 +80,7 @@
                             <th class="border-bottom-0">Target</th>
                             <th class="border-bottom-0">Machine</th>
                             <th class="border-bottom-0">Status</th>
-                            <th class="border-bottom-0">Action</th>
+                            <th class="border-bottom-0">Action/Move</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,11 +101,13 @@
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
                                     @if ($dataInstruction->instruction->spk_number_fsc)
-                                        <span class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
+                                        <span
+                                            class="tag tag-border">{{ $dataInstruction->instruction->spk_number_fsc }}</span>
                                     @endif
-                
+
                                     @if ($dataInstruction->instruction->group_id)
-                                        <button class="btn btn-icon btn-sm btn-info">Group-{{ $dataInstruction->instruction->group_id }}</button>
+                                        <button
+                                            class="btn btn-icon btn-sm btn-info">Group-{{ $dataInstruction->instruction->group_id }}</button>
                                     @endif
                                 </td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
@@ -122,7 +125,27 @@
                                     {{ $dataInstruction->status_task }}
                                 </td>
                                 <td>
-                                    -
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div wire:ignore>
+                                                <select class="form-control" data-clear data-pharaonic="select2"
+                                                    data-component-id="{{ $this->id }}" data-placeholder="Select User"
+                                                    wire:model="changeTo.{{ $dataInstruction->id }}" id="changeTo" style="width: 100%;">
+                                                    <option label='Select User'></option>
+                                                    @foreach ($dataUser as $datauser)
+                                                        <option value="{{ $datauser->id }}">{{ $datauser->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>                                                
+                                            </div>
+
+                                            
+                                        </div>
+                                        @error('changeTo.' . $dataInstruction->id)
+                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                            @enderror
+                                        <button type="button" class="btn btn-success btn-sm mt-2" wire:click="pindahOperator({{ $dataInstruction->id }})" wire:key="pindahOperator({{ $dataInstruction->id }})">Move</button>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -134,7 +157,7 @@
                         @endforelse
                     </tbody>
                 </table>
-                
+
 
             </div>
 

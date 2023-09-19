@@ -26,6 +26,7 @@ class OperatorDashboardIndex extends Component
     public $worksteplistSelected;
 
     public $workSteps = [];
+    public $changeTo = [];
 
     public $selectedInstructionParent;
     public $selectedWorkStepParent;
@@ -40,6 +41,8 @@ class OperatorDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    protected $listeners = ['indexRender' => '$refresh'];
+    
     public function updatingDijadwalkanSelected()
     {
         $this->resetPage();
@@ -65,7 +68,7 @@ class OperatorDashboardIndex extends Component
         $this->select2();
         $this->dataWorkStepList = WorkStepList::whereNotIn('id', [1, 2, 3, 4, 5])->get();
         $this->dataUser = User::where('role', 'Operator')->get();
-
+        $this->changeTo = [];
         $this->userSelected = 'all';
         $this->worksteplistSelected = 6;
     }
@@ -90,6 +93,7 @@ class OperatorDashboardIndex extends Component
 
     public function render()
     {
+        $this->select2();
         if ($this->userSelected == 'all') {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('state_task', 'Running')
@@ -110,7 +114,7 @@ class OperatorDashboardIndex extends Component
                 ->orderBy('user_id', 'asc')
                 ->get();
 
-                $dataDetailWorkStep->groupBy('user_id');
+            $dataDetailWorkStep->groupBy('user_id');
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -132,5 +136,30 @@ class OperatorDashboardIndex extends Component
         }
 
         return view('livewire.penjadwalan.component.operator-dashboard-index', ['dataDetailWorkStep' => $dataDetailWorkStep]);
+    }
+
+    public function pindahOperator($selectedValue)
+    {
+        $this->validate(
+            [
+                "changeTo.{$selectedValue}" => 'required',
+            ],
+            [
+                "changeTo.{$selectedValue}.required" => 'Pilih User Terlebih Dahulu',
+            ],
+        );
+
+        $searchWorkStep = WorkStep::find($selectedValue);
+        $searchWorkStep->update([
+            'user_id' => $this->changeTo[$selectedValue],
+        ]);
+
+        $this->changeTo = [];
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Success Reschedule',
+            'message' => 'Data berhasil disimpan',
+        ]);
+        $this->emit('indexRender');
     }
 }
