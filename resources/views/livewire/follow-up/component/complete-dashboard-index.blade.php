@@ -140,6 +140,10 @@
                                                 wire:click="modalInstructionDetailsRevisiSample({{ $dataInstruction->instruction->id }})"
                                                 wire:key="modalInstructionDetailsRevisiSample({{ $dataInstruction->instruction->id }})"><i
                                                     class="fe fe-eye"></i></button>
+                                        @elseif ($dataInstruction->instruction->spk_type == 'production' && $dataInstruction->spk_status == 'Kekurangan QTY Kirim')
+                                            <a class="btn btn-icon btn-sm btn-primary"
+                                                href="{{ route('followUp.updateQtyInstruction', ['instructionId' => $dataInstruction->instruction->id]) }}"><i
+                                                    class="fe fe-edit"></i></a>
                                         @else
                                             <button class="btn btn-icon btn-sm btn-dark" data-bs-toggle="modal"
                                                 data-bs-target="#openModalComplete"
