@@ -109,7 +109,8 @@
                                         <th class="border-bottom-0">Style</th>
                                         <th class="border-bottom-0">TGL Masuk</th>
                                         <th class="border-bottom-0">TGL Kirim</th>
-                                        <th class="border-bottom-0">Total Qty</th>
+                                        <th class="border-bottom-0">Permintaan Qty</th>
+                                        <th class="border-bottom-0">Stock</th>
                                         <th class="border-bottom-0">Follow Up</th>
                                         <th class="border-bottom-0">Action</th>
                                     </tr>
@@ -140,7 +141,8 @@
                                             <td>{{ $instruction->code_style }}</td>
                                             <td>{{ $instruction->order_date }}</td>
                                             <td>{{ $instruction->shipping_date }}</td>
-                                            <td>{{ currency_idr($instruction->quantity - $instruction->stock) }}</td>
+                                            <td>{{ $instruction->quantity }}</td>
+                                            <td>{{ $instruction->stock }}</td>
                                             <td>{{ $instruction->follow_up }}</td>
                                             <td>
                                                 <div class="btn-list">

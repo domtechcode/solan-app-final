@@ -108,7 +108,10 @@ class PengajuanKekuranganQcDashboardIndex extends Component
                 'spk_status' => 'Running',
             ]);
 
-            $this->messageSent(['receiver' => $updatePengiriman->user_id, 'conversation' => 'SPK Kekurangan Qc Di Tolak', 'instruction_id' => $updatePengajuan->instruction_id]);
+            $userDestination = User::where('jobdesk', 'Pengiriman')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Kekurangan Di Tolak', 'instruction_id' => $updatePengajuan->instruction_id]);
+            }
         
         }else{
             $updatePengajuan->update([
