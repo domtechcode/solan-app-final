@@ -52,14 +52,8 @@
                                 <td>{{ $dataInstruction->instruction->customer_name }}</td>
                                 <td>{{ $dataInstruction->instruction->order_name }}</td>
                                 <td>{{ $dataInstruction->instruction->customer_number }}</td>
-                                @if ($dataInstruction->instruction->group_id)
-                                    <td>
-                                        {{ currency_idr($this->sumGroup($dataInstruction->instruction->group_id)) }}
-                                    </td>
-                                @else
-                                    <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
-                                    </td>
-                                @endif
+                                <td>{{ currency_idr($dataInstruction->instruction->quantity - $dataInstruction->instruction->stock) }}
+                                </td>
                                 <td>{{ $dataInstruction->qty_kirim }}</td>
                                 <td>{{ $dataInstruction->qty_kekurangan }}</td>
                                 <td>

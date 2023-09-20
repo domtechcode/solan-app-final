@@ -86,7 +86,7 @@ class CompleteDashboardIndex extends Component
     public function render()
     {
         $dataComplete = WorkStep::where('work_step_list_id', 1)
-            ->whereIn('spk_status', ['Selesai'])
+            ->whereIn('spk_status', ['Selesai', 'Kekurangan QTY Kirim'])
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchComplete . '%';
                 $query
