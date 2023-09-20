@@ -55,6 +55,7 @@ class ReorderInstructionIndex extends Component
     public $type_order;
     public $spk_layout_number;
     public $spk_sample_number;
+    public $spk_stock_number;
     public $po_foc;
 
     //data
@@ -62,6 +63,7 @@ class ReorderInstructionIndex extends Component
     public $dataparents = [];
     public $datalayouts = [];
     public $datasamples = [];
+    public $datastocks = [];
     public $dataworksteplists = [];
 
     public $workSteps = [];
@@ -112,6 +114,9 @@ class ReorderInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
+            $this->datastocks = Instruction::where('type_order', 'stock')
+            ->orderByDesc('created_at')
+            ->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'Penjadwalan', 'RAB'])->get();
 
         $this->instructions = Instruction::findorfail($instructionId);
@@ -140,6 +145,7 @@ class ReorderInstructionIndex extends Component
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
         $this->spk_sample_number = $this->instructions->spk_sample_number;
+        $this->spk_stock_number = $this->instructions->spk_stock_number;
 
         $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->whereNotIn('work_step_list_id', [1, 2, 3])
@@ -277,6 +283,7 @@ class ReorderInstructionIndex extends Component
                 'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
+                'spk_stock_number' => $this->spk_stock_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
@@ -493,6 +500,17 @@ class ReorderInstructionIndex extends Component
                             ]);
                         }
                     }
+                }
+            }
+
+            if ($this->spk_stock_number) {
+                $dataInstructionStock = Instruction::where('spk_number', $this->spk_stock_number)->first();
+                $cariStock = WorkStep::where('instruction_id', $dataInstructionStock->id)->where('work_step_list_id', 1)->first();
+
+                if($cariStock->spk_status == 'Running'){
+                    $updatePending = WorkStep::where('instruction_id', $instruction->id)->update([
+                        'spk_status' => 'Hold Waiting STK',
+                    ]);
                 }
             }
 
@@ -1396,6 +1414,18 @@ class ReorderInstructionIndex extends Component
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
             'target' => '#spk_layout_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#spk_sample_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#spk_stock_number',
         ]);
 
         // Load Event

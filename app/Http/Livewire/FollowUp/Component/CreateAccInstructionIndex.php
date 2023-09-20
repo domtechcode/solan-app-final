@@ -53,6 +53,7 @@ class CreateAccInstructionIndex extends Component
     public $type_order;
     public $spk_layout_number;
     public $spk_sample_number;
+    public $spk_stock_number;
 
     public $panjang_barang;
     public $lebar_barang;
@@ -63,6 +64,7 @@ class CreateAccInstructionIndex extends Component
     public $dataparents = [];
     public $datalayouts = [];
     public $datasamples = [];
+    public $datastocks = [];
     public $dataworksteplists = [];
 
     public $workSteps = [];
@@ -116,6 +118,9 @@ class CreateAccInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
+        $this->datastocks = Instruction::where('type_order', 'stock')
+            ->orderByDesc('created_at')
+            ->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'RAB', 'Penjadwalan'])
             ->orderBy('no_urut', 'asc')
             ->get();
@@ -142,6 +147,8 @@ class CreateAccInstructionIndex extends Component
         $this->price = $this->instructions->price;
         $this->follow_up = $this->instructions->follow_up;
         $this->type_ppn = $this->instructions->type_ppn;
+        $this->panjang_barang = $this->instructions->panjang_barang;
+        $this->lebar_barang = $this->instructions->lebar_barang;
 
         if ($dataInstruction->spk_type == 'layout') {
             $this->spk_layout_number = $dataInstruction->spk_number;
@@ -240,9 +247,9 @@ class CreateAccInstructionIndex extends Component
         }
 
         if ($this->spk_parent == '' || $this->spk_parent == false) {
-            $this->spk_parent = NULL;
+            $this->spk_parent = null;
         }
-        
+
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)
             ->whereNotNull('customer_number')
             ->where('sub_spk', '!=', $this->sub_spk)
@@ -298,6 +305,7 @@ class CreateAccInstructionIndex extends Component
                 'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
+                'spk_stock_number' => $this->spk_stock_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
@@ -513,6 +521,19 @@ class CreateAccInstructionIndex extends Component
                             ]);
                         }
                     }
+                }
+            }
+
+            if ($this->spk_stock_number) {
+                $dataInstructionStock = Instruction::where('spk_number', $this->spk_stock_number)->first();
+                $cariStock = WorkStep::where('instruction_id', $dataInstructionStock->id)
+                    ->where('work_step_list_id', 1)
+                    ->first();
+
+                if ($cariStock->spk_status == 'Running') {
+                    $updatePending = WorkStep::where('instruction_id', $instruction->id)->update([
+                        'spk_status' => 'Hold Waiting STK',
+                    ]);
                 }
             }
 
@@ -1405,6 +1426,18 @@ class CreateAccInstructionIndex extends Component
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
+            'target' => '#spk_sample_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#spk_stock_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
             'target' => '#spk_parent',
         ]);
     }
@@ -1415,7 +1448,7 @@ class CreateAccInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';

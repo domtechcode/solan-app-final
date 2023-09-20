@@ -53,6 +53,7 @@ class EditInstructionIndex extends Component
     public $lebar_barang;
     public $spk_layout_number;
     public $spk_sample_number;
+    public $spk_stock_number;
     public $po_foc;
 
     //data
@@ -60,6 +61,7 @@ class EditInstructionIndex extends Component
     public $dataparents = [];
     public $datalayouts = [];
     public $datasamples = [];
+    public $datastocks = [];
     public $dataworksteplists = [];
 
     public $workSteps = [];
@@ -118,6 +120,9 @@ class EditInstructionIndex extends Component
         $this->datasamples = Instruction::where('spk_type', 'sample')
             ->orderByDesc('created_at')
             ->get();
+        $this->datastocks = Instruction::where('type_order', 'stock')
+            ->orderByDesc('created_at')
+            ->get();
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up', 'RAB', 'Penjadwalan'])
             ->orderBy('no_urut', 'asc')
             ->get();
@@ -150,6 +155,7 @@ class EditInstructionIndex extends Component
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
         $this->spk_sample_number = $this->instructions->spk_sample_number;
+        $this->spk_stock_number = $this->instructions->spk_stock_number;
 
         $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
             ->whereNotIn('work_step_list_id', [1, 2, 3])
@@ -245,7 +251,7 @@ class EditInstructionIndex extends Component
         }
 
         if ($this->spk_parent == '' || $this->spk_parent == false) {
-            $this->spk_parent = NULL;
+            $this->spk_parent = null;
         }
 
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
@@ -291,6 +297,7 @@ class EditInstructionIndex extends Component
                 'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
+                'spk_stock_number' => $this->spk_stock_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
@@ -428,37 +435,37 @@ class EditInstructionIndex extends Component
 
             if ($this->awalState == 'Ya') {
                 $updateFollowUp = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('step', 0)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Process',
-                    'target_date' => Carbon::now(),
-                    'schedule_date' => Carbon::now(),
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'selesai' => Carbon::now()->toDateTimeString(),
+                    ->where('step', 0)
+                    ->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Process',
+                        'target_date' => Carbon::now(),
+                        'schedule_date' => Carbon::now(),
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                    ]);
+
+                $firstWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', 1)
+                    ->first();
+
+                $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
+                    ->where('step', 1)
+                    ->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
+                        'schedule_date' => Carbon::now(),
+                        'target_date' => Carbon::now(),
+                        'reject_from_id' => null,
+                        'reject_from_status' => null,
+                        'reject_from_job' => null,
+                    ]);
+
+                $updateStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                    'status_id' => 1,
+                    'job_id' => $firstWorkStep->work_step_list_id,
                 ]);
-
-            $firstWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('step', 1)
-                ->first();
-
-            $updateNextStep = WorkStep::where('instruction_id', $this->currentInstructionId)
-                ->where('step', 1)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'schedule_date' => Carbon::now(),
-                    'target_date' => Carbon::now(),
-                    'reject_from_id' => null,
-                    'reject_from_status' => null,
-                    'reject_from_job' => null,
-                ]);
-
-            $updateStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                'status_id' => 1,
-                'job_id' => $firstWorkStep->work_step_list_id,
-            ]);
             } else {
                 foreach ($lastWorkStep as $lastwork) {
                     $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)
@@ -611,6 +618,19 @@ class EditInstructionIndex extends Component
 
                 if ($this->uploadFiles($this->currentInstructionId)) {
                     $this->uploadFiles($this->currentInstructionId);
+                }
+            }
+
+            if ($this->spk_stock_number) {
+                $dataInstructionStock = Instruction::where('spk_number', $this->spk_stock_number)->first();
+                $cariStock = WorkStep::where('instruction_id', $dataInstructionStock->id)
+                    ->where('work_step_list_id', 1)
+                    ->first();
+
+                if ($cariStock->spk_status == 'Running') {
+                    $updatePending = WorkStep::where('instruction_id', $instruction->id)->update([
+                        'spk_status' => 'Hold Waiting STK',
+                    ]);
                 }
             }
 
@@ -779,6 +799,18 @@ class EditInstructionIndex extends Component
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
+            'target' => '#spk_sample_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#spk_stock_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
             'target' => '#spk_parent',
         ]);
     }
@@ -789,7 +821,7 @@ class EditInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';

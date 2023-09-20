@@ -333,7 +333,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
                 <div class="form-group">
                     <div wire:ignore>
                         <div class="form-group">
@@ -352,7 +352,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
                 <div class="form-group">
                     <div wire:ignore>
                         <div class="form-group">
@@ -364,6 +364,25 @@
                                 @foreach ($datasamples as $datasample)
                                     <option value="{{ $datasample->spk_number }}">{{ $datasample->spk_number }} -
                                         {{ $datasample->order_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 col-md-4">
+                <div class="form-group">
+                    <div wire:ignore>
+                        <div class="form-group">
+                            <label class="form-label">SPK STK</label>
+                            <select class="form-control" data-clear data-pharaonic="select2"
+                                data-component-id="{{ $this->id }}" wire:model="spk_stock_number"
+                                id="spk_stock_number" data-placeholder="Choose one">
+                                <option value="">Choose one</option>
+                                @foreach ($datastocks as $datastock)
+                                    <option value="{{ $datastock->spk_number }}">{{ $datastock->spk_number }} -
+                                        {{ $datastock->order_name }}</option>
                                 @endforeach
                             </select>
                         </div>

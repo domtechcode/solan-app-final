@@ -186,6 +186,13 @@ class FormPengirimanIndex extends Component
                     ]);
                 }
 
+                $cariWaitingStk = Instruction::where('spk_stock_number', $instructionData->spk_number)->first();
+                if(isset($cariWaitingStk)) {
+                    WorkStep::where('instruction_id', $cariWaitingStk->id)->update([
+                        'spk_status' => 'Running',
+                    ]);
+                }
+
                 $this->emit('flashMessage', [
                     'type' => 'success',
                     'title' => 'Pengiriman Instruksi Kerja',

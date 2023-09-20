@@ -53,6 +53,7 @@ class UpdateInstructionIndex extends Component
     public $ppn = 11.2 / 100;
     public $spk_layout_number;
     public $spk_sample_number;
+    public $spk_stock_number;
     public $po_foc;
 
     //data
@@ -60,6 +61,7 @@ class UpdateInstructionIndex extends Component
     public $dataparents = [];
     public $datalayouts = [];
     public $datasamples = [];
+    public $datastocks = [];
 
     public $filecontohCurrent;
     public $filearsipCurrent;
@@ -96,6 +98,10 @@ class UpdateInstructionIndex extends Component
             ->orderByDesc('created_at')
             ->get();
 
+        $this->datastocks = Instruction::where('type_order', 'stock')
+            ->orderByDesc('created_at')
+            ->get();
+
         $this->instructions = Instruction::findorfail($instructionId);
         $this->spk_type = $this->instructions->type_order;
         $this->sub_spk = $this->instructions->sub_spk;
@@ -118,6 +124,9 @@ class UpdateInstructionIndex extends Component
         $this->type_ppn = $this->instructions->type_ppn;
         $this->spk_layout_number = $this->instructions->spk_layout_number;
         $this->spk_sample_number = $this->instructions->spk_sample_number;
+        $this->spk_stock_number = $this->instructions->spk_stock_number;
+        $this->panjang_barang = $this->instructions->panjang_barang;
+        $this->lebar_barang = $this->instructions->lebar_barang;
         $this->dataworksteplists = WorkStepList::whereNotIn('name', ['Follow Up'])->get();
 
         $dataWorkStep = WorkStep::where('instruction_id', $instructionId)
@@ -166,19 +175,17 @@ class UpdateInstructionIndex extends Component
 
     public function update()
     {
-        $this->validate(
-            [
-                'spk_type' => 'required',
-                'spk_number' => 'required',
-                'customer' => 'required',
-                'order_date' => 'required',
-                'shipping_date' => 'required',
-                'order_name' => 'required',
-                'quantity' => 'required',
-                'qtyState' => 'required',
-                'price' => 'required',
-            ]
-        );
+        $this->validate([
+            'spk_type' => 'required',
+            'spk_number' => 'required',
+            'customer' => 'required',
+            'order_date' => 'required',
+            'shipping_date' => 'required',
+            'order_name' => 'required',
+            'quantity' => 'required',
+            'qtyState' => 'required',
+            'price' => 'required',
+        ]);
 
         $customerList = Customer::find($this->customer);
 
@@ -196,7 +203,7 @@ class UpdateInstructionIndex extends Component
         }
 
         if ($this->spk_parent == '' || $this->spk_parent == false) {
-            $this->spk_parent = NULL;
+            $this->spk_parent = null;
         }
 
         $dataInstruction = Instruction::where('customer_number', $this->customer_number)->first();
@@ -242,6 +249,7 @@ class UpdateInstructionIndex extends Component
                 'ukuran_barang' => $ukuranBarang,
                 'spk_layout_number' => $this->spk_layout_number,
                 'spk_sample_number' => $this->spk_sample_number,
+                'spk_stock_number' => $this->spk_stock_number,
                 'type_ppn' => $this->type_ppn,
                 'ppn' => $this->ppn,
                 'type_order' => $this->type_order,
@@ -322,6 +330,19 @@ class UpdateInstructionIndex extends Component
                             ]);
                         }
                     }
+                }
+            }
+
+            if ($this->spk_stock_number) {
+                $dataInstructionStock = Instruction::where('spk_number', $this->spk_stock_number)->first();
+                $cariStock = WorkStep::where('instruction_id', $dataInstructionStock->id)
+                    ->where('work_step_list_id', 1)
+                    ->first();
+
+                if ($cariStock->spk_status == 'Running') {
+                    $updatePending = WorkStep::where('instruction_id', $instruction->id)->update([
+                        'spk_status' => 'Hold Waiting STK',
+                    ]);
                 }
             }
 
@@ -526,6 +547,18 @@ class UpdateInstructionIndex extends Component
         // Load Event
         $this->dispatchBrowserEvent('pharaonic.select2.load', [
             'component' => $this->id,
+            'target' => '#spk_sample_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
+            'target' => '#spk_stock_number',
+        ]);
+
+        // Load Event
+        $this->dispatchBrowserEvent('pharaonic.select2.load', [
+            'component' => $this->id,
             'target' => '#spk_parent',
         ]);
     }
@@ -536,7 +569,7 @@ class UpdateInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';
