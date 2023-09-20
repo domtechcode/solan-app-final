@@ -1069,14 +1069,24 @@ class CreateFormHitungBahanIndex extends Component
 
                     if ($keteranganData['fileRincian']) {
                         $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
-                        $norincian = 1;
                         foreach ($keteranganData['fileRincian'] as $file) {
+                            $norincian = uniqid();
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/hitung-bahan';
 
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-label-' . $norincian . '.' . $file->getClientOriginalExtension();
                             Storage::putFileAs($folder, $file, $fileName);
                             $norincian++;
 
+                            $keteranganFileRincian = $keterangan->fileRincian()->create([
+                                'instruction_id' => $this->currentInstructionId,
+                                'file_name' => $fileName,
+                                'file_path' => $folder,
+                            ]);
+                        }
+                    }
+
+                    if ($keteranganData['fileRincianLast']) {
+                        foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
                                 'file_name' => $fileName,
@@ -1268,14 +1278,24 @@ class CreateFormHitungBahanIndex extends Component
 
                     if (isset($keteranganData['fileRincian'])) {
                         $InstructionCurrentDataFile = Instruction::find($this->currentInstructionId);
-                        $norincian = 1;
                         foreach ($keteranganData['fileRincian'] as $file) {
+                            $norincian = uniqid();
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/hitung-bahan';
 
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-' . $norincian . '.' . $file->getClientOriginalExtension();
                             Storage::putFileAs($folder, $file, $fileName);
                             $norincian++;
 
+                            $keteranganFileRincian = $keterangan->fileRincian()->create([
+                                'instruction_id' => $this->currentInstructionId,
+                                'file_name' => $fileName,
+                                'file_path' => $folder,
+                            ]);
+                        }
+                    }
+
+                    if ($keteranganData['fileRincianLast']) {
+                        foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
                                 'file_name' => $fileName,
