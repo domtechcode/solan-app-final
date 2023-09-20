@@ -180,7 +180,7 @@
                                             <div class="expanel expanel-default">
                                                 <div class="expanel-heading">{{ $dataInstruction->instruction->spk_number }}</div>
                                                 <div class="expanel-body">
-                                                    {{ $dataInstruction->instruction->order_name }} - [{{ $dataInstruction->state_task }}]
+                                                    {{ $dataInstruction->instruction->order_name }} - [ {{ $dataInstruction->state_task }} ]
                                                     <div class="row">
                                                         <div class="col-sm-12 col-md-12">
                                                             <div class="form-group">
