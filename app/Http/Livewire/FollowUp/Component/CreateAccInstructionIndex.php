@@ -494,6 +494,14 @@ class CreateAccInstructionIndex extends Component
                         }
                     }
                 }
+
+                $updateSetting = WorkStep::where('instruction_id', $selectedLayout->id)->where('work_step_list_id', 6)->first();
+
+                if(isset($updateSetting)) {
+                    $updateSettingUser = WorkStep::where('instruction_id', $instruction->id)->where('work_step_list_id', 6)->update([
+                        'user_id' => $updateSetting->user_id,
+                    ]);
+                }
             }
 
             if ($this->spk_sample_number) {
