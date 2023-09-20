@@ -511,7 +511,6 @@
         </div>
     </div>
 
-
     <!-- Modal General-->
     <div wire:ignore.self class="modal fade" id="detailInstructionModalCompleteChecker" tabindex="-1"
         role="dialog">
