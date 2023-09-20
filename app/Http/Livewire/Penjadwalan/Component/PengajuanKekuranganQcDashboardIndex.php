@@ -91,21 +91,43 @@ class PengajuanKekuranganQcDashboardIndex extends Component
     public function pengajuanKekuranganQc($idPengajuan, $statePengajuan)
     {
         $updatePengajuan = PengajuanKekuranganQc::find($idPengajuan);
-        $updatePengajuan->update([
-            'status' => $statePengajuan,
-        ]);
+        
+        if($statePengajuan == 'Reject') {
+            $updatePengajuan->update([
+                'status' => $statePengajuan,
+            ]);
 
-        $this->emit('indexRender');
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Pengajuan Kekurangan Qc',
-            'message' => 'Data Pengajuan Kekurangan Qc berhasil disimpan',
-        ]);
+            $workStep = WorkStep::where('instruction_id', $updatePengajuan->instruction_id)->update([
+                'status_id' => 3,
+                'job_id' => 36,
+            ]);
 
-        $userDestination = User::where('role', 'Follow Up')->get();
-        foreach ($userDestination as $dataUser) {
-            $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Kekurangan Qc', 'instruction_id' => $updatePengajuan->instruction_id]);
+            $updatePengiriman = WorkStep::where('instruction_id', $updatePengajuan->instruction_id)->where('work_step_list_id', 36)->update([
+                'state_task' => 'Running',
+                'status_task' => 'Process',
+                'spk_status' => 'Running',
+            ]);
+
+            $this->messageSent(['receiver' => $updatePengiriman->user_id, 'conversation' => 'SPK Kekurangan Qc Di Tolak', 'instruction_id' => $updatePengajuan->instruction_id]);
+        
+        }else{
+            $updatePengajuan->update([
+                'status' => $statePengajuan,
+            ]);
+    
+            $this->emit('indexRender');
+            $this->emit('flashMessage', [
+                'type' => 'success',
+                'title' => 'Pengajuan Kekurangan Qc',
+                'message' => 'Data Pengajuan Kekurangan Qc berhasil disimpan',
+            ]);
+    
+            $userDestination = User::where('role', 'Follow Up')->get();
+            foreach ($userDestination as $dataUser) {
+                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Kekurangan Qc', 'instruction_id' => $updatePengajuan->instruction_id]);
+            }
         }
+        
     }
 
     public function modalInstructionDetailsPengajuanKekuranganQc($instructionId)

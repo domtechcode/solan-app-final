@@ -64,10 +64,18 @@
                                         </tr>
                                     @endforeach
                                     <tr>
-                                        <td colspan="3">
+                                        <td colspan="4">
                                             <div class="text-center">
                                                 <button type="button" class="btn btn-success mb-0" wire:click="addAnggota">Tambah Anggota</button>
                                             </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            Total Qty
+                                        </td>
+                                        <td colspan="2">
+                                            {{ $totalQty }}
                                         </td>
                                     </tr>
                                 </tbody>

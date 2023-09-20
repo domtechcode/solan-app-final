@@ -36,6 +36,7 @@ class FormPengirimanIndex extends Component
     public $catatanProsesPengerjaan;
     public $dataDriver;
     public $anggota = [];
+    public $totalQty;
 
     public function addAnggota()
     {
@@ -67,6 +68,7 @@ class FormPengirimanIndex extends Component
                     'status' => $item['status'],
                 ];
 
+                $this->totalQty += $item['qty'];
                 $this->anggota[] = $anggota;
             }
         }
@@ -78,6 +80,8 @@ class FormPengirimanIndex extends Component
                 'qty' => '',
                 'status' => 'Kirim',
             ];
+
+            $this->totalQty = 0;
         }
     }
 
@@ -108,6 +112,116 @@ class FormPengirimanIndex extends Component
         } else {
             $instructionData = Instruction::find($this->instructionCurrentId);
 
+            $totalQty = 0;
+
+            foreach ($this->anggota as $item) {
+                $totalQty += intval($item['qty']);
+            }
+
+            $totalPermintaan = $instructionData->quantity - $instructionData->stock;
+
+            if ($totalPermintaan <= $totalQty) {
+                $this->emit('flashMessage', [
+                    'type' => 'error',
+                    'title' => 'Error Submit',
+                    'message' => 'Total QTY Pengiriman Lebih besar dari permintaan',
+                ]);
+            } else {
+                if ($this->catatanProsesPengerjaan) {
+                    $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
+
+                    // Ambil alasan pause yang sudah ada dari database
+                    $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
+
+                    // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
+                    $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
+                    $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
+
+                    // Simpan data ke database sebagai JSON
+                    $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
+                        'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
+                    ]);
+                }
+
+                $currentStep = WorkStep::find($this->workStepCurrentId);
+
+                if (isset($this->anggota)) {
+                    $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
+                    foreach ($this->anggota as $dataAnggota) {
+                        $createFormPengiriman = FormPengiriman::create([
+                            'instruction_id' => $this->instructionCurrentId,
+                            'driver' => $dataAnggota['driver'],
+                            'kernet' => $dataAnggota['kernet'],
+                            'qty' => $dataAnggota['qty'],
+                            'status' => $dataAnggota['status'],
+                        ]);
+                    }
+                }
+
+                $updateSpkSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                    'status_id' => 7,
+                    'job_id' => $currentStep->work_step_list_id,
+                    'status_task' => 'Complete',
+                    'state_task' => 'Complete',
+                    'spk_status' => 'Selesai',
+                ]);
+
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach ($userDestination as $dataUser) {
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Pengiriman Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
+                }
+
+                if ($totalQty < $totalPermintaan) {
+                    $qtyKekurangan = $totalPermintaan - $totalQty;
+                    $createPengajuanQc = PengajuanKekuranganQc::create([
+                        'instruction_id' => $instructionData->id,
+                        'qty_permintaan' => $totalPermintaan,
+                        'qty_kirim' => $totalQty,
+                        'qty_kekurangan' => $qtyKekurangan,
+                        'status' => 'Pending',
+                    ]);
+
+                    $updateSpkKekurangan = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
+                        'spk_status' => 'Kekurangan QTY Kirim',
+                    ]);
+                }
+
+                $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Pengiriman Instruksi Kerja',
+                    'message' => 'Data Pengiriman berhasil disimpan',
+                ]);
+
+                return redirect()->route('operator.dashboard');
+            }
+        }
+    }
+
+    public function update()
+    {
+        $this->validate([
+            'anggota.*.driver' => 'required',
+            'anggota.*.qty' => 'required',
+            'anggota.*.status' => 'required',
+        ]);
+
+        $instructionData = Instruction::find($this->instructionCurrentId);
+
+        $totalQty = 0;
+
+        foreach ($this->anggota as $item) {
+            $totalQty += intval($item['qty']);
+        }
+
+        $totalPermintaan = $instructionData->quantity - $instructionData->stock;
+
+        if ($totalPermintaan <= $totalQty) {
+            $this->emit('flashMessage', [
+                'type' => 'error',
+                'title' => 'Error Submit',
+                'message' => 'Total QTY Pengiriman Lebih besar dari permintaan',
+            ]);
+        } else {
             if ($this->catatanProsesPengerjaan) {
                 $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
 
@@ -124,8 +238,6 @@ class FormPengirimanIndex extends Component
                 ]);
             }
 
-            $currentStep = WorkStep::find($this->workStepCurrentId);
-
             if (isset($this->anggota)) {
                 $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
                 foreach ($this->anggota as $dataAnggota) {
@@ -139,38 +251,6 @@ class FormPengirimanIndex extends Component
                 }
             }
 
-            $updateSpkSelesai = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
-                'status_id' => 7,
-                'job_id' => $currentStep->work_step_list_id,
-                'status_task' => 'Complete',
-                'state_task' => 'Complete',
-                'spk_status' => 'Selesai',
-            ]);
-
-            $userDestination = User::where('role', 'Penjadwalan')->get();
-            foreach ($userDestination as $dataUser) {
-                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Pengiriman Selesai Oleh ' . $currentStep->workStepList->name, 'instruction_id' => $this->instructionCurrentId]);
-            }
-
-            $totalQty = 0;
-
-            foreach ($this->anggota as $item) {
-                $totalQty += intval($item['qty']);
-            }
-
-            $totalPermintaan = $instructionData->quantity - $instructionData->stock;
-
-            if ($totalQty < $totalPermintaan) {
-                $qtyKekurangan = $totalPermintaan - $totalQty;
-                $createPengajuanQc = PengajuanKekuranganQc::create([
-                    'instruction_id' => $instructionData->id,
-                    'qty_permintaan' => $totalPermintaan,
-                    'qty_kirim' => $totalQty,
-                    'qty_kekurangan' => $qtyKekurangan,
-                    'status' => 'Pending',
-                ]);
-            }
-
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Pengiriman Instruksi Kerja',
@@ -179,54 +259,6 @@ class FormPengirimanIndex extends Component
 
             return redirect()->route('operator.dashboard');
         }
-    }
-
-    public function update()
-    {
-        $this->validate([
-            'anggota.*.driver' => 'required',
-            'anggota.*.qty' => 'required',
-            'anggota.*.status' => 'required',
-        ]);
-
-        $instructionData = Instruction::find($this->instructionCurrentId);
-
-        if ($this->catatanProsesPengerjaan) {
-            $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
-
-            // Ambil alasan pause yang sudah ada dari database
-            $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
-
-            // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
-            $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
-            $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
-
-            // Simpan data ke database sebagai JSON
-            $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
-                'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
-            ]);
-        }
-
-        if (isset($this->anggota)) {
-            $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
-            foreach ($this->anggota as $dataAnggota) {
-                $createFormPengiriman = FormPengiriman::create([
-                    'instruction_id' => $this->instructionCurrentId,
-                    'driver' => $dataAnggota['driver'],
-                    'kernet' => $dataAnggota['kernet'],
-                    'qty' => $dataAnggota['qty'],
-                    'status' => $dataAnggota['status'],
-                ]);
-            }
-        }
-
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Pengiriman Instruksi Kerja',
-            'message' => 'Data Pengiriman berhasil disimpan',
-        ]);
-
-        return redirect()->route('operator.dashboard');
     }
 
     public function messageSent($arguments)
