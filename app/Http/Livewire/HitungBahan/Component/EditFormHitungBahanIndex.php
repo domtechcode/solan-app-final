@@ -1122,8 +1122,8 @@ class EditFormHitungBahanIndex extends Component
                         foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
-                                'file_name' => $fileName,
-                                'file_path' => $folder,
+                                'file_name' => $file['file_name'],
+                                'file_path' => $file['file_path'],
                             ]);
                         }
                     }
@@ -1320,7 +1320,7 @@ class EditFormHitungBahanIndex extends Component
 
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-rincian-' . $norincian . '.' . $file->getClientOriginalExtension();
                             Storage::putFileAs($folder, $file, $fileName);
-                            $norincian++;
+                            // $norincian++;
 
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
@@ -1334,8 +1334,8 @@ class EditFormHitungBahanIndex extends Component
                         foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
-                                'file_name' => $fileName,
-                                'file_path' => $folder,
+                                'file_name' => $file['file_name'],
+                                'file_path' => $file['file_path'],
                             ]);
                         }
                     }

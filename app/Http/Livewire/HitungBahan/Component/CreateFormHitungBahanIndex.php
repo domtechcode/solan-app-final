@@ -1089,8 +1089,8 @@ class CreateFormHitungBahanIndex extends Component
                         foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
-                                'file_name' => $fileName,
-                                'file_path' => $folder,
+                                'file_name' => $file['file_name'],
+                                'file_path' => $file['file_path'],
                             ]);
                         }
                     }
@@ -1298,8 +1298,8 @@ class CreateFormHitungBahanIndex extends Component
                         foreach ($keteranganData['fileRincianLast'] as $file) {
                             $keteranganFileRincian = $keterangan->fileRincian()->create([
                                 'instruction_id' => $this->currentInstructionId,
-                                'file_name' => $fileName,
-                                'file_path' => $folder,
+                                'file_name' => $file['file_name'],
+                                'file_path' => $file['file_path'],
                             ]);
                         }
                     }
