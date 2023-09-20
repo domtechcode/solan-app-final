@@ -93,7 +93,6 @@ class OperatorDashboardIndex extends Component
 
     public function render()
     {
-        $this->select2();
         if ($this->userSelected == 'all') {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('state_task', 'Running')

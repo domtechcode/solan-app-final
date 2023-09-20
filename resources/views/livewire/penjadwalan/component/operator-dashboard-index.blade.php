@@ -69,7 +69,7 @@
     <div class="row mt-3">
         <div class="col-md-12">
             <div class="table-responsive">
-                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                {{-- <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                     <thead>
                         <tr>
                             <th class="border-bottom-0">User</th>
@@ -156,9 +156,69 @@
                             </tr>
                         @endforelse
                     </tbody>
+                </table> --}}
+
+                <table class="table border text-nowrap text-md-nowrap table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <!-- Kolom pengguna -->
+                            @foreach ($dataDetailWorkStep->unique('user_id') as $user)
+                                <th class="border-bottom-0">{{ $user->user->name }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <div class="row">
+
+                            
+                            @foreach ($dataDetailWorkStep->unique('user_id') as $user)
+                                <td>
+                                    @foreach ($dataDetailWorkStep as $dataInstruction)
+                                        @if ($dataInstruction->user_id == $user->user_id)
+                                        <div class="col-lg-12">
+                                            <div class="expanel expanel-default">
+                                                <div class="expanel-heading">{{ $dataInstruction->instruction->spk_number }}</div>
+                                                <div class="expanel-body">
+                                                    {{ $dataInstruction->instruction->order_name }}
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-md-12">
+                                                            <div class="form-group">
+                                                                <div wire:ignore>
+                                                                    <div class="form-group">
+                                                                        <label class="form-label"></label>
+                                                                        <div wire:ignore>
+                                                                            <select class="form-control" data-clear data-pharaonic="select2"
+                                                                                data-component-id="{{ $this->id }}" data-placeholder="Select User"
+                                                                                wire:model="changeTo.{{ $dataInstruction->id }}" id="changeTo" style="width: 100%;">
+                                                                                <option label='Select User'></option>
+                                                                                @foreach ($dataUser as $datauser)
+                                                                                    <option value="{{ $datauser->id }}">{{ $datauser->name }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>                                                
+                                                                        </div>
+                                                                        @error('changeTo.' . $dataInstruction->id)
+                                                                                <div><span class="text-danger">{{ $message }}</span></div>
+                                                                            @enderror
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-success btn-sm mt-2" wire:click="pindahOperator({{ $dataInstruction->id }})" wire:key="pindahOperator({{ $dataInstruction->id }})">Move</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @endforeach
+                                </td>
+                            @endforeach
+                        </div>
+                        </tr>
+                    </tbody>
                 </table>
-
-
+                
             </div>
 
         </div>
@@ -166,4 +226,6 @@
             {{-- {{ $dataDetailWorkStep->links() }} --}}
         </div>
     </div>
+
+    
 </div>
