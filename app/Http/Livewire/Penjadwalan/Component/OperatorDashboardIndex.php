@@ -26,6 +26,7 @@ class OperatorDashboardIndex extends Component
     public $worksteplistSelected;
 
     public $workSteps = [];
+    public $dataWorkStep;
     public $changeTo = [];
 
     public $selectedInstructionParent;
@@ -41,8 +42,8 @@ class OperatorDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRender' => '$refresh'];
-    
+    protected $listeners = ['indexRenderPage' => '$refresh'];
+
     public function updatingDijadwalkanSelected()
     {
         $this->resetPage();
@@ -68,9 +69,71 @@ class OperatorDashboardIndex extends Component
         $this->select2();
         $this->dataWorkStepList = WorkStepList::whereNotIn('id', [1, 2, 3, 4, 5])->get();
         $this->dataUser = User::where('role', 'Operator')->get();
-        $this->changeTo = [];
         $this->userSelected = 'all';
         $this->worksteplistSelected = 6;
+
+        if ($this->userSelected == 'all') {
+            $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->whereIn('state_task', ['Running', 'Not Running'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                // ->paginate($this->paginateOperator);
+                ->orderBy('user_id', 'asc')
+                ->get();
+
+            $dataDetailWorkStep->groupBy('user_id');
+
+            $this->changeTo = [];
+            foreach ($dataDetailWorkStep as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeTo[] = $item;
+            }
+        } else {
+            $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->where('user_id', $this->userSelected)
+                ->whereIn('state_task', ['Running', 'Not Running'])
+                ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                ->paginate($this->paginateOperator);
+
+            $this->changeTo = [];
+            foreach ($dataDetailWorkStep as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeTo[] = $item;
+            }
+        }
     }
 
     public function select2()
@@ -114,6 +177,17 @@ class OperatorDashboardIndex extends Component
                 ->get();
 
             $dataDetailWorkStep->groupBy('user_id');
+
+            $this->changeTo = [];
+            foreach ($dataDetailWorkStep as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeTo[] = $item;
+            }
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -132,25 +206,31 @@ class OperatorDashboardIndex extends Component
                 })
                 ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
                 ->paginate($this->paginateOperator);
+
+                $this->changeTo = [];
+            foreach ($dataDetailWorkStep as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeTo[] = $item;
+            }
         }
+
+        // dd($this->changeTo);
 
         return view('livewire.penjadwalan.component.operator-dashboard-index', ['dataDetailWorkStep' => $dataDetailWorkStep]);
     }
 
-    public function pindahOperator($selectedValue)
+    public function pindahOperator($selectedValue, $keyValue)
     {
-        $this->validate(
-            [
-                "changeTo.{$selectedValue}" => 'required',
-            ],
-            [
-                "changeTo.{$selectedValue}.required" => 'Pilih User Terlebih Dahulu',
-            ],
-        );
-
         $searchWorkStep = WorkStep::find($selectedValue);
         $searchWorkStep->update([
-            'user_id' => $this->changeTo[$selectedValue],
+            'user_id' => $this->changeTo[$keyValue]['user_id'],
+            'target_date' => $this->changeTo[$keyValue]['target_date'],
+            'schedule_date' => $this->changeTo[$keyValue]['schedule_date'],
         ]);
 
         $this->changeTo = [];
@@ -159,6 +239,6 @@ class OperatorDashboardIndex extends Component
             'title' => 'Success Reschedule',
             'message' => 'Data berhasil disimpan',
         ]);
-        $this->emit('indexRender');
+        $this->emit('indexRenderPage');
     }
 }
