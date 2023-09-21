@@ -191,6 +191,7 @@ class CompleteDashboardIndex extends Component
             'status_task' => 'Waiting Running',
             'target_date' => null,
             'schedule_date' => null,
+            'flag' => null,
         ]);
 
         $workStepCurrent = WorkStep::where('instruction_id', $updateAlasanRevisi->id)
@@ -289,7 +290,7 @@ class CompleteDashboardIndex extends Component
             }
         }
 
-        $this->dispatchBrowserEvent('close-modal-complete-checker');
+        $this->dispatchBrowserEvent('close-modal-revisi-sample');
     }
 
     public function modalInstructionDetailsComplete($instructionId)
