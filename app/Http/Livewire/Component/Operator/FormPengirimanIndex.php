@@ -119,8 +119,9 @@ class FormPengirimanIndex extends Component
             }
 
             $totalPermintaan = $instructionData->quantity - $instructionData->stock;
+            $totalPermintaanSPK = $instructionData->quantity;
 
-            if ($totalPermintaan < $totalQty) {
+            if ($totalPermintaanSPK < $totalQty) {
                 $this->emit('flashMessage', [
                     'type' => 'error',
                     'title' => 'Error Submit',
