@@ -29,6 +29,7 @@
                             <th class="border-bottom-0">Permintaan Kirim</th>
                             <th class="border-bottom-0">Total Lembar Cetak</th>
                             <th class="border-bottom-0">Urgent</th>
+                            <th class="border-bottom-0">Alat/Bahan</th>
                             <th class="border-bottom-0">Status</th>
                             <th class="border-bottom-0">Pekerjaan</th>
                             <th class="border-bottom-0">Action</th>
@@ -105,6 +106,15 @@
                                             </label>
                                         </div>
                                     </td>
+                                @endif
+                                @if (isset($dataInstruction->instruction->pengajuanBarangSpk))
+                                <td>
+                                    @forelse ($dataInstruction->instruction->pengajuanBarangSpk as $item)
+                                        {{ $item->nama_barang }} - [{{ $item->status->desc_status }}] <br>
+                                    @empty
+                                        -
+                                    @endforelse
+                                </td>
                                 @endif
                                 @if (in_array($dataInstruction->status_id, [1, 8]))
                                     <td>

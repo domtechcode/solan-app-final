@@ -225,7 +225,7 @@ class RunningDashboardIndex extends Component
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
-            ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan'])
+            ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan', 'instruction.pengajuanBarangSpk'])
             ->orderBy('instructions.shipping_date', 'asc')
             ->paginate($this->paginateRunning);
 
