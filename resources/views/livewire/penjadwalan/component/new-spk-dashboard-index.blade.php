@@ -348,7 +348,7 @@
                                                     <td>
                                                         <div class="form-group">
                                                             <input type="date"
-                                                                wire:model="workSteps.{{ $key }}.target_date"
+                                                                wire:model.defer="workSteps.{{ $key }}.target_date"
                                                                 id="workSteps.{{ $key }}.target_date"
                                                                 class="form-control">
                                                             @error('workSteps.' . $key . '.target_date')
@@ -360,7 +360,7 @@
                                                     <td>
                                                         <div class="form-group">
                                                             <input type="date"
-                                                                wire:model="workSteps.{{ $key }}.schedule_date"
+                                                                wire:model.defer="workSteps.{{ $key }}.schedule_date"
                                                                 id="workSteps.{{ $key }}.schedule_date"
                                                                 class="form-control">
                                                             @error('workSteps.' . $key . '.schedule_date')
@@ -372,7 +372,7 @@
                                                     <td>
                                                         <div class="form-group">
                                                             <input type="number" autocomplete="off"
-                                                                wire:model="workSteps.{{ $key }}.target_time"
+                                                                wire:model.defer="workSteps.{{ $key }}.target_time"
                                                                 id="workSteps.{{ $key }}.target_time"
                                                                 placeholder="Target Jam" class="form-control">
                                                             @error('workSteps.' . $key . '.target_time')

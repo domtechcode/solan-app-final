@@ -424,7 +424,7 @@
                                                 <td>
                                                     <div class="form-group">
                                                         <input type="date"
-                                                            wire:model="workSteps.{{ $key }}.target_date"
+                                                            wire:model.defer="workSteps.{{ $key }}.target_date"
                                                             id="workSteps.{{ $key }}.target_date"
                                                             class="form-control">
                                                         @error('workSteps.{{ $key }}.target_date')
@@ -436,7 +436,7 @@
                                                 <td>
                                                     <div class="form-group">
                                                         <input type="date"
-                                                            wire:model="workSteps.{{ $key }}.schedule_date"
+                                                            wire:model.defer="workSteps.{{ $key }}.schedule_date"
                                                             id="workSteps.{{ $key }}.schedule_date"
                                                             class="form-control">
                                                         @error('workSteps.{{ $key }}.schedule_date')
@@ -448,7 +448,7 @@
                                                 <td>
                                                     <div class="form-group">
                                                         <input type="text"
-                                                            wire:model="workSteps.{{ $key }}.target_time"
+                                                            wire:model.defer="workSteps.{{ $key }}.target_time"
                                                             id="workSteps.{{ $key }}.target_time"
                                                             placeholder="Target Jam" class="form-control">
                                                         @error('workSteps.{{ $key }}.target_time')
@@ -533,11 +533,11 @@
                                                                     wire:click="startButton({{ $dataWork['id'] }})"
                                                                     wire:loading.attr="disabled"><i
                                                                         class="fe fe-play"></i></button>
-                                                                <button type="button"
+                                                                {{-- <button type="button"
                                                                     class="btn btn-icon btn-sm btn-info"
                                                                     wire:click="startDuetButton({{ $dataWork['id'] }})"
                                                                     wire:loading.attr="disabled"><i
-                                                                        class="fe fe-play"></i> Start Duet</button>
+                                                                        class="fe fe-play"></i> Start Duet</button> --}}
                                                                 <button type="button"
                                                                     class="btn btn-icon btn-sm btn-info"
                                                                     wire:click="startSplitButton({{ $dataWork['id'] }})"
