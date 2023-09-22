@@ -2909,7 +2909,7 @@
         function addCanvasSetting(index) {
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-setting-' + index;
-            canvasContainer.classList.add('canvas-container');
+            canvasContainer.classList.add('border');
 
             var canvasWrapper = document.getElementById('canvas-wrapper-setting-' + index);
             canvasWrapper.appendChild(canvasContainer);
@@ -3096,7 +3096,7 @@
         function addCanvasBahan(indexBahan) {
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-bahan-' + indexBahan;
-            canvasContainer.classList.add('canvas-container');
+            canvasContainer.classList.add('border');
 
             var canvasWrapper = document.getElementById('canvas-wrapper-bahan-' + indexBahan);
             canvasWrapper.appendChild(canvasContainer);

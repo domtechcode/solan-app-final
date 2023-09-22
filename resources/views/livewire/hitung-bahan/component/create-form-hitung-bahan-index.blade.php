@@ -1,7 +1,8 @@
 @push('styles')
     <style>
         .canvas-container {
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
+            
             /* margin-bottom: 20px; */
         }
     </style>
@@ -2879,7 +2880,7 @@
         function addCanvasSetting(index) {
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-setting-' + index;
-            canvasContainer.classList.add('canvas-container');
+            canvasContainer.classList.add('border');
 
             var canvasWrapper = document.getElementById('canvas-wrapper-setting-' + index);
             canvasWrapper.appendChild(canvasContainer);
@@ -3067,7 +3068,7 @@
         function addCanvasBahan(indexBahan) {
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-bahan-' + indexBahan;
-            canvasContainer.classList.add('canvas-container');
+            canvasContainer.classList.add('border');
 
             var canvasWrapper = document.getElementById('canvas-wrapper-bahan-' + indexBahan);
             canvasWrapper.appendChild(canvasContainer);
