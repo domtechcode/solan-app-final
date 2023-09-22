@@ -19,7 +19,7 @@
                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                     <thead>
                         <tr>
-                            <th class="border-bottom-0">No</th>
+                            {{-- <th class="border-bottom-0">No</th> --}}
                             <th class="border-bottom-0">No SPK</th>
                             <th class="border-bottom-0">Type SPK</th>
                             <th class="border-bottom-0">Pemesan</th>
@@ -36,7 +36,7 @@
                     <tbody>
                         @forelse ($instructionsNewSpk as $key => $dataInstruction)
                             <tr wire:key="{{ $dataInstruction->instruction->id }}">
-                                <td>{{ $key + 1 }}</td>
+                                {{-- <td>{{ $key + 1 }}</td> --}}
                                 <td>
                                     {{ $dataInstruction->instruction->spk_number }}
                                     @if ($dataInstruction->instruction->spk_number_fsc)
