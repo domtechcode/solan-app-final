@@ -1583,7 +1583,7 @@ class EditFormHitungBahanIndex extends Component
                     } else {
                         $updateNextStep->update([
                             'state_task' => 'Running',
-                            'status_task' => 'Process',
+                            'status_task' => 'Reject',
                         ]);
 
                         $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([

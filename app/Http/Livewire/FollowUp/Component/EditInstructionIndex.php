@@ -546,7 +546,7 @@ class EditInstructionIndex extends Component
                         ]);
                     }else{
                         $findSourceReject->update([
-                            'status_task' => 'Process',
+                            'status_task' => 'Reject',
                         ]);
                     }
 
