@@ -536,9 +536,19 @@ class EditInstructionIndex extends Component
                         $this->messageSent(['conversation' => 'QTY SPK telah diperbaiki oleh Follow Up', 'receiver' => $dataUser->id, 'instruction_id' => $this->currentInstructionId]);
                     }
                 } else {
-                    $findSourceReject->update([
-                        'status_task' => 'Pending Approved',
-                    ]);
+                    if($currentWorkStep->reject_from_status == 1) {
+                        $findSourceReject->update([
+                            'status_task' => 'Pending Approved',
+                        ]);
+                    }else if($currentWorkStep->reject_from_status == 2) {
+                        $findSourceReject->update([
+                            'status_task' => 'Process',
+                        ]);
+                    }else{
+                        $findSourceReject->update([
+                            'status_task' => 'Process',
+                        ]);
+                    }
 
                     $updateJobStatus = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                         'status_id' => $currentWorkStep->reject_from_status,

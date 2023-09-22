@@ -829,7 +829,7 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    {{-- <div class="row mb-3">
                         <div class="col-md-12">
                             <div class="expanel expanel-default">
                                 <div class="expanel-body">
@@ -863,7 +863,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
 
                     {{-- file --}}
@@ -966,7 +966,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject</button>
+                    {{-- <button class="btn btn-primary" wire:click="rejectSpk" wire:key="rejectSpk">Reject</button> --}}
                     <button class="btn btn-success" wire:click="reschedule" wire:key="reschedule">Reschedule</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>

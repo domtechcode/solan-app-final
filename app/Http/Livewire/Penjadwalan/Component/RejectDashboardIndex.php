@@ -972,7 +972,7 @@ class RejectDashboardIndex extends Component
             'state_task' => 'Running',
             'status_task' => 'Reject',
             'reject_from_id' => $workStepCurrent->id,
-            'reject_from_status' => 1,
+            'reject_from_status' => 3,
             'reject_from_job' => 2,
             'count_reject' => $workStepDestination->count_reject + 1,
         ]);

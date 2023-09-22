@@ -953,58 +953,58 @@ class RunningDashboardIndex extends Component
         $this->dispatchBrowserEvent('close-modal-running');
     }
 
-    public function rejectSpk()
-    {
-        $this->validate([
-            'tujuanReject' => 'required',
-            'keteranganReject' => 'required',
-        ]);
+    // public function rejectSpk()
+    // {
+    //     $this->validate([
+    //         'tujuanReject' => 'required',
+    //         'keteranganReject' => 'required',
+    //     ]);
 
-        $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', 2)
-            ->first();
+    //     $workStepCurrent = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+    //         ->where('work_step_list_id', 2)
+    //         ->first();
 
-        $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-            ->where('work_step_list_id', $this->tujuanReject)
-            ->first();
+    //     $workStepDestination = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+    //         ->where('work_step_list_id', $this->tujuanReject)
+    //         ->first();
 
-        $workStepDestination->update([
-            'state_task' => 'Running',
-            'status_task' => 'Reject',
-            'reject_from_id' => $workStepCurrent->id,
-            'reject_from_status' => 1,
-            'reject_from_job' => 2,
-            'count_reject' => $workStepDestination->count_reject + 1,
-        ]);
+    //     $workStepDestination->update([
+    //         'state_task' => 'Running',
+    //         'status_task' => 'Reject',
+    //         'reject_from_id' => $workStepCurrent->id,
+    //         'reject_from_status' => $workStepCurrent->status_id,
+    //         'reject_from_job' => $workStepCurrent->job_id,
+    //         'count_reject' => $workStepDestination->count_reject + 1,
+    //     ]);
 
-        $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-            'status_id' => 3,
-            'job_id' => $workStepDestination->work_step_list_id,
-        ]);
+    //     $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+    //         'status_id' => 3,
+    //         'job_id' => $workStepDestination->work_step_list_id,
+    //     ]);
 
-        $updateKeterangan = Catatan::create([
-            'tujuan' => $this->tujuanReject,
-            'catatan' => $this->keteranganReject,
-            'kategori' => 'reject',
-            'instruction_id' => $this->selectedInstruction->id,
-            'user_id' => Auth()->user()->id,
-        ]);
+    //     $updateKeterangan = Catatan::create([
+    //         'tujuan' => $this->tujuanReject,
+    //         'catatan' => $this->keteranganReject,
+    //         'kategori' => 'reject',
+    //         'instruction_id' => $this->selectedInstruction->id,
+    //         'user_id' => Auth()->user()->id,
+    //     ]);
 
-        $workStepCurrent->update([
-            'user_id' => Auth()->user()->id,
-            // 'status_task' => 'Waiting For Repair',
-        ]);
+    //     $workStepCurrent->update([
+    //         'user_id' => Auth()->user()->id,
+    //         // 'status_task' => 'Waiting For Repair',
+    //     ]);
 
-        $this->emit('flashMessage', [
-            'type' => 'success',
-            'title' => 'Reject Instruksi Kerja',
-            'message' => 'Berhasil reject instruksi kerja',
-        ]);
-        $this->messageSent(['receiver' => $workStepDestination->user_id, 'conversation' => 'SPK Reject dari Penjadwalan', 'instruction_id' => $this->selectedInstruction->id]);
-        $this->tujuanReject = null;
-        $this->keteranganReject = null;
-        $this->dispatchBrowserEvent('close-modal-new-spk');
-    }
+    //     $this->emit('flashMessage', [
+    //         'type' => 'success',
+    //         'title' => 'Reject Instruksi Kerja',
+    //         'message' => 'Berhasil reject instruksi kerja',
+    //     ]);
+    //     $this->messageSent(['receiver' => $workStepDestination->user_id, 'conversation' => 'SPK Reject dari Penjadwalan', 'instruction_id' => $this->selectedInstruction->id]);
+    //     $this->tujuanReject = null;
+    //     $this->keteranganReject = null;
+    //     $this->dispatchBrowserEvent('close-modal-new-spk');
+    // }
 
     public function ajukanBarang()
     {

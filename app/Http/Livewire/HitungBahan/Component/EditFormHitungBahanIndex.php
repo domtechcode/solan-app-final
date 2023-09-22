@@ -521,7 +521,7 @@ class EditFormHitungBahanIndex extends Component
                         'b' => $dataRincianPlate['b'],
                         'warnaPlate' => [], // Inisialisasi array warnaPlate
                     ];
-            
+
                     foreach ($dataRincianPlate['warnaPlate'] as $dataWarnaPlate) {
                         // Tambahkan informasi warnaPlate ke dalam rincianPlate yang sesuai
                         $keterangan['rincianPlate'][$key]['warnaPlate'][] = [
@@ -536,7 +536,6 @@ class EditFormHitungBahanIndex extends Component
                     }
                 }
             }
-            
 
             if (isset($dataKeterangan['rincianScreen'])) {
                 foreach ($dataKeterangan['rincianScreen'] as $dataRincianScreen) {
@@ -1066,7 +1065,7 @@ class EditFormHitungBahanIndex extends Component
                                 'a' => $dataRincianPlate['a'],
                                 'b' => $dataRincianPlate['b'],
                             ]);
-                    
+
                             if (isset($dataRincianPlate['warnaPlate'])) {
                                 foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                     // Buat instance model WarnaPlate
@@ -1084,7 +1083,6 @@ class EditFormHitungBahanIndex extends Component
                             }
                         }
                     }
-                    
 
                     if ($keteranganData['label']) {
                         foreach ($keteranganData['label'] as $label) {
@@ -1280,7 +1278,7 @@ class EditFormHitungBahanIndex extends Component
                                 'a' => $dataRincianPlate['a'],
                                 'b' => $dataRincianPlate['b'],
                             ]);
-                    
+
                             if (isset($dataRincianPlate['warnaPlate'])) {
                                 foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                     // Buat instance model WarnaPlate
@@ -1471,15 +1469,39 @@ class EditFormHitungBahanIndex extends Component
                     $updateNextStep = WorkStep::find($updateTask->reject_from_id);
 
                     if ($updateNextStep) {
-                        $updateNextStep->update([
-                            'state_task' => 'Running',
-                            'status_task' => 'Pending Approved',
-                        ]);
 
-                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                            'status_id' => 1,
-                            'job_id' => $updateNextStep->work_step_list_id,
-                        ]);
+                        if($updateNextStep->reject_from_status == 1) {
+                            $updateNextStep->update([
+                                'state_task' => 'Running',
+                                'status_task' => 'Pending Approved',
+                            ]);
+    
+                            $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                                'status_id' => 1,
+                                'job_id' => $updateTask->reject_from_job,
+                            ]);
+                        }else if($updateNextStep->reject_from_status == 2) {
+                            $updateNextStep->update([
+                                'state_task' => 'Running',
+                                'status_task' => 'Process',
+                            ]);
+    
+                            $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                                'status_id' => 2,
+                                'job_id' => $updateTask->reject_from_job,
+                            ]);
+                        }else{
+                            $updateNextStep->update([
+                                'state_task' => 'Running',
+                                'status_task' => 'Process',
+                            ]);
+    
+                            $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                                'status_id' => 2,
+                                'job_id' => $updateTask->reject_from_job,
+                            ]);
+                        }
+                        
                     }
 
                     $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
@@ -1538,15 +1560,37 @@ class EditFormHitungBahanIndex extends Component
                 $updateNextStep = WorkStep::find($updateTask->reject_from_id);
 
                 if ($updateNextStep->work_step_list_id == 2) {
-                    $updateNextStep->update([
-                        'state_task' => 'Running',
-                        'status_task' => 'Pending Approved',
-                    ]);
+                    if ($updateTask->reject_from_status == 1) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                        ]);
 
-                    $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
-                        'status_id' => 1,
-                        'job_id' => $updateNextStep->work_step_list_id,
-                    ]);
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 1,
+                            'job_id' => $updateTask->reject_from_job,
+                        ]);
+                    } elseif ($updateTask->reject_from_status == 2) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Process',
+                        ]);
+
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 2,
+                            'job_id' => $updateTask->reject_from_job,
+                        ]);
+                    } else {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Process',
+                        ]);
+
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
+                            'status_id' => 2,
+                            'job_id' => $updateTask->reject_from_job,
+                        ]);
+                    }                    
                 } else {
                     $updateNextStep->update([
                         'state_task' => 'Running',
