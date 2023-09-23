@@ -1,7 +1,7 @@
 @push('styles')
     <style>
         .canvas-container {
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
             /* margin-bottom: 20px; */
         }
     </style>
@@ -60,7 +60,7 @@
             </div>
         @endif
     @endforeach
-    
+
 
     <!-- ROW-1 Data Order-->
     <div class="row row-sm">
@@ -1035,11 +1035,11 @@
                                                                 <?php
                                                                 $jumlahLembarCetak = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'];
                                                                 $waste = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] ?? 0;
-                                                                
+
                                                                 if (is_numeric($jumlahLembarCetak)) {
                                                                     $totalLembarCetakPlate += $jumlahLembarCetak;
                                                                 }
-                                                                
+
                                                                 if (is_numeric($waste)) {
                                                                     $totalWastePlate += $waste;
                                                                 }
@@ -1173,11 +1173,11 @@
                                                                 <?php
                                                                 $jumlahLembarCetakScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['jumlah_lembar_cetak'];
                                                                 $wasteScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['waste'] ?? 0;
-                                                                
+
                                                                 if (is_numeric($jumlahLembarCetakScreen)) {
                                                                     $totalLembarCetakScreen += $jumlahLembarCetakScreen;
                                                                 }
-                                                                
+
                                                                 if (is_numeric($wasteScreen)) {
                                                                     $totalWasteScreen += $wasteScreen;
                                                                 }
