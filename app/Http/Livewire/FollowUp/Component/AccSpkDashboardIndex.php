@@ -186,7 +186,7 @@ class AccSpkDashboardIndex extends Component
         $dataCurrentWorkStep = WorkStep::where('instruction_id', $updateAlasanRevisi->id)->update([
             'spk_status' => 'Running',
             'state_task' => 'Not Running',
-            'status_task' => 'Waiting Running',
+            'status_task' => 'Waiting',
             'target_date' => null,
             'schedule_date' => null,
             'flag' => null,
