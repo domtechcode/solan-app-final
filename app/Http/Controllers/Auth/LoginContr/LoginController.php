@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-	public function showLoginForm()
+    public function showLoginForm()
     {
-        $data['title'] = "Login";
+        $data['title'] = 'Login';
 
         // Attempt to log the user in
         if (Auth::check()) {
@@ -63,7 +63,7 @@ class LoginController extends Controller
 
         return view('login', $data);
     }
-    
+
     public function login(Request $request)
     {
         // Validate the form data
@@ -125,7 +125,9 @@ class LoginController extends Controller
         // If authentication fails, redirect back to the login page with an error message
         session()->flash('error', 'Username/Password Salah.');
 
-        return redirect()->back()->withErrors(['username' => 'Invalid credentials']);
+        return redirect()
+            ->back()
+            ->withErrors(['username' => 'Invalid credentials']);
     }
 
     public function logout(Request $request)

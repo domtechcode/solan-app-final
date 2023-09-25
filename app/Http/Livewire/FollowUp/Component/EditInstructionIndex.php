@@ -650,7 +650,7 @@ class EditInstructionIndex extends Component
                     ->first();
 
                 if ($cariStock->spk_status == 'Running') {
-                    $updatePending = WorkStep::where('instruction_id', $instruction->id)->update([
+                    $updatePending = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                         'spk_status' => 'Hold Waiting STK',
                     ]);
                 }
