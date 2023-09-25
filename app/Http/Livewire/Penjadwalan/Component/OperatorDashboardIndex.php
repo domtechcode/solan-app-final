@@ -109,7 +109,7 @@ class OperatorDashboardIndex extends Component
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
                 ->whereIn('state_task', ['Running', 'Not Running'])
-                ->whereIn('status_task', ['Pending Approved', 'Process'])
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Waiting'])
                 ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
                 ->where(function ($query) {
                     $searchTerms = '%' . $this->dijadwalkanSelected . '%';
@@ -161,7 +161,7 @@ class OperatorDashboardIndex extends Component
         if ($this->userSelected == 'all') {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->whereIn('state_task', ['Running', 'Not Running'])
-                ->whereIn('status_task', ['Pending Approved', 'Process'])
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Waiting'])
                 ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
                 ->where(function ($query) {
                     $searchTerms = '%' . $this->dijadwalkanSelected . '%';
@@ -195,7 +195,7 @@ class OperatorDashboardIndex extends Component
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
                 ->whereIn('state_task', ['Running', 'Not Running'])
-                ->whereIn('status_task', ['Pending Approved', 'Process'])
+                ->whereIn('status_task', ['Pending Approved', 'Process', 'Waiting'])
                 ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
                 ->where(function ($query) {
                     $searchTerms = '%' . $this->dijadwalkanSelected . '%';
