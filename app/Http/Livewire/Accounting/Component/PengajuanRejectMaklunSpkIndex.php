@@ -80,13 +80,27 @@ class PengajuanRejectMaklunSpkIndex extends Component
     public function render()
     {
         $dataPengajuanRejectMaklunSpk = FormPengajuanMaklun::whereIn('status', ['Reject RAB'])
-        ->where('pekerjaan', 'Accounting')
+            ->where('pekerjaan', 'Accounting')
             ->where(function ($query) {
                 $query
-                    ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
-                    ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
-                    ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
-                    ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('ukuran_barang', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('spk_number_fsc', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%');
+                    })
+                    ->OrWhere(function ($sub) {
+                        $sub->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%')
+                            ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanRejectMaklunSpk . '%');
+                    });
             })
             ->with(['instruction'])
             ->orderBy('tgl_keluar', 'asc')

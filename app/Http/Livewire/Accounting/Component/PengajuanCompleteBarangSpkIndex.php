@@ -70,10 +70,24 @@ class PengajuanCompleteBarangSpkIndex extends Component
         $dataPengajuanCompleteBarangSpk = PengajuanBarangSpk::whereIn('status_id', [16])
             ->where(function ($query) {
                 $query
-                    ->where('qty_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
-                    ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
-                    ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
-                    ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('ukuran_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('spk_number_fsc', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%');
+                    })
+                    ->OrWhere(function ($sub) {
+                        $sub->where('qty_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('nama_barang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('tgl_target_datang', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%')
+                            ->orWhere('tgl_pengajuan', 'like', '%' . $this->searchPengajuanCompleteBarangSpk . '%');
+                    });
             })
             ->with(['status', 'workStepList', 'instruction', 'user'])
             ->orderBy('tgl_target_datang', 'asc')

@@ -80,13 +80,27 @@ class PengajuanNewMaklunSpkIndex extends Component
     public function render()
     {
         $dataPengajuanNewMaklunSpk = FormPengajuanMaklun::where('status', 'Pengajuan Accounting')
-        ->where('pekerjaan', 'Accounting')
+            ->where('pekerjaan', 'Accounting')
             ->where(function ($query) {
                 $query
-                    ->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
-                    ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
-                    ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
-                    ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery
+                            ->where('spk_number', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('spk_type', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('customer_name', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('order_name', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('customer_number', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('code_style', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('shipping_date', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('ukuran_barang', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('spk_number_fsc', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%');
+                    })
+                    ->OrWhere(function ($sub) {
+                        $sub->where('bentuk_maklun', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('rekanan', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('tgl_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%')
+                            ->orWhere('qty_keluar', 'like', '%' . $this->searchPengajuanNewMaklunSpk . '%');
+                    });
             })
             ->with(['instruction'])
             ->orderBy('tgl_keluar', 'asc')
@@ -268,7 +282,7 @@ class PengajuanNewMaklunSpkIndex extends Component
     public function modalPengajuanNewMaklunSpk($PengajuanMaklunId, $instructionId)
     {
         $this->reset();
-        
+
         $this->selectedInstruction = Instruction::find($instructionId);
 
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
