@@ -377,6 +377,8 @@
                 </div>
                 <div class="modal-footer">
                     @if (isset($dataMaklun))
+                        <button class="btn btn-primary" wire:click="rejectPurchaseMaklun({{ $dataMaklun->id }})"
+                            wire:key="rejectPurchaseMaklun({{ $dataMaklun->id }})">Reject Purchase</button>
                         <button class="btn btn-info" wire:click="ajukanAccountingMaklun({{ $dataMaklun->id }})"
                             wire:key="ajukanAccountingMaklun({{ $dataMaklun->id }})">Ajukan <i
                                 class="fe fe-arrow-right"></i> Accounting</button>
