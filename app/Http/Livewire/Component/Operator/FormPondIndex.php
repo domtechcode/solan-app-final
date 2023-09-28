@@ -165,7 +165,7 @@ class FormPondIndex extends Component
             ->where('step', $currentStep->step - 1)
             ->first();
 
-        if ($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete') {
+        if ($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete' && $previousStep->work_step_list_id != 2) {
             $this->emit('flashMessage', [
                 'type' => 'error',
                 'title' => 'Error Submit',

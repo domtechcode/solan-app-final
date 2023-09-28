@@ -90,7 +90,7 @@
                                                             <input type="text"
                                                                 wire:model="maklunPengajuan.{{ $index }}.bentuk_maklun"
                                                                 class="form-control" autocomplete="off"
-                                                                placeholder="Bentuk Maklun">
+                                                                placeholder="Bentuk Maklun" readonly>
                                                         </div>
                                                         @error('maklunPengajuan.' . $index . '.bentuk_maklun')
                                                             <div><span class="text-danger">{{ $message }}</span></div>
@@ -259,7 +259,7 @@
                                                             <input type="text"
                                                                 wire:model="maklunPenerimaan.{{ $index }}.bentuk_maklun"
                                                                 class="form-control" autocomplete="off"
-                                                                placeholder="Bentuk Maklun">
+                                                                placeholder="Bentuk Maklun" readonly>
                                                         </div>
                                                         @error('maklunPenerimaan.' . $index . '.bentuk_maklun')
                                                             <div><span class="text-danger">{{ $message }}</span>
@@ -409,7 +409,7 @@
                                                             <input type="text"
                                                                 wire:model="maklunPengajuan.{{ $index }}.bentuk_maklun"
                                                                 class="form-control" autocomplete="off"
-                                                                placeholder="Bentuk Maklun">
+                                                                placeholder="Bentuk Maklun" readonly>
                                                         </div>
                                                         @error('maklunPengajuan.' . $index . '.bentuk_maklun')
                                                             <div><span class="text-danger">{{ $message }}</span>
@@ -563,7 +563,7 @@
                                                             <input type="text"
                                                                 wire:model="maklunPenerimaan.{{ $index }}.bentuk_maklun"
                                                                 class="form-control" autocomplete="off"
-                                                                placeholder="Bentuk Maklun">
+                                                                placeholder="Bentuk Maklun" readonly>
                                                         </div>
                                                         @error('maklunPenerimaan.' . $index . '.bentuk_maklun')
                                                             <div><span class="text-danger">{{ $message }}</span>

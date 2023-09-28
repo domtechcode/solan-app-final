@@ -445,8 +445,8 @@ class FormSettingIndex extends Component
         $previousStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
             ->where('step', $currentStep->step - 1)
             ->first();
-        
-        if($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete'){
+
+        if($currentStep->flag == 'Split' && $previousStep->state_task != 'Complete' && $previousStep->work_step_list_id != 2){
             $this->emit('flashMessage', [
                 'type' => 'error',
                 'title' => 'Error Submit',
@@ -455,26 +455,26 @@ class FormSettingIndex extends Component
         }else{
             if ($this->catatanProsesPengerjaan) {
                 $dataCatatanProsesPengerjaan = WorkStep::find($this->workStepCurrentId);
-    
+
                 // Ambil alasan pause yang sudah ada dari database
                 $existingCatatanProsesPengerjaan = json_decode($dataCatatanProsesPengerjaan->catatan_proses_pengerjaan, true);
-    
+
                 // Tambahkan alasan pause yang baru ke dalam array existingCatatanProsesPengerjaan
                 $timestampedKeterangan = $this->catatanProsesPengerjaan . ' - [' . now() . ']';
                 $existingCatatanProsesPengerjaan[] = $timestampedKeterangan;
-    
+
                 // Simpan data ke database sebagai JSON
                 $updateCatatanPengerjaan = WorkStep::where('id', $this->workStepCurrentId)->update([
                     'catatan_proses_pengerjaan' => json_encode($existingCatatanProsesPengerjaan),
                 ]);
             }
-    
+
             if (isset($this->notes)) {
                 $this->validate([
                     'notes.*.tujuan' => 'required',
                     'notes.*.catatan' => 'required',
                 ]);
-    
+
                 foreach ($this->notes as $input) {
                     $catatan = Catatan::create([
                         'tujuan' => $input['tujuan'],
@@ -485,7 +485,7 @@ class FormSettingIndex extends Component
                     ]);
                 }
             }
-    
+
             if ($nextStep->status_task == 'Waiting Revisi') {
                 if (isset($this->stateWorkStepPlate)) {
                     $this->validate(
@@ -501,14 +501,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepFoil)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
                             return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -525,14 +525,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepEmbossDeboss)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
                             return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -549,7 +549,7 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if ($this->filePisauPond) {
                     if (isset($this->stateWorkStepPond)) {
                         $this->validate(
@@ -566,20 +566,20 @@ class FormSettingIndex extends Component
                                 'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',
                             ],
                         );
-    
+
                         $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Pisau')
                             ->count();
                         foreach ($this->filePisauPond as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-revisi-' . $noPisauPond . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noPisauPond++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataPisauPond['keperluan'],
@@ -591,7 +591,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileFoil) {
                     if (isset($this->stateWorkStepFoil)) {
                         $this->validate(
@@ -608,20 +608,20 @@ class FormSettingIndex extends Component
                                 'dataFoil.ukuran_film.required' => 'Data Foil harus diisi.',
                             ],
                         );
-    
+
                         $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Foil')
                             ->count();
                         foreach ($this->fileFoil as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-revisi-' . $noFoil . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noFoil++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataFoil['keperluan'],
@@ -633,7 +633,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSablon) {
                     if (isset($this->stateWorkStepSablon)) {
                         $this->validate(
@@ -650,20 +650,20 @@ class FormSettingIndex extends Component
                                 'dataSablon.ukuran_film.required' => 'Data Sablon harus diisi.',
                             ],
                         );
-    
+
                         $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Sablon')
                             ->count();
                         foreach ($this->fileSablon as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-revisi-' . $noSablon . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSablon++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSablon['keperluan'],
@@ -675,7 +675,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileEmbossDeboss) {
                     if (isset($this->stateWorkStepEmbossDeboss)) {
                         $this->validate(
@@ -692,20 +692,20 @@ class FormSettingIndex extends Component
                                 'dataEmbossDeboss.ukuran_film.required' => 'Data Emboss/Deboss harus diisi.',
                             ],
                         );
-    
+
                         $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Emboss/Deboss')
                             ->count();
                         foreach ($this->fileEmbossDeboss as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-revisi-' . $noEmbossDeboss . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noEmbossDeboss++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataEmbossDeboss['keperluan'],
@@ -717,7 +717,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSpotUV) {
                     if (isset($this->stateWorkStepSpotUV)) {
                         $this->validate(
@@ -734,20 +734,20 @@ class FormSettingIndex extends Component
                                 'dataSpotUV.ukuran_film.required' => 'Data SpotUV harus diisi.',
                             ],
                         );
-    
+
                         $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Spot UV')
                             ->count();
                         foreach ($this->fileSpotUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-revisi-' . $noSpotUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSpotUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSpotUV['keperluan'],
@@ -759,7 +759,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileUV) {
                     if (isset($this->stateWorkStepUV)) {
                         $this->validate(
@@ -776,20 +776,20 @@ class FormSettingIndex extends Component
                                 'dataUV.ukuran_film.required' => 'Data UV harus diisi.',
                             ],
                         );
-    
+
                         $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'UV')
                             ->count();
                         foreach ($this->fileUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-revisi-' . $noUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataUV['keperluan'],
@@ -801,7 +801,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileCetakLabel) {
                     if (isset($this->stateWorkStepCetakLabel)) {
                         $this->validate(
@@ -818,20 +818,20 @@ class FormSettingIndex extends Component
                                 'dataCetakLabel.ukuran_film.required' => 'Data CetakLabel harus diisi.',
                             ],
                         );
-    
+
                         $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Label')
                             ->count();
                         foreach ($this->fileCetakLabel as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-revisi-' . $noCetakLabel . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noCetakLabel++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataCetakLabel['keperluan'],
@@ -843,7 +843,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileLayout) {
                     $this->validate(
                         [
@@ -853,22 +853,22 @@ class FormSettingIndex extends Component
                             'fileLayout.required' => 'File Layout Harus diisi.',
                         ],
                     );
-    
+
                     $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)
                         ->where('type_file', 'layout')
                         ->count();
                     $nolayout = $fileLayoutData;
-    
+
                     foreach ($this->fileLayout as $file) {
                         $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                         $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                         $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                         $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-revisi-' . $nolayout . '.' . $extension;
-    
+
                         Storage::putFileAs($folder, $file, $fileName);
                         $nolayout++;
-    
+
                         Files::create([
                             'instruction_id' => $this->instructionCurrentId,
                             'user_id' => Auth()->user()->id,
@@ -893,14 +893,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepFoil)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
                             return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -917,14 +917,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepEmbossDeboss)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
                             return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -941,7 +941,7 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if ($this->filePisauPond) {
                     if (isset($this->stateWorkStepPond)) {
                         $this->validate(
@@ -958,20 +958,20 @@ class FormSettingIndex extends Component
                                 'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',
                             ],
                         );
-    
+
                         $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Pisau')
                             ->count();
                         foreach ($this->filePisauPond as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-reject-' . $noPisauPond . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noPisauPond++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataPisauPond['keperluan'],
@@ -983,7 +983,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileFoil) {
                     if (isset($this->stateWorkStepFoil)) {
                         $this->validate(
@@ -1000,20 +1000,20 @@ class FormSettingIndex extends Component
                                 'dataFoil.ukuran_film.required' => 'Data Foil harus diisi.',
                             ],
                         );
-    
+
                         $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Foil')
                             ->count();
                         foreach ($this->fileFoil as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-reject-' . $noFoil . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noFoil++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataFoil['keperluan'],
@@ -1025,7 +1025,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSablon) {
                     if (isset($this->stateWorkStepSablon)) {
                         $this->validate(
@@ -1042,20 +1042,20 @@ class FormSettingIndex extends Component
                                 'dataSablon.ukuran_film.required' => 'Data Sablon harus diisi.',
                             ],
                         );
-    
+
                         $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Sablon')
                             ->count();
                         foreach ($this->fileSablon as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-reject-' . $noSablon . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSablon++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSablon['keperluan'],
@@ -1067,7 +1067,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileEmbossDeboss) {
                     if (isset($this->stateWorkStepEmbossDeboss)) {
                         $this->validate(
@@ -1084,20 +1084,20 @@ class FormSettingIndex extends Component
                                 'dataEmbossDeboss.ukuran_film.required' => 'Data Emboss/Deboss harus diisi.',
                             ],
                         );
-    
+
                         $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Emboss/Deboss')
                             ->count();
                         foreach ($this->fileEmbossDeboss as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-reject-' . $noEmbossDeboss . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noEmbossDeboss++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataEmbossDeboss['keperluan'],
@@ -1109,7 +1109,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSpotUV) {
                     if (isset($this->stateWorkStepSpotUV)) {
                         $this->validate(
@@ -1126,20 +1126,20 @@ class FormSettingIndex extends Component
                                 'dataSpotUV.ukuran_film.required' => 'Data SpotUV harus diisi.',
                             ],
                         );
-    
+
                         $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Spot UV')
                             ->count();
                         foreach ($this->fileSpotUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-reject-' . $noSpotUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSpotUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSpotUV['keperluan'],
@@ -1151,7 +1151,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileUV) {
                     if (isset($this->stateWorkStepUV)) {
                         $this->validate(
@@ -1168,20 +1168,20 @@ class FormSettingIndex extends Component
                                 'dataUV.ukuran_film.required' => 'Data UV harus diisi.',
                             ],
                         );
-    
+
                         $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'UV')
                             ->count();
                         foreach ($this->fileUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-reject-' . $noUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataUV['keperluan'],
@@ -1193,7 +1193,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileCetakLabel) {
                     if (isset($this->stateWorkStepCetakLabel)) {
                         $this->validate(
@@ -1210,20 +1210,20 @@ class FormSettingIndex extends Component
                                 'dataCetakLabel.ukuran_film.required' => 'Data CetakLabel harus diisi.',
                             ],
                         );
-    
+
                         $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Label')
                             ->count();
                         foreach ($this->fileCetakLabel as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-reject-' . $noCetakLabel . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noCetakLabel++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataCetakLabel['keperluan'],
@@ -1235,7 +1235,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileLayout) {
                     $this->validate(
                         [
@@ -1245,22 +1245,22 @@ class FormSettingIndex extends Component
                             'fileLayout.required' => 'File Layout Harus diisi.',
                         ],
                     );
-    
+
                     $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)
                         ->where('type_file', 'layout')
                         ->count();
                     $nolayout = $fileLayoutData;
-    
+
                     foreach ($this->fileLayout as $file) {
                         $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                         $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                         $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                         $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-reject-' . $nolayout . '.' . $extension;
-    
+
                         Storage::putFileAs($folder, $file, $fileName);
                         $nolayout++;
-    
+
                         Files::create([
                             'instruction_id' => $this->instructionCurrentId,
                             'user_id' => Auth()->user()->id,
@@ -1285,14 +1285,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepFoil)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['foil'] = array_filter($keterangan['foil'], function ($foil) {
                             return $foil['state_foil'] !== null || $foil['jumlah_foil'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -1309,14 +1309,14 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if (isset($this->stateWorkStepEmbossDeboss)) {
                     foreach ($this->keterangans as $index => $keterangan) {
                         $this->keterangans[$index]['matress'] = array_filter($keterangan['matress'], function ($matress) {
                             return $matress['state_matress'] !== null || $matress['jumlah_matress'] !== null;
                         });
                     }
-    
+
                     $this->validate(
                         [
                             'keterangans' => 'required|array|min:1',
@@ -1333,7 +1333,7 @@ class FormSettingIndex extends Component
                         ],
                     );
                 }
-    
+
                 if ($this->filePisauPond) {
                     if (isset($this->stateWorkStepPond)) {
                         $this->validate(
@@ -1350,20 +1350,20 @@ class FormSettingIndex extends Component
                                 'dataPisauPond.ukuran_film.required' => 'Data Pisau Pond harus diisi.',
                             ],
                         );
-    
+
                         $noPisauPond = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Pisau')
                             ->count();
                         foreach ($this->filePisauPond as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-pisau-pond-' . $noPisauPond . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noPisauPond++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataPisauPond['keperluan'],
@@ -1375,7 +1375,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileFoil) {
                     if (isset($this->stateWorkStepFoil)) {
                         $this->validate(
@@ -1392,20 +1392,20 @@ class FormSettingIndex extends Component
                                 'dataFoil.ukuran_film.required' => 'Data Foil harus diisi.',
                             ],
                         );
-    
+
                         $noFoil = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Foil')
                             ->count();
                         foreach ($this->fileFoil as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-foil-' . $noFoil . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noFoil++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataFoil['keperluan'],
@@ -1417,7 +1417,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSablon) {
                     if (isset($this->stateWorkStepSablon)) {
                         $this->validate(
@@ -1434,20 +1434,20 @@ class FormSettingIndex extends Component
                                 'dataSablon.ukuran_film.required' => 'Data Sablon harus diisi.',
                             ],
                         );
-    
+
                         $noSablon = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Sablon')
                             ->count();
                         foreach ($this->fileSablon as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-sablon-' . $noSablon . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSablon++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSablon['keperluan'],
@@ -1459,7 +1459,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileEmbossDeboss) {
                     if (isset($this->stateWorkStepEmbossDeboss)) {
                         $this->validate(
@@ -1476,20 +1476,20 @@ class FormSettingIndex extends Component
                                 'dataEmbossDeboss.ukuran_film.required' => 'Data Emboss/Deboss harus diisi.',
                             ],
                         );
-    
+
                         $noEmbossDeboss = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Emboss/Deboss')
                             ->count();
                         foreach ($this->fileEmbossDeboss as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-EmbossDeboss-' . $noEmbossDeboss . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noEmbossDeboss++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataEmbossDeboss['keperluan'],
@@ -1501,7 +1501,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileSpotUV) {
                     if (isset($this->stateWorkStepSpotUV)) {
                         $this->validate(
@@ -1518,20 +1518,20 @@ class FormSettingIndex extends Component
                                 'dataSpotUV.ukuran_film.required' => 'Data SpotUV harus diisi.',
                             ],
                         );
-    
+
                         $noSpotUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Spot UV')
                             ->count();
                         foreach ($this->fileSpotUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-SpotUV-' . $noSpotUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noSpotUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataSpotUV['keperluan'],
@@ -1543,7 +1543,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileUV) {
                     if (isset($this->stateWorkStepUV)) {
                         $this->validate(
@@ -1560,20 +1560,20 @@ class FormSettingIndex extends Component
                                 'dataUV.ukuran_film.required' => 'Data UV harus diisi.',
                             ],
                         );
-    
+
                         $noUV = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'UV')
                             ->count();
                         foreach ($this->fileUV as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-UV-' . $noUV . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noUV++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataUV['keperluan'],
@@ -1585,7 +1585,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileCetakLabel) {
                     if (isset($this->stateWorkStepCetakLabel)) {
                         $this->validate(
@@ -1602,20 +1602,20 @@ class FormSettingIndex extends Component
                                 'dataCetakLabel.ukuran_film.required' => 'Data CetakLabel harus diisi.',
                             ],
                         );
-    
+
                         $noCetakLabel = FileSetting::where('instruction_id', $this->instructionCurrentId)
                             ->where('keperluan', 'Label')
                             ->count();
                         foreach ($this->fileCetakLabel as $file) {
                             $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                             $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                             $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                             $fileName = $InstructionCurrentDataFile->spk_number . '-file-CetakLabel-' . $noCetakLabel . '.' . $extension;
-    
+
                             Storage::putFileAs($folder, $file, $fileName);
                             $noCetakLabel++;
-    
+
                             $keteranganFileRincian = FileSetting::create([
                                 'instruction_id' => $this->instructionCurrentId,
                                 'keperluan' => $this->dataCetakLabel['keperluan'],
@@ -1627,7 +1627,7 @@ class FormSettingIndex extends Component
                         }
                     }
                 }
-    
+
                 if ($this->fileLayout) {
                     $this->validate(
                         [
@@ -1637,21 +1637,21 @@ class FormSettingIndex extends Component
                             'fileLayout.required' => 'File Layout Harus diisi.',
                         ],
                     );
-    
+
                     $fileLayoutData = Files::where('instruction_id', $this->instructionCurrentId)
                         ->where('type_file', 'layout')
                         ->count();
                     $nolayout = $fileLayoutData;
                     foreach ($this->fileLayout as $file) {
                         $folder = 'public/' . $InstructionCurrentDataFile->spk_number . '/setting';
-    
+
                         $lastDotPosition = strrpos($file->getClientOriginalName(), '.');
                         $extension = substr($file->getClientOriginalName(), $lastDotPosition + 1);
                         $fileName = Carbon::now()->format('Ymd') . '-' . $InstructionCurrentDataFile->spk_number . '-file-layout-' . $nolayout . '.' . $extension;
-    
+
                         Storage::putFileAs($folder, $file, $fileName);
                         $nolayout++;
-    
+
                         Files::create([
                             'instruction_id' => $this->instructionCurrentId,
                             'user_id' => Auth()->user()->id,
@@ -1662,7 +1662,7 @@ class FormSettingIndex extends Component
                     }
                 }
             }
-    
+
             if (isset($this->stateWorkStepPlate)) {
                 $deleteWarna = WarnaPlate::where('instruction_id', $this->instructionCurrentId)->delete();
                 if (isset($this->keterangans)){
@@ -1691,7 +1691,7 @@ class FormSettingIndex extends Component
                                 ]);
                             }
                         }
-        
+
                         if (isset($item['foil'])) {
                             $deleteFoil = KeteranganFoil::where('instruction_id', $this->instructionCurrentId)->delete();
                             foreach ($item['foil'] as $foil) {
@@ -1704,7 +1704,7 @@ class FormSettingIndex extends Component
                                 ]);
                             }
                         }
-        
+
                         if (isset($item['matress'])) {
                             $deleteMatressEmbossDeboss = KeteranganMatressEmbossDeboss::where('instruction_id', $this->instructionCurrentId)->delete();
                             foreach ($item['matress'] as $matress) {
@@ -1718,7 +1718,7 @@ class FormSettingIndex extends Component
                             }
                         }
                     }
-        
+
                     $updateRincianPlateDeleted = RincianPlate::where('instruction_id', $this->instructionCurrentId)
                         ->whereNull('name')
                         ->update([
@@ -1726,32 +1726,32 @@ class FormSettingIndex extends Component
                         ]);
                 }
             }
-    
+
             if ($currentStep->status_task == 'Reject Requirements') {
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
                 ]);
-    
+
                 $findSourceReject = WorkStep::find($currentStep->reject_from_id);
-    
+
                 $findSourceReject->update([
                     'state_task' => 'Running',
                     'status_task' => 'Pending Approved',
                 ]);
-    
+
                 $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                     'status_id' => 1,
                     'job_id' => $findSourceReject->work_step_list_id,
                 ]);
-    
+
                 $currentStep->update([
                     'reject_from_id' => null,
                     'reject_from_status' => null,
                     'reject_from_job' => null,
                     'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
-    
+
                 $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
                 event(new IndexRenderEvent('refresh'));
             } else {
@@ -1762,47 +1762,47 @@ class FormSettingIndex extends Component
                             'status_task' => 'Complete',
                             'selesai' => Carbon::now()->toDateTimeString(),
                         ]);
-    
+
                         // Cek apakah step berikutnya ada sebelum melanjutkan
                         if ($nextStep) {
                             $nextStep->update([
                                 'state_task' => 'Running',
                                 'status_task' => 'Pending Approved',
                             ]);
-    
+
                             $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                                 'job_id' => $nextStep->work_step_list_id,
                                 'status_id' => 1,
                             ]);
-    
+
                             //group
                             $dataInstruction = Instruction::find($this->instructionCurrentId);
                             if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
                                 $datachild = Instruction::where('group_id', $dataInstruction->group_id)
                                     ->where('group_priority', 'child')
                                     ->get();
-    
+
                                 foreach ($datachild as $key => $item) {
                                     $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
                                         ->where('work_step_list_id', $currentStep->work_step_list_id)
                                         ->where('user_id', $currentStep->user_id)
                                         ->first();
-    
+
                                     if (isset($updateChildWorkStep)) {
                                         $updateChildWorkStep->update([
                                             'state_task' => 'Complete',
                                             'status_task' => 'Complete',
                                         ]);
-    
+
                                         $updateChildNextWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
                                             ->where('step', $updateChildWorkStep->step + 1)
                                             ->first();
-    
+
                                         $updateChildNextWorkStep->update([
                                             'state_task' => 'Running',
                                             'status_task' => 'Pending Approved',
                                         ]);
-    
+
                                         $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
                                             'job_id' => $updateChildNextWorkStep->work_step_list_id,
                                             'status_id' => 1,
@@ -1816,31 +1816,31 @@ class FormSettingIndex extends Component
                                 'state_task' => 'Complete',
                                 'status_task' => 'Complete',
                             ]);
-    
+
                             $updateJobStatus = WorkStep::where('instruction_id', $this->instructionCurrentId)->update([
                                 'job_id' => $currentStep->work_step_list_id,
                                 'status_id' => 7,
                             ]);
-    
+
                             //group
                             $dataInstruction = Instruction::find($this->instructionCurrentId);
                             if (isset($dataInstruction->group_id) && isset($dataInstruction->group_priority)) {
                                 $datachild = Instruction::where('group_id', $dataInstruction->group_id)
                                     ->where('group_priority', 'child')
                                     ->get();
-    
+
                                 foreach ($datachild as $key => $item) {
                                     $updateChildWorkStep = WorkStep::where('instruction_id', $item['instruction_id'])
                                         ->where('work_step_list_id', $currentStep->work_step_list_id)
                                         ->where('user_id', $currentStep->user_id)
                                         ->first();
-    
+
                                     if (isset($updateChildWorkStep)) {
                                         $updateChildWorkStep->update([
                                             'state_task' => 'Complete',
                                             'status_task' => 'Complete',
                                         ]);
-    
+
                                         $updateChildJobStatus = WorkStep::where('instruction_id', $item['instruction_id'])->update([
                                             'spk_status' => 'Selesai',
                                             'state_task' => 'Complete',
@@ -1857,15 +1857,15 @@ class FormSettingIndex extends Component
                 $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
                 event(new IndexRenderEvent('refresh'));
             }
-    
+
             $this->emit('flashMessage', [
                 'type' => 'success',
                 'title' => 'Setting Instruksi Kerja',
                 'message' => 'Data Setting berhasil disimpan',
             ]);
-    
+
             return redirect()->route('operator.dashboard');
-        }        
+        }
     }
 
     public function saveLayout()
