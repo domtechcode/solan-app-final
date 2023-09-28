@@ -49,6 +49,7 @@ class RiwayatPengajuanBarangSpkIndex extends Component
     public $qty_purchase;
     public $total_harga;
     public $stock;
+    public $file_pengajuan = [];
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -89,6 +90,7 @@ class RiwayatPengajuanBarangSpkIndex extends Component
         $dataworkStepHitungBahanNew = WorkStep::where('instruction_id', $instructionId)
             ->where('work_step_list_id', 5)
             ->first();
+
         if (isset($dataworkStepHitungBahanNew)) {
             $this->workStepHitungBahanNew = $dataworkStepHitungBahanNew->id;
         }
@@ -100,11 +102,26 @@ class RiwayatPengajuanBarangSpkIndex extends Component
             $this->qty_purchase = currency_idr($this->dataBarang->qty_purchase);
             $this->stock = currency_idr($this->dataBarang->stock);
             $this->total_harga = currency_idr($this->dataBarang->total_harga);
+
+            if(isset($this->dataBarang->filesPengajuanBarangSpk)) {
+                foreach ($this->dataBarang->filesPengajuanBarangSpk as $data) {
+                    $dataFilePengajuan = [
+                        'file_name' => $data['file_name'],
+                        'file_path' => $data['file_path'],
+                    ];
+
+                    $this->file_pengajuan [] = $dataFilePengajuan;
+                }
+            }else{
+                $this->file_pengajuan = [];
+            }
+
         } else {
             $this->harga_satuan = '';
             $this->qty_purchase = '';
             $this->stock = '';
             $this->total_harga = '';
+            $this->file_pengajuan = [];
         }
     }
 

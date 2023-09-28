@@ -21,7 +21,7 @@
                                             <th>NAMA BARANG</th>
                                             <th>TARGET TERSEDIA</th>
                                             <th>QTY</th>
-                                            <th>FILE</th>
+                                            <th>FILE FILM/LAIN LAIN (Upload File)</th>
                                             <th>KETERANGAN</th>
                                             <th>ACTION</th>
                                         </tr>
@@ -93,16 +93,6 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div class="input-group control-group">
-                                                            <textarea class="form-control" placeholder="Keterangan" rows="1"
-                                                                wire:model="pengajuanBarang.{{ $key }}.keterangan"></textarea>
-                                                        </div>
-                                                        @error('pengajuanBarang.' . $key . '.keterangan')
-                                                            <div><span class="text-danger">{{ $message }}</span>
-                                                            </div>
-                                                        @enderror
-                                                    </td>
-                                                    <td>
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -118,6 +108,16 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group control-group">
+                                                            <textarea class="form-control" placeholder="Keterangan" rows="1"
+                                                                wire:model="pengajuanBarang.{{ $key }}.keterangan"></textarea>
+                                                        </div>
+                                                        @error('pengajuanBarang.' . $key . '.keterangan')
+                                                            <div><span class="text-danger">{{ $message }}</span>
+                                                            </div>
+                                                        @enderror
                                                     </td>
                                                     <td>
                                                         <div class="btn-list">

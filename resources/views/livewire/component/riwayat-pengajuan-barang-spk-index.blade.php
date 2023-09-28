@@ -232,6 +232,7 @@
                                             <th class="border-bottom-0">LANGKAH KERJA</th>
                                             <th class="border-bottom-0">NAMA BARANG</th>
                                             <th class="border-bottom-0">QTY PENGAJUAN</th>
+                                            <th class="border-bottom-0">FILE</th>
                                             <th class="border-bottom-0">KETERANGAN</th>
                                         </tr>
                                     </thead>
@@ -241,6 +242,15 @@
                                                 <td>{{ $dataBarang->workStepList->name }}</td>
                                                 <td>{{ $dataBarang->nama_barang }}</td>
                                                 <td>{{ $dataBarang->qty_barang }}</td>
+                                                @if(isset($file_pengajuan))
+                                                    @foreach ($file_pengajuan as $data)
+                                                        <td>
+                                                            <a href="{{ asset(Storage::url($data['file_path'] . '/' . $data['file_name'])) }}"
+                                                                download>{{ $data['file_name'] }}</a></td>
+                                                    @endforeach
+                                                @else
+                                                    <td>-</td>
+                                                @endif
                                                 <td>{{ $dataBarang->keterangan }}</td>
                                             </tr>
                                         @endif
