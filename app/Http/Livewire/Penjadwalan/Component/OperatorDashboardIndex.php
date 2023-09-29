@@ -42,7 +42,7 @@ class OperatorDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRenderPage' => 'render'];
+    protected $listeners = ['indexRenderPage' => '$refresh'];
 
     public function updatingDijadwalkanSelected()
     {
