@@ -42,7 +42,7 @@ class OperatorDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRenderPage' => '$refresh'];
+    protected $listeners = ['indexRenderPage' => 'render'];
 
     public function updatingDijadwalkanSelected()
     {
@@ -158,6 +158,7 @@ class OperatorDashboardIndex extends Component
 
     public function render()
     {
+        $this->select2();
         if ($this->userSelected == 'all') {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->whereIn('state_task', ['Running', 'Not Running'])

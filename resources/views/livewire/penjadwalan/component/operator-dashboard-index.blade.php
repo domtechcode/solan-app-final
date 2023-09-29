@@ -136,10 +136,10 @@
                                                         <option value="{{ $datauser->id }}">{{ $datauser->name }}
                                                         </option>
                                                     @endforeach
-                                                </select>                                                
+                                                </select>
                                             </div>
 
-                                            
+
                                         </div>
                                         @error('changeTo.' . $dataInstruction->id)
                                                 <div><span class="text-danger">{{ $message }}</span></div>
@@ -197,7 +197,7 @@
                                                                                     <option value="{{ $datauser->id }}">{{ $datauser->name }}
                                                                                     </option>
                                                                                 @endforeach
-                                                                            </select>                                                
+                                                                            </select>
                                                                         </div>
                                                                         @error('changeTo.' . $dataInstruction->id)
                                                                                 <div><span class="text-danger">{{ $message }}</span></div>
@@ -304,7 +304,7 @@
                                                                             <button type="button"
                                                                                 class="btn btn-success btn-sm mt-2"
                                                                                 wire:click="pindahOperator({{ $dataInstruction->id }}, {{ $key }})"
-                                                                                wire:key="pindahOperator({{ $dataInstruction->id }}, {{ $key }})">Move</button>
+                                                                                wire:key="pindahOperator({{ $dataInstruction->id }})">Move</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
