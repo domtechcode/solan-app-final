@@ -223,7 +223,13 @@ class ReorderInstructionIndex extends Component
         ]);
 
         $customerList = Customer::find($this->customer);
-        $dataInstruction = Instruction::where('customer_number', '!=', $this->customer_number)->first();
+        $dataInstruction = Instruction::where('customer_number', $this->customer_number)
+        ->whereNotNull('customer_number')
+        ->where('sub_spk', '!=', $this->sub_spk)
+        ->where('spk_type', $this->spk_type)
+        ->first();
+
+        $dataInstructionSpkNumber = Instruction::where('spk_number', $this->spk_number)->first();
 
         if ($this->spk_type == 'stock') {
             $this->spk_type = 'production';
@@ -242,7 +248,7 @@ class ReorderInstructionIndex extends Component
             $this->spk_parent = NULL;
         }
 
-        if ($dataInstruction == null) {
+        if ($dataInstruction == null && $dataInstructionSpkNumber == null) {
             if ($this->spk_type != 'layout') {
                 $this->validate([
                     'panjang_barang' => 'required',
@@ -764,7 +770,7 @@ class ReorderInstructionIndex extends Component
                                 'b' => $dataRincianPlate['b'],
                                 'warnaPlate' => [], // Inisialisasi array warnaPlate
                             ];
-                    
+
                             foreach ($dataRincianPlate['warnaPlate'] as $dataWarnaPlate) {
                                 // Tambahkan informasi warnaPlate ke dalam rincianPlate yang sesuai
                                 $keterangan['rincianPlate'][$key]['warnaPlate'][] = [
@@ -934,7 +940,7 @@ class ReorderInstructionIndex extends Component
                                         'a' => $dataRincianPlate['a'],
                                         'b' => $dataRincianPlate['b'],
                                     ]);
-                            
+
                                     if (isset($dataRincianPlate['warnaPlate'])) {
                                         foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                             // Buat instance model WarnaPlate
@@ -1134,7 +1140,7 @@ class ReorderInstructionIndex extends Component
                                         'a' => $dataRincianPlate['a'],
                                         'b' => $dataRincianPlate['b'],
                                     ]);
-                            
+
                                     if (isset($dataRincianPlate['warnaPlate'])) {
                                         foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                             // Buat instance model WarnaPlate
@@ -1453,7 +1459,7 @@ class ReorderInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';
