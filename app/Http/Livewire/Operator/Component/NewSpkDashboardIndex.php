@@ -85,6 +85,7 @@ class NewSpkDashboardIndex extends Component
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
                 ->where('spk_status', 'Running')
                 ->where('schedule_date', '<=', $formattedToday)
+                ->orderBy('task_priority', 'desc')
                 ->where(function ($query) {
                     $query
                         ->where(function ($subQuery) {
@@ -129,6 +130,7 @@ class NewSpkDashboardIndex extends Component
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
                 ->where('spk_status', 'Running')
                 ->where('schedule_date', '<=', $formattedToday)
+                ->orderBy('task_priority', 'desc')
                 ->whereHas('instruction', function ($query) {
                     $searchTerms = '%' . $this->searchNewSpk . '%';
                     $query
@@ -164,6 +166,7 @@ class NewSpkDashboardIndex extends Component
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])
                 ->where('spk_status', 'Running')
                 ->where('schedule_date', '<=', $formattedToday)
+                ->orderBy('task_priority', 'desc')
                 ->whereHas('instruction', function ($query) {
                     $searchTerms = '%' . $this->searchNewSpk . '%';
                     $query
