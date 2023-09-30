@@ -268,10 +268,10 @@ class CreateFormHitungBahanIndex extends Component
             ->first();
 
         if (!$cekGroup) {
-            $this->instructionData = Instruction::where('id', $instructionId)->get();
+            $this->instructionData = Instruction::where('id', $instructionId)->orderBy('spk_number', 'asc')->get();
         } else {
-            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
-            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->orderBy('spk_number', 'asc')->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->orderBy('spk_number', 'asc')->get();
         }
 
         $this->contohData = Files::where('instruction_id', $instructionId)
@@ -509,7 +509,7 @@ class CreateFormHitungBahanIndex extends Component
                         'b' => $dataRincianPlate['b'],
                         'warnaPlate' => [], // Inisialisasi array warnaPlate
                     ];
-            
+
                     foreach ($dataRincianPlate['warnaPlate'] as $dataWarnaPlate) {
                         // Tambahkan informasi warnaPlate ke dalam rincianPlate yang sesuai
                         $keterangan['rincianPlate'][$key]['warnaPlate'][] = [
@@ -816,13 +816,25 @@ class CreateFormHitungBahanIndex extends Component
             ]);
 
             foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                ]);
+                if($input['tujuan'] == 'semua') {
+                    foreach ($this->workSteps as $item) {
+                        $catatanSemua = Catatan::create([
+                            'tujuan' => $item['work_step_list_id'],
+                            'catatan' => $input['catatan'],
+                            'kategori' => 'catatan',
+                            'instruction_id' => $this->currentInstructionId,
+                            'user_id' => Auth()->user()->id,
+                        ]);
+                    }
+                }else{
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->currentInstructionId,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
             }
         }
 
@@ -1034,7 +1046,7 @@ class CreateFormHitungBahanIndex extends Component
                                 'a' => $dataRincianPlate['a'],
                                 'b' => $dataRincianPlate['b'],
                             ]);
-                    
+
                             if (isset($dataRincianPlate['warnaPlate'])) {
                                 foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                     // Buat instance model WarnaPlate
@@ -1244,7 +1256,7 @@ class CreateFormHitungBahanIndex extends Component
                                 'a' => $dataRincianPlate['a'],
                                 'b' => $dataRincianPlate['b'],
                             ]);
-                    
+
                             if (isset($dataRincianPlate['warnaPlate'])) {
                                 foreach ($dataRincianPlate['warnaPlate'] as $dataWarna) {
                                     // Buat instance model WarnaPlate

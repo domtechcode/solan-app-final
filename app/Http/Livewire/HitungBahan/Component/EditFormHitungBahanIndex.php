@@ -270,10 +270,16 @@ class EditFormHitungBahanIndex extends Component
             ->first();
 
         if (!$cekGroup) {
-            $this->instructionData = Instruction::where('id', $instructionId)->get();
+            $this->instructionData = Instruction::where('id', $instructionId)
+                ->orderBy('spk_number', 'asc')
+                ->get();
         } else {
-            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)->get();
-            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))->get();
+            $instructionGroup = Instruction::where('group_id', $cekGroup->group_id)
+                ->orderBy('spk_number', 'asc')
+                ->get();
+            $this->instructionData = Instruction::whereIn('id', $instructionGroup->pluck('id'))
+                ->orderBy('spk_number', 'asc')
+                ->get();
         }
 
         $this->contohData = Files::where('instruction_id', $instructionId)
@@ -828,13 +834,25 @@ class EditFormHitungBahanIndex extends Component
             ]);
 
             foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                ]);
+                if($input['tujuan'] == 'semua') {
+                    foreach ($this->workSteps as $item) {
+                        $catatanSemua = Catatan::create([
+                            'tujuan' => $item['work_step_list_id'],
+                            'catatan' => $input['catatan'],
+                            'kategori' => 'catatan',
+                            'instruction_id' => $this->currentInstructionId,
+                            'user_id' => Auth()->user()->id,
+                        ]);
+                    }
+                }else{
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->currentInstructionId,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
             }
         }
 
@@ -1469,39 +1487,37 @@ class EditFormHitungBahanIndex extends Component
                     $updateNextStep = WorkStep::find($updateTask->reject_from_id);
 
                     if ($updateNextStep) {
-
-                        if($updateNextStep->reject_from_status == 1) {
+                        if ($updateNextStep->reject_from_status == 1) {
                             $updateNextStep->update([
                                 'state_task' => 'Running',
                                 'status_task' => 'Pending Approved',
                             ]);
-    
+
                             $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                                 'status_id' => 1,
                                 'job_id' => $updateTask->reject_from_job,
                             ]);
-                        }else if($updateNextStep->reject_from_status == 2) {
+                        } elseif ($updateNextStep->reject_from_status == 2) {
                             $updateNextStep->update([
                                 'state_task' => 'Running',
                                 'status_task' => 'Process',
                             ]);
-    
+
                             $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                                 'status_id' => 2,
                                 'job_id' => $updateTask->reject_from_job,
                             ]);
-                        }else{
+                        } else {
                             $updateNextStep->update([
                                 'state_task' => 'Running',
                                 'status_task' => 'Process',
                             ]);
-    
+
                             $updateStatusJob = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
                                 'status_id' => 2,
                                 'job_id' => $updateTask->reject_from_job,
                             ]);
                         }
-                        
                     }
 
                     $this->messageSent(['conversation' => 'SPK diperbaiki Hitung Bahan', 'instruction_id' => $this->currentInstructionId, 'receiver' => $updateNextStep->user_id]);
@@ -1590,7 +1606,7 @@ class EditFormHitungBahanIndex extends Component
                             'status_id' => 2,
                             'job_id' => $updateTask->reject_from_job,
                         ]);
-                    }                    
+                    }
                 } else {
                     $updateNextStep->update([
                         'state_task' => 'Running',

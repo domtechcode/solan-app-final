@@ -84,6 +84,8 @@
                                         <th class="border-bottom-0">Style</th>
                                         <th class="border-bottom-0">TGL Masuk</th>
                                         <th class="border-bottom-0">TGL Kirim</th>
+                                        <th class="border-bottom-0">QTY Permintaan</th>
+                                        <th class="border-bottom-0">Stock</th>
                                         <th class="border-bottom-0">Total Qty</th>
                                         <th class="border-bottom-0">Price</th>
                                         <th class="border-bottom-0">Follow Up</th>
@@ -115,6 +117,8 @@
                                             <td>{{ $instruction->code_style }}</td>
                                             <td>{{ $instruction->order_date }}</td>
                                             <td>{{ $instruction->shipping_date }}</td>
+                                            <td>{{ currency_idr($instruction->quantity) }}</td>
+                                            <td>{{ currency_idr($instruction->stock) }}</td>
                                             <td>{{ currency_idr($instruction->quantity - $instruction->stock) }}</td>
                                             <td>{{ $instruction->price }}</td>
                                             <td>{{ $instruction->follow_up }}</td>
@@ -2011,6 +2015,7 @@
                                                         data-bs-placeholder="Pilih Tujuan Catatan"
                                                         wire:model="notes.{{ $index }}.tujuan" required>
                                                         <option label="Pilih Tujuan Catatan"></option>
+                                                        <option value="semua">Semua</option>
                                                         @foreach ($workSteps as $key)
                                                             <option value="{{ $key['work_step_list_id'] }}">
                                                                 {{ $key['workStepList']['name'] }}</option>

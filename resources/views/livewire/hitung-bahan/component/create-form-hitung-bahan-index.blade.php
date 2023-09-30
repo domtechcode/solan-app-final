@@ -2,7 +2,7 @@
     <style>
         .canvas-container {
             /* border: 1px solid #000; */
-            
+
             /* margin-bottom: 20px; */
         }
     </style>
@@ -91,6 +91,8 @@
                                         <th class="border-bottom-0">Style</th>
                                         <th class="border-bottom-0">TGL Masuk</th>
                                         <th class="border-bottom-0">TGL Kirim</th>
+                                        <th class="border-bottom-0">QTY Permintaan</th>
+                                        <th class="border-bottom-0">Stock</th>
                                         <th class="border-bottom-0">Total Qty</th>
                                         <th class="border-bottom-0">Price</th>
                                         <th class="border-bottom-0">Follow Up</th>
@@ -122,6 +124,8 @@
                                             <td>{{ $instruction->code_style }}</td>
                                             <td>{{ $instruction->order_date }}</td>
                                             <td>{{ $instruction->shipping_date }}</td>
+                                            <td>{{ currency_idr($instruction->quantity) }}</td>
+                                            <td>{{ currency_idr($instruction->stock) }}</td>
                                             <td>{{ currency_idr($instruction->quantity - $instruction->stock) }}</td>
                                             <td>{{ $instruction->price }}</td>
                                             <td>{{ $instruction->follow_up }}</td>
@@ -1044,11 +1048,11 @@
                                                                 <?php
                                                                 $jumlahLembarCetak = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'];
                                                                 $waste = $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] ?? 0;
-                                                                
+
                                                                 if (is_numeric($jumlahLembarCetak)) {
                                                                     $totalLembarCetakPlate += $jumlahLembarCetak;
                                                                 }
-                                                                
+
                                                                 if (is_numeric($waste)) {
                                                                     $totalWastePlate += $waste;
                                                                 }
@@ -1182,11 +1186,11 @@
                                                                 <?php
                                                                 $jumlahLembarCetakScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['jumlah_lembar_cetak'];
                                                                 $wasteScreen = $keterangans[$keteranganIndex]['rincianScreen'][$rincianIndexScreen]['waste'] ?? 0;
-                                                                
+
                                                                 if (is_numeric($jumlahLembarCetakScreen)) {
                                                                     $totalLembarCetakScreen += $jumlahLembarCetakScreen;
                                                                 }
-                                                                
+
                                                                 if (is_numeric($wasteScreen)) {
                                                                     $totalWasteScreen += $wasteScreen;
                                                                 }
@@ -1981,6 +1985,7 @@
                                                         data-bs-placeholder="Pilih Tujuan Catatan"
                                                         wire:model="notes.{{ $index }}.tujuan">
                                                         <option label="Pilih Tujuan Catatan"></option>
+                                                        <option value="semua">Semua</option>
                                                         @foreach ($workSteps as $key)
                                                             <option value="{{ $key['work_step_list_id'] }}">
                                                                 {{ $key['workStepList']['name'] }}</option>
