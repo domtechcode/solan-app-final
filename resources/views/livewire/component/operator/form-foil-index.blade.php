@@ -98,13 +98,13 @@
                                             </tr>
                                             <?php
                                             $totalLembarCetak = $dataHasilAkhir[$key]['hasil_akhir_lembar_cetak_plate'];
-                                            
+
                                             if (is_numeric($totalLembarCetak)) {
                                                 $totalLembarCetakHasilAkhir += $totalLembarCetak;
                                             } else {
                                                 $totalLembarCetakHasilAkhir = 0;
                                             }
-                                            
+
                                             ?>
                                         @endforeach
                                         <tr>
@@ -202,6 +202,7 @@
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
                                                             wire:model="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="semua">Semua</option>
                                                             @foreach ($workSteps as $key)
                                                                 <option value="{{ $key['work_step_list_id'] }}">
                                                                     {{ $key['workStepList']['name'] }}</option>

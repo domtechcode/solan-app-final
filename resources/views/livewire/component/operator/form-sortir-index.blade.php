@@ -158,7 +158,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-sm-12 col-md-12">
                             <div class="expanel expanel-default">
@@ -180,6 +180,7 @@
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
                                                             wire:model="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="semua">Semua</option>
                                                             @foreach ($workSteps as $key)
                                                                 <option value="{{ $key['work_step_list_id'] }}">
                                                                     {{ $key['workStepList']['name'] }}</option>

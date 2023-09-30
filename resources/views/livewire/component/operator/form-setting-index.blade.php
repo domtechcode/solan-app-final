@@ -995,7 +995,7 @@
                                                         class="fe fe-plus"></i>Tambah
                                                     Catatan</button>
                                             </div>
-    
+
                                             @foreach ($notes as $index => $note)
                                                 <div class="col-sm-12 col-md-12" wire:key="note-{{ $index }}">
                                                     <div class="expanel expanel-default">
@@ -1006,11 +1006,12 @@
                                                                     data-bs-placeholder="Pilih Tujuan Catatan"
                                                                     wire:model="notes.{{ $index }}.tujuan">
                                                                     <option label="Pilih Tujuan Catatan"></option>
+                                                                    <option value="semua">Semua</option>
                                                                     @foreach ($workSteps as $key)
                                                                         <option value="{{ $key['work_step_list_id'] }}">
                                                                             {{ $key['workStepList']['name'] }}</option>
                                                                     @endforeach
-    
+
                                                                 </select>
                                                                 <button class="btn btn-danger" type="button"
                                                                     wire:click="removeNote({{ $index }})"><i
@@ -1020,7 +1021,7 @@
                                                                 <p class="mt-2 text-sm text-danger">{{ $message }}
                                                                 </p>
                                                             @enderror
-    
+
                                                             <div class="input-group control-group"
                                                                 style="padding-top: 5px;">
                                                                 <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
@@ -1034,7 +1035,7 @@
                                                     </div>
                                                 </div>
                                             @endforeach
-    
+
                                         </div>
                                     </div>
                                 </div>

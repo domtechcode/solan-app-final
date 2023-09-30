@@ -113,13 +113,25 @@ class FormSablonIndex extends Component
             ]);
 
             foreach ($this->notes as $input) {
-                $catatan = Catatan::create([
-                    'tujuan' => $input['tujuan'],
-                    'catatan' => $input['catatan'],
-                    'kategori' => 'catatan',
-                    'instruction_id' => $this->currentInstructionId,
-                    'user_id' => Auth()->user()->id,
-                ]);
+                if($input['tujuan'] == 'semua') {
+                    foreach ($this->workSteps as $item) {
+                        $catatanSemua = Catatan::create([
+                            'tujuan' => $item['work_step_list_id'],
+                            'catatan' => $input['catatan'],
+                            'kategori' => 'catatan',
+                            'instruction_id' => $this->instructionCurrentId,
+                            'user_id' => Auth()->user()->id,
+                        ]);
+                    }
+                }else{
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->instructionCurrentId,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
             }
         }
 

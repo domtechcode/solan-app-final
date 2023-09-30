@@ -103,7 +103,7 @@
                                                 } else {
                                                     $totalLembarCetakHasilAkhir = 0;
                                                 }
-                                            
+
                                             ?>
                                         @endforeach
                                         <tr>
@@ -118,7 +118,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="form-label">Jenis Pekerjaan</label>
@@ -253,6 +253,7 @@
                                                             data-bs-placeholder="Pilih Tujuan Catatan"
                                                             wire:model="notes.{{ $index }}.tujuan">
                                                             <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="semua">Semua</option>
                                                             @foreach ($workSteps as $key)
                                                                 <option value="{{ $key['work_step_list_id'] }}">
                                                                     {{ $key['workStepList']['name'] }}</option>
