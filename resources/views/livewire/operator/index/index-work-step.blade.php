@@ -88,6 +88,8 @@
                                                 @if ($workStepData->work_step_list_id == 36)
                                                     <!-- ROW-2-->
                                                     @livewire('component.hitung-bahan-data-view-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @elseif ($workStepData->work_step_list_id == 35)
+                                                    @livewire('component.hitung-bahan-data-view-qc-packing-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @else
                                                     @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @endif
