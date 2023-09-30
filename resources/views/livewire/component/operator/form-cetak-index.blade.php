@@ -33,17 +33,7 @@
                                                 <td>
                                                     @if (!empty($rincianPlate['warnaCetak']))
                                                         @foreach ($rincianPlate['warnaCetak'] as $index => $warnaCetak)
-                                                            <div class="form-group">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Warna"
-                                                                    wire:model="dataWarna.rincianPlate.{{ $key }}.warnaCetak.{{ $index }}.warna"
-                                                                    disabled>
-                                                                @error('dataWarna.' . $key . '.warnaCetak.' . $index .
-                                                                    '.warna')
-                                                                    <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                    </p>
-                                                                @enderror
-                                                            </div>
+                                                            {{ $dataWarna['rincianPlate'][$key]['warnaCetak'][$index]['warna'] }}
                                                         @endforeach
                                                     @else
                                                         N/A
@@ -52,17 +42,7 @@
                                                 <td>
                                                     @if (!empty($rincianPlate['warnaCetak']))
                                                         @foreach ($rincianPlate['warnaCetak'] as $index => $warnaCetak)
-                                                            <div class="form-group">
-                                                                <input type="text" autocomplete="off"
-                                                                    class="form-control" placeholder="Warna"
-                                                                    wire:model="dataWarna.rincianPlate.{{ $key }}.warnaCetak.{{ $index }}.keterangan"
-                                                                    disabled>
-                                                                @error('dataWarna.' . $key . '.warnaCetak.' . $index .
-                                                                    '.keterangan')
-                                                                    <p class="mt-2 text-sm text-danger">{{ $message }}
-                                                                    </p>
-                                                                @enderror
-                                                            </div>
+                                                            {{ $dataWarna['rincianPlate'][$key]['warnaCetak'][$index]['keterangan'] }}
                                                         @endforeach
                                                     @else
                                                         N/A
@@ -171,56 +151,16 @@
                                         @foreach ($dataHasilAkhir as $key => $rincianPlate)
                                             <tr>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <input type="text"
-                                                                wire:model="dataHasilAkhir.{{ $key }}.state"
-                                                                class="form-control" autocomplete="off"
-                                                                placeholder="State" readonly>
-                                                        </div>
-                                                        @error('dataHasilAkhir.' . $key . '.state')
-                                                            <div><span class="text-danger">{{ $message }}</span></div>
-                                                        @enderror
-                                                    </div>
+                                                    {{ $dataHasilAkhir[$key]['state'] }}
                                                 </td>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <input type="text"
-                                                                wire:model="dataHasilAkhir.{{ $key }}.plate"
-                                                                class="form-control" autocomplete="off"
-                                                                placeholder="Plate" readonly>
-                                                        </div>
-                                                        @error('dataHasilAkhir.' . $key . '.plate')
-                                                            <div><span class="text-danger">{{ $message }}</span></div>
-                                                        @enderror
-                                                    </div>
+                                                    {{ $dataHasilAkhir[$key]['plate'] }}
                                                 </td>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <input type="text"
-                                                                wire:model="dataHasilAkhir.{{ $key }}.jumlah_lembar_cetak"
-                                                                class="form-control" autocomplete="off"
-                                                                placeholder="Jumlah Lembar Cetak" readonly>
-                                                        </div>
-                                                        @error('dataHasilAkhir.' . $key . '.jumlah_lembar_cetak')
-                                                            <div><span class="text-danger">{{ $message }}</span></div>
-                                                        @enderror
-                                                    </div>
+                                                    {{ $dataHasilAkhir[$key]['jumlah_lembar_cetak'] }}
                                                 </td>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <input type="text"
-                                                                wire:model="dataHasilAkhir.{{ $key }}.waste"
-                                                                class="form-control" autocomplete="off"
-                                                                placeholder="Waste" readonly>
-                                                        </div>
-                                                        @error('dataHasilAkhir.' . $key . '.waste')
-                                                            <div><span class="text-danger">{{ $message }}</span></div>
-                                                        @enderror
-                                                    </div>
+                                                    {{ $dataHasilAkhir[$key]['waste'] }}
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
@@ -240,13 +180,13 @@
                                             </tr>
                                             <?php
                                             $totalLembarCetak = $dataHasilAkhir[$key]['hasil_akhir_lembar_cetak_plate'];
-                                            
+
                                             if (is_numeric($totalLembarCetak)) {
                                                 $totalLembarCetakHasilAkhir += $totalLembarCetak;
                                             } else {
                                                 $totalLembarCetakHasilAkhir = 0;
                                             }
-                                            
+
                                             ?>
                                         @endforeach
                                         <tr>
