@@ -240,13 +240,13 @@
                                             </tr>
                                             <?php
                                             $totalLembarCetak = $dataHasilAkhir[$key]['hasil_akhir_lembar_cetak_plate'];
-                                            
+
                                             if (is_numeric($totalLembarCetak)) {
                                                 $totalLembarCetakHasilAkhir += $totalLembarCetak;
                                             } else {
                                                 $totalLembarCetakHasilAkhir = 0;
                                             }
-                                            
+
                                             ?>
                                         @endforeach
                                         <tr>
@@ -357,7 +357,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-sm-12 col-md-12 mb-3">
                             <div class="table-responsive">

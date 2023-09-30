@@ -1016,7 +1016,7 @@
                             </div>
 
                             <div class="row mt-3">
-                                <div class="col-md-3">
+                                <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
                                         <table
                                             class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
@@ -1042,7 +1042,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-12">
                                     <div class="table-responsive">
                                         <table
                                             class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
@@ -1069,7 +1069,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
 
                             @if (isset($stateWorkStepPlate))
                                 <div class="row mt-3">
@@ -1098,85 +1098,19 @@
                                                             @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
                                                                 <tr>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <select
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.state"
-                                                                                class="form-control form-select"
-                                                                                data-bs-placeholder="Pilih View"
-                                                                                disabled>
-                                                                                <option label="-- Pilih View --">
-                                                                                </option>
-                                                                                <option value="depan/belakang">
-                                                                                    Depan/Belakang</option>
-                                                                                <option value="depan">Depan</option>
-                                                                                <option value="tengah">Tengah</option>
-                                                                                <option value="belakang">Belakang
-                                                                                </option>
-                                                                            </select>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.state')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['state'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Plate"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.plate"
-                                                                                disabled>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.plate')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['plate'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Jumlah Lembar Cetak"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.jumlah_lembar_cetak"
-                                                                                disabled>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.jumlah_lembar_cetak')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['jumlah_lembar_cetak'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            <input type="text" autocomplete="off"
-                                                                                class="form-control"
-                                                                                placeholder="Waste"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.waste"
-                                                                                disabled>
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.waste')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['waste'] }}
                                                                     </td>
                                                                     <td>
-                                                                        <div class="form-group">
-                                                                            {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['name'] }}
-
-                                                                            @error('keterangans.' . $keteranganIndex .
-                                                                                '.rincianPlate.' . $rincianIndexPlate .
-                                                                                '.name')
-                                                                                <p class="mt-2 text-sm text-danger">
-                                                                                    {{ $message }}</p>
-                                                                            @enderror
-                                                                        </div>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['name'] }}
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
@@ -1208,47 +1142,38 @@
                                             <hr>
                                             <div class="table-responsive">
                                                 <table
-                                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Plate</th>
-                                                            <th>Warna</th>
-                                                            <th>Keterangan</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-group">
-                                                                    <input type="text" autocomplete="off" class="form-control" placeholder="Plate" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.plate" disabled>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                            @if (is_array($rincian) && isset($rincian['rincianWarna']))
-                                                                @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
-                                                                <div class="form-group">
-                                                                    <div class="input-group mb-2">
-                                                                        <input type="text" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.warna" class="form-control" placeholder="Warna" disabled>
-                                                                    </div>
-                                                                    @error('keterangans.' . $keteranganIndex .'.rincianPlate.' . $rincianIndexPlate . '.rincianWarna.' . $indexwarna . '.warna') <p class="mt-2 text-sm text-danger">{{ $message }}</p> @enderror
-                                                                </div>
-                                                                @endforeach
-                                                            @endif
-                                                            </td>
-                                                            <td>
-                                                                @if (is_array($rincian) && isset($rincian['rincianWarna']))
-                                                                @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
-                                                                <div class="form-group">
-                                                                    <textarea class="form-control mb-4" placeholder="Catatan" rows="1" wire:model="keterangans.{{ $keteranganIndex }}.rincianPlate.{{ $rincianIndexPlate }}.rincianWarna.{{ $indexwarna }}.keterangan" disabled></textarea>
-                                                                </div>
-                                                                @endforeach
-                                                            @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                    </tbody>
-                                                </table>
+                                                        class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Plate</th>
+                                                                <th>Warna</th>
+                                                                <th>Keterangan</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($keterangan['rincianPlate'] ?? [] as $rincianIndexPlate => $rincian)
+                                                                <tr>
+                                                                    <td>
+                                                                        {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['plate'] }}
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (is_array($rincian) && isset($rincian['rincianWarna']))
+                                                                            @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
+                                                                                {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]['warna'] }}
+                                                                            @endforeach
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (is_array($rincian) && isset($rincian['rincianWarna']))
+                                                                            @foreach ($rincian['rincianWarna'] as $indexwarna => $warna)
+                                                                                {{ $keterangans[$keteranganIndex]['rincianPlate'][$rincianIndexPlate]['rincianWarna'][$indexwarna]['keterangan'] }}
+                                                                            @endforeach
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
                                             </div>
                                         </div>
                                     </div>

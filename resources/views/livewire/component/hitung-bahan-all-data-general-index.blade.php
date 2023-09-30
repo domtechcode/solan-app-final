@@ -1016,7 +1016,7 @@
                             </div>
 
                             <div class="row mt-3">
-                                <div class="col-md-3">
+                                <div class="col-md-12 mb-3">
                                     <div class="table-responsive">
                                         <table
                                             class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
@@ -1042,7 +1042,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="col-md-9">
+                                <div class="col-md-12">
                                     <div class="table-responsive">
                                         <table
                                             class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
@@ -1072,7 +1072,7 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
 
                             @if (isset($stateWorkStepPlate))
                                 <div class="row mt-3">
