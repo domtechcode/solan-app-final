@@ -59,11 +59,25 @@ class NewSpkDashboardIndex extends Component
     public $pengajuanBarang;
     public $historyPengajuanBarang;
 
+    public $sendNotes = [];
+    public $historyCatatan = [];
+
     protected $listeners = ['indexRender' => '$refresh'];
 
     public function updatingSearchNewSpk()
     {
         $this->resetPage();
+    }
+
+    public function addEmptyNote()
+    {
+        $this->sendNotes[] = '';
+    }
+
+    public function removeNote($index)
+    {
+        unset($this->sendNotes[$index]);
+        $this->sendNotes = array_values($this->sendNotes);
     }
 
     public function addField($index)
@@ -244,7 +258,7 @@ class NewSpkDashboardIndex extends Component
         $newDataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
             ->whereNotIn('work_step_list_id', [1, 2, 3, 4, 5])
             ->get();
-            
+
         foreach ($lastDataWorkStep as $lastData) {
             $updateNewWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
                 ->where('work_step_list_id', $lastData->work_step_list_id)
@@ -312,6 +326,49 @@ class NewSpkDashboardIndex extends Component
         $this->dispatchBrowserEvent('close-modal-new-spk');
     }
 
+    public function sendNote()
+    {
+        if (isset($this->sendNotes)) {
+            $this->validate([
+                'sendNotes.*.tujuan' => 'required',
+                'sendNotes.*.catatan' => 'required',
+            ]);
+
+            foreach ($this->sendNotes as $input) {
+                if($input['tujuan'] == 'semua') {
+                    foreach ($this->workSteps as $item) {
+                        $catatanSemua = Catatan::create([
+                            'tujuan' => $item['work_step_list_id'],
+                            'catatan' => $input['catatan'],
+                            'kategori' => 'catatan',
+                            'instruction_id' => $this->selectedInstruction->id,
+                            'user_id' => Auth()->user()->id,
+                        ]);
+                    }
+                }else{
+                    $catatan = Catatan::create([
+                        'tujuan' => $input['tujuan'],
+                        'catatan' => $input['catatan'],
+                        'kategori' => 'catatan',
+                        'instruction_id' => $this->selectedInstruction->id,
+                        'user_id' => Auth()->user()->id,
+                    ]);
+                }
+            }
+        }
+
+        $this->emit('flashMessage', [
+            'type' => 'success',
+            'title' => 'Jadwal Instruksi Kerja',
+            'message' => 'Data jadwal berhasil disimpan',
+        ]);
+
+        $this->workSteps = [];
+        $this->sendNotes = [];
+        $this->emit('indexRender');
+        $this->dispatchBrowserEvent('close-modal-new-spk');
+    }
+
     public function ajukanBarang()
     {
         $this->validate([
@@ -360,6 +417,8 @@ class NewSpkDashboardIndex extends Component
         $this->workSteps = [];
         $this->pengajuanBarang = [];
         $this->historyPengajuanBarang = [];
+        $this->historyCatatan = [];
+        $this->historyCatatan = Catatan::where('instruction_id', $instructionId)->where('user_id', Auth()->user()->id)->where('kategori', 'catatan')->get();
         $this->dataWorkSteps = WorkStepList::whereNotIn('id', [1, 2, 3])->get();
         $this->dataUsers = User::whereNotIn('role', ['Admin', 'Follow Up', 'Penjadwalan', 'RAB', 'Purchase', 'Accounting'])->get();
         $this->dataMachines = Machine::all();
@@ -436,6 +495,20 @@ class NewSpkDashboardIndex extends Component
                 'target' => '#machine_id-' . $key,
             ]);
         }
+
+        if (isset($this->historyCatatan)) {
+            $this->historyCatatan = collect($this->historyCatatan)->map(function ($dataCatatan) {
+                $cariWorkStepList = WorkStepList::where('id', $dataCatatan['tujuan'])->first();
+                return [
+                    'tujuan' => optional($cariWorkStepList)->name,
+                    'catatan' => $dataCatatan['catatan'],
+                ];
+            })->toArray();
+        } else {
+            $this->historyCatatan = [];
+        }
+
+
 
         $this->selectedFileContoh = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'contoh')

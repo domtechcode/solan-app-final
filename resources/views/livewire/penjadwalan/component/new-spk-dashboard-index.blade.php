@@ -703,6 +703,100 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label class="form-label mb-3">Catatan</label>
+                                                <button class="btn btn-info" type="button"
+                                                    wire:click="addEmptyNote"><i class="fe fe-plus"></i>Tambah
+                                                    Catatan</button>
+                                            </div>
+                                            @foreach ($sendNotes as $index => $note)
+                                                <div class="col-sm-12 col-md-12"
+                                                    wire:key="note-{{ $index }}">
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <select class="form-control form-select"
+                                                            data-bs-placeholder="Pilih Tujuan Catatan"
+                                                            wire:model="sendNotes.{{ $index }}.tujuan">
+                                                            <option label="Pilih Tujuan Catatan"></option>
+                                                            <option value="semua">Semua</option>
+                                                            @foreach ($selectedWorkStep as $key)
+                                                                <option value="{{ $key['work_step_list_id'] }}">
+                                                                    {{ $key['workStepList']['name'] }}</option>
+                                                            @endforeach
+
+                                                        </select>
+                                                        <button class="btn btn-danger" type="button"
+                                                            wire:click="removeNote({{ $index }})"><i
+                                                                class="fe fe-x"></i></button>
+                                                    </div>
+                                                    @error('sendNotes.' . $index . '.tujuan')
+                                                        <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                        </p>
+                                                    @enderror
+
+                                                    <div class="input-group control-group" style="padding-top: 5px;">
+                                                        <textarea class="form-control mb-4" placeholder="Catatan" rows="4"
+                                                            wire:model="sendNotes.{{ $index }}.catatan" required></textarea>
+                                                    </div>
+                                                    @error('sendNotes.' . $index . '.catatan')
+                                                        <p class="mt-2 text-sm text-danger">{{ $message }}
+                                                        </p>
+                                                    @enderror
+                                                </div>
+                                            @endforeach
+
+                                            <button class="btn btn-info" type="button"
+                                            wire:click="sendNote" wire:key="sendNote">Kirim
+                                            Catatan</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="expanel expanel-default">
+                                <div class="expanel-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label class="form-label mb-3">History Catatan</label>
+                                            <div class="table-responsive">
+                                                <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="border-bottom-0">LANGKAH KERJA</th>
+                                                            <th class="border-bottom-0">CATATAN</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse ($historyCatatan as $data)
+                                                        <tr>
+                                                            <td>{{ $data['tujuan'] ?? '-' }}</td>
+                                                            <td>{{ $data['catatan'] ?? '-' }}</td>
+                                                        </tr>
+                                                        @empty
+                                                        <tr>
+                                                            -
+                                                        </tr>
+                                                        @endforelse
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {{-- file --}}
                     <div class="row mb-3">
                         <div class="col-xl-4">
