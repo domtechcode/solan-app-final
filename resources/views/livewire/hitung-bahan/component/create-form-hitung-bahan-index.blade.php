@@ -259,7 +259,7 @@
                                                     onclick="exportCanvasSetting({{ $indexSetting }})"
                                                     style="display: none;">Export</button>
                                                 <button type="button" class="btn btn-sm btn-warning"
-                                                    onclick="addCanvasSetting({{ $indexSetting }})">Create
+                                                    onclick="addCanvasSetting({{ $indexSetting }})" id="btn-canvas-setting-{{ $indexSetting }}">Create
                                                     Canvas</button>
 
                                             </div>
@@ -1678,7 +1678,7 @@
                                                     onclick="exportCanvasBahan({{ $indexBahan }})"
                                                     style="display: none;">Export</button>
                                                 <button type="button" class="btn btn-sm btn-warning"
-                                                    onclick="addCanvasBahan({{ $indexBahan }})">Create
+                                                    onclick="addCanvasBahan({{ $indexBahan }})" id="btn-canvas-bahan-{{ $indexBahan }}">Create
                                                     Canvas</button>
 
                                             </div>
@@ -2883,6 +2883,8 @@
         var canvasesSetting = {};
 
         function addCanvasSetting(index) {
+            var button = document.getElementById("btn-canvas-setting-" + index);
+            button.disabled = true;
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-setting-' + index;
             canvasContainer.classList.add('border');
@@ -3071,6 +3073,8 @@
         var canvasesBahan = {};
 
         function addCanvasBahan(indexBahan) {
+            var buttonBahan = document.getElementById("btn-canvas-bahan-" + indexBahan);
+            buttonBahan.disabled = true;
             var canvasContainer = document.createElement('div');
             canvasContainer.id = 'canvas-container-bahan-' + indexBahan;
             canvasContainer.classList.add('border');
