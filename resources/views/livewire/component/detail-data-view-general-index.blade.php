@@ -69,7 +69,7 @@
                                                 $spk_type = $instruction->spk_type;
                                                 $total_qty += $instruction->quantity - $instruction->stock;
                                             @endphp
-                                        
+
                                     </tr>
                                     @endforeach
                                     <tr>
@@ -95,6 +95,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 mb-3">
+                            {{-- <button class="btn btn-info mb-3" wire:click="downloadFileContoh">Download Semua File Contoh</button> --}}
                             <div class="table-responsive">
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
@@ -441,13 +442,13 @@
                                                             <td>{{ $selectedInstructionParent->stock ?? '-' }}</td>
                                                         </tr>
                                                         @endif
-                                                        
+
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Row -->
                                     <div class="row mb-3">
                                         <div class="col-xl-12">
@@ -480,13 +481,13 @@
                                                             <td>{{ $selectedInstructionParent->shipping_date_first ?? '-' }}</td>
                                                         </tr>
                                                         @endif
-                                                        
+
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Row -->
                                     <div class="row mb-3">
                                         <div class="col-xl-12">
@@ -627,7 +628,7 @@
                                 <div class="panel-heading" role="tab" id="headingTwo2">
                                     <h4 class="panel-title">
                                         <a class="collapsed" role="button" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapse{{ $no }}" aria-expanded="false" aria-controls="collapse{{ $no }}">
-    
+
                                                 {{ $data->spk_number ?? '-' }} <span class="tag tag-red">Child</span>
                                             </a>
                                     </h4>
@@ -666,13 +667,13 @@
                                                                 <td>{{ $data->stock ?? '-' }}</td>
                                                             </tr>
                                                             @endif
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Row -->
                                         <div class="row mb-3">
                                             <div class="col-xl-12">
@@ -705,13 +706,13 @@
                                                                 <td>{{ $data->shipping_date_first ?? '-' }}</td>
                                                             </tr>
                                                             @endif
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Row -->
                                         <div class="row mb-3">
                                             <div class="col-xl-12">
@@ -851,11 +852,11 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
                         <!-- PANEL-GROUP -->
                             @endforeach
                         @endif
-                    </div>   
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

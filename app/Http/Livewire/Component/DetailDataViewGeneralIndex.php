@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Component;
 
+use ZipArchive;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
@@ -12,11 +13,11 @@ use App\Models\Instruction;
 use App\Models\LayoutBahan;
 use App\Models\LayoutSetting;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Html;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
 
 class DetailDataViewGeneralIndex extends Component
 {
@@ -121,6 +122,34 @@ class DetailDataViewGeneralIndex extends Component
             ->section('content')
             ->layoutData(['title' => 'Form Edit Hitung Bahan']);
     }
+
+    // public function downloadFileContoh()
+    // {
+    //     $dataInstruction = Instruction::find($this->currentInstructionId);
+
+    //     // Nama file ZIP yang akan dibuat
+    //     $zipFileName = 'file-contoh.zip';
+
+    //     // Buat file ZIP baru
+    //     $zip = new ZipArchive();
+    //     $zip->open(storage_path('app/public/' . $zipFileName), ZipArchive::CREATE);
+
+    //     // // Mendapatkan data file contoh dari $dataFileContoh
+    //     // $dataFileContoh = Files::where('instruction_id', $this->currentInstructionId)
+    //     //     ->where('type_file', 'contoh')
+    //     //     ->get();
+
+    //     // foreach ($dataFileContoh as $file) {
+    //     //     // Menambahkan setiap file ke dalam file ZIP dengan nama file asli
+    //     //     $zip->addFile(storage_path('app/' . $file->file_path), $file->file_name);
+    //     // }
+
+    //     $zip->close();
+
+    //     // Mengirimkan file ZIP sebagai respons unduhan
+    //     return response()->download(storage_path('app/public/' . $zipFileName))->deleteFileAfterSend();
+    // }
+
 
     public function modalInstructionDetailsDetail($instructionId)
     {
