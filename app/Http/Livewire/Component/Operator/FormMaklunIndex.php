@@ -152,6 +152,7 @@ class FormMaklunIndex extends Component
                     'tgl_keluar' => '',
                     'qty_keluar' => '',
                     'satuan_keluar' => '',
+                    'catatan' => '',
                     'status' => 'Pengajuan Purchase',
                     'pekerjaan' => 'Purchase',
                 ];
@@ -184,11 +185,11 @@ class FormMaklunIndex extends Component
                     'instruction_id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
-                    'tgl_keluar' => '',
-                    'qty_keluar' => '',
-                    'satuan_keluar' => '',
+                    'tgl_kembali' => '',
+                    'qty_kembali' => '',
+                    'satuan_kembali' => '',
                     'status' => 'Barang Diterima',
-                    'catatan' => 'Barang Diterima',
+                    'catatan' => '',
                 ];
             }
         } else {
@@ -221,6 +222,7 @@ class FormMaklunIndex extends Component
                     'tgl_keluar' => '',
                     'qty_keluar' => '',
                     'satuan_keluar' => '',
+                    'catatan' => '',
                     'status' => 'Pengajuan Purchase',
                     'pekerjaan' => 'Purchase',
                 ];
@@ -251,9 +253,9 @@ class FormMaklunIndex extends Component
                     'id' => '',
                     'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
                     'rekanan' => '',
-                    'tgl_keluar' => '',
-                    'qty_keluar' => '',
-                    'satuan_keluar' => '',
+                    'tgl_kembali' => '',
+                    'qty_kembali' => '',
+                    'satuan_kembali' => '',
                     'status' => 'Barang Diterima',
                     'catatan' => '',
                 ];
