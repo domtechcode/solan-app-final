@@ -42,7 +42,7 @@ class OperatorDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
-    protected $listeners = ['indexRenderPage' => '$refresh'];
+    protected $listeners = ['indexRenderPage' => 'refresh'];
 
     public function updatingDijadwalkanSelected()
     {
@@ -62,6 +62,12 @@ class OperatorDashboardIndex extends Component
     public function updatingUserSelected()
     {
         $this->resetPage();
+    }
+
+    public function refresh()
+    {
+        $this->mount();
+        $this->render();
     }
 
     public function mount()
