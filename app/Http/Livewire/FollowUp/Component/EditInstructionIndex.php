@@ -511,6 +511,9 @@ class EditInstructionIndex extends Component
                         ->update([
                             'state_task' => 'Running',
                             'status_task' => 'Revisi Qty',
+                            'reject_from_id' => null,
+                            'reject_from_status' => null,
+                            'reject_from_job' => null,
                         ]);
 
                     $updateWorkStep = WorkStep::where('instruction_id', $this->currentInstructionId)->update([
@@ -555,6 +558,14 @@ class EditInstructionIndex extends Component
                         'job_id' => $currentWorkStep->reject_from_job,
                         'spk_status' => 'Running',
                     ]);
+
+                    if($findSourceReject->reject_from_id != null){
+                        $carirab = WorkStep::where('instruction_id', $this->currentInstructionId)->where('work_step_list_id', $findSourceReject->reject_from_job)->first();
+
+                        $findSourceReject->update([
+                            'reject_from_id' => $carirab->id,
+                        ]);
+                    }
 
                     //notif
                     $this->messageSent(['conversation' => 'SPK telah diperbaiki oleh Follow Up', 'receiver' => $findSourceReject->user_id, 'instruction_id' => $this->currentInstructionId]);
