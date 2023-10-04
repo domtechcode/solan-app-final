@@ -67,7 +67,7 @@ class FormCetakIndex extends Component
             ->get();
 
         $dataFormCetak = FormCetak::where('instruction_id', $instructionId)
-            ->where('user_id', Auth()->user()->id)
+            ->where('user_id', $this->workStepData->user_id)
             ->where('step', $dataWorkStep->step)
             ->first();
 
@@ -86,6 +86,7 @@ class FormCetakIndex extends Component
                     'jumlah_lembar_cetak' => $dataHasilAkhirCetak['jumlah_lembar_cetak'],
                     'waste' => $dataHasilAkhirCetak['waste'],
                     'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirCetak['hasil_akhir_lembar_cetak_plate'],
+                    'hasil_akhir_lembar_cetak' => $dataHasilAkhirCetak['hasil_akhir_lembar_cetak'],
                 ];
 
                 $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
@@ -103,6 +104,7 @@ class FormCetakIndex extends Component
                         'jumlah_lembar_cetak' => $dataHasilAkhirPond->jumlah_lembar_cetak,
                         'waste' => $dataHasilAkhirPond->waste,
                         'hasil_akhir_lembar_cetak_plate' => null,
+                        'hasil_akhir_lembar_cetak' => null,
                     ];
 
                     $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;

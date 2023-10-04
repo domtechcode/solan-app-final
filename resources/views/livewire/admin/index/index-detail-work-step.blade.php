@@ -49,63 +49,67 @@
                                 <div class="panel-body tabs-menu-body">
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="tab1">
-
-                                            @if ($workStepData->work_step_list_id == 5)
-                                                @livewire('component.hitung-bahan-data-view-rab-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                            @elseif ($workStepData->work_step_list_id == 3)
-                                                @livewire('component.hitung-bahan-all-data-rab-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                            @else
+                                            @if ($workStepData->user_id == 50)
                                                 @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @if ($workStepData->work_step_list_id == 6)
-                                                    <!-- Setting -->
-                                                    @livewire('component.details.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 37)
-                                                    <!-- Checker -->
-                                                    @livewire('component.details.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 7)
-                                                    <!-- Plate -->
-                                                    @livewire('component.details.form-plate-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 8 || $workStepData->work_step_list_id == 9)
-                                                    <!-- Potong Bahan & Potong Jadi -->
-                                                    @livewire('component.details.form-potong-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 10)
-                                                    <!-- Cetak -->
-                                                    @livewire('component.details.form-cetak-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 11)
-                                                    <!-- Cetak -->
-                                                    @livewire('component.details.form-sortir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 23)
-                                                    <!-- Sablon -->
-                                                    @livewire('component.details.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif(
-                                                    $workStepData->work_step_list_id == 24 ||
-                                                        $workStepData->work_step_list_id == 25 ||
-                                                        $workStepData->work_step_list_id == 26 ||
-                                                        $workStepData->work_step_list_id == 27 ||
-                                                        $workStepData->work_step_list_id == 29)
-                                                    <!-- Pond -->
-                                                    @livewire('component.details.form-pond-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 28)
-                                                    <!-- Pond -->
-                                                    @livewire('component.details.form-foil-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 32 || $workStepData->work_step_list_id == 33)
-                                                    <!-- Potong Bahan & Potong Jadi -->
-                                                    @livewire('component.details.form-lem-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 12)
-                                                    <!-- Potong Bahan & Potong Jadi -->
-                                                    @livewire('component.details.form-cetak-label-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 35)
-                                                    <!-- Potong Bahan & Potong Jadi -->
-                                                    @livewire('component.details.form-qc-packing-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 36)
-                                                    <!-- Pengiriman -->
-                                                    @livewire('component.details.form-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
-                                                @elseif($workStepData->work_step_list_id == 45)
-                                                    <!-- Pengiriman -->
-                                                    @livewire('component.details.form-lipat-pinggir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @livewire('component.details.form-maklun-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                            @else
+                                                @if ($workStepData->work_step_list_id == 5)
+                                                    @livewire('component.hitung-bahan-data-view-rab-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @elseif ($workStepData->work_step_list_id == 3)
+                                                    @livewire('component.hitung-bahan-all-data-rab-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @else
-                                                    <!-- WorkStep Lain -->
-                                                    @livewire('component.details.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @livewire('component.hitung-bahan-data-view-general-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @if ($workStepData->work_step_list_id == 6)
+                                                        <!-- Setting -->
+                                                        @livewire('component.details.form-setting-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 37)
+                                                        <!-- Checker -->
+                                                        @livewire('component.details.form-checker-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 7)
+                                                        <!-- Plate -->
+                                                        @livewire('component.details.form-plate-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 8 || $workStepData->work_step_list_id == 9)
+                                                        <!-- Potong Bahan & Potong Jadi -->
+                                                        @livewire('component.details.form-potong-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 10)
+                                                        <!-- Cetak -->
+                                                        @livewire('component.details.form-cetak-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 11)
+                                                        <!-- Cetak -->
+                                                        @livewire('component.details.form-sortir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 23)
+                                                        <!-- Sablon -->
+                                                        @livewire('component.details.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif(
+                                                        $workStepData->work_step_list_id == 24 ||
+                                                            $workStepData->work_step_list_id == 25 ||
+                                                            $workStepData->work_step_list_id == 26 ||
+                                                            $workStepData->work_step_list_id == 27 ||
+                                                            $workStepData->work_step_list_id == 29)
+                                                        <!-- Pond -->
+                                                        @livewire('component.details.form-pond-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 28)
+                                                        <!-- Pond -->
+                                                        @livewire('component.details.form-foil-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 32 || $workStepData->work_step_list_id == 33)
+                                                        <!-- Potong Bahan & Potong Jadi -->
+                                                        @livewire('component.details.form-lem-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 12)
+                                                        <!-- Potong Bahan & Potong Jadi -->
+                                                        @livewire('component.details.form-cetak-label-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 35)
+                                                        <!-- Potong Bahan & Potong Jadi -->
+                                                        @livewire('component.details.form-qc-packing-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 36)
+                                                        <!-- Pengiriman -->
+                                                        @livewire('component.details.form-pengiriman-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @elseif($workStepData->work_step_list_id == 45)
+                                                        <!-- Pengiriman -->
+                                                        @livewire('component.details.form-lipat-pinggir-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @else
+                                                        <!-- WorkStep Lain -->
+                                                        @livewire('component.details.form-other-work-step-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                    @endif
                                                 @endif
                                             @endif
 
