@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HitungBahan\Component;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Files;
 use App\Models\Catatan;
 use Livewire\Component;
