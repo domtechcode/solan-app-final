@@ -66,7 +66,7 @@ class FormFoilIndex extends Component
 
 
         $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)
-            ->where('user_id', Auth()->user()->id)
+            ->where('user_id', $this->workStepData->user_id)
             ->where('step', $dataWorkStep->step)
             ->first();
 
@@ -81,7 +81,7 @@ class FormFoilIndex extends Component
             $this->status_matress = $dataFoil['status_matress'];
 
             $dataFoil = FormFoil::where('instruction_id', $this->instructionCurrentId)
-                ->where('user_id', Auth()->user()->id)
+                ->where('user_id', $this->workStepData->user_id)
                 ->where('step', $dataWorkStep->step)
                 ->get();
             foreach ($dataFoil as $dataHasilAkhirFoil) {
