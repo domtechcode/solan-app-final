@@ -67,7 +67,7 @@ class FormPotongIndex extends Component
         if ($dataWorkStep->work_step_list_id == 9) {
             $currentPotongJadi = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)
                 ->where('step', $dataWorkStep->step)
-                ->where('user_id', Auth()->user()->id)
+                ->where('user_id', $dataWorkStep->user_id)
                 ->first();
 
             if (isset($currentPotongJadi)) {
@@ -75,7 +75,7 @@ class FormPotongIndex extends Component
 
                 $dataRincianPlateHasilAkhir = FormPotongJadi::where('instruction_id', $this->instructionCurrentId)
                     ->where('step', $dataWorkStep->step)
-                    ->where('user_id', Auth()->user()->id)
+                    ->where('user_id', $dataWorkStep->user_id)
                     ->get();
 
                 if (isset($dataRincianPlateHasilAkhir)) {
@@ -107,7 +107,7 @@ class FormPotongIndex extends Component
                             'plate' => $dataHasilAkhirPlate->plate,
                             'jumlah_lembar_cetak' => $dataHasilAkhirPlate->jumlah_lembar_cetak,
                             'waste' => $dataHasilAkhirPlate->waste,
-                            'hasil_akhir_lembar_cetak_plate' => '',
+                            'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirPlate->hasil_akhir_lembar_cetak_plate,
                         ];
 
                         $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
