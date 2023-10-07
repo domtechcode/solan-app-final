@@ -138,9 +138,9 @@ class FormPondIndex extends Component
                 'nama_pisau' => 'required',
                 'lokasi_pisau' => 'required',
                 'status_pisau' => 'required',
-                'nama_matress' => 'required',
-                'lokasi_matress' => 'required',
-                'status_matress' => 'required',
+                // 'nama_matress' => 'required',
+                // 'lokasi_matress' => 'required',
+                // 'status_matress' => 'required',
                 'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
             ]);
         } else {
