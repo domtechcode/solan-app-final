@@ -296,12 +296,12 @@ class NewSpkDashboardIndex extends Component
             // Simpan data ke database sebagai JSON
             $updateCatatanPengerjaan = WorkStep::where('id', $workStepId)->update([
                 'dikerjakan' => json_encode($existingDiKerjakan),
+                'status_task' => 'Process',
             ]);
         }
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
-            // 'status_task' => 'Process',
         ]);
 
         $this->workStepData = WorkStep::find($this->workStepSelectedId);
