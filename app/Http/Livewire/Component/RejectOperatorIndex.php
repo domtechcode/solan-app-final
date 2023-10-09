@@ -21,7 +21,7 @@ class RejectOperatorIndex extends Component
         $this->currentInstructionId = $instructionId;
         $this->currentWorkStepId = $workStepId;
         $workStepData = WorkStep::find($workStepId);
-        $this->operatorReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', '<', $workStepData->step)->where('work_step_list_id', '!=', 3)->with('workStepList')->get();      
+        $this->operatorReject = WorkStep::where('instruction_id', $this->currentInstructionId)->where('step', '<', $workStepData->step)->where('work_step_list_id', '!=', 3)->with('workStepList')->get();
     }
 
     public function rejectWorkStep($dataTujuan, $dataKeterangan)
@@ -39,11 +39,11 @@ class RejectOperatorIndex extends Component
         $updateReject = WorkStep::find($this->tujuanReject);
 
         $updateReject->update([
-            'reject_from_id' => $this->currentWorkStepId, 
-            'reject_from_status' => $dataWorkStep->status_id, 
-            'reject_from_job' => $dataWorkStep->job_id, 
-            'state_task' => 'Running', 
-            'status_task' => 'Reject Requirements', 
+            'reject_from_id' => $this->currentWorkStepId,
+            'reject_from_status' => $dataWorkStep->status_id,
+            'reject_from_job' => $dataWorkStep->work_step_list_id,
+            'state_task' => 'Running',
+            'status_task' => 'Reject Requirements',
             'count_reject' => $updateReject->count_reject + 1,
         ]);
 
