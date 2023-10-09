@@ -301,6 +301,7 @@ class NewSpkDashboardIndex extends Component
 
         $updateJobStatus = WorkStep::where('instruction_id', $this->instructionSelectedId)->update([
             'status_id' => 2,
+            'status_task' => 'Process',
         ]);
 
         $this->workStepData = WorkStep::find($this->workStepSelectedId);
