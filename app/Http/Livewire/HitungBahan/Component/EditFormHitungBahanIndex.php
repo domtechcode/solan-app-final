@@ -975,7 +975,7 @@ class EditFormHitungBahanIndex extends Component
                 [
                     'keterangans' => 'required|array|min:1',
                     'keterangans.*.label' => 'required|array|min:1',
-                    'keterangans.*.label.*.alat_bahan' => 'required',
+                    // 'keterangans.*.label.*.alat_bahan' => 'required',
                     'keterangans.*.label.*.jenis_ukuran' => 'required',
                     'keterangans.*.label.*.jumlah' => 'required',
                     'keterangans.*.label.*.ketersediaan' => 'required',
@@ -983,7 +983,7 @@ class EditFormHitungBahanIndex extends Component
                 ],
                 [
                     'keterangans.*.label.min' => 'Setidaknya satu data Label harus diisi pada keterangan.',
-                    'keterangans.*.label.*.alat_bahan.required' => 'State pada data Label harus diisi pada keterangan.',
+                    // 'keterangans.*.label.*.alat_bahan.required' => 'State pada data Label harus diisi pada keterangan.',
                     'keterangans.*.label.*.jenis_ukuran.required' => 'Jenis Ukuran harus diisi pada keterangan.',
                     'keterangans.*.label.*.jumlah.required' => 'Jumlah harus diisi pada keterangan.',
                     'keterangans.*.label.*.ketersediaan.required' => 'Ketersediaan harus diisi pada keterangan.',
