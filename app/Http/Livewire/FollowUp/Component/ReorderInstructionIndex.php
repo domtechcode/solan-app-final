@@ -123,7 +123,6 @@ class ReorderInstructionIndex extends Component
         $this->spk_type = $this->instructions->type_order;
         $this->sub_spk = $this->instructions->sub_spk;
         $this->customerCurrent = Customer::where('name', $this->instructions->customer_name)
-            ->where('taxes', $this->instructions->taxes_type)
             ->first();
         $this->customer = $this->customerCurrent->id;
         $this->spk_parent = $this->instructions->spk_parent;
