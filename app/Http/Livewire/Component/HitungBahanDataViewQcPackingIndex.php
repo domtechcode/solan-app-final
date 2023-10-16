@@ -92,7 +92,7 @@ class HitungBahanDataViewQcPackingIndex extends Component
                 ->where('group_priority', 'parent')
                 ->first();
 
-            $this->instructionData = Instruction::where('id', $instructionGroup->id)->get();
+            $this->instructionData = Instruction::where('id', $instructionId)->get();
             $this->currentInstructionId = $instructionGroup->id;
             $instructionId = $instructionGroup->id;
             $this->currentWorkStepId = $workStepId;

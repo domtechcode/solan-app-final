@@ -154,7 +154,7 @@ class FormQcPackingIndex extends Component
                 }
             }
 
-            if ($currentStep->status_task == 'Reject Requirements') {
+            if ($currentStep->reject_from_id != null) {
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',

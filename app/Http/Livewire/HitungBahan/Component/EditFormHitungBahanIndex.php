@@ -1009,8 +1009,8 @@ class EditFormHitungBahanIndex extends Component
         $currentTotalHargaBahan = $currentHargaBahan * $currentJumlahBahan;
 
         if (isset($this->stateWorkStepCetakLabel)) {
-            LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
             if (isset($this->layoutSettings)) {
+                LayoutSetting::where('instruction_id', $this->currentInstructionId)->delete();
                 foreach ($this->layoutSettings as $key => $layoutSettingData) {
                     // Buat instance model LayoutSetting
                     $layoutSetting = LayoutSetting::create([

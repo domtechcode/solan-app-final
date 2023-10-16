@@ -116,150 +116,72 @@ class FormMaklunIndex extends Component
             ->where('step', $this->dataWorkSteps->step - 1)
             ->first();
 
-        if ($this->dataInstruction->group_priority == 'parent') {
-            $this->anggotaGroupSpk = Instruction::where('group_id', $this->dataInstruction->group_id)->get();
-            $dataAnggota = Instruction::where('group_id', $this->dataInstruction->group_id)->pluck('id');
-
-            $dataMaklunPengajuan = FormPengajuanMaklun::whereIn('instruction_id', $dataAnggota)
-                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
-                ->get();
-
-            if (isset($dataMaklunPengajuan)) {
-                foreach ($dataMaklunPengajuan as $item) {
-                    $maklunPengajuan = [
-                        'id' => $item['id'],
-                        'instruction_id' => $item['instruction_id'],
-                        'bentuk_maklun' => $item['bentuk_maklun'],
-                        'rekanan' => $item['rekanan'],
-                        'tgl_keluar' => $item['tgl_keluar'],
-                        'qty_keluar' => $item['qty_keluar'],
-                        'satuan_keluar' => $item['satuan_keluar'],
-                        'catatan' => $item['catatan'],
-                        'status' => $item['status'],
-                        'pekerjaan' => $item['pekerjaan'],
-                    ];
-
-                    $this->maklunPengajuan[] = $maklunPengajuan;
-                }
-            }
-
-            if (empty($this->maklunPengajuan)) {
-                $this->maklunPengajuan[] = [
-                    'id' => '',
-                    'instruction_id' => '',
-                    'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
-                    'rekanan' => '',
-                    'tgl_keluar' => '',
-                    'qty_keluar' => '',
-                    'satuan_keluar' => '',
-                    'catatan' => '',
-                    'status' => 'Pengajuan Purchase',
-                    'pekerjaan' => 'Purchase',
+        $dataMaklunPengajuan = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)
+            ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
+            ->get();
+        if (isset($dataMaklunPengajuan)) {
+            foreach ($dataMaklunPengajuan as $item) {
+                $maklunPengajuan = [
+                    'id' => $item['id'],
+                    'bentuk_maklun' => $item['bentuk_maklun'],
+                    'rekanan' => $item['rekanan'],
+                    'tgl_keluar' => $item['tgl_keluar'],
+                    'qty_keluar' => $item['qty_keluar'],
+                    'satuan_keluar' => $item['satuan_keluar'],
+                    'catatan' => $item['catatan'],
+                    'status' => $item['status'],
+                    'pekerjaan' => $item['pekerjaan'],
                 ];
+
+                $this->maklunPengajuan[] = $maklunPengajuan;
             }
+        }
 
-            $datamaklunPenerimaan = FormPenerimaanMaklun::whereIn('instruction_id', $dataAnggota)
-                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
-                ->get();
-            if (isset($datamaklunPenerimaan)) {
-                foreach ($datamaklunPenerimaan as $item) {
-                    $maklunPenerimaan = [
-                        'id' => $item['id'],
-                        'instruction_id' => $item['instruction_id'],
-                        'bentuk_maklun' => $item['bentuk_maklun'],
-                        'rekanan' => $item['rekanan'],
-                        'tgl_kembali' => $item['tgl_kembali'],
-                        'qty_kembali' => $item['qty_kembali'],
-                        'satuan_kembali' => $item['satuan_kembali'],
-                        'status' => $item['status'],
-                        'catatan' => $item['catatan'],
-                    ];
+        if (empty($this->maklunPengajuan)) {
+            $this->maklunPengajuan[] = [
+                'id' => '',
+                'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
+                'rekanan' => '',
+                'tgl_keluar' => '',
+                'qty_keluar' => '',
+                'satuan_keluar' => '',
+                'catatan' => '',
+                'status' => 'Pengajuan Purchase',
+                'pekerjaan' => 'Purchase',
+            ];
+        }
 
-                    $this->maklunPenerimaan[] = $maklunPenerimaan;
-                }
-            }
-
-            if (empty($this->maklunPenerimaan)) {
-                $this->maklunPenerimaan[] = [
-                    'id' => '',
-                    'instruction_id' => '',
-                    'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
-                    'rekanan' => '',
-                    'tgl_kembali' => '',
-                    'qty_kembali' => '',
-                    'satuan_kembali' => '',
-                    'status' => 'Barang Diterima',
-                    'catatan' => '',
+        $datamaklunPenerimaan = FormPenerimaanMaklun::where('instruction_id', $this->instructionCurrentId)
+            ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
+            ->get();
+        if (isset($datamaklunPenerimaan)) {
+            foreach ($datamaklunPenerimaan as $item) {
+                $maklunPenerimaan = [
+                    'id' => $item['id'],
+                    'bentuk_maklun' => $item['bentuk_maklun'],
+                    'rekanan' => $item['rekanan'],
+                    'tgl_kembali' => $item['tgl_kembali'],
+                    'qty_kembali' => $item['qty_kembali'],
+                    'satuan_kembali' => $item['satuan_kembali'],
+                    'status' => $item['status'],
+                    'catatan' => $item['catatan'],
                 ];
-            }
-        } else {
-            $dataMaklunPengajuan = FormPengajuanMaklun::where('instruction_id', $this->instructionCurrentId)
-                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
-                ->get();
-            if (isset($dataMaklunPengajuan)) {
-                foreach ($dataMaklunPengajuan as $item) {
-                    $maklunPengajuan = [
-                        'id' => $item['id'],
-                        'bentuk_maklun' => $item['bentuk_maklun'],
-                        'rekanan' => $item['rekanan'],
-                        'tgl_keluar' => $item['tgl_keluar'],
-                        'qty_keluar' => $item['qty_keluar'],
-                        'satuan_keluar' => $item['satuan_keluar'],
-                        'catatan' => $item['catatan'],
-                        'status' => $item['status'],
-                        'pekerjaan' => $item['pekerjaan'],
-                    ];
 
-                    $this->maklunPengajuan[] = $maklunPengajuan;
-                }
+                $this->maklunPenerimaan[] = $maklunPenerimaan;
             }
+        }
 
-            if (empty($this->maklunPengajuan)) {
-                $this->maklunPengajuan[] = [
-                    'id' => '',
-                    'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
-                    'rekanan' => '',
-                    'tgl_keluar' => '',
-                    'qty_keluar' => '',
-                    'satuan_keluar' => '',
-                    'catatan' => '',
-                    'status' => 'Pengajuan Purchase',
-                    'pekerjaan' => 'Purchase',
-                ];
-            }
-
-            $datamaklunPenerimaan = FormPenerimaanMaklun::where('instruction_id', $this->instructionCurrentId)
-                ->where('bentuk_maklun', $this->dataWorkSteps->workStepList->name)
-                ->get();
-            if (isset($datamaklunPenerimaan)) {
-                foreach ($datamaklunPenerimaan as $item) {
-                    $maklunPenerimaan = [
-                        'id' => $item['id'],
-                        'bentuk_maklun' => $item['bentuk_maklun'],
-                        'rekanan' => $item['rekanan'],
-                        'tgl_kembali' => $item['tgl_kembali'],
-                        'qty_kembali' => $item['qty_kembali'],
-                        'satuan_kembali' => $item['satuan_kembali'],
-                        'status' => $item['status'],
-                        'catatan' => $item['catatan'],
-                    ];
-
-                    $this->maklunPenerimaan[] = $maklunPenerimaan;
-                }
-            }
-
-            if (empty($this->maklunPenerimaan)) {
-                $this->maklunPenerimaan[] = [
-                    'id' => '',
-                    'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
-                    'rekanan' => '',
-                    'tgl_kembali' => '',
-                    'qty_kembali' => '',
-                    'satuan_kembali' => '',
-                    'status' => 'Barang Diterima',
-                    'catatan' => '',
-                ];
-            }
+        if (empty($this->maklunPenerimaan)) {
+            $this->maklunPenerimaan[] = [
+                'id' => '',
+                'bentuk_maklun' => $this->dataWorkSteps->workStepList->name,
+                'rekanan' => '',
+                'tgl_kembali' => '',
+                'qty_kembali' => '',
+                'satuan_kembali' => '',
+                'status' => 'Barang Diterima',
+                'catatan' => '',
+            ];
         }
 
         if (isset($stateBefore)) {
@@ -364,7 +286,7 @@ class FormMaklunIndex extends Component
                 ]);
             }
 
-            if ($currentStep->status_task == 'Reject Requirements') {
+            if ($currentStep->reject_from_id != null) {
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',
@@ -621,19 +543,47 @@ class FormMaklunIndex extends Component
             }
         }
 
-        $currentStep = WorkStep::find($this->workStepCurrentId);
-        $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
-            ->where('step', $currentStep->step + 1)
-            ->first();
+        if($instructionData->group_id == null){
+            $currentStep = WorkStep::find($this->workStepCurrentId);
+            $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
 
-        $currentStep->update([
-            'flag' => 'Split',
-        ]);
+            $currentStep->update([
+                'flag' => 'Split',
+            ]);
 
-        $nextStep->update([
-            'state_task' => 'Running',
-            'status_task' => 'Pending Approved',
-        ]);
+            $nextStep->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+                'flag' => 'Split',
+            ]);
+        }else{
+            $parentGroup = Instruction::where('group_id', $instructionData->group_id)->where('group_priority', 'parent')->first();
+            $currentStep = WorkStep::find($this->workStepCurrentId);
+
+
+            $currentStepParent = WorkStep::where('instruction_id', $this->instructionCurrentId)->where('work_step_list_id', $parentGroup);
+
+            $nextStep = WorkStep::where('instruction_id', $this->instructionCurrentId)
+                ->where('step', $currentStep->step + 1)
+                ->first();
+
+            $currentStepParent->update([
+                'flag' => 'Split',
+            ]);
+
+            $currentStep->update([
+                'flag' => 'Split',
+            ]);
+
+            $nextStep->update([
+                'state_task' => 'Running',
+                'status_task' => 'Pending Approved',
+                'flag' => 'Split',
+            ]);
+        }
+
 
         if (isset($nextStep->user_id)) {
             $this->messageSent(['conversation' => 'SPK Baru', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $nextStep->user_id]);
@@ -722,7 +672,7 @@ class FormMaklunIndex extends Component
                 ]);
             }
 
-            if ($currentStep->status_task == 'Reject Requirements') {
+            if ($currentStep->reject_from_id != null) {
                 $currentStep->update([
                     'state_task' => 'Complete',
                     'status_task' => 'Complete',

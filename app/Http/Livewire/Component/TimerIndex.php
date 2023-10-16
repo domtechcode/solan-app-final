@@ -101,6 +101,7 @@ class TimerIndex extends Component
         $workStepSplit->update([
             'state_task' => 'Running',
             'status_task' => 'Pending Approved',
+            'flag' => 'Split',
         ]);
 
         $this->emit('flashMessage', [

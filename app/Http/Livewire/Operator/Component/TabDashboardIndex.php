@@ -57,7 +57,7 @@ class TabDashboardIndex extends Component
         $today = Carbon::today();
         $formattedToday = $today->format('Y-m-d');
 
-        if (Auth()->user()->jobdesk == 'Pengiriman' || Auth()->user()->jobdesk == 'Team Qc Packing') {
+        if (Auth()->user()->jobdesk == 'Pengiriman' || Auth()->user()->jobdesk == 'Team Qc Packing' || Auth()->user()->jobdesk == 'Maklun') {
             $this->dataCountNewSpk = WorkStep::where('user_id', Auth()->user()->id)
                 ->where('state_task', 'Running')
                 ->whereIn('status_task', ['Pending Approved', 'Process', 'Reject Requirements'])

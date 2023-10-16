@@ -1238,7 +1238,7 @@
                                                                                 class="form-control"
                                                                                 placeholder="Cylinder"
                                                                                 value="Cylinder"
-                                                                                wire:model="keterangans.{{ $keteranganIndex }}.label.0.alat_bahan"
+                                                                                wire:model.defer="keterangans.{{ $keteranganIndex }}.label.0.alat_bahan"
                                                                                 readonly>
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.alat_bahan')
