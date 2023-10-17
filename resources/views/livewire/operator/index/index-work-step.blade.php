@@ -113,6 +113,9 @@
                                                 @elseif($workStepData->work_step_list_id == 40)
                                                     <!-- Sortir -->
                                                     @livewire('component.operator.form-sortir-barang-keluar-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                                                @elseif($workStepData->work_step_list_id == 41)
+                                                    <!-- Sortir -->
+                                                    @livewire('component.operator.form-sortir-barang-masuk-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
                                                 @elseif($workStepData->work_step_list_id == 23)
                                                     <!-- Sablon -->
                                                     @livewire('component.operator.form-sablon-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])

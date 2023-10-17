@@ -19,6 +19,7 @@ use Livewire\WithFileUploads;
 use App\Events\IndexRenderEvent;
 use App\Events\NotificationSent;
 use App\Models\FormOtherWorkStep;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
 
 class FormSortirBarangMasukIndex extends Component
@@ -547,7 +548,8 @@ class FormSortirBarangMasukIndex extends Component
             'message' => 'Data Sortir Barang Masuk berhasil disimpan',
         ]);
 
-        return redirect()->route('operator.dashboard');
+        $previous = URL::previous();
+        return redirect($previous);
     }
 
     public function messageSent($arguments)
