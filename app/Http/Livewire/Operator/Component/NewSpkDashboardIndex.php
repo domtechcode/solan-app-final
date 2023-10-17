@@ -145,6 +145,14 @@ class NewSpkDashboardIndex extends Component
                                 ->orWhere('shipping_date', 'like', $searchTerms)
                                 ->orWhere('ukuran_barang', 'like', $searchTerms)
                                 ->orWhere('spk_number_fsc', 'like', $searchTerms);
+                        })
+                        ->where(function ($subQuery) {
+                            // Tambahkan kondisi jika work_step_list_id bukan 35 atau 36
+                            $subQuery
+                                ->where(function ($nestedSubQuery) {
+                                    $nestedSubQuery->whereIn('work_step_list_id', [35, 36])->orWhereNull('group_priority');
+                                })
+                                ->orWhere('group_priority', 'parent');
                         });
                 })
                 ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
