@@ -324,6 +324,18 @@
                                                                         {{ $workstep->user->name ?? '-' }}</p>
                                                                     <p class="mb-0 fs-13 text-dark">Dijadwalkan :
                                                                         {{ $workstep->schedule_date ?? '-' }}</p>
+                                                                    <p class="mb-0 fs-13 text-dark">Dikerjakan :
+                                                                        @php
+                                                                            $dikerjakanData = json_decode($workstep->dikerjakan);
+                                                                        @endphp
+
+                                                                        @if (is_array($dikerjakanData))
+                                                                            <ul>
+                                                                                @foreach ($dikerjakanData as $item)
+                                                                                    <li>-> {{ $item }}</li>
+                                                                                @endforeach
+                                                                            </ul>
+                                                                        @endif
                                                                 </div>
                                                                 <div class="notify-time">
                                                                     <span

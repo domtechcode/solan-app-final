@@ -186,7 +186,7 @@ class AllDashboardIndex extends Component
             ->where('type_file', 'sample')
             ->get();
 
-        $this->catatanSpk = Catatan::where('instruction_id', $instructionId)->get();
+        $this->catatanSpk = Catatan::where('instruction_id', $instructionId)->where('user_id', Auth()->user()->id)->get();
     }
 
     public function modalInstructionDetailsGroupAll($groupId)
