@@ -165,6 +165,7 @@ class FormPengirimanIndex extends Component
                     'status_task' => 'Complete',
                     'state_task' => 'Complete',
                     'spk_status' => 'Selesai',
+                    'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
 
                 $userDestination = User::where('role', 'Penjadwalan')->get();
