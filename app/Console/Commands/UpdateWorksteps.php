@@ -21,15 +21,27 @@ class UpdateWorksteps extends Command
     {
         $today = Carbon::now()->toDateString();
         $cari = WorkStep::select('instruction_id')->where('target_date', '<', $today)->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])->where('spk_status', 'Running')->distinct()->get()->toArray();
+        $cariPengiriman = WorkStep::select('instruction_id')
+                        ->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])
+                        ->where('spk_status', 'Running')
+                        ->whereHas('instruction', function ($query) use ($today) {
+                            $query->where('shipping_date', '<', $today);
+                        })
+                        ->distinct()
+                        ->get()
+                        ->toArray();
 
-        for ($i = 0; $i < count($cari); $i++) {
-            WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])->where('spk_status', 'Running')->whereNotIn('work_step_list_id', [3, 4, 5])->update([
-                'spk_status_target' => 'Late',
-            ]);
-            WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereIn('work_step_list_id', [1, 2])->update([
-                'spk_status_target' => 'Late',
-            ]);
+        if(isset($cari) && isset($cariPengiriman)){
+            for ($i = 0; $i < count($cari); $i++) {
+                WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])->where('spk_status', 'Running')->whereNotIn('work_step_list_id', [3, 4, 5])->update([
+                    'spk_status_target' => 'Late By Schedule',
+                ]);
+                WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereIn('work_step_list_id', [1, 2])->update([
+                    'spk_status_target' => 'Late By Schedule',
+                ]);
+            }
         }
+
 
         $this->info('Worksteps updated successfully.');
     }
