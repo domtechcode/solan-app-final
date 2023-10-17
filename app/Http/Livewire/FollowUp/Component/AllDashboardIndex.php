@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\FollowUp\Component;
 
 use App\Models\Files;
+use App\Models\Catatan;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
@@ -38,6 +39,8 @@ class AllDashboardIndex extends Component
 
     public $selectedGroupParent;
     public $selectedGroupChild;
+
+    public $catatanSpk;
 
     protected $listeners = ['indexRender' => '$refresh'];
 
@@ -182,6 +185,8 @@ class AllDashboardIndex extends Component
         $this->selectedFileSample = Files::where('instruction_id', $instructionId)
             ->where('type_file', 'sample')
             ->get();
+
+        $this->catatanSpk = Catatan::where('instruction_id', $instructionId)->get();
     }
 
     public function modalInstructionDetailsGroupAll($groupId)
