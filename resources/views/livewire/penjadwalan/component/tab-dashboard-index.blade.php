@@ -119,6 +119,20 @@
                                                     wire:key="tabSpk5" href="#tabSpk5">Reject -
                                                     {{ $dataCountReject }}</button>
                                             </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-danger mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk6' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk6')"
+                                                    wire:key="tabSpk6" href="#tabSpk6">Late Schedule -
+                                                    {{ $dataCountLateScheduleSpk }}</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button
+                                                    class="btn btn-danger mt-1 mb-1 me-3 {{ $activeTabSpk === 'tabSpk7' ? 'active' : '' }}"
+                                                    data-bs-toggle="tab" wire:click="changeTabSpk('tabSpk7')"
+                                                    wire:key="tabSpk7" href="#tabSpk7">Late Delivery -
+                                                    {{ $dataCountLateDeliverySpk }}</button>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="card-body">
@@ -147,6 +161,16 @@
                                                 id="tabSpk5">
                                                 <h5 class="card-title">Reject</h5>
                                                 @livewire('penjadwalan.component.reject-dashboard-index')
+                                            </div>
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk6' ? 'active' : '' }}"
+                                                id="tabSpk6">
+                                                <h5 class="card-title">Late Schedule</h5>
+                                                @livewire('penjadwalan.component.late-schedule-dashboard-index')
+                                            </div>
+                                            <div class="tab-pane {{ $activeTabSpk === 'tabSpk7' ? 'active' : '' }}"
+                                                id="tabSpk7">
+                                                <h5 class="card-title">Late Delivery</h5>
+                                                @livewire('penjadwalan.component.late-delivery-dashboard-index')
                                             </div>
                                         </div>
                                     </div>

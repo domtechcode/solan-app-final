@@ -34,14 +34,22 @@ class UpdateWorksteps extends Command
         if(isset($cari) && isset($cariPengiriman)){
             for ($i = 0; $i < count($cari); $i++) {
                 WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])->where('spk_status', 'Running')->whereNotIn('work_step_list_id', [3, 4, 5])->update([
-                    'spk_status_target' => 'Late By Schedule',
+                    'schedule_state' => 'Late By Schedule',
                 ]);
                 WorkStep::where('instruction_id', $cari[$i]['instruction_id'])->whereIn('work_step_list_id', [1, 2])->update([
-                    'spk_status_target' => 'Late By Schedule',
+                    'schedule_state' => 'Late By Schedule',
+                ]);
+            }
+
+            for ($i = 0; $i < count($cariPengiriman); $i++) {
+                WorkStep::where('instruction_id', $cariPengiriman[$i]['instruction_id'])->whereNotIn('status_task', ['Complete', 'Waiting', 'Selesai'])->where('spk_status', 'Running')->whereNotIn('work_step_list_id', [3, 4, 5])->update([
+                    'delivery_state' => 'Late By Delivery',
+                ]);
+                WorkStep::where('instruction_id', $cariPengiriman[$i]['instruction_id'])->whereIn('work_step_list_id', [1, 2])->update([
+                    'delivery_state' => 'Late By Delivery',
                 ]);
             }
         }
-
 
         $this->info('Worksteps updated successfully.');
     }

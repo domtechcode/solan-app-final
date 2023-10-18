@@ -30,6 +30,9 @@ class TabDashboardIndex extends Component
 
     public $workStepList;
 
+    public $dataCountLateScheduleSpk;
+    public $dataCountLateDeliverySpk;
+
     protected $listeners = ['indexRender' => 'mount'];
 
     public $activeTab = 'tab1';
@@ -130,6 +133,24 @@ class TabDashboardIndex extends Component
         $this->dataCountIncomingSpk = WorkStep::where('work_step_list_id', 2)
             ->where('state_task', 'Not Running')
             ->where('spk_status', 'Running')
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
+
+        $this->dataCountLateScheduleSpk = WorkStep::where('work_step_list_id', 2)
+            ->where('schedule_state', 'Late By Schedule')
+            ->whereHas('instruction', function ($query) {
+                $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+            })
+            ->orderBy('shipping_date', 'asc')
+            ->with(['status', 'job', 'workStepList', 'instruction'])
+            ->count();
+
+        $this->dataCountLateDeliverySpk = WorkStep::where('work_step_list_id', 2)
+            ->where('delivery_state', 'Late By Delivery')
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
             })
