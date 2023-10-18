@@ -395,6 +395,7 @@ class LateDeliveryDashboardIndex extends Component
         $updateJobStatus = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
             'status_id' => $firstWorkStep->status_id,
             'job_id' => $firstWorkStep->job_id,
+            'delivery_state' => 'On Schedule',
         ]);
 
         $firstWorkStep->update([
