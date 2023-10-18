@@ -205,28 +205,16 @@ class RunningDashboardIndex extends Component
             ->whereIn('status_task', ['Process', 'Reject', 'Reject Requirements'])
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
             ->where(function ($query) {
-                $searchTerms = '%' . $this->searchRunning . '%';
                 $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan', 'instruction.pengajuanBarangSpk'])
             ->orderBy('instructions.shipping_date', 'asc')
+            ->search(trim($this->searchRunning))
             ->paginate($this->paginateRunning);
 
         return view('livewire.penjadwalan.component.running-dashboard-index', ['instructionsRunning' => $dataRunning])
