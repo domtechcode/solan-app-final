@@ -337,7 +337,7 @@ class FormCetakIndex extends Component
                 $this->messageSent(['conversation' => 'SPK Perbaikan', 'instruction_id' => $this->instructionCurrentId, 'receiver' => $findSourceReject->user_id]);
                 event(new IndexRenderEvent('refresh'));
             } else {
-                if ($currentStep->flag == 'Split' || $currentStep->flag == 'Duet') {
+                if ($currentStep->flag == 'Split' && $nextStep->flag == 'Split') {
                     if ($currentStep) {
                         $currentStep->update([
                             'state_task' => 'Complete',
