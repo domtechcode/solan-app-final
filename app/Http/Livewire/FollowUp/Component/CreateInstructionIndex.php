@@ -623,7 +623,7 @@ class CreateInstructionIndex extends Component
             'spk_type' => 'required',
             'customer' => 'required',
         ]);
-        
+
         $datacustomerlist = Customer::find($this->customer);
         if ($this->po_foc != null || $this->po_foc != false) {
             $datacustomerlist->taxes = 'nonpajak';
