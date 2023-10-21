@@ -1230,7 +1230,7 @@
                                                                                 placeholder="Cylinder"
                                                                                 value="Cylinder"
                                                                                 wire:model.defer="keterangans.{{ $keteranganIndex }}.label.0.alat_bahan"
-                                                                                readonly>
+                                                                                >
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.0.alat_bahan')
                                                                                 <p class="mt-2 text-sm text-danger">
@@ -1313,7 +1313,7 @@
                                                                                 class="form-control"
                                                                                 placeholder="Pita" value="Pita"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.1.alat_bahan"
-                                                                                readonly>
+                                                                                >
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.1.alat_bahan')
                                                                                 <p class="mt-2 text-sm text-danger">
@@ -1396,7 +1396,7 @@
                                                                                 class="form-control"
                                                                                 placeholder="Tinta" value="Tinta"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.2.alat_bahan"
-                                                                                readonly>
+                                                                                >
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.2.alat_bahan')
                                                                                 <p class="mt-2 text-sm text-danger">
@@ -1479,7 +1479,7 @@
                                                                                 class="form-control"
                                                                                 placeholder="Plate" value="Plate"
                                                                                 wire:model="keterangans.{{ $keteranganIndex }}.label.3.alat_bahan"
-                                                                                readonly>
+                                                                                >
                                                                             @error('keterangans.' . $keteranganIndex .
                                                                                 '.label.3.alat_bahan')
                                                                                 <p class="mt-2 text-sm text-danger">
