@@ -369,7 +369,7 @@
                                 <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
                                     <thead>
                                         <tr>
-                                            {{-- <th class="border-bottom-0"></th> --}}
+                                            <th class="border-bottom-0"></th>
                                             <th class="border-bottom-0">LANGKAH KERJA</th>
                                             <th class="border-bottom-0">TARGET SELESAI</th>
                                             <th class="border-bottom-0">DIJADWALKAN</th>
@@ -387,7 +387,7 @@
 
                                         @foreach ($workSteps as $key => $dataWork)
                                             <tr>
-                                                {{-- <td>
+                                                <td>
                                                     <div class="btn-list">
                                                         <button type="button" class="btn btn-icon btn-sm btn-success"
                                                             wire:click="addField({{ $key }})"
@@ -398,7 +398,7 @@
                                                             wire:loading.attr="disabled"><i
                                                                 class="fe fe-x"></i></button>
                                                     </div>
-                                                </td> --}}
+                                                </td>
                                                 <td>
                                                     <div class="row">
                                                         <div class="col-md-12">
