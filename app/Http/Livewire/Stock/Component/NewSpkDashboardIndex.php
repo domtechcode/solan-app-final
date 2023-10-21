@@ -84,7 +84,7 @@ class NewSpkDashboardIndex extends Component
         $dataNewSpk = WorkStep::where('work_step_list_id', 4)
             ->where('state_task', 'Running')
             ->whereIn('status_task', ['Pending Approved', 'Process'])
-            ->where('spk_status', 'Running')
+            ->whereIn('spk_status', ['Running', 'Hold Waiting STK'])
             ->whereIn('status_id', [1, 2])
             ->where(function ($query) {
                 $searchTerms = '%' . $this->searchNewSpk . '%';
@@ -136,168 +136,345 @@ class NewSpkDashboardIndex extends Component
             }
         }
 
-        if ($this->selectedInstruction->quantity < currency_convert($this->stock)) {
-            $this->emit('flashMessage', [
-                'type' => 'error',
-                'title' => 'Error Stock',
-                'message' => 'Stock tidak boleh lebih dari quantity',
-            ]);
-        } elseif ($this->selectedInstruction->quantity == currency_convert($this->stock)) {
-            $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])
-                ->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                    'selesai' => Carbon::now(),
+        $dataWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+        ->where('work_step_list_id', 4)->first();
+
+        if($dataWorkStep->spk_status == 'Hold Waiting STK'){
+            if ($this->selectedInstruction->quantity < currency_convert($this->stock)) {
+                $this->emit('flashMessage', [
+                    'type' => 'error',
+                    'title' => 'Error Stock',
+                    'message' => 'Stock tidak boleh lebih dari quantity',
                 ]);
-
-            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->where('work_step_list_id', 2)
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Approved',
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'schedule_date' => Carbon::now(),
+            }elseif ($this->selectedInstruction->quantity != currency_convert($this->stock)){
+                $this->emit('flashMessage', [
+                    'type' => 'error',
+                    'title' => 'Error Stock',
+                    'message' => 'Stock stk belum terpenuhi',
                 ]);
-
-            $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->whereIn('work_step_list_id', [35, 36])
-                ->update([
-                    'state_task' => 'Running',
-                    'status_task' => 'Pending Start',
-                    'dikerjakan' => Carbon::now()->toDateTimeString(),
-                    'schedule_date' => Carbon::now(),
-                ]);
-
-            $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-                'status_id' => 1,
-                'job_id' => 2,
-            ]);
-
-            $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
-                'stock' => currency_convert($this->stock),
-            ]);
-
-            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->where('work_step_list_id', 4)
-                ->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                    'selesai' => Carbon::now()->toDateTimeString(),
-                    'target_time' => 1,
-                ]);
-
-            if ($this->fileRincian) {
-                $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
-
-                $norincianstock = 1;
-                foreach ($this->fileRincian as $file) {
-                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
-                    Storage::putFileAs($folder, $file, $fileName);
-                    $norincianstock++;
-
-                    Files::create([
-                        'instruction_id' => $this->selectedInstruction->id,
-                        'user_id' => Auth()->user()->id,
-                        'type_file' => 'arsip',
-                        'file_name' => $fileName,
-                        'file_path' => $folder,
+            } elseif ($this->selectedInstruction->quantity == currency_convert($this->stock)) {
+                $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])
+                    ->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now(),
                     ]);
-                }
-            }
 
-            $userDestination = User::where('role', 'Penjadwalan')->get();
-            foreach ($userDestination as $dataUser) {
-                $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
-            }
-            event(new IndexRenderEvent('refresh'));
-
-            $this->emit('flashMessage', [
-                'type' => 'success',
-                'title' => 'Stock Instruksi Kerja',
-                'message' => 'Data berhasil disimpan',
-            ]);
-
-            $this->reset();
-            $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal-new-spk-stock');
-        } else {
-            $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
-                'stock' => currency_convert($this->stock),
-            ]);
-
-            $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                ->where('work_step_list_id', 4)
-                ->first();
-
-            if ($updateTask) {
-                $updateTask->update([
-                    'state_task' => 'Complete',
-                    'status_task' => 'Complete',
-                    'selesai' => Carbon::now()->toDateTimeString(),
-                    'target_time' => 1,
-                ]);
-
-                $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
-                    ->where('step', $updateTask->step + 1)
-                    ->first();
-
-                if ($updateNextStep) {
-                    $updateNextStep->update([
+                $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 2)
+                    ->update([
                         'state_task' => 'Running',
                         'status_task' => 'Pending Approved',
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
                         'schedule_date' => Carbon::now(),
                     ]);
 
-                    $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
-                        'status_id' => 1,
-                        'job_id' => $updateNextStep->work_step_list_id,
+                $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->whereIn('work_step_list_id', [35, 36])
+                    ->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Start',
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
+                        'schedule_date' => Carbon::now(),
                     ]);
-                }
-            }
 
-            if ($this->fileRincian) {
-                $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
+                $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                    'status_id' => 1,
+                    'job_id' => 2,
+                    'spk_status' => 'Running',
+                ]);
 
-                $norincianstock = 1;
-                foreach ($this->fileRincian as $file) {
-                    $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
-                    Storage::putFileAs($folder, $file, $fileName);
-                    $norincianstock++;
+                $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
+                    'stock' => currency_convert($this->stock),
+                ]);
 
-                    Files::create([
-                        'instruction_id' => $this->selectedInstruction->id,
-                        'user_id' => Auth()->user()->id,
-                        'type_file' => 'arsip',
-                        'file_name' => $fileName,
-                        'file_path' => $folder,
+                $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 4)
+                    ->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                        'target_time' => 1,
                     ]);
-                }
-            }
 
-            if ($updateNextStep->work_step_list_id == 5) {
-                $userDestination = User::where('role', 'Hitung Bahan')->get();
-                foreach ($userDestination as $dataUser) {
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                if ($this->fileRincian) {
+                    $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
+
+                    $norincianstock = 1;
+                    foreach ($this->fileRincian as $file) {
+                        $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $norincianstock++;
+
+                        Files::create([
+                            'instruction_id' => $this->selectedInstruction->id,
+                            'user_id' => Auth()->user()->id,
+                            'type_file' => 'arsip',
+                            'file_name' => $fileName,
+                            'file_path' => $folder,
+                        ]);
+                    }
                 }
-                event(new IndexRenderEvent('refresh'));
-            } else {
+
                 $userDestination = User::where('role', 'Penjadwalan')->get();
                 foreach ($userDestination as $dataUser) {
-                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
                 }
                 event(new IndexRenderEvent('refresh'));
+
+                $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Stock Instruksi Kerja',
+                    'message' => 'Data berhasil disimpan',
+                ]);
+
+                $this->reset();
+                $this->dispatchBrowserEvent('pondReset');
+                $this->dispatchBrowserEvent('close-modal-new-spk-stock');
+            } else {
+                $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
+                    'stock' => currency_convert($this->stock),
+                ]);
+
+                $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 4)
+                    ->first();
+
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                        'target_time' => 1,
+                    ]);
+
+                    $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                        ->where('step', $updateTask->step + 1)
+                        ->first();
+
+                    if ($updateNextStep) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                            'schedule_date' => Carbon::now(),
+                        ]);
+
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                            'status_id' => 1,
+                            'job_id' => $updateNextStep->work_step_list_id,
+                            'spk_status' => 'Running',
+                        ]);
+                    }
+                }
+
+                if ($this->fileRincian) {
+                    $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
+
+                    $norincianstock = 1;
+                    foreach ($this->fileRincian as $file) {
+                        $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $norincianstock++;
+
+                        Files::create([
+                            'instruction_id' => $this->selectedInstruction->id,
+                            'user_id' => Auth()->user()->id,
+                            'type_file' => 'arsip',
+                            'file_name' => $fileName,
+                            'file_path' => $folder,
+                        ]);
+                    }
+                }
+
+                if ($updateNextStep->work_step_list_id == 5) {
+                    $userDestination = User::where('role', 'Hitung Bahan')->get();
+                    foreach ($userDestination as $dataUser) {
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                    }
+                    event(new IndexRenderEvent('refresh'));
+                } else {
+                    $userDestination = User::where('role', 'Penjadwalan')->get();
+                    foreach ($userDestination as $dataUser) {
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                    }
+                    event(new IndexRenderEvent('refresh'));
+                }
+
+                $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Stock Instruksi Kerja',
+                    'message' => 'Data berhasil disimpan',
+                ]);
+
+                $this->reset();
+                $this->dispatchBrowserEvent('pondReset');
+                $this->dispatchBrowserEvent('close-modal-new-spk-stock');
             }
+        }else{
+            if ($this->selectedInstruction->quantity < currency_convert($this->stock)) {
+                $this->emit('flashMessage', [
+                    'type' => 'error',
+                    'title' => 'Error Stock',
+                    'message' => 'Stock tidak boleh lebih dari quantity',
+                ]);
+            } elseif ($this->selectedInstruction->quantity == currency_convert($this->stock)) {
+                $updateWorkStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->whereNotIn('work_step_list_id', [1, 2, 13, 14, 33, 34, 35, 36])
+                    ->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now(),
+                    ]);
 
-            $this->emit('flashMessage', [
-                'type' => 'success',
-                'title' => 'Stock Instruksi Kerja',
-                'message' => 'Data berhasil disimpan',
-            ]);
+                $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 2)
+                    ->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Approved',
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
+                        'schedule_date' => Carbon::now(),
+                    ]);
 
-            $this->reset();
-            $this->dispatchBrowserEvent('pondReset');
-            $this->dispatchBrowserEvent('close-modal-new-spk-stock');
+                $updateJadwal = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->whereIn('work_step_list_id', [35, 36])
+                    ->update([
+                        'state_task' => 'Running',
+                        'status_task' => 'Pending Start',
+                        'dikerjakan' => Carbon::now()->toDateTimeString(),
+                        'schedule_date' => Carbon::now(),
+                    ]);
+
+                $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                    'status_id' => 1,
+                    'job_id' => 2,
+                ]);
+
+                $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
+                    'stock' => currency_convert($this->stock),
+                ]);
+
+                $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 4)
+                    ->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                        'target_time' => 1,
+                    ]);
+
+                if ($this->fileRincian) {
+                    $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
+
+                    $norincianstock = 1;
+                    foreach ($this->fileRincian as $file) {
+                        $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $norincianstock++;
+
+                        Files::create([
+                            'instruction_id' => $this->selectedInstruction->id,
+                            'user_id' => Auth()->user()->id,
+                            'type_file' => 'arsip',
+                            'file_name' => $fileName,
+                            'file_path' => $folder,
+                        ]);
+                    }
+                }
+
+                $userDestination = User::where('role', 'Penjadwalan')->get();
+                foreach ($userDestination as $dataUser) {
+                    $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Selesai Cari Stock', 'instruction_id' => $this->selectedInstruction->id]);
+                }
+                event(new IndexRenderEvent('refresh'));
+
+                $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Stock Instruksi Kerja',
+                    'message' => 'Data berhasil disimpan',
+                ]);
+
+                $this->reset();
+                $this->dispatchBrowserEvent('pondReset');
+                $this->dispatchBrowserEvent('close-modal-new-spk-stock');
+            } else {
+                $updateStock = Instruction::where('id', $this->selectedInstruction->id)->update([
+                    'stock' => currency_convert($this->stock),
+                ]);
+
+                $updateTask = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                    ->where('work_step_list_id', 4)
+                    ->first();
+
+                if ($updateTask) {
+                    $updateTask->update([
+                        'state_task' => 'Complete',
+                        'status_task' => 'Complete',
+                        'selesai' => Carbon::now()->toDateTimeString(),
+                        'target_time' => 1,
+                    ]);
+
+                    $updateNextStep = WorkStep::where('instruction_id', $this->selectedInstruction->id)
+                        ->where('step', $updateTask->step + 1)
+                        ->first();
+
+                    if ($updateNextStep) {
+                        $updateNextStep->update([
+                            'state_task' => 'Running',
+                            'status_task' => 'Pending Approved',
+                            'schedule_date' => Carbon::now(),
+                        ]);
+
+                        $updateStatusJob = WorkStep::where('instruction_id', $this->selectedInstruction->id)->update([
+                            'status_id' => 1,
+                            'job_id' => $updateNextStep->work_step_list_id,
+                        ]);
+                    }
+                }
+
+                if ($this->fileRincian) {
+                    $folder = 'public/' . $this->selectedInstruction->spk_number . '/stock';
+
+                    $norincianstock = 1;
+                    foreach ($this->fileRincian as $file) {
+                        $fileName = $this->selectedInstruction->spk_number . '-file-rincian-stock-' . $norincianstock . '.' . $file->getClientOriginalExtension();
+                        Storage::putFileAs($folder, $file, $fileName);
+                        $norincianstock++;
+
+                        Files::create([
+                            'instruction_id' => $this->selectedInstruction->id,
+                            'user_id' => Auth()->user()->id,
+                            'type_file' => 'arsip',
+                            'file_name' => $fileName,
+                            'file_path' => $folder,
+                        ]);
+                    }
+                }
+
+                if ($updateNextStep->work_step_list_id == 5) {
+                    $userDestination = User::where('role', 'Hitung Bahan')->get();
+                    foreach ($userDestination as $dataUser) {
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                    }
+                    event(new IndexRenderEvent('refresh'));
+                } else {
+                    $userDestination = User::where('role', 'Penjadwalan')->get();
+                    foreach ($userDestination as $dataUser) {
+                        $this->messageSent(['receiver' => $dataUser->id, 'conversation' => 'SPK Telah Selesai', 'instruction_id' => $this->selectedInstruction->id]);
+                    }
+                    event(new IndexRenderEvent('refresh'));
+                }
+
+                $this->emit('flashMessage', [
+                    'type' => 'success',
+                    'title' => 'Stock Instruksi Kerja',
+                    'message' => 'Data berhasil disimpan',
+                ]);
+
+                $this->reset();
+                $this->dispatchBrowserEvent('pondReset');
+                $this->dispatchBrowserEvent('close-modal-new-spk-stock');
+            }
         }
     }
 
