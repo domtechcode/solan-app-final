@@ -64,26 +64,11 @@ class NewSpkDashboardIndex extends Component
             ->where('state_task', 'Running')
             ->where('status_task', 'Process')
             ->whereNotIn('spk_status', ['Hold', 'Cancel', 'Hold', 'Hold RAB', 'Hold Waiting Qty QC', 'Hold Qc', 'Failed Waiting Qty QC', 'Deleted', 'Acc', 'Close PO', 'Training Program'])
-            ->where(function ($query) {
-                $searchTerms = '%' . $this->searchNewSpk . '%';
-                $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    });
-            })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
+            ->search(trim($this->searchNewSpk))
             ->paginate($this->paginateNewSpk);
 
 

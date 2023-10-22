@@ -70,12 +70,24 @@
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                         @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
                                         @endif
                                         <span
                                             class="badge bg-secondary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
@@ -84,6 +96,12 @@
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
                                         @endif
                                         <span
                                             class="badge bg-info rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
@@ -100,12 +118,24 @@
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                         @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
                                         @endif
                                         <span
                                             class="badge bg-primary rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
@@ -115,12 +145,24 @@
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
                                         @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
+                                        @endif
                                         <span
                                             class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->status->desc_status }}</span>
                                     </td>
                                     <td>
                                         @if ($dataInstruction->spk_status != 'Running')
                                             <span class="tag tag-border">{{ $dataInstruction->spk_status }}</span>
+                                        @endif
+                                        @if ($dataInstruction->delivery_state == 'Late By Delivery')
+                                            <span class="tag tag-border">{{ $dataInstruction->delivery_state }}</span>
+                                        @endif
+                                        @if ($dataInstruction->schedule_state == 'Late By Schedule')
+                                            <span class="tag tag-border">{{ $dataInstruction->schedule_state }}</span>
                                         @endif
                                         <span
                                             class="badge bg-success rounded-pill text-white p-2 px-3">{{ $dataInstruction->job->desc_job }}</span>
