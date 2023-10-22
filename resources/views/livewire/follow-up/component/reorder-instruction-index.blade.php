@@ -467,7 +467,7 @@
             </div>
 
             {{-- file --}}
-            <div class="row mb-3">
+            {{-- <div class="row mb-3">
                 <div class="col-xl-4">
                     <div class="table-responsive">
                         <table class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
@@ -567,7 +567,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="row">
                 <div class="col-sm-4 col-md-4">

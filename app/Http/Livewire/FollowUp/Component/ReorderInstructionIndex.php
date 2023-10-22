@@ -68,9 +68,9 @@ class ReorderInstructionIndex extends Component
 
     public $workSteps = [];
 
-    public $filecontohCurrent;
-    public $filearsipCurrent;
-    public $fileaccountingCurrent;
+    // public $filecontohCurrent;
+    // public $filearsipCurrent;
+    // public $fileaccountingCurrent;
 
     public $currentInstructionId;
 
@@ -161,15 +161,15 @@ class ReorderInstructionIndex extends Component
             ];
         }
 
-        $this->filecontohCurrent = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'contoh')
-            ->get();
-        $this->filearsipCurrent = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'arsip')
-            ->get();
-        $this->fileaccountingCurrent = Files::where('instruction_id', $instructionId)
-            ->where('type_file', 'accounting')
-            ->get();
+        // $this->filecontohCurrent = Files::where('instruction_id', $instructionId)
+        //     ->where('type_file', 'contoh')
+        //     ->get();
+        // $this->filearsipCurrent = Files::where('instruction_id', $instructionId)
+        //     ->where('type_file', 'arsip')
+        //     ->get();
+        // $this->fileaccountingCurrent = Files::where('instruction_id', $instructionId)
+        //     ->where('type_file', 'accounting')
+        //     ->get();
 
         $dataNotes = Catatan::where('instruction_id', $instructionId)
             ->where('kategori', 'catatan')
@@ -193,11 +193,11 @@ class ReorderInstructionIndex extends Component
     public function render()
     {
         return view('livewire.follow-up.component.reorder-instruction-index', [
-            'title' => 'Form Edit Instruksi Kerja',
+            'title' => 'Form Reorder Instruksi Kerja',
         ])
             ->extends('layouts.app')
             ->section('content')
-            ->layoutData(['title' => 'Form Edit Instruksi Kerja']);
+            ->layoutData(['title' => 'Form Reorder Instruksi Kerja']);
     }
 
     public function update()
