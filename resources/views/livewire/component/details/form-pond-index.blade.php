@@ -24,7 +24,7 @@
                                 <tbody>
                                     @if (!empty($dataHasilAkhir))
                                         <?php
-                                            $totalLembarCetakHasilAkhir = 0;
+                                        $totalLembarCetakHasilAkhir = 0;
                                         ?>
                                         @foreach ($dataHasilAkhir as $key => $rincianPlate)
                                             <tr>
@@ -86,9 +86,10 @@
                                                             <input type="text"
                                                                 wire:model="dataHasilAkhir.{{ $key }}.hasil_akhir_lembar_cetak_plate"
                                                                 class="form-control" autocomplete="off"
-                                                                placeholder="Hasil Akhir Lembar Cetak" readonly>
+                                                                placeholder="Hasil Akhir Lembar Cetak">
                                                         </div>
-                                                        @error('dataHasilAkhir.' . $key . '.hasil_akhir_lembar_cetak_plate')
+                                                        @error('dataHasilAkhir.' . $key .
+                                                            '.hasil_akhir_lembar_cetak_plate')
                                                             <div><span class="text-danger">{{ $message }}</span>
                                                             </div>
                                                         @enderror
@@ -96,14 +97,14 @@
                                                 </td>
                                             </tr>
                                             <?php
-                                                $totalLembarCetak = $dataHasilAkhir[$key]['hasil_akhir_lembar_cetak_plate'];
+                                            $totalLembarCetak = $dataHasilAkhir[$key]['hasil_akhir_lembar_cetak_plate'];
 
-                                                if (is_numeric($totalLembarCetak)) {
-                                                    $totalLembarCetakHasilAkhir += $totalLembarCetak;
-                                                } else {
-                                                    $totalLembarCetakHasilAkhir = 0;
-                                                }
-                                            
+                                            if (is_numeric($totalLembarCetak)) {
+                                                $totalLembarCetakHasilAkhir += $totalLembarCetak;
+                                            } else {
+                                                $totalLembarCetakHasilAkhir = 0;
+                                            }
+
                                             ?>
                                         @endforeach
                                         <tr>
@@ -118,7 +119,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="form-label">Jenis Pekerjaan</label>
@@ -136,7 +137,7 @@
                                 <label class="form-label">Hasil Akhir (Lembar Cetak)</label>
                                 <div class="input-group">
                                     <input type="text" wire:model="hasil_akhir" id="hasil_akhir" class="form-control"
-                                        autocomplete="off" placeholder="Hasil Akhir" readonly>
+                                        autocomplete="off" placeholder="Hasil Akhir">
                                 </div>
                                 @error('hasil_akhir')
                                     <div><span class="text-danger">{{ $message }}</span></div>
@@ -149,7 +150,7 @@
                                     <label class="form-label">Nama Pisau</label>
                                     <div class="input-group">
                                         <input type="text" wire:model="nama_pisau" id="nama_pisau"
-                                            class="form-control" autocomplete="off" placeholder="Nama Pisau" readonly>
+                                            class="form-control" autocomplete="off" placeholder="Nama Pisau">
                                     </div>
                                     @error('nama_pisau')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -161,7 +162,7 @@
                                     <label class="form-label">Lokasi Pisau</label>
                                     <div class="input-group">
                                         <input type="text" wire:model="lokasi_pisau" id="lokasi_pisau"
-                                            class="form-control" autocomplete="off" placeholder="Lokasi Pisau" readonly>
+                                            class="form-control" autocomplete="off" placeholder="Lokasi Pisau">
                                     </div>
                                     @error('lokasi_pisau')
                                         <div><span class="text-danger">{{ $message }}</span></div>
@@ -173,7 +174,7 @@
                                     <label class="form-label">Status Pisau</label>
                                     <div class="input-group">
                                         <select wire:model="status_pisau" id="type_ppn"
-                                            class="form-control form-select" data-bs-placeholder="Pilih Status Pisau" readonly>
+                                            class="form-control form-select" data-bs-placeholder="Pilih Status Pisau">
                                             <option label="-- Pilih Status Pisau --"></option>
                                             <option value="Bagus">Bagus</option>
                                             <option value="Jelek">Jelek</option>
@@ -184,109 +185,49 @@
                                     @enderror
                                 </div>
                             </div>
+                        @else
+                            <div class="col-sm-4 col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">Nama Matress</label>
+                                    <div class="input-group">
+                                        <input type="text" wire:model="nama_matress" id="nama_matress"
+                                            class="form-control" autocomplete="off" placeholder="Nama Matress">
+                                    </div>
+                                    @error('nama_matress')
+                                        <div><span class="text-danger">{{ $message }}</span></div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">Lokasi Matress</label>
+                                    <div class="input-group">
+                                        <input type="text" wire:model="lokasi_matress" id="lokasi_matress"
+                                            class="form-control" autocomplete="off" placeholder="Lokasi Matress">
+                                    </div>
+                                    @error('lokasi_matress')
+                                        <div><span class="text-danger">{{ $message }}</span></div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label">Status Matress</label>
+                                    <div class="input-group">
+                                        <select wire:model="status_matress" id="type_ppn"
+                                            class="form-control form-select"
+                                            data-bs-placeholder="Pilih Status Matress">
+                                            <option label="-- Pilih Status Matress --"></option>
+                                            <option value="Bagus">Bagus</option>
+                                            <option value="Jelek">Jelek</option>
+                                        </select>
+                                    </div>
+                                    @error('status_matress')
+                                        <div><span class="text-danger">{{ $message }}</span></div>
+                                    @enderror
+                                </div>
+                            </div>
                         @endif
-                        <div class="col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label class="form-label">Nama Matress</label>
-                                <div class="input-group">
-                                    <input type="text" wire:model="nama_matress" id="nama_matress"
-                                        class="form-control" autocomplete="off" placeholder="Nama Matress" readonly>
-                                </div>
-                                @error('nama_matress')
-                                    <div><span class="text-danger">{{ $message }}</span></div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label class="form-label">Lokasi Matress</label>
-                                <div class="input-group">
-                                    <input type="text" wire:model="lokasi_matress" id="lokasi_matress"
-                                        class="form-control" autocomplete="off" placeholder="Lokasi Matress" readonly>
-                                </div>
-                                @error('lokasi_matress')
-                                    <div><span class="text-danger">{{ $message }}</span></div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label class="form-label">Status Matress</label>
-                                <div class="input-group">
-                                    <select wire:model="status_matress" id="type_ppn" class="form-control form-select"
-                                        data-bs-placeholder="Pilih Status Matress" readonly>
-                                        <option label="-- Pilih Status Matress --"></option>
-                                        <option value="Bagus">Bagus</option>
-                                        <option value="Jelek">Jelek</option>
-                                    </select>
-                                </div>
-                                @error('status_matress')
-                                    <div><span class="text-danger">{{ $message }}</span></div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-12 col-md-12 mb-3">
-                            <div class="table-responsive">
-                                <table
-                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">Catatan Proses Pengerjaan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                @php
-                                                    $catatan_proses_pengerjaan_Data = json_decode($workStepData->catatan_proses_pengerjaan);
-                                                @endphp
-
-                                                @if (is_array($catatan_proses_pengerjaan_Data))
-                                                    <ul>
-                                                        @foreach ($catatan_proses_pengerjaan_Data as $item)
-                                                            <li>-> {{ $item }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-sm-12 col-md-12 mb-3">
-                            <div class="table-responsive">
-                                <table
-                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-bottom-0">Catatan</th>
-                                            <th class="border-bottom-0">Tujuan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($catatanData as $item)
-                                            <tr>
-                                                <td>
-                                                    {{ $item->catatan }}
-                                                    {{ $item->tujuan }}
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                -
-                                            </tr>
-                                        @endforelse
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

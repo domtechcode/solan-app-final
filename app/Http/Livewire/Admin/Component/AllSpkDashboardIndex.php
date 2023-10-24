@@ -62,29 +62,17 @@ class AllSpkDashboardIndex extends Component
     public function render()
     {
         $dataAll = WorkStep::where('work_step_list_id', 1)
-            ->whereNotIn('spk_status', ['Training Program'])
             ->where(function ($query) {
-                $searchTerms = '%' . $this->searchAll . '%';
                 $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
+            ->search(trim($this->searchAll))
             ->paginate($this->paginateAll);
 
         return view('livewire.admin.component.all-spk-dashboard-index', ['instructionsAll' => $dataAll])

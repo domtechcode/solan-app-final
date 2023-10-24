@@ -61,12 +61,6 @@ class FormPondIndex extends Component
         $dataWorkStep = WorkStep::find($workStepId);
         $this->dataWorkSteps = WorkStep::find($workStepId);
 
-        $this->workStepData = WorkStep::find($workStepId);
-        $this->catatanData = Catatan::where('instruction_id', $instructionId)
-            ->where('user_id', $this->workStepData->user_id)
-            ->where('kategori', 'catatan')
-            ->get();
-
         $this->workSteps = WorkStep::where('instruction_id', $instructionId)
             ->with('workStepList')
             ->get();
@@ -87,19 +81,20 @@ class FormPondIndex extends Component
             $this->lokasi_matress = $dataPond['lokasi_matress'];
             $this->status_matress = $dataPond['status_matress'];
 
-            $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)
-            ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
-            ->where('user_id', $dataWorkStep->user_id)
-            ->where('step', $dataWorkStep->step)
-            ->get();
+            $dataPondGet = FormPond::where('instruction_id', $this->instructionCurrentId)
+                ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
+                ->where('user_id', $dataWorkStep->user_id)
+                ->where('step', $dataWorkStep->step)
+                ->get();
 
-            foreach ($dataPond as $dataHasilAkhirPond) {
+            foreach ($dataPondGet as $dataHasilAkhirPond) {
                 $rincianPlateDataHasilAkhir = [
                     'state' => $dataHasilAkhirPond['state'],
                     'plate' => $dataHasilAkhirPond['plate'],
                     'jumlah_lembar_cetak' => $dataHasilAkhirPond['jumlah_lembar_cetak'],
                     'waste' => $dataHasilAkhirPond['waste'],
                     'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirPond['hasil_akhir_lembar_cetak_plate'],
+                    'hasil_akhir' => $dataHasilAkhirPond['hasil_akhir'],
                 ];
 
                 $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
@@ -125,7 +120,7 @@ class FormPondIndex extends Component
                         'plate' => $dataHasilAkhirPond->plate,
                         'jumlah_lembar_cetak' => $dataHasilAkhirPond->jumlah_lembar_cetak,
                         'waste' => $dataHasilAkhirPond->waste,
-                        'hasil_akhir_lembar_cetak_plate' => null,
+                        'hasil_akhir_lembar_cetak_plate' => $dataHasilAkhirPond->hasil_akhir_lembar_cetak_plate,
                     ];
 
                     $this->dataHasilAkhir[] = $rincianPlateDataHasilAkhir;
