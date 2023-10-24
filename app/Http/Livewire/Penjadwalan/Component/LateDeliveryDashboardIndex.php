@@ -199,30 +199,19 @@ class LateDeliveryDashboardIndex extends Component
         $this->dispatchBrowserEvent('pharaonic.select2.init');
 
         $dataLateDelivery = WorkStep::where('work_step_list_id', 2)
+            ->where('spk_status', 'Running')
             ->where('delivery_state', 'Late By Delivery')
             ->where(function ($query) {
-                $searchTerms = '%' . $this->searchLateDelivery . '%';
                 $query
-                    ->whereHas('instruction', function ($instructionQuery) use ($searchTerms) {
-                        $instructionQuery
-                            ->where('spk_number', 'like', $searchTerms)
-                            ->orWhere('spk_type', 'like', $searchTerms)
-                            ->orWhere('customer_name', 'like', $searchTerms)
-                            ->orWhere('order_name', 'like', $searchTerms)
-                            ->orWhere('customer_number', 'like', $searchTerms)
-                            ->orWhere('code_style', 'like', $searchTerms)
-                            ->orWhere('shipping_date', 'like', $searchTerms)
-                            ->orWhere('ukuran_barang', 'like', $searchTerms)
-                            ->orWhere('spk_number_fsc', 'like', $searchTerms);
-                    })
-                    ->where(function ($subQuery) {
-                        $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                    ->whereHas('instruction', function ($instructionQuery) {
+                        $instructionQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
                     });
             })
             ->join('instructions', 'work_steps.instruction_id', '=', 'instructions.id')
             ->select('work_steps.*')
             ->with(['status', 'job', 'workStepList', 'instruction', 'instruction.layoutBahan', 'instruction.pengajuanBarangSpk'])
             ->orderBy('instructions.shipping_date', 'asc')
+            ->search(trim($this->searchLateDelivery))
             ->paginate($this->paginateLateDelivery);
 
         return view('livewire.penjadwalan.component.late-delivery-dashboard-index', ['instructionsLateDelivery' => $dataLateDelivery])

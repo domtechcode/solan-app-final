@@ -141,6 +141,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountLateScheduleSpk = WorkStep::where('work_step_list_id', 2)
+            ->where('spk_status', 'Running')
             ->where('schedule_state', 'Late By Schedule')
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -150,6 +151,7 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountLateDeliverySpk = WorkStep::where('work_step_list_id', 2)
+            ->where('spk_status', 'Running')
             ->where('delivery_state', 'Late By Delivery')
             ->whereHas('instruction', function ($query) {
                 $query->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -159,14 +161,20 @@ class TabDashboardIndex extends Component
             ->count();
 
         $this->dataCountPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->count();
-        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
+        $this->dataCountRejectPengajuanBarangPersonal = PengajuanBarangPersonal::where('user_id', Auth()->user()->id)
+            ->where('status_id', 3)
+            ->count();
         $this->dataCountPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->count();
-        $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)->where('status_id', 3)->count();
+        $this->dataCountRejectPengajuanBarangSpk = PengajuanBarangSpk::where('user_id', Auth()->user()->id)
+            ->where('status_id', 3)
+            ->count();
         $this->dataCountTotalPengajuanBarang = $this->dataCountPengajuanBarangPersonal + $this->dataCountPengajuanBarangSpk;
 
         $this->dataCountTotalPengajuanKekuranganQc = PengajuanKekuranganQc::where('status', 'Pending')->count();
 
-        $this->workStepList = WorkStepList::whereNotIn('id', [1,2,3,4,5])->orderBy('no_urut', 'asc')->get();
+        $this->workStepList = WorkStepList::whereNotIn('id', [1, 2, 3, 4, 5])
+            ->orderBy('no_urut', 'asc')
+            ->get();
     }
 
     public function render()

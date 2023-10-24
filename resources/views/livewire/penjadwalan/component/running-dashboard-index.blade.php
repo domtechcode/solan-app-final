@@ -822,7 +822,7 @@
                             <label class="form-label">Keterangan Reschedule</label>
                             <div class="input-group control-group" style="padding-top: 5px;">
                                 <textarea class="form-control mb-4" placeholder="Keterangan Reschedule" rows="4"
-                                    wire:model="keteranganReschedule"></textarea>
+                                    wire:model.defer="keteranganReschedule"></textarea>
                             </div>
                             @error('keteranganReschedule')
                                 <div><span class="text-danger">{{ $message }}</span></div>
