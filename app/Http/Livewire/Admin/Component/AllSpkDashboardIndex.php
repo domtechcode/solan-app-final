@@ -6,6 +6,7 @@ use App\Models\Files;
 use Livewire\Component;
 use App\Models\WorkStep;
 use App\Models\Instruction;
+use App\Models\WorkStepList;
 use Livewire\WithPagination;
 
 class AllSpkDashboardIndex extends Component
@@ -39,6 +40,10 @@ class AllSpkDashboardIndex extends Component
     public $selectedGroupParent;
     public $selectedGroupChild;
 
+    public $searchFinish;
+    public $searchWork;
+    public $dataWorkStepList;
+
     protected $listeners = ['indexRender' => '$refresh'];
 
     public function updatingSearchAll()
@@ -46,9 +51,23 @@ class AllSpkDashboardIndex extends Component
         $this->resetPage();
     }
 
+    public function updatingSearchFinish()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSearchWork()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->searchAll = request()->query('search', $this->searchAll);
+        $this->searchFinish = request()->query('search', $this->searchFinish);
+        $this->searchWork = request()->query('search', $this->searchWork);
+
+        $this->dataWorkStepList = WorkStepList::all();
     }
 
     public function sumGroup($groupId)
@@ -61,7 +80,11 @@ class AllSpkDashboardIndex extends Component
 
     public function render()
     {
-        $dataAll = WorkStep::where('work_step_list_id', 1)
+        if($this->searchWork == null){
+            $this->searchWork = 1;
+        }
+
+        $dataAll = WorkStep::where('work_step_list_id', $this->searchWork)
             ->where(function ($query) {
                 $query
                     ->whereHas('instruction', function ($instructionQuery) {
@@ -73,6 +96,7 @@ class AllSpkDashboardIndex extends Component
             ->with(['status', 'job', 'workStepList', 'instruction'])
             ->orderBy('instructions.shipping_date', 'asc')
             ->search(trim($this->searchAll))
+            ->searchFinish(trim($this->searchFinish))
             ->paginate($this->paginateAll);
 
         return view('livewire.admin.component.all-spk-dashboard-index', ['instructionsAll' => $dataAll])

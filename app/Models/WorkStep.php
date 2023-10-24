@@ -72,4 +72,12 @@ class WorkStep extends Model
         });
     }
 
+    public function scopeSearchFinish($query, $finishDate)
+    {
+        $searchTermData = "%$finishDate%";
+        $query->where(function ($query) use ($searchTermData) {
+            $query->where('selesai', 'like', $searchTermData);
+        });
+    }
+
 }

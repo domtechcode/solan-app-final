@@ -20,6 +20,15 @@
                             </select>
                         </div>
                         <div class="col d-flex justify-content-end">
+                            <input type="date" class="form-control w-auto" wire:model="searchFinish">
+                            <div class="col-lg-3">
+                                <select id="" name="" class="form-control form-select w-auto"
+                                    wire:model="searchWork">
+                                    @foreach ($dataWorkStepList as $data)
+                                        <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <input type="text" class="form-control w-auto" placeholder="Search"
                                 wire:model="searchAll">
                         </div>
@@ -328,7 +337,7 @@
                                                                     <p class="mb-0 fs-13 text-dark">Dijadwalkan :
                                                                         {{ $workstep->schedule_date ?? '-' }}</p>
                                                                     <div class="btn-list mt-2">
-                                                                        @if(!in_array($workstep->work_step_list_id, [1,2]))
+                                                                        @if (!in_array($workstep->work_step_list_id, [1, 2]))
                                                                             <a target="blank"
                                                                                 class="btn btn-icon btn-sm btn-dark"
                                                                                 href="{{ route('admin.indexDetailWorkStep', ['instructionId' => $workstep->instruction->id, 'workStepId' => $workstep->id]) }}"><i
