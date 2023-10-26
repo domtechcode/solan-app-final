@@ -105,9 +105,10 @@ class ReorderInstructionIndex extends Component
     {
         $this->currentInstructionId = $instructionId;
         $this->datacustomers = Customer::all();
-        $this->dataparents = Instruction::where('spk_number', 'LIKE', '%-A')
-            ->orderByDesc('created_at')
-            ->get();
+        $this->dataparents = Instruction::where('spk_parent', null)
+        ->where('sub_spk', 'sub')
+        ->orderByDesc('created_at')
+        ->get();
         $this->datalayouts = Instruction::where('spk_type', 'layout')
             ->orderByDesc('created_at')
             ->get();

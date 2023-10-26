@@ -137,6 +137,8 @@ class CreatePengajuanKekuranganQcIndex extends Component
         $instruction->group_id = null;
         $instruction->group_priority = null;
         $instruction->order_date = $this->order_date;
+        $instruction->shipping_date = $this->shipping_date;
+        $instruction->shipping_date_first = $this->shipping_date;
         if ($this->requestKekurangan == 'Pemesan') {
             $instruction->spk_state = 'Kekurangan Request Pemesan';
         } elseif ($this->requestKekurangan == 'QC') {
