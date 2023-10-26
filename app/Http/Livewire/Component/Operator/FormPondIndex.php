@@ -246,6 +246,20 @@ class FormPondIndex extends Component
                         'status_matress' => $this->status_matress,
                     ]);
                 }
+            }else{
+                $createCetak = FormPond::create([
+                    'instruction_id' => $this->instructionCurrentId,
+                    'user_id' => Auth()->user()->id,
+                    'step' => $currentStep->step,
+                    'jenis_pekerjaan' => $this->jenis_pekerjaan,
+                    'hasil_akhir' => $this->hasil_akhir,
+                    'nama_pisau' => $this->nama_pisau,
+                    'lokasi_pisau' => $this->lokasi_pisau,
+                    'status_pisau' => $this->status_pisau,
+                    'nama_matress' => $this->nama_matress,
+                    'lokasi_matress' => $this->lokasi_matress,
+                    'status_matress' => $this->status_matress,
+                ]);
             }
 
             if ($currentStep->reject_from_id != null) {
