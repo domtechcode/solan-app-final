@@ -141,7 +141,7 @@ class FormPondIndex extends Component
                 // 'nama_matress' => 'required',
                 // 'lokasi_matress' => 'required',
                 // 'status_matress' => 'required',
-                'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
+                // 'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
             ]);
         } else {
             $this->validate([
@@ -149,7 +149,7 @@ class FormPondIndex extends Component
                 'nama_matress' => 'required',
                 'lokasi_matress' => 'required',
                 'status_matress' => 'required',
-                'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
+                // 'dataHasilAkhir.*.hasil_akhir_lembar_cetak_plate' => 'required',
             ]);
         }
 

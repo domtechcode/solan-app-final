@@ -229,6 +229,69 @@
                             </div>
                         @endif
                     </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-12 col-md-12 mb-3">
+                            <div class="table-responsive">
+                                <table
+                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-bottom-0">Catatan Proses Pengerjaan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @php
+                                                    $catatan_proses_pengerjaan_Data = json_decode($workStepData->catatan_proses_pengerjaan);
+                                                @endphp
+
+                                                @if (is_array($catatan_proses_pengerjaan_Data))
+                                                    <ul>
+                                                        @foreach ($catatan_proses_pengerjaan_Data as $item)
+                                                            <li>-> {{ $item }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-12 col-md-12 mb-3">
+                            <div class="table-responsive">
+                                <table
+                                    class="table border text-nowrap text-md-nowrap table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-bottom-0">Catatan</th>
+                                            <th class="border-bottom-0">Tujuan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($catatanData as $item)
+                                            <tr>
+                                                <td>
+                                                    {{ $item->catatan }}
+                                                    {{ $item->tujuan }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                -
+                                            </tr>
+                                        @endforelse
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

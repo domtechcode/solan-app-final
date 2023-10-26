@@ -65,6 +65,12 @@ class FormPondIndex extends Component
             ->with('workStepList')
             ->get();
 
+            $this->workStepData = WorkStep::find($workStepId);
+            $this->catatanData = Catatan::where('instruction_id', $instructionId)
+                ->where('user_id', $this->workStepData->user_id)
+                ->where('kategori', 'catatan')
+                ->get();
+
         $dataPond = FormPond::where('instruction_id', $this->instructionCurrentId)
             ->where('jenis_pekerjaan', $dataWorkStep->workStepList->name)
             ->where('user_id', $dataWorkStep->user_id)
