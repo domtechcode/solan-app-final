@@ -111,6 +111,28 @@ class OperatorDashboardIndex extends Component
 
                 $this->changeTo[] = $item;
             }
+
+            $dataDetailWorkStepComplete = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->whereIn('state_task', ['Complete'])
+                ->whereIn('status_task', ['Complete'])
+                ->whereIn('spk_status', ['Running'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                // ->paginate($this->paginateOperator);
+                ->orderBy('user_id', 'asc')
+                ->get();
+
+            $dataDetailWorkStepComplete->groupBy('user_id');
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -141,6 +163,25 @@ class OperatorDashboardIndex extends Component
 
                 $this->changeTo[] = $item;
             }
+
+            $dataDetailWorkStepComplete = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->where('user_id', $this->userSelected)
+                ->whereIn('state_task', ['Complete'])
+                ->whereIn('status_task', ['Complete'])
+                ->whereIn('spk_status', ['Running'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                ->paginate($this->paginateOperator);
         }
     }
 
@@ -198,6 +239,28 @@ class OperatorDashboardIndex extends Component
 
                 $this->changeTo[] = $item;
             }
+
+            $dataDetailWorkStepComplete = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->whereIn('state_task', ['Complete'])
+                ->whereIn('status_task', ['Complete'])
+                ->whereIn('spk_status', ['Running'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                // ->paginate($this->paginateOperator);
+                ->orderBy('user_id', 'asc')
+                ->get();
+
+            $dataDetailWorkStepComplete->groupBy('user_id');
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -228,11 +291,30 @@ class OperatorDashboardIndex extends Component
 
                 $this->changeTo[] = $item;
             }
+
+            $dataDetailWorkStepComplete = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
+                ->where('user_id', $this->userSelected)
+                ->whereIn('state_task', ['Complete'])
+                ->whereIn('status_task', ['Complete'])
+                ->whereIn('spk_status', ['Running'])
+                ->where(function ($query) {
+                    $searchTerms = '%' . $this->dijadwalkanSelected . '%';
+                    $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
+                    $query
+                        ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
+                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                        })
+                        ->whereHas('instruction', function ($subQuery) {
+                            $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
+                        });
+                })
+                ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
+                ->paginate($this->paginateOperator);
         }
 
         // dd($this->changeTo);
 
-        return view('livewire.penjadwalan.component.operator-dashboard-index', ['dataDetailWorkStep' => $dataDetailWorkStep]);
+        return view('livewire.penjadwalan.component.operator-dashboard-index', ['dataDetailWorkStep' => $dataDetailWorkStep, 'dataDetailWorkStepComplete' => $dataDetailWorkStepComplete]);
     }
 
     public function pindahOperator($selectedValue, $keyValue)
