@@ -98,7 +98,17 @@
                                                                         aria-expanded="true"
                                                                         aria-controls="collapse{{ $dataInstruction->id }}">
 
-                                                                        {{ $dataInstruction->instruction->spk_number }}
+                                                                        {{ $dataInstruction->instruction->spk_number }} - <?php
+                                                                        $totalLembarCetak = 0;
+                                                                        ?>
+
+                                                                        @foreach ($dataInstruction->instruction->layoutBahan as $data)
+                                                                            <?php
+                                                                            $totalLembarCetak += $data->total_lembar_cetak;
+                                                                            ?>
+                                                                        @endforeach
+
+                                                                    [ {{ currency_idr($totalLembarCetak) }} LC ]
                                                                     </a>
                                                                 </h4>
                                                             </div>
@@ -255,7 +265,17 @@
                                                                         aria-expanded="true"
                                                                         aria-controls="collapse{{ $dataInstruction->id }}">
 
-                                                                        {{ $dataInstruction->instruction->spk_number }}
+                                                                        {{ $dataInstruction->instruction->spk_number }} - <?php
+                                                                        $totalLembarCetak = 0;
+                                                                        ?>
+
+                                                                        @foreach ($dataInstruction->instruction->layoutBahan as $data)
+                                                                            <?php
+                                                                            $totalLembarCetak += $data->total_lembar_cetak;
+                                                                            ?>
+                                                                        @endforeach
+
+                                                                    [ {{ currency_idr($totalLembarCetak) }} LC ]
                                                                     </a>
                                                                 </h4>
                                                             </div>
