@@ -233,7 +233,7 @@
             {{-- {{ $dataDetailWorkStep->links() }} --}}
         </div>
     </div>
-    {{-- <div class="row mt-3">
+    <div class="row mt-3">
         <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table border text-nowrap text-md-nowrap table-bordered mb-0">
@@ -285,96 +285,17 @@
                                                                 <div class="panel-body">
                                                                     {{ $dataInstruction->instruction->order_name }} - [
                                                                     {{ $dataInstruction->state_task }} ]
-                                                                    <div class="row" wire:ignore>
+                                                                    <div class="row">
                                                                         <div class="col-sm-12 col-md-12">
                                                                             <div class="row">
                                                                                 <div class="col-sm-12">
                                                                                     <div class="form-group">
-                                                                                        <label class="form-label">User
-                                                                                            <span
-                                                                                                class="text-red">*</span></label>
-                                                                                        <div wire:ignore>
-                                                                                            <div class="form-group">
-                                                                                                <label
-                                                                                                    class="form-label"></label>
-                                                                                                <div wire:ignore>
-                                                                                                    <select
-                                                                                                        class="form-control"
-                                                                                                        data-clear
-                                                                                                        data-pharaonic="select2"
-                                                                                                        data-component-id="{{ $this->id }}"
-                                                                                                        data-placeholder="Select User"
-                                                                                                        wire:model.defer="changeTo.{{ $key }}.user_id"
-                                                                                                        id="changeTo"
-                                                                                                        style="width: 100%;">
-                                                                                                        <option
-                                                                                                            label='Select User'>
-                                                                                                        </option>
-                                                                                                        @foreach ($dataUser as $datauser)
-                                                                                                            <option
-                                                                                                                value="{{ $datauser->id }}">
-                                                                                                                {{ $datauser->name }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    </select>
-                                                                                                </div>
-                                                                                                @error('changeTo.' .
-                                                                                                    $key . '.user_id')
-                                                                                                    <div><span
-                                                                                                            class="text-danger">{{ $message }}</span>
-                                                                                                    </div>
-                                                                                                @enderror
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="form-group">
-                                                                                        <label
-                                                                                            class="form-label">Dijadwalkan
-                                                                                            <span
-                                                                                                class="text-red">*</span></label>
-                                                                                        <div class="input-group">
-                                                                                            <input type="date"
-                                                                                                wire:model.defer="changeTo.{{ $key }}.schedule_date"
-                                                                                                id="schedule_date"
-                                                                                                class="form-control @error('changeTo.' . $key . '.schedule_date') is-invalid @enderror"
-                                                                                                >
-                                                                                        </div>
-                                                                                        @error('changeTo.' . $key .
-                                                                                            '.schedule_date')
-                                                                                            <div><span
-                                                                                                    class="text-danger">{{ $message }}</span>
-                                                                                            </div>
-                                                                                        @enderror
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="form-group">
-                                                                                        <label
-                                                                                            class="form-label">Target
-                                                                                            <span
-                                                                                                class="text-red">*</span></label>
-                                                                                        <div class="input-group">
-                                                                                            <input type="date"
-                                                                                                wire:model.defer="changeTo.{{ $key }}.target_date"
-                                                                                                id="target_date"
-                                                                                                class="form-control @error('changeTo.' . $key . '.target_date') is-invalid @enderror"
-                                                                                                >
-                                                                                        </div>
-                                                                                        @error('changeTo.' . $key .
-                                                                                            '.target_date')
-                                                                                            <div><span
-                                                                                                    class="text-danger">{{ $message }}</span>
-                                                                                            </div>
-                                                                                        @enderror
+                                                                                        <label class="form-label">User : {{ $dataInstruction->user->name }}</label>
+                                                                                        <label class="form-label">Dijadwalkan : {{ $dataInstruction->schedule_date }}</label>
+                                                                                        <label class="form-label">Target : {{ $dataInstruction->target_date }}</label>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <button type="button"
-                                                                                class="btn btn-success btn-sm mt-2"
-                                                                                wire:click="pindahOperator({{ $dataInstruction->id }}, {{ $key }})"
-                                                                                wire:key="pindahOperator({{ $dataInstruction->id }})">Move</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -396,5 +317,5 @@
         </div>
         <div class="col d-flex justify-content-end mt-3">
         </div>
-    </div> --}}
+    </div>
 </div>

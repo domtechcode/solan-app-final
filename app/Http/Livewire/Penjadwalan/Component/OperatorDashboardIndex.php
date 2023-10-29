@@ -28,7 +28,6 @@ class OperatorDashboardIndex extends Component
     public $workSteps = [];
     public $dataWorkStep;
     public $changeTo = [];
-    public $changeToComplete = [];
 
     public $selectedInstructionParent;
     public $selectedWorkStepParent;
@@ -122,7 +121,7 @@ class OperatorDashboardIndex extends Component
                     $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
                     $query
                         ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
-                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
                         })
                         ->whereHas('instruction', function ($subQuery) {
                             $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -135,16 +134,6 @@ class OperatorDashboardIndex extends Component
 
             $dataDetailWorkStepComplete->groupBy('user_id');
 
-            $this->changeToComplete = [];
-            foreach ($dataDetailWorkStepComplete as $data) {
-                $item = [
-                    'user_id' => $data->user_id,
-                    'schedule_date' => $data->schedule_date,
-                    'target_date' => $data->target_date,
-                ];
-
-                $this->changeToComplete[] = $item;
-            }
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -186,7 +175,7 @@ class OperatorDashboardIndex extends Component
                     $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
                     $query
                         ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
-                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
                         })
                         ->whereHas('instruction', function ($subQuery) {
                             $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -272,7 +261,7 @@ class OperatorDashboardIndex extends Component
                     $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
                     $query
                         ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
-                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
                         })
                         ->whereHas('instruction', function ($subQuery) {
                             $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -284,17 +273,6 @@ class OperatorDashboardIndex extends Component
                 ->get();
 
             $dataDetailWorkStepComplete->groupBy('user_id');
-
-            $this->changeToComplete = [];
-            foreach ($dataDetailWorkStepComplete as $data) {
-                $item = [
-                    'user_id' => $data->user_id,
-                    'schedule_date' => $data->schedule_date,
-                    'target_date' => $data->target_date,
-                ];
-
-                $this->changeToComplete[] = $item;
-            }
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -336,7 +314,7 @@ class OperatorDashboardIndex extends Component
                     $searchTermsTarget = '%' . $this->targetSelesaiSelected . '%';
                     $query
                         ->where(function ($instructionQuery) use ($searchTerms, $searchTermsTarget) {
-                            $instructionQuery->orWhere('selesai', 'like', $searchTerms)->where('selesai', 'like', $searchTermsTarget);
+                            $instructionQuery->orWhere('schedule_date', 'like', $searchTerms)->where('target_date', 'like', $searchTermsTarget);
                         })
                         ->whereHas('instruction', function ($subQuery) {
                             $subQuery->where('group_priority', '!=', 'child')->orWhereNull('group_priority');
@@ -344,17 +322,6 @@ class OperatorDashboardIndex extends Component
                 })
                 ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
                 ->paginate($this->paginateOperator);
-
-            $this->changeToComplete = [];
-            foreach ($dataDetailWorkStepComplete as $data) {
-                $item = [
-                    'user_id' => $data->user_id,
-                    'schedule_date' => $data->schedule_date,
-                    'target_date' => $data->target_date,
-                ];
-
-                $this->changeToComplete[] = $item;
-            }
         }
 
         // dd($this->changeTo);
