@@ -233,7 +233,7 @@
             {{-- {{ $dataDetailWorkStep->links() }} --}}
         </div>
     </div>
-    <div class="row mt-3">
+    {{-- <div class="row mt-3">
         <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table border text-nowrap text-md-nowrap table-bordered mb-0">
@@ -380,8 +380,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-                                                        {{-- </div> --}}
                                                     @endif
                                                 @endforeach
                                             </div>
@@ -397,7 +395,6 @@
 
         </div>
         <div class="col d-flex justify-content-end mt-3">
-            {{-- {{ $dataDetailWorkStep->links() }} --}}
         </div>
-    </div>
+    </div> --}}
 </div>
