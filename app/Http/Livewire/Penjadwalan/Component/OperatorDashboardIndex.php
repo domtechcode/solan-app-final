@@ -28,6 +28,7 @@ class OperatorDashboardIndex extends Component
     public $workSteps = [];
     public $dataWorkStep;
     public $changeTo = [];
+    public $changeToComplete = [];
 
     public $selectedInstructionParent;
     public $selectedWorkStepParent;
@@ -133,6 +134,17 @@ class OperatorDashboardIndex extends Component
                 ->get();
 
             $dataDetailWorkStepComplete->groupBy('user_id');
+
+            $this->changeToComplete = [];
+            foreach ($dataDetailWorkStepComplete as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeToComplete[] = $item;
+            }
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -182,6 +194,17 @@ class OperatorDashboardIndex extends Component
                 })
                 ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
                 ->paginate($this->paginateOperator);
+
+            $this->changeToComplete = [];
+            foreach ($dataDetailWorkStepComplete as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeToComplete[] = $item;
+            }
         }
     }
 
@@ -261,6 +284,17 @@ class OperatorDashboardIndex extends Component
                 ->get();
 
             $dataDetailWorkStepComplete->groupBy('user_id');
+
+            $this->changeToComplete = [];
+            foreach ($dataDetailWorkStepComplete as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeToComplete[] = $item;
+            }
         } else {
             $dataDetailWorkStep = WorkStep::where('work_step_list_id', $this->worksteplistSelected)
                 ->where('user_id', $this->userSelected)
@@ -281,7 +315,7 @@ class OperatorDashboardIndex extends Component
                 ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
                 ->paginate($this->paginateOperator);
 
-                $this->changeTo = [];
+            $this->changeTo = [];
             foreach ($dataDetailWorkStep as $data) {
                 $item = [
                     'user_id' => $data->user_id,
@@ -310,6 +344,17 @@ class OperatorDashboardIndex extends Component
                 })
                 ->with(['instruction', 'user', 'instruction.layoutBahan', 'machine'])
                 ->paginate($this->paginateOperator);
+
+            $this->changeToComplete = [];
+            foreach ($dataDetailWorkStepComplete as $data) {
+                $item = [
+                    'user_id' => $data->user_id,
+                    'schedule_date' => $data->schedule_date,
+                    'target_date' => $data->target_date,
+                ];
+
+                $this->changeToComplete[] = $item;
+            }
         }
 
         // dd($this->changeTo);
