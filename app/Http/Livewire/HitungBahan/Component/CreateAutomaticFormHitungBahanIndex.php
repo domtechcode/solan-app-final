@@ -20,31 +20,31 @@ class CreateAutomaticFormHitungBahanIndex extends Component
 
     public $layoutSettingType;
     public $layoutBahanType;
-    public $mesin;
-    public $panjangAreaCetakMinimal = 18;
-    public $lebarAreaCetakMinimal = 11.6;
-    public $panjangAreaCetakMaximal = 50.5;
-    public $lebarAreaCetakMaximal = 34.5;
-    public $panjangMaximalBahan = 51.5;
-    public $lebarMaximalBahan = 36.2;
+    public $mesin = 3;
+    public $panjangAreaCetakMinimal;
+    public $lebarAreaCetakMinimal;
+    public $panjangAreaCetakMaximal;
+    public $lebarAreaCetakMaximal;
+    public $panjangMaximalBahan;
+    public $lebarMaximalBahan;
 
     //detail
-    public $panjangBarangJadi = 18.1;
+    public $panjangBarangJadi = 18;
     public $lebarBarangJadi = 5;
 
-    public $qtyPermintaan = '1000';
+    public $qtyPermintaan;
     public $pond = 'Y';
     public $potongJadi = 'N';
     public $jarakPotongJadi = 'N';
-    public $jarakPanjangAntarBarang = 0.4;
-    public $jarakLebarAntarBarang = 0.4;
+    public $jarakPanjangAntarBarang;
+    public $jarakLebarAntarBarang;
     public $jarakAtas = 1;
     public $jarakBawah = 0.5;
     public $jarakSisiKiri = 0.5;
     public $jarakSisiKanan = 0.5;
     public $jarakTambahanVertical = 0;
     public $jarakTambahanHorizontal = 0;
-    public $panjangBahan = 109;
+    public $panjangBahan = 108;
     public $lebarBahan = 79;
 
     //hasil landscape
@@ -53,6 +53,13 @@ class CreateAutomaticFormHitungBahanIndex extends Component
 
     public $ukuranPanjangLembarCetakLandscape;
     public $ukuranLebarLembarCetakLandscape;
+
+    //hasil Potrait
+    public $panjangNaikPotrait;
+    public $lebarNaikPotrait;
+
+    public $ukuranPanjangLembarCetakPotrait;
+    public $ukuranLebarLembarCetakPotrait;
 
     //hasil bahan landscape
     public $panjangSisaBahanLandscape;
@@ -63,6 +70,16 @@ class CreateAutomaticFormHitungBahanIndex extends Component
 
     public $panjangNaikSisaBahanPanjangLandscape;
     public $lebarNaikSisaBahanPanjangLandscape;
+
+    //hasil bahan Potrait
+    public $panjangSisaBahanPotrait;
+    public $panjangNaikBahanPotrait;
+
+    public $lebarSisaBahanPotrait;
+    public $lebarNaikBahanPotrait;
+
+    public $panjangNaikSisaBahanPanjangPotrait;
+    public $lebarNaikSisaBahanPanjangPotrait;
 
     public function mount($instructionId)
     {
@@ -140,17 +157,19 @@ class CreateAutomaticFormHitungBahanIndex extends Component
 
     public function generate()
     {
-        // $this->validate([
-        //     'panjangBarangJadi' => 'required',
-        //     'lebarBarangJadi' => 'required',
-        //     'qtyPermintaan' => 'required',
-        //     'mesin' => 'required',
-        //     'pond' => 'required',
-        //     'potongJadi' => 'required',
-        //     'jarakPotongJadi' => 'required',
-        //     'layoutSettingType' => 'required',
-        //     'layoutBahanType' => 'required',
-        // ]);
+        $this->validate([
+            'panjangBarangJadi' => 'required',
+            'lebarBarangJadi' => 'required',
+            'panjangBahan' => 'required',
+            'lebarBahan' => 'required',
+            'qtyPermintaan' => 'required',
+            'mesin' => 'required',
+            'pond' => 'required',
+            'potongJadi' => 'required',
+            'jarakPotongJadi' => 'required',
+            'layoutSettingType' => 'required',
+            'layoutBahanType' => 'required',
+        ]);
 
         // //hitungJarakAntarBarang
         if ($this->pond == 'Y' && $this->potongJadi == 'N' && $this->jarakPotongJadi == 'N') {
@@ -173,17 +192,34 @@ class CreateAutomaticFormHitungBahanIndex extends Component
             $this->jarakLebarAntarBarang = 0;
         }
 
+        $dataMesin = Machine::find($this->mesin);
+
+        $this->panjangAreaCetakMinimal = $dataMesin->panjang_area_cetak_minimal;
+        $this->lebarAreaCetakMinimal = $dataMesin->lebar_area_cetak_minimal;
+        $this->panjangAreaCetakMaximal = $dataMesin->panjang_area_cetak_maximal;
+        $this->lebarAreaCetakMaximal = $dataMesin->lebar_area_cetak_maximal;
+        $this->panjangMaximalBahan = $dataMesin->panjang_maximal_bahan;
+        $this->lebarMaximalBahan = $dataMesin->lebar_maximal_bahan;
+
+
         //Menentukan Panjang Naik Landscape
         $resultsPanjangNaikLandscape = []; // Membuat array untuk menyimpan hasil formula
 
         $panjangBarangJadi = $this->panjangBarangJadi;
+        $lebarBarangJadi = $this->lebarBarangJadi;
         $jarakSisiKiri = $this->jarakSisiKiri;
         $jarakSisiKanan = $this->jarakSisiKanan;
 
         $incrementPanjangNaikLandscape = 1; // Mulai dari increment 1
         while (true) {
-            $jarakPanjangAntarBarang = $this->jarakPanjangAntarBarang; // Hitung jarak antar barang
-            $totalPanjangLembarCetakLandscape = $panjangBarangJadi * $incrementPanjangNaikLandscape + ($jarakPanjangAntarBarang * ($incrementPanjangNaikLandscape - 1) + $jarakSisiKiri + $jarakSisiKanan);
+            if($this->layoutSettingType == "Landscape"){
+                $jarakPanjangAntarBarang = $this->jarakPanjangAntarBarang; // Hitung jarak antar barang
+                $totalPanjangLembarCetakLandscape = $panjangBarangJadi * $incrementPanjangNaikLandscape + ($jarakPanjangAntarBarang * ($incrementPanjangNaikLandscape - 1) + $jarakSisiKiri + $jarakSisiKanan);
+            }else{
+                $jarakLebarAntarBarang = $this->jarakLebarAntarBarang; // Hitung jarak antar barang
+                $totalPanjangLembarCetakLandscape = $lebarBarangJadi * $incrementPanjangNaikLandscape + ($jarakLebarAntarBarang * ($incrementPanjangNaikLandscape - 1) + $jarakSisiKiri + $jarakSisiKanan);
+            }
+
 
             if ($totalPanjangLembarCetakLandscape >= $this->panjangAreaCetakMaximal) {
                 break; // Menghentikan perulangan jika totalPanjangLembarCetakLandscape mendekati panjangAreaCetakMaximal
@@ -219,13 +255,20 @@ class CreateAutomaticFormHitungBahanIndex extends Component
         $resultsLebarNaikLandscape = []; // Membuat array untuk menyimpan hasil formula
 
         $lebarBarangJadi = $this->lebarBarangJadi;
+        $panjangBarangJadi = $this->panjangBarangJadi;
         $jarakAtas = $this->jarakAtas;
         $jarakBawah = $this->jarakBawah;
 
         $incrementLebarNaikLandscape = 1; // Mulai dari increment 1
         while (true) {
-            $jarakLebarAntarBarang = $this->jarakLebarAntarBarang; // Hitung jarak antar barang
-            $totalLebarLembarCetakLandscape = $lebarBarangJadi * $incrementLebarNaikLandscape + ($jarakLebarAntarBarang * ($incrementLebarNaikLandscape - 1) + $jarakAtas + $jarakBawah);
+            if($this->layoutSettingType == "Landscape"){
+                $jarakLebarAntarBarang = $this->jarakLebarAntarBarang; // Hitung jarak antar barang
+                $totalLebarLembarCetakLandscape = $lebarBarangJadi * $incrementLebarNaikLandscape + ($jarakLebarAntarBarang * ($incrementLebarNaikLandscape - 1) + $jarakAtas + $jarakBawah);
+
+            }else{
+                $jarakPanjangAntarBarang = $this->jarakPanjangAntarBarang; // Hitung jarak antar barang
+                $totalLebarLembarCetakLandscape = $panjangBarangJadi * $incrementLebarNaikLandscape + ($jarakPanjangAntarBarang * ($incrementLebarNaikLandscape - 1) + $jarakAtas + $jarakBawah);
+            }
 
             if ($totalLebarLembarCetakLandscape >= $this->lebarAreaCetakMaximal) {
                 break; // Menghentikan perulangan jika totalPanjangLembarCetakLandscape mendekati panjangAreaCetakMaximal
@@ -261,11 +304,16 @@ class CreateAutomaticFormHitungBahanIndex extends Component
         $resultsPanjangNaikLandscapeBahan = []; // Membuat array untuk menyimpan hasil formula
 
         $panjangBahan = $this->panjangBahan;
-        $ukuranPanjangLembarCetakLandscape = $this->ukuranPanjangLembarCetakLandscape;
 
         $incrementPanjangNaikLandscapeBahan = 1; // Mulai dari increment 1
         while (true) {
-            $totalNaikPanjangLembarCetakLandscape = $panjangBahan - $ukuranPanjangLembarCetakLandscape * $incrementPanjangNaikLandscapeBahan;
+            if($this->layoutBahanType == "Landscape"){
+                $ukuranPanjangLembarCetakLandscape = $this->ukuranPanjangLembarCetakLandscape;
+                $totalNaikPanjangLembarCetakLandscape = $panjangBahan - $ukuranPanjangLembarCetakLandscape * $incrementPanjangNaikLandscapeBahan;
+            }else{
+                $ukuranLebarLembarCetakLandscape = $this->ukuranLebarLembarCetakLandscape;
+                $totalNaikPanjangLembarCetakLandscape = $panjangBahan - $ukuranLebarLembarCetakLandscape * $incrementPanjangNaikLandscapeBahan;
+            }
 
             if ($totalNaikPanjangLembarCetakLandscape < 0) {
                 break; // Menghentikan perulangan jika $totalNaikPanjangLembarCetakLandscape menjadi negatif
@@ -295,15 +343,21 @@ class CreateAutomaticFormHitungBahanIndex extends Component
         $this->panjangNaikBahanLandscape = $panjangNaikBahanLandscape;
         //selesai Menentukan Panjang Naik Landscape Bahan
 
-        //Menentukan Panjang Naik Landscape Bahan
+
+        //Menentukan Lebar Naik Landscape Bahan
         $resultsLebarNaikLandscapeBahan = []; // Membuat array untuk menyimpan hasil formula
 
         $lebarBahan = $this->lebarBahan;
-        $ukuranLebarLembarCetakLandscape = $this->ukuranLebarLembarCetakLandscape;
 
         $incrementLebarNaikLandscapeBahan = 1; // Mulai dari increment 1
         while (true) {
-            $totalNaikLebarLembarCetakLandscape = $lebarBahan - ($ukuranLebarLembarCetakLandscape * $incrementLebarNaikLandscapeBahan);
+            if($this->layoutBahanType == "Landscape"){
+                $ukuranLebarLembarCetakLandscape = $this->ukuranLebarLembarCetakLandscape;
+                $totalNaikLebarLembarCetakLandscape = $lebarBahan - ($ukuranLebarLembarCetakLandscape * $incrementLebarNaikLandscapeBahan);
+            }else if($this->layoutBahanType == "Potrait"){
+                $ukuranPanjangLembarCetakLandscape = $this->ukuranPanjangLembarCetakLandscape;
+                $totalNaikLebarLembarCetakLandscape = $lebarBahan - ($ukuranPanjangLembarCetakLandscape * $incrementLebarNaikLandscapeBahan);
+            }
 
             if ($totalNaikLebarLembarCetakLandscape < 0) {
                 break; // Menghentikan perulangan jika $totalNaikLebarLembarCetakLandscape menjadi negatif
@@ -330,7 +384,7 @@ class CreateAutomaticFormHitungBahanIndex extends Component
         }
 
         $this->lebarNaikBahanLandscape = $lebarNaikBahanLandscape;
-        //selesai Menentukan Panjang Naik Landscape Bahan
+        //selesai Menentukan Lebar Naik Landscape Bahan
 
         $this->panjangSisaBahanLandscape = $panjangSisaBahanLandscape;
         $lebarSisaBahanLandscape = $this->lebarBahan;
@@ -416,7 +470,22 @@ class CreateAutomaticFormHitungBahanIndex extends Component
             $this->lebarNaikSisaBahanPanjangLandscape = 0;
         }
 
-        $this->emit('updateCanvasSettingLandscape', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBarangJadi, $this->lebarBarangJadi, $this->jarakPanjangAntarBarang, $this->lebarNaikLandscape, $this->panjangNaikLandscape, $this->jarakSisiKiri, $this->jarakAtas);
-        $this->emit('updateCanvasBahanLandscape', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBahan, $this->lebarBahan, $this->lebarNaikBahanLandscape, $this->panjangNaikBahanLandscape, $this->panjangNaikSisaBahanPanjangLandscape, $this->lebarNaikSisaBahanPanjangLandscape);
+
+        if($this->layoutSettingType == "Potrait"){
+            $this->emit('updateCanvasSettingPotrait', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBarangJadi, $this->lebarBarangJadi, $this->jarakPanjangAntarBarang, $this->lebarNaikLandscape, $this->panjangNaikLandscape, $this->jarakSisiKiri, $this->jarakAtas);
+        }else{
+            $this->emit('updateCanvasSettingLandscape', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBarangJadi, $this->lebarBarangJadi, $this->jarakPanjangAntarBarang, $this->lebarNaikLandscape, $this->panjangNaikLandscape, $this->jarakSisiKiri, $this->jarakAtas);
+        }
+
+        if($this->layoutBahanType == "Potrait"){
+            $this->emit('updateCanvasBahanPotrait', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBahan, $this->lebarBahan, $this->lebarNaikBahanLandscape, $this->panjangNaikBahanLandscape);
+        }else if($this->layoutBahanType == "Landscape"){
+            // $this->emit('updateCanvasBahanLandscape', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBahan, $this->lebarBahan, $this->lebarNaikBahanLandscape, $this->panjangNaikBahanLandscape, $this->panjangNaikSisaBahanPanjangLandscape, $this->lebarNaikSisaBahanPanjangLandscape);
+            $this->emit('updateCanvasBahanLandscape', $this->ukuranPanjangLembarCetakLandscape, $this->ukuranLebarLembarCetakLandscape, $this->panjangBahan, $this->lebarBahan, $this->lebarNaikBahanLandscape, $this->panjangNaikBahanLandscape);
+        }else{
+
+        }
+
+
     }
 }
