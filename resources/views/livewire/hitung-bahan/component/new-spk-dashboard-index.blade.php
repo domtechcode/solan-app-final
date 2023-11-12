@@ -142,6 +142,9 @@
                                         <a class="btn btn-icon btn-sm btn-primary"
                                             href="{{ route('hitungBahan.createFormHitungBahan', ['instructionId' => $dataInstruction->instruction->id]) }}"><i
                                                 class="fe fe-edit"></i></a>
+                                        <a class="btn btn-icon btn-sm btn-primary"
+                                            href="{{ route('hitungBahan.createFormHitungBahanAutomatic', ['instructionId' => $dataInstruction->instruction->id]) }}"><i
+                                                class="fe fe-edit"></i> Otomatis</a>
                                     </div>
                                 </td>
                             </tr>

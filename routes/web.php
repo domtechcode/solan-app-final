@@ -65,7 +65,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/pengajuan-barang-personal', 'App\Http\Livewire\HitungBahan\Index\IndexPengajuanBarangPersonal')->name('hitungBahan.pengajuanBarangPersonal');
         Route::get('/pengajuan-barang-spk', 'App\Http\Livewire\HitungBahan\Index\IndexPengajuanBarangSpk')->name('hitungBahan.pengajuanBarangSpk');
 
-        Route::get('/create-automatic-spk', 'App\Http\Livewire\HitungBahan\Index\IndexAutomaticSpk')->name('hitungBahan.createAutomatic');
+        Route::get('/create-form-hitung-bahan/automatic/{instructionId}', 'App\Http\Livewire\HitungBahan\Index\IndexCreateAutomaticFormHitungBahan')->name('hitungBahan.createFormHitungBahanAutomatic');
     });
 
     Route::group(['prefix' => 'rab', 'middleware' => ['role:RAB']], function () {
