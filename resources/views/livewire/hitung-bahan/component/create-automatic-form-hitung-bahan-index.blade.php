@@ -859,8 +859,259 @@
         });
     </script>
 
-    {{-- <script>
+    {{-- Layout Bahan Landscape --}}
+    <script>
         Livewire.on('updateCanvasBahanLandscape', (ukuranPanjangLembarCetakLandscape, ukuranLebarLembarCetakLandscape,
+            panjangBahan,
+            lebarBahan, lebarNaikBahanLandscape, panjangNaikBahanLandscape) => {
+
+            function resizeCanvas() {
+                const outerCanvasContainer = $('.fabric-canvas-wrapper-bahan')[0];
+
+                const ratio = canvas.getWidth() / canvas.getHeight();
+                const containerWidth = outerCanvasContainer.clientWidth;
+                const containerHeight = outerCanvasContainer.clientHeight;
+
+                const scale = containerWidth / canvas.getWidth();
+                const zoom = canvas.getZoom() * scale;
+                canvas.setDimensions({
+                    width: containerWidth,
+                    height: containerWidth / ratio
+                });
+                canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+            }
+
+            $(window).resize(resizeCanvas);
+
+            var canvas = new fabric.Canvas('canvasBahan');
+            var canvasWidth = panjangBahan * 12; // Lebar canvas dalam mm
+            var canvasHeight = lebarBahan * 12; // Tinggi canvas dalam mm
+
+            var panjangBahan = panjangBahan * 10; // Lebar canvas dalam mm
+            var lebarBahan = lebarBahan * 10; // Tinggi canvas dalam mm
+
+            // Ukuran sel tabel dalam mm
+            var cellWidth = ukuranPanjangLembarCetakLandscape * 10; // Mengubah dari cm ke mm
+            var cellHeight = ukuranLebarLembarCetakLandscape * 10; // Mengubah dari cm ke mm
+            var cellSpacing = 0; // Mengubah dari cm ke mm
+            var rowCount = lebarNaikBahanLandscape;
+            var columnCount = panjangNaikBahanLandscape;
+
+            // Menghitung ukuran tabel berdasarkan ukuran sel dan jarak antar sel
+            var tableWidth = columnCount * cellWidth + (columnCount - 1) * cellSpacing;
+            var tableHeight = rowCount * cellHeight + (rowCount - 1) * cellSpacing;
+
+            // Mengatur ukuran canvas sesuai dengan ukuran yang diinginkan
+            canvas.setWidth(canvasWidth);
+            canvas.setHeight(canvasHeight);
+
+            // Fungsi untuk membuat kotak dengan ukuran seluruh canvas dan keterangan tulisan
+            function createCanvasSizeBox() {
+                var box = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    width: panjangBahan,
+                    height: lebarBahan,
+                    fill: 'transparent',
+                    stroke: 'blue',
+                    strokeWidth: 2,
+                });
+                // Tambahkan keterangan tulisan dengan ukuran lebih kecil
+                var fontSize = 3 * 12; // Ukuran font kecil (sesuaikan sesuai keinginan)
+                var textPanjang = new fabric.IText('Panjang: ' + panjangBahan / 10 + '', {
+                    left: 0,
+                    top: box.height, // Geser sedikit ke atas
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                var textLebar = new fabric.IText('Lebar: ' + lebarBahan / 10 + '', {
+                    left: box.width, // Geser sedikit ke kiri
+                    top: box.height,
+                    angle: -90,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                // Tambahkan kotak dan teks ke kanvas
+                canvas.add(box);
+                canvas.add(textPanjang);
+                canvas.add(textLebar);
+            }
+            // Fungsi untuk membuat sel tabel
+            function createTableCell(x, y) {
+                var cell = new fabric.Rect({
+                    left: x,
+                    top: y,
+                    width: cellWidth,
+                    height: cellHeight,
+                    fill: 'transparent',
+                    stroke: 'red',
+                    strokeWidth: 1,
+                });
+                var fontSize = 3 * 12;
+                var textPanjang = new fabric.IText((cellWidth / 10) + '', {
+                    left: cell.left + (cell.width / 2) - 10,
+                    top: cell.top,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                var textLebar = new fabric.IText((cellHeight / 10) + '', {
+                    left: cell.left,
+                    top: cell.top + (cell.height / 2) - 10,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                    // angle: -90,
+                });
+                canvas.add(textPanjang);
+                canvas.add(textLebar);
+                return cell;
+            }
+
+            // Fungsi untuk membuat tabel
+            function createTable() {
+                for (var i = 0; i < rowCount; i++) {
+                    for (var j = 0; j < columnCount; j++) {
+                        var x = j * (cellWidth + cellSpacing);
+                        var y = i * (cellHeight + cellSpacing);
+                        var cell = createTableCell(x, y);
+                        canvas.add(cell);
+                    }
+                }
+
+            }
+            createCanvasSizeBox();
+            createTable();
+            resizeCanvas();
+        });
+    </script>
+
+    {{-- Layout Bahan Potrait --}}
+    <script>
+        Livewire.on('updateCanvasBahanPotrait', (ukuranPanjangLembarCetakPotrait, ukuranLebarLembarCetakPotrait,
+            panjangBahan,
+            lebarBahan, lebarNaikBahanPotrait, panjangNaikBahanPotrait) => {
+
+            function resizeCanvas() {
+                const outerCanvasContainer = $('.fabric-canvas-wrapper-bahan')[0];
+
+                const ratio = canvas.getWidth() / canvas.getHeight();
+                const containerWidth = outerCanvasContainer.clientWidth;
+                const containerHeight = outerCanvasContainer.clientHeight;
+
+                const scale = containerWidth / canvas.getWidth();
+                const zoom = canvas.getZoom() * scale;
+                canvas.setDimensions({
+                    width: containerWidth,
+                    height: containerWidth / ratio
+                });
+                canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
+            }
+
+            $(window).resize(resizeCanvas);
+
+            var canvas = new fabric.Canvas('canvasBahan');
+            var canvasWidth = panjangBahan * 12; // Lebar canvas dalam mm
+            var canvasHeight = lebarBahan * 12; // Tinggi canvas dalam mm
+
+            var panjangBahan = panjangBahan * 10; // Lebar canvas dalam mm
+            var lebarBahan = lebarBahan * 10; // Tinggi canvas dalam mm
+
+            // Ukuran sel tabel dalam mm
+            var cellWidth =  ukuranLebarLembarCetakPotrait * 10; // Mengubah dari cm ke mm
+            var cellHeight = ukuranPanjangLembarCetakPotrait * 10; // Mengubah dari cm ke mm
+            var cellSpacing = 0; // Mengubah dari cm ke mm
+            var rowCount = lebarNaikBahanPotrait;
+            var columnCount = panjangNaikBahanPotrait;
+
+            // Menghitung ukuran tabel berdasarkan ukuran sel dan jarak antar sel
+            var tableWidth = columnCount * cellWidth + (columnCount - 1) * cellSpacing;
+            var tableHeight = rowCount * cellHeight + (rowCount - 1) * cellSpacing;
+
+            // Mengatur ukuran canvas sesuai dengan ukuran yang diinginkan
+            canvas.setWidth(canvasWidth);
+            canvas.setHeight(canvasHeight);
+
+            // Fungsi untuk membuat kotak dengan ukuran seluruh canvas dan keterangan tulisan
+            function createCanvasSizeBox() {
+                var box = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    width: panjangBahan,
+                    height: lebarBahan,
+                    fill: 'transparent',
+                    stroke: 'blue',
+                    strokeWidth: 2,
+                });
+                // Tambahkan keterangan tulisan dengan ukuran lebih kecil
+                var fontSize = 3 * 12; // Ukuran font kecil (sesuaikan sesuai keinginan)
+                var textPanjang = new fabric.IText('Panjang: ' + panjangBahan / 10 + '', {
+                    left: 0,
+                    top: box.height, // Geser sedikit ke atas
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                var textLebar = new fabric.IText('Lebar: ' + lebarBahan / 10 + '', {
+                    left: box.width, // Geser sedikit ke kiri
+                    top: box.height,
+                    angle: -90,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                // Tambahkan kotak dan teks ke kanvas
+                canvas.add(box);
+                canvas.add(textPanjang);
+                canvas.add(textLebar);
+            }
+            // Fungsi untuk membuat sel tabel
+            function createTableCell(x, y) {
+                var cell = new fabric.Rect({
+                    left: x,
+                    top: y,
+                    width: cellWidth,
+                    height: cellHeight,
+                    fill: 'transparent',
+                    stroke: 'red',
+                    strokeWidth: 1,
+                });
+                var fontSize = 3 * 12;
+                var textPanjang = new fabric.IText((cellWidth / 10) + '', {
+                    left: cell.left + (cell.width / 2) - 10,
+                    top: cell.top,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                });
+                var textLebar = new fabric.IText((cellHeight / 10) + '', {
+                    left: cell.left,
+                    top: cell.top + (cell.height / 2) - 10,
+                    textAlign: 'center',
+                    fontSize: fontSize,
+                    // angle: -90,
+                });
+                canvas.add(textPanjang);
+                canvas.add(textLebar);
+                return cell;
+            }
+
+            // Fungsi untuk membuat tabel
+            function createTable() {
+                for (var i = 0; i < rowCount; i++) {
+                    for (var j = 0; j < columnCount; j++) {
+                        var x = j * (cellWidth + cellSpacing);
+                        var y = i * (cellHeight + cellSpacing);
+                        var cell = createTableCell(x, y);
+                        canvas.add(cell);
+                    }
+                }
+
+            }
+            createCanvasSizeBox();
+            createTable();
+            resizeCanvas();
+        });
+    </script>
+
+    {{-- Layout Bahan Combination --}}
+    <script>
+        Livewire.on('updateCanvasBahanCombination', (ukuranPanjangLembarCetakLandscape, ukuranLebarLembarCetakLandscape,
             panjangBahan,
             lebarBahan, lebarNaikBahanLandscape, panjangNaikBahanLandscape, panjangNaikSisaBahanPanjangLandscape,
             lebarNaikSisaBahanPanjangLandscape) => {
@@ -900,8 +1151,8 @@
             var sisaColumnPanjang = panjangNaikSisaBahanPanjangLandscape;
             var sisaRowPanjang = lebarNaikSisaBahanPanjangLandscape;
 
-            var sisaColumnLebar = 2;
-            var sisaRowLebar = 1;
+            var sisaColumnLebar = 0;
+            var sisaRowLebar = 0;
 
             // Menghitung ukuran tabel berdasarkan ukuran sel dan jarak antar sel
             var tableWidth = columnCount * cellWidth + (columnCount - 1) * cellSpacing;
@@ -1075,253 +1326,5 @@
             createTable();
             resizeCanvas();
         });
-    </script> --}}
-    {{-- Layout Bahan Landscape --}}
-    <script>
-        Livewire.on('updateCanvasBahanLandscape', (ukuranPanjangLembarCetakLandscape, ukuranLebarLembarCetakLandscape,
-            panjangBahan,
-            lebarBahan, lebarNaikBahanLandscape, panjangNaikBahanLandscape) => {
-
-            function resizeCanvas() {
-                const outerCanvasContainer = $('.fabric-canvas-wrapper-bahan')[0];
-
-                const ratio = canvas.getWidth() / canvas.getHeight();
-                const containerWidth = outerCanvasContainer.clientWidth;
-                const containerHeight = outerCanvasContainer.clientHeight;
-
-                const scale = containerWidth / canvas.getWidth();
-                const zoom = canvas.getZoom() * scale;
-                canvas.setDimensions({
-                    width: containerWidth,
-                    height: containerWidth / ratio
-                });
-                canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-            }
-
-            $(window).resize(resizeCanvas);
-
-            var canvas = new fabric.Canvas('canvasBahan');
-            var canvasWidth = panjangBahan * 12; // Lebar canvas dalam mm
-            var canvasHeight = lebarBahan * 12; // Tinggi canvas dalam mm
-
-            var panjangBahan = panjangBahan * 10; // Lebar canvas dalam mm
-            var lebarBahan = lebarBahan * 10; // Tinggi canvas dalam mm
-
-            // Ukuran sel tabel dalam mm
-            var cellWidth = ukuranPanjangLembarCetakLandscape * 10; // Mengubah dari cm ke mm
-            var cellHeight = ukuranLebarLembarCetakLandscape * 10; // Mengubah dari cm ke mm
-            var cellSpacing = 0; // Mengubah dari cm ke mm
-            var rowCount = lebarNaikBahanLandscape;
-            var columnCount = panjangNaikBahanLandscape;
-
-            // Menghitung ukuran tabel berdasarkan ukuran sel dan jarak antar sel
-            var tableWidth = columnCount * cellWidth + (columnCount - 1) * cellSpacing;
-            var tableHeight = rowCount * cellHeight + (rowCount - 1) * cellSpacing;
-
-            // Mengatur ukuran canvas sesuai dengan ukuran yang diinginkan
-            canvas.setWidth(canvasWidth);
-            canvas.setHeight(canvasHeight);
-
-            // Fungsi untuk membuat kotak dengan ukuran seluruh canvas dan keterangan tulisan
-            function createCanvasSizeBox() {
-                var box = new fabric.Rect({
-                    left: 0,
-                    top: 0,
-                    width: panjangBahan,
-                    height: lebarBahan,
-                    fill: 'transparent',
-                    stroke: 'blue',
-                    strokeWidth: 2,
-                });
-                // Tambahkan keterangan tulisan dengan ukuran lebih kecil
-                var fontSize = 3 * 12; // Ukuran font kecil (sesuaikan sesuai keinginan)
-                var textPanjang = new fabric.IText('Panjang: ' + panjangBahan / 10 + '', {
-                    left: 0,
-                    top: box.height, // Geser sedikit ke atas
-                    textAlign: 'center',
-                    fontSize: fontSize,
-                });
-                var textLebar = new fabric.IText('Lebar: ' + lebarBahan / 10 + '', {
-                    left: box.width, // Geser sedikit ke kiri
-                    top: box.height,
-                    angle: -90,
-                    textAlign: 'center',
-                    fontSize: fontSize,
-                });
-                // Tambahkan kotak dan teks ke kanvas
-                canvas.add(box);
-                canvas.add(textPanjang);
-                canvas.add(textLebar);
-            }
-            // Fungsi untuk membuat sel tabel
-            function createTableCell(x, y) {
-                var cell = new fabric.Rect({
-                    left: x,
-                    top: y,
-                    width: cellWidth,
-                    height: cellHeight,
-                    fill: 'transparent',
-                    stroke: 'red',
-                    strokeWidth: 1,
-                });
-                var fontSize = 3 * 12;
-                var textPanjang = new fabric.IText((cellWidth / 10) + '', {
-                    left: cell.left + (cell.width / 2) - 10,
-                    top: cell.top,
-                    textAlign: 'center',
-                    fontSize: fontSize,
-                });
-                var textLebar = new fabric.IText((cellHeight / 10) + '', {
-                    left: cell.left,
-                    top: cell.top + (cell.height / 2) - 10,
-                    textAlign: 'center',
-                    fontSize: fontSize,
-                    // angle: -90,
-                });
-                canvas.add(textPanjang);
-                canvas.add(textLebar);
-                return cell;
-            }
-
-            // Fungsi untuk membuat tabel
-            function createTable() {
-                for (var i = 0; i < rowCount; i++) {
-                    for (var j = 0; j < columnCount; j++) {
-                        var x = j * (cellWidth + cellSpacing);
-                        var y = i * (cellHeight + cellSpacing);
-                        var cell = createTableCell(x, y);
-                        canvas.add(cell);
-                    }
-                }
-
-            }
-            createCanvasSizeBox();
-            createTable();
-            resizeCanvas();
-        });
     </script>
-
-<script>
-    Livewire.on('updateCanvasBahanPotrait', (ukuranPanjangLembarCetakPotrait, ukuranLebarLembarCetakPotrait,
-        panjangBahan,
-        lebarBahan, lebarNaikBahanPotrait, panjangNaikBahanPotrait) => {
-
-        function resizeCanvas() {
-            const outerCanvasContainer = $('.fabric-canvas-wrapper-bahan')[0];
-
-            const ratio = canvas.getWidth() / canvas.getHeight();
-            const containerWidth = outerCanvasContainer.clientWidth;
-            const containerHeight = outerCanvasContainer.clientHeight;
-
-            const scale = containerWidth / canvas.getWidth();
-            const zoom = canvas.getZoom() * scale;
-            canvas.setDimensions({
-                width: containerWidth,
-                height: containerWidth / ratio
-            });
-            canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-        }
-
-        $(window).resize(resizeCanvas);
-
-        var canvas = new fabric.Canvas('canvasBahan');
-        var canvasWidth = panjangBahan * 12; // Lebar canvas dalam mm
-        var canvasHeight = lebarBahan * 12; // Tinggi canvas dalam mm
-
-        var panjangBahan = panjangBahan * 10; // Lebar canvas dalam mm
-        var lebarBahan = lebarBahan * 10; // Tinggi canvas dalam mm
-
-        // Ukuran sel tabel dalam mm
-        var cellWidth =  ukuranLebarLembarCetakPotrait * 10; // Mengubah dari cm ke mm
-        var cellHeight = ukuranPanjangLembarCetakPotrait * 10; // Mengubah dari cm ke mm
-        var cellSpacing = 0; // Mengubah dari cm ke mm
-        var rowCount = lebarNaikBahanPotrait;
-        var columnCount = panjangNaikBahanPotrait;
-
-        // Menghitung ukuran tabel berdasarkan ukuran sel dan jarak antar sel
-        var tableWidth = columnCount * cellWidth + (columnCount - 1) * cellSpacing;
-        var tableHeight = rowCount * cellHeight + (rowCount - 1) * cellSpacing;
-
-        // Mengatur ukuran canvas sesuai dengan ukuran yang diinginkan
-        canvas.setWidth(canvasWidth);
-        canvas.setHeight(canvasHeight);
-
-        // Fungsi untuk membuat kotak dengan ukuran seluruh canvas dan keterangan tulisan
-        function createCanvasSizeBox() {
-            var box = new fabric.Rect({
-                left: 0,
-                top: 0,
-                width: panjangBahan,
-                height: lebarBahan,
-                fill: 'transparent',
-                stroke: 'blue',
-                strokeWidth: 2,
-            });
-            // Tambahkan keterangan tulisan dengan ukuran lebih kecil
-            var fontSize = 3 * 12; // Ukuran font kecil (sesuaikan sesuai keinginan)
-            var textPanjang = new fabric.IText('Panjang: ' + panjangBahan / 10 + '', {
-                left: 0,
-                top: box.height, // Geser sedikit ke atas
-                textAlign: 'center',
-                fontSize: fontSize,
-            });
-            var textLebar = new fabric.IText('Lebar: ' + lebarBahan / 10 + '', {
-                left: box.width, // Geser sedikit ke kiri
-                top: box.height,
-                angle: -90,
-                textAlign: 'center',
-                fontSize: fontSize,
-            });
-            // Tambahkan kotak dan teks ke kanvas
-            canvas.add(box);
-            canvas.add(textPanjang);
-            canvas.add(textLebar);
-        }
-        // Fungsi untuk membuat sel tabel
-        function createTableCell(x, y) {
-            var cell = new fabric.Rect({
-                left: x,
-                top: y,
-                width: cellWidth,
-                height: cellHeight,
-                fill: 'transparent',
-                stroke: 'red',
-                strokeWidth: 1,
-            });
-            var fontSize = 3 * 12;
-            var textPanjang = new fabric.IText((cellWidth / 10) + '', {
-                left: cell.left + (cell.width / 2) - 10,
-                top: cell.top,
-                textAlign: 'center',
-                fontSize: fontSize,
-            });
-            var textLebar = new fabric.IText((cellHeight / 10) + '', {
-                left: cell.left,
-                top: cell.top + (cell.height / 2) - 10,
-                textAlign: 'center',
-                fontSize: fontSize,
-                // angle: -90,
-            });
-            canvas.add(textPanjang);
-            canvas.add(textLebar);
-            return cell;
-        }
-
-        // Fungsi untuk membuat tabel
-        function createTable() {
-            for (var i = 0; i < rowCount; i++) {
-                for (var j = 0; j < columnCount; j++) {
-                    var x = j * (cellWidth + cellSpacing);
-                    var y = i * (cellHeight + cellSpacing);
-                    var cell = createTableCell(x, y);
-                    canvas.add(cell);
-                }
-            }
-
-        }
-        createCanvasSizeBox();
-        createTable();
-        resizeCanvas();
-    });
-</script>
 @endpush
