@@ -20,7 +20,7 @@ class CreateAutomaticFormHitungBahanIndex extends Component
 
     public $layoutSettingType;
     public $layoutBahanType;
-    public $mesin = 3;
+    public $mesin;
     public $panjangAreaCetakMinimal;
     public $lebarAreaCetakMinimal;
     public $panjangAreaCetakMaximal;
@@ -29,13 +29,13 @@ class CreateAutomaticFormHitungBahanIndex extends Component
     public $lebarMaximalBahan;
 
     //detail
-    public $panjangBarangJadi = 18;
-    public $lebarBarangJadi = 5;
+    public $panjangBarangJadi;
+    public $lebarBarangJadi;
 
     public $qtyPermintaan;
-    public $pond = 'Y';
-    public $potongJadi = 'N';
-    public $jarakPotongJadi = 'N';
+    public $pond;
+    public $potongJadi;
+    public $jarakPotongJadi;
     public $jarakPanjangAntarBarang;
     public $jarakLebarAntarBarang;
     public $jarakAtas = 1;
@@ -44,8 +44,8 @@ class CreateAutomaticFormHitungBahanIndex extends Component
     public $jarakSisiKanan = 0.5;
     public $jarakTambahanVertical = 0;
     public $jarakTambahanHorizontal = 0;
-    public $panjangBahan = 108;
-    public $lebarBahan = 79;
+    public $panjangBahan;
+    public $lebarBahan;
 
     //hasil landscape
     public $panjangNaikLandscape;
