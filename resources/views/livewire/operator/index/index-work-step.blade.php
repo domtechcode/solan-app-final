@@ -162,6 +162,9 @@
                     </div>
                     @if ($workStepData->work_step_list_id == 36)
                     @elseif(Auth()->user()->jobdesk == 'Maklun')
+                    <div class="col-md-4">
+                        @livewire('component.reject-operator-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
+                    </div>
                     @else
                         <div class="col-md-4">
                             @livewire('component.timer-index', ['instructionId' => $instructionSelectedId, 'workStepId' => $workStepSelectedId])
