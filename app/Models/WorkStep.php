@@ -80,4 +80,43 @@ class WorkStep extends Model
         });
     }
 
+    public static function updateStatusForAll()
+    {
+        $workSteps = self::all();
+        foreach ($workSteps as $workStep) {
+            $targetDate = \Carbon\Carbon::parse($workStep->target_date);
+            $completionDate = $workStep->selesai;
+
+            if (($completionDate->greaterThan($targetDate)) || $workStep->selesai != null) {
+                $workStep->update(['spk_status_target' => 'Late']);
+            } else {
+                $workStep->update(['spk_status_target' => 'On Time']);
+            }
+
+            // if ($workStep->selesai != null) {
+            //     $workStep->update(['spk_status_target' => 'Late']);
+            // } else {
+            //     $workStep->update(['spk_status_target' => 'On Time']);
+            // }
+        }
+
+
+        // $workSteps = WorkStep::where('user_id', 62)->get();
+        // foreach ($workSteps as $workStep) {
+        //     // $targetDate = \Carbon\Carbon::parse($workStep->target_date . ' 23:59:00');
+        //     // $completionDate = \Carbon\Carbon::parse($workStep->selesai);
+
+        //     // if ($completionDate->greaterThan($targetDate)) {
+        //     //     $workStep->update(['spk_status_target' => 'Late']);
+        //     // } else {
+        //     //     $workStep->update(['spk_status_target' => 'On Time']);
+        //     // }
+
+        //     if ($workStep->selesai == null) {
+        //         $workStep->update(['spk_status_target' => 'On Time']);
+        //     }
+        // }
+
+    }
+
 }

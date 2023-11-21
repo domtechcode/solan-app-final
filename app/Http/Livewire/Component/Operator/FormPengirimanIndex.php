@@ -145,6 +145,8 @@ class FormPengirimanIndex extends Component
                 }
 
                 $currentStep = WorkStep::find($this->workStepCurrentId);
+                $currentStep->selesai = Carbon::now()->toDateTimeString();
+                $currentStep->save();
 
                 if (isset($this->anggota)) {
                     $deleteFormPengiriman = FormPengiriman::where('instruction_id', $this->instructionCurrentId)->delete();
@@ -165,7 +167,6 @@ class FormPengirimanIndex extends Component
                     'status_task' => 'Complete',
                     'state_task' => 'Complete',
                     'spk_status' => 'Selesai',
-                    'selesai' => Carbon::now()->toDateTimeString(),
                 ]);
 
                 $userDestination = User::where('role', 'Penjadwalan')->get();

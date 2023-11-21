@@ -51,6 +51,7 @@ class UpdateWorksteps extends Command
             }
         }
 
+        WorkStep::updateStatusForAll();
         $this->info('Worksteps updated successfully.');
     }
 }
